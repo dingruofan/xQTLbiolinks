@@ -56,7 +56,7 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
       rowRange1 <- c(seq(from=1, to=nrow(gencodeENSG), by=200), nrow(gencodeENSG))
       gencodeGeneInfoV19 <- data.table::data.table()
       for(i in 1:(length(rowRange1)-1)){
-        # use internal function: apiRef_gene
+# use internal function: apiRef_gene
         apiRef_geneOut_tmp = apiRef_gene( gencodeENSG[rowRange1[i]:(rowRange1[i+1]-1),]$gene_id, "v19", "GRCh37/hg19")
         gencodeGeneInfoV19 <- rbind(gencodeGeneInfoV19, apiRef_geneOut_tmp)
         rm(apiRef_geneOut_tmp)
@@ -79,6 +79,7 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 #' @param gtf_attributes
 #'
 #' @return specificed attributes
+#' @importFrom data.table as.data.table
 #' @examples
 #'  # extract gene info:
 #'  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
@@ -103,7 +104,6 @@ gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_typ
 #' @param genomeBuild "GRCh38/hg38" or "GRCh37/hg19"
 #'
 #' @return queried gene info table
-#' @importFrom httr GET progress content
 #' @importFrom jsonlite fromJSON
 #' @importFrom data.table as.data.table
 #' @examples
@@ -112,8 +112,8 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
   geneId <- as.character(unlist(geneId))
   if( any(is.na(geneId)) | any(geneId=="") | any(is.null(geneId)) ){
     stop("gene ID can not be null!")
-  }else if(length(geneId)>2000){
-    stop("number of gene ID can not > 2000 ")
+  }else if(length(geneId)>200){
+    stop("number of gene ID can not > 200 ")
   }else{
     url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
                    "geneId=", paste0(geneId, collapse = ","),"&",
@@ -144,7 +144,6 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 #' @title Heartbeat to check server connectivity.
 #' @description
 #'  test API server
-#' @importFrom httr GET status_code
 #' @import curl
 #' @return boolean value
 #' @examples
@@ -171,4 +170,16 @@ apiAdmin_ping <- function(){
 # httr::use_proxy(url="127.0.0.1", port=7890
 #           # ,username="dd",password="123456"
 # )
+
+# usethis::use_package("data.table")
+# usethis::use_package("curl")
+# usethis::use_package("jsonlite")
+# usethis::use_package("stringr")
+# usethis::use_package("usethis")
+# usethis::use_package("utils")
+
+
+
+
+
 
