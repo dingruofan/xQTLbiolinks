@@ -5,15 +5,16 @@
 #' @return
 #'
 #' @importFrom utils download.file
-#' @importFrom data.table fread rbindlist setnames as.data.table
+#' @importFrom data.table fread rbindlist setnames as.data.table data.table
 #' @importFrom stringr str_split
+#' @importFrom usethis use_data
 #' @examples
 #'  gtfSubsGeneInfo("v26")
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
   gtfDir <- tempdir()
   dir.create(gtfDir, recursive = TRUE)
   message("created temp dir: ",gtfDir)
-  if(gencodeVersion=="v26"){
+  if(gencodeVersion=="v26" ){
     gtfUrl <- paste0("http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_26/gencode.v26.annotation.gtf.gz")
     utils::download.file(gtfUrl,paste0(gtfDir,"/gencode.annotation.gtf.gz"), method="curl")
     # downloader::download(gtfUrl,paste0(gtfDir,"/gencode.annotation.gtf.gz"))
@@ -34,12 +35,39 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 # use internal function: gtfSubsGene
     gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
     # gencodeENSG$ENSG <- unlist(lapply(gencodeENSG$gene_id, function(x){ str_split(x, fixed("."))[[1]][1] }))
-# use internal function: apiRef_gene
     if(gencodeVersion=="v26"){
-      rowRange1 <- c(seq(from=1, to=nrow(gencodeENSG), by=1000), nrow(gencodeENSG))
+      rowRange1 <- c(seq(from=1, to=nrow(gencodeENSG), by=200), nrow(gencodeENSG))
+      gencodeGeneInfoV26 <- data.table::data.table()
       for(i in 1:(length(rowRange1)-1)){
-        a = apiRef_gene(gencodeENSG[rowRange1[i]:(rowRange1[i+1]-1),]$gene_id, "v26", "GRCh38/hg38")
+# use internal function: apiRef_gene
+        apiRef_geneOut_tmp = apiRef_gene( gencodeENSG[rowRange1[i]:(rowRange1[i+1]-1),]$gene_id, "v26", "GRCh38/hg38")
+        gencodeGeneInfoV26 <- rbind(gencodeGeneInfoV26, apiRef_geneOut_tmp)
+        rm(apiRef_geneOut_tmp)
+        message(i,"/",(length(rowRange1)-1), "; Complete ", round(i/(length(rowRange1)-1)*100,2),"%")
       }
+      # add last row:
+      apiRef_geneOut_tmp = apiRef_gene( gencodeENSG[rowRange1[length(rowRange1)],]$gene_id, "v26", "GRCh38/hg38")
+      gencodeGeneInfoV26 <- rbind(gencodeGeneInfoV26, apiRef_geneOut_tmp)
+      rm(apiRef_geneOut_tmp)
+      # create .rds file with gencodeGeneInfoV26
+      usethis::use_data(gencodeGeneInfoV26)
+    }
+    if(gencodeVersion=="v19"){
+      rowRange1 <- c(seq(from=1, to=nrow(gencodeENSG), by=200), nrow(gencodeENSG))
+      gencodeGeneInfoV19 <- data.table::data.table()
+      for(i in 1:(length(rowRange1)-1)){
+        # use internal function: apiRef_gene
+        apiRef_geneOut_tmp = apiRef_gene( gencodeENSG[rowRange1[i]:(rowRange1[i+1]-1),]$gene_id, "v19", "GRCh37/hg19")
+        gencodeGeneInfoV19 <- rbind(gencodeGeneInfoV19, apiRef_geneOut_tmp)
+        rm(apiRef_geneOut_tmp)
+        message(i,"/",(length(rowRange1)-1), "; Complete ", round(i/(length(rowRange1)-1)*100,2),"%")
+      }
+      # add last row:
+      apiRef_geneOut_tmp = apiRef_gene( gencodeENSG[rowRange1[length(rowRange1)],]$gene_id, "v19", "GRCh37/hg19")
+      gencodeGeneInfoV19 <- rbind(gencodeGeneInfoV19, apiRef_geneOut_tmp)
+      rm(apiRef_geneOut_tmp)
+      # create .rds file with gencodeGeneInfoV19
+      usethis::use_data(gencodeGeneInfoV19, overwrite = TRUE)
     }
   }
 }
@@ -94,10 +122,13 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
                    "page=0&pageSize=2000&format=json"
                    )
 # use internal function: apiAdmin_ping
-    if( apiAdmin_ping()==200 ){
+    pingOut <- apiAdmin_ping()
+    if( !is.null(pingOut) & pingOut==200 ){
       message("GTEx API successfully accessed!")
-      url1Get <- httr::GET(url1, httr::progress())
-      url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
+      # url1Get <- httr::GET(url1, httr::progress())
+      url1Get <- curl::curl_fetch_memory(url1)
+      # url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
+      url1GetText <- rawToChar(url1Get$content)
       url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
       url1GetText2Json2DT$genomeBuild <- genomeBuild
@@ -114,6 +145,7 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 #' @description
 #'  test API server
 #' @importFrom httr GET status_code
+#' @import curl
 #' @return boolean value
 #' @examples
 #'  apiAdmin_ping()
@@ -123,7 +155,8 @@ apiAdmin_ping <- function(){
   url1Get <- "https://gtexportal.org/rest/v1/admin/ping"
   tryCatch(
     {
-      httr::status_code(httr::GET(url1Get))
+      # httr::status_code(httr::GET(url1Get))
+      curl::curl_fetch_memory(url1Get)$status_code
     },
     # e = simpleError("test error"),
     error=function(cond){
