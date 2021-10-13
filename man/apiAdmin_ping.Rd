@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_dealWithGencode.R
 \name{apiAdmin_ping}
 \alias{apiAdmin_ping}
-\title{Title Heartbeat to check server connectivity.}
+\title{Heartbeat to check server connectivity.}
 \usage{
 apiAdmin_ping()
 }
@@ -10,9 +10,10 @@ apiAdmin_ping()
 boolean value
 }
 \description{
-Title Heartbeat to check server connectivity.
+test API server
 }
 \examples{
- apiStatus <- ifelse( apiAdmin_ping()==200, "GTEx API can be accessed", "Please check your network!")
+ apiAdmin_ping()
+ apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
  print(apiStatus)
 }

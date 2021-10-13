@@ -23,18 +23,24 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
     utils::download.file(gtfUrl,paste0(gtfDir,"/gencode.annotation.gtf.gz"), method="curl")
     # downloader::download(gtfUrl,paste0(gtfDir,"/gencode.annotation.gtf.gz"))
   }
-  if( file.exists(paste0(gtfDir,"/gencode.annotation.gtf.gz"))){
+  # deal with gtf:
+  if( file.exists(paste0(gtfDir,"/gencode.annotation.gtf.gz")) ){
     message(gtfDir,"/gencode.annotation.gtf.gz", " exists!")
     # read gencode file:
     gencodeAnno <- data.table::fread(paste0(gtfDir,"/gencode.annotation.gtf.gz"),sep="\t", header = FALSE)
     data.table::setnames(gencodeAnno, names(gencodeAnno), c("chr","source","type","start","end","score","strand","phase","attributes") )
     # for gene:
     gencodeAnnoGene <- gencodeAnno[type == "gene"]
-    # use internal function: gtfSubsGene
+# use internal function: gtfSubsGene
     gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
     # gencodeENSG$ENSG <- unlist(lapply(gencodeENSG$gene_id, function(x){ str_split(x, fixed("."))[[1]][1] }))
-    # use internal function: apiRef_gene
-    apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
+# use internal function: apiRef_gene
+    if(gencodeVersion=="v26"){
+      rowRange1 <- c(seq(from=1, to=nrow(gencodeENSG), by=1000), nrow(gencodeENSG))
+      for(i in 1:(length(rowRange1)-1)){
+        a = apiRef_gene(gencodeENSG[rowRange1[i]:(rowRange1[i+1]-1),]$gene_id, "v26", "GRCh38/hg38")
+      }
+    }
   }
 }
 
@@ -88,7 +94,7 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
                    "page=0&pageSize=2000&format=json"
                    )
 # use internal function: apiAdmin_ping
-    if( apiAdmin_ping()==200){
+    if( apiAdmin_ping()==200 ){
       message("GTEx API successfully accessed!")
       url1Get <- httr::GET(url1, httr::progress())
       url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
@@ -103,12 +109,15 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
   }
 }
 
-# test API server
-#' Title Heartbeat to check server connectivity.
+#
+#' @title Heartbeat to check server connectivity.
+#' @description
+#'  test API server
 #' @importFrom httr GET status_code
 #' @return boolean value
 #' @examples
-#'  apiStatus <- ifelse( apiAdmin_ping()==200, "GTEx API can be accessed", "Please check your network!")
+#'  apiAdmin_ping()
+#'  apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
 #'  print(apiStatus)
 apiAdmin_ping <- function(){
   url1Get <- "https://gtexportal.org/rest/v1/admin/ping"
@@ -125,3 +134,8 @@ apiAdmin_ping <- function(){
     }
   )
 }
+
+# httr::use_proxy(url="127.0.0.1", port=7890
+#           # ,username="dd",password="123456"
+# )
+
