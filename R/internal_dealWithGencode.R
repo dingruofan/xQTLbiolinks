@@ -167,6 +167,10 @@ apiAdmin_ping <- function(){
   )
 }
 
+# obtain all tissueSiteDetail info:
+
+# unique(outInfo[,.(tissueSiteDetail,tissueSiteDetailId,)])
+
 # httr::use_proxy(url="127.0.0.1", port=7890
 #           # ,username="dd",password="123456"
 # )
