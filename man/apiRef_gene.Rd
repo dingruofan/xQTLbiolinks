@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_dealWithGencode.R
 \name{apiRef_gene}
 \alias{apiRef_gene}
-\title{Title fetch reference genes by API.}
+\title{fetch reference genes by API.}
 \usage{
 apiRef_gene(geneId = "", gencodeVersion = "v26", genomeBuild = "GRCh38/hg38")
 }
@@ -17,7 +17,7 @@ apiRef_gene(geneId = "", gencodeVersion = "v26", genomeBuild = "GRCh38/hg38")
 queried gene info table
 }
 \description{
-Title fetch reference genes by API.
+fetch reference genes by API.
 }
 \examples{
  apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")

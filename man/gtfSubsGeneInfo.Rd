@@ -2,19 +2,20 @@
 % Please edit documentation in R/internal_dealWithGencode.R
 \name{gtfSubsGeneInfo}
 \alias{gtfSubsGeneInfo}
-\title{Title download gtf files and extract gene info from attribute column:}
+\title{download gtf files and extract gene info from attribute column:}
 \usage{
 gtfSubsGeneInfo(gencodeVersion = "v26")
 }
 \arguments{
-\item{gencodeVersion}{}
+\item{gencodeVersion}{"v26" or "v19"}
 }
 \value{
 
 }
 \description{
-Title download gtf files and extract gene info from attribute column:
+download gtf files and extract gene info from attribute column:
 }
 \examples{
  gtfSubsGeneInfo("v26")
+ gtfSubsGeneInfo("v19")
 }

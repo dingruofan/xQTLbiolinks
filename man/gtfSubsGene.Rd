@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_dealWithGencode.R
 \name{gtfSubsGene}
 \alias{gtfSubsGene}
-\title{Title extract gene attributes of interest}
+\title{Extract gene attributes of interest}
 \usage{
 gtfSubsGene(
   gtf_attributes,
@@ -10,7 +10,7 @@ gtfSubsGene(
 )
 }
 \arguments{
-\item{gtf_attributes}{}
+\item{gtf_attributes}{like: c("gene_id", "gene_type", "gene_name")}
 }
 \value{
 specificed attributes

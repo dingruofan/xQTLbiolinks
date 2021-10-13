@@ -1,6 +1,6 @@
-#' Title download gtf files and extract gene info from attribute column:
+#' @title download gtf files and extract gene info from attribute column:
 #'
-#' @param gencodeVersion
+#' @param gencodeVersion "v26" or "v19"
 #'
 #' @return
 #'
@@ -10,6 +10,7 @@
 #' @importFrom usethis use_data
 #' @examples
 #'  gtfSubsGeneInfo("v26")
+#'  gtfSubsGeneInfo("v19")
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
   gtfDir <- tempdir()
   dir.create(gtfDir, recursive = TRUE)
@@ -73,10 +74,10 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 }
 
 
-#' Title extract gene attributes of interest
+#' @title Extract gene attributes of interest
 #' @description
 #' as a funciton of lapply
-#' @param gtf_attributes
+#' @param gtf_attributes like: c("gene_id", "gene_type", "gene_name")
 #'
 #' @return specificed attributes
 #' @importFrom data.table as.data.table
@@ -97,7 +98,7 @@ gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_typ
 }
 
 
-#' Title fetch reference genes by API.
+#' @title fetch reference genes by API.
 #'
 #' @param geneId a character or a character vector(versioned ensemble ID or unversioned ensemble ID)
 #' @param gencodeVersion "v26" or "v19"
@@ -167,9 +168,28 @@ apiAdmin_ping <- function(){
   )
 }
 
-# obtain all tissueSiteDetail info:
+#' @title create .rds file with GTExquery_sample function
+#'
+#' @param datasetId "gtex_v8" or "gtex_v7"
+#' @import usethis
+#' @return none
+#'
+#' @examples
+#'  createTissueSiteDetailMappingData("gtex_v8)
+#'  createTissueSiteDetailMappingData("gtex_v7)
+createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
+  # obtain all tissueSiteDetail info:
+  if( datasetId == "gtex_v8" ){
+    tissueSiteDetailGTExv8 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
+    tissueSiteDetailGTExv8 <- unique(tissueSiteDetailGTExv8[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
+    usethis::use_data(tissueSiteDetailGTExv8, overwrite = TRUE)
+  }else if(datasetId == "gtex_v7" ){
+    tissueSiteDetailGTExv7 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",pageSize=2000 )
+    tissueSiteDetailGTExv7 <- unique(tissueSiteDetailGTExv7[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
+    usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
+  }
+}
 
-# unique(outInfo[,.(tissueSiteDetail,tissueSiteDetailId,)])
 
 # httr::use_proxy(url="127.0.0.1", port=7890
 #           # ,username="dd",password="123456"
