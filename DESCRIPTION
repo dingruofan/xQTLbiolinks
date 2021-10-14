@@ -18,4 +18,8 @@ Imports:
     data.table,
     stringr,
     usethis,
-    utils
+    utils,
+    SummarizedExperiment,
+    GenomicRanges,
+    IRanges,
+    GenomeInfoDb

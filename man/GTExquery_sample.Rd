@@ -135,7 +135,7 @@ For GTEx v7, must be following terms:
 \item{pageSize}{A integer value (1-2000). number of records fetched per request (default: 200).}
 }
 \value{
-
+returen sample information
 }
 \description{
 Fetch information of samples used in analyses from all datasets.
@@ -144,5 +144,6 @@ Fetch information of samples used in analyses from all datasets.
 \donttest{
   GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
-  GTExquery_sample( tissueSiteDetail="Adipose - Visceral (Omentum)", dataType="RNASEQ", datasetId="gtex_v8",pageSize=200 )}
+  GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
+  }
 }

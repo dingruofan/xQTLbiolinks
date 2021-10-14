@@ -10,7 +10,7 @@ gtfSubsGeneInfo(gencodeVersion = "v26")
 \item{gencodeVersion}{"v26" or "v19"}
 }
 \value{
-
+create .rds file
 }
 \description{
 download gtf files and extract gene info from attribute column:

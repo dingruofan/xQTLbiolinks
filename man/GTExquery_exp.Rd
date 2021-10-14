@@ -8,7 +8,8 @@ GTExquery_exp(
   genes = "",
   geneType = "symbol",
   tissueSiteDetail = "Liver",
-  datasetId = "gtex_v8"
+  datasetId = "gtex_v8",
+  toSummarizedExperiment = FALSE
 )
 }
 \arguments{
@@ -19,7 +20,7 @@ GTExquery_exp(
 A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
 \item \strong{Gencode/ensemble id} (versioned or unversioned).
 
-A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15".
+A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
 \item \strong{Entrez gene ID}.
 
 A integer string or a integer vectors. like: 51150,5590,4509.
@@ -146,14 +147,14 @@ For GTEx v7, must be following terms:
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
-
+return gene expression profiles.
 }
 \description{
 This function fetch queried genes' expression profiles in a tissue at the sample level.
 }
 \examples{
 \donttest{
-  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "gencodeId", "Liver", "gtex_v8")
+  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"), "gencodeId", "Liver", "gtex_v8")
   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
   }

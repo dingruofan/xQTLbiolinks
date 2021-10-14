@@ -8,7 +8,7 @@
 #'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
 #'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
 #'
-#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15".
+#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
 #'   \item \strong{Entrez gene ID}.
 #'
 #'   A integer string or a integer vectors. like: 51150,5590,4509.
@@ -43,7 +43,7 @@
 #'  # test hg38:
 #'  geneInfo <- GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
-#'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), geneType="gencodeId", "v26", "GRCh38/hg38")
+#'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808"), geneType="gencodeId", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
 #'  # test hg19:
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
@@ -266,18 +266,17 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
 #' @import utils
 #' @import curl
 #' @import jsonlite
-#' @return
+#' @return returen sample information
 #' @export
-#'
 #' @examples
 #' \donttest{
 #'   GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
 #'   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
-#'   GTExquery_sample( tissueSiteDetail="Adipose - Visceral (Omentum)", dataType="RNASEQ", datasetId="gtex_v8",pageSize=200 )}
+#'   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
+#'   }
 GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 ){
   page_tmp <- 0
   pageSize_tmp <- as.integer(pageSize)
-
 
   ########## parameter check: tissueSiteDetail
   if(is.null(datasetId) ||  is.na(datasetId)){
@@ -393,7 +392,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
       return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
     }
   }else{
-    stop("API server is overloaded; please wait several minutes!")
+    message("")
   }
   # note: pathologyNotes info is ignored.
 }
@@ -409,7 +408,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
 #'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
 #'
-#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15".
+#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
 #'   \item \strong{Entrez gene ID}.
 #'
 #'   A integer string or a integer vectors. like: 51150,5590,4509.
@@ -533,17 +532,27 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #'   \item Whole Blood
 #'  }
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
-#'
-#' @return
+#' @import data.table
+#' @import curl
+#' @import stringr
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @importFrom GenomicRanges GRanges
+#' @importFrom   IRanges IRanges
+#' @importFrom GenomeInfoDb Seqinfo
+#' @return return gene expression profiles.
 #' @export
-#'
 #' @examples
 #' \donttest{
-#'   expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "gencodeId", "Liver", "gtex_v8")
-#'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
+#'   expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"), "gencodeId", "Liver", "gtex_v8")
+#'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8", toSummarizedExperiment=TRUE)
 #'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
 #'   }
-GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver", datasetId="gtex_v8" ){
+GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=FALSE ){
+  # genes=c("ENSG00000210195.2","ENSG00000078808")
+  # geneType="gencodeId"
+  # tissueSiteDetail="Liver"
+  # datasetId="gtex_v8"
+  # toSummarizedExperiment=TRUE
 
   ########## parameter check: tissueSiteDetail
   if(is.null(datasetId) ||  is.na(datasetId)){
@@ -586,12 +595,13 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
   tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
 
   # convert genes. parameter check is unnecessary for this, because GTExquery_gene check it internally.
+  message("Querying gene info:")
   geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, genomeBuild)
   # geneInfo <-  GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
 
   # get sample info:
-  message("Fetch sample information from API server:")
-  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ",datasetId=datasetId, pageSize=1000 )
+  message("Fetching sample information from API server:")
+  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ",datasetId=datasetId, pageSize=200 )
   if(!exists("sampleInfo")){
     stop("can not connect to API server, please try again later.")
   }
@@ -626,13 +636,38 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
     outInfo <- data.table::as.data.table(url1GetText2Json$geneExpression)
     outInfo <- merge(geneInfo, outInfo, by= c("geneSymbol", "gencodeId"))
     outInfo <- cbind(outInfo[,c("genes")], outInfo[,-c("genes")])
-    message( length(outInfo$data[[1]])," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId)," were obtained." )
     expDT <- data.table::as.data.table(t(data.table::as.data.table(outInfo$data)))
+    data.table::setDF(expDT)
+    rownames(expDT) <- geneInfo$geneSymbol
     colnames(expDT) <- sampleInfo$sampleId
-    outInfo <- cbind(outInfo[,-c("data")], expDT)
-    return(outInfo)
+    message( length(outInfo$data[[1]])," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId)," were obtained."," Unit: ",paste0(unique(outInfo$unit), collapse = ","),"." )
+    #
+    if( !toSummarizedExperiment ){
+      outInfoDF <- cbind(outInfo[,-c("data")], expDT)
+      data.table::setDF(outInfoDF)
+      return(outInfoDF)
+    }else{
+      # construc summarizedExperiment object::
+      # gene info:
+      expRowRanges <- GenomicRanges::GRanges(geneInfo$chromosome,
+                                          IRanges::IRanges(geneInfo$start, geneInfo$end),
+                                          strand= geneInfo$strand,
+                                          geneInfo[,.(genes, geneSymbol, gencodeId, entrezGeneId, geneType, tss, description)]
+                                          # ,seqinfo = GenomeInfoDb::Seqinfo(genome= stringr::str_split(unique(geneInfo$genomeBuild)[1],stringr::fixed("/"))[[1]][2])
+                                          )
+      # sample info:
+      expColData <- data.table::copy(sampleInfo)
+      # meta data:
+      expMetadata <- paste0(length(outInfo$data[[1]])," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId), ". Unit: ",paste0(unique(outInfo$unit), collapse = ","),".")
+      # outInfoSE:
+      outInfoSE <- SummarizedExperiment::SummarizedExperiment(assays=list(exp=expDT),
+                                        rowRanges=expRowRanges,
+                                        colData=expColData,
+                                        metadata=expMetadata)
+    }
+
   }else{
-    message("API server is overloaded or network is busy, please wait several minutes.")
+    message("")
   }
 }
 
@@ -647,7 +682,7 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
 #' @examples
 #' \donttest{
 #'   apiAdmin_ping()
-#'   apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
+#'   apiStatus <- ifelse( apiAdmin_ping() ==200, "accessed", "failed")
 #'   print(apiStatus)
 #'  }
 apiAdmin_ping <- function(){
@@ -659,7 +694,8 @@ apiAdmin_ping <- function(){
     },
     # e = simpleError("test error"),
     error=function(cond){
-      message(cond,"\n,network is busy or check your network!")
+      message("Note: API server is busy or your network has latency, please try again later.")
+      return(NULL)
     },
     warning = function(cond){
       message(cond)

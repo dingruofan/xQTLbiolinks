@@ -10,7 +10,9 @@ gtfSubsGene(
 )
 }
 \arguments{
-\item{gtf_attributes}{like: c("gene_id", "gene_type", "gene_name")}
+\item{gtf_attributes}{A character string or a character vector. Like: c("gene_id", "gene_type", "gene_name"). Default: "gene_id", "gene_type", "gene_name".}
+
+\item{att_of_interest}{A character string or a character vector. Attributes of interest.}
 }
 \value{
 specificed attributes

@@ -2,7 +2,7 @@
 #'
 #' @param gencodeVersion "v26" or "v19"
 #'
-#' @return
+#' @return create .rds file
 #'
 #' @importFrom utils download.file
 #' @importFrom data.table fread rbindlist setnames as.data.table data.table
@@ -79,7 +79,8 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 #' @title Extract gene attributes of interest
 #' @description
 #' as a funciton of lapply
-#' @param gtf_attributes like: c("gene_id", "gene_type", "gene_name")
+#' @param gtf_attributes A character string or a character vector. Like: c("gene_id", "gene_type", "gene_name"). Default: "gene_id", "gene_type", "gene_name".
+#' @param att_of_interest A character string or a character vector. Attributes of interest.
 #'
 #' @return specificed attributes
 #' @importFrom data.table as.data.table
@@ -143,7 +144,7 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
       outInfo <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
       return(outInfo)
     }else{
-      stop("GTEx API can not be accessed, please check your network!")
+      message("")
     }
   }
 }
@@ -185,6 +186,10 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
 # usethis::use_package("stringr")
 # usethis::use_package("usethis")
 # usethis::use_package("utils")
+# usethis::use_package("SummarizedExperiment")
+# usethis::use_package("GenomicRanges")
+# usethis::use_package("IRanges")
+# usethis::use_package("GenomeInfoDb")
 
 
 

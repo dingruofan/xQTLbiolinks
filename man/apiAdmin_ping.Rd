@@ -15,7 +15,7 @@ test API server
 \examples{
 \donttest{
   apiAdmin_ping()
-  apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
+  apiStatus <- ifelse( apiAdmin_ping() ==200, "accessed", "failed")
   print(apiStatus)
  }
 }
