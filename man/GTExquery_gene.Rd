@@ -23,6 +23,57 @@ A character string or a character vector (case ignored). like: "ENSG00000210195.
 \item \strong{Entrez gene ID}.
 
 A integer string or a integer vectors. like: 51150,5590,4509.
+
+\item \strong{geneCategory}.
+
+When choose "geneCategory", "genes" must be chosen from following gene category:
+\itemize{
+\item protein coding
+\item antisense
+\item lincRNA
+\item unprocessed pseudogene
+\item miRNA
+\item transcribed unprocessed pseudogene
+\item snRNA
+\item processed pseudogene
+\item processed transcript
+\item TEC
+\item transcribed unitary pseudogene
+\item transcribed processed pseudogene
+\item sense intronic
+\item misc RNA
+\item snoRNA
+\item scaRNA
+\item rRNA
+\item unitary pseudogene
+\item 3prime overlapping ncRNA
+\item polymorphic pseudogene
+\item bidirectional promoter lncRNA
+\item sense overlapping
+\item pseudogene
+\item IG V pseudogene
+\item scRNA
+\item IG C gene
+\item IG J gene
+\item IG V gene
+\item sRNA
+\item ribozyme
+\item vaultRNA
+\item non coding
+\item TR J gene
+\item TR C gene
+\item TR V gene
+\item TR V pseudogene
+\item TR D gene
+\item IG C pseudogene
+\item macro lncRNA
+\item TR J pseudogene
+\item IG D gene
+\item IG J pseudogene
+\item IG pseudogene
+\item Mt tRNA
+\item Mt rRNA
+}
 }}
 
 \item{geneType}{A character string. Types of queried genes. Options: "symbol" (default), "gencodeId", "entrezId";}
@@ -61,5 +112,8 @@ users can use this function to search gene of interest
  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
  # hg19:
  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
+ # get all protein_coding genes:
+ proteinCoding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
+ miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
  }
 }

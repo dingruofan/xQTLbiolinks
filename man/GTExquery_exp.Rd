@@ -157,5 +157,8 @@ This function fetch queried genes' expression profiles in a tissue at the sample
   expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"), "gencodeId", "Liver", "gtex_v8")
   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8", toSummarizedExperiment=TRUE)
   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+  # get miRNA expression:
+  miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
+  miRNAExp <- GTExquery_exp(miRNA$gencodeId[1:10], geneType = "gencodeId")
   }
 }

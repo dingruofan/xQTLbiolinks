@@ -12,6 +12,57 @@
 #'   \item \strong{Entrez gene ID}.
 #'
 #'   A integer string or a integer vectors. like: 51150,5590,4509.
+#'
+#'   \item \strong{geneCategory}.
+#'
+#'   When choose "geneCategory", "genes" must be chosen from following gene category:
+#'   \itemize{
+#'   \item protein coding
+#'   \item antisense
+#'   \item lincRNA
+#'   \item unprocessed pseudogene
+#'   \item miRNA
+#'   \item transcribed unprocessed pseudogene
+#'   \item snRNA
+#'   \item processed pseudogene
+#'   \item processed transcript
+#'   \item TEC
+#'   \item transcribed unitary pseudogene
+#'   \item transcribed processed pseudogene
+#'   \item sense intronic
+#'   \item misc RNA
+#'   \item snoRNA
+#'   \item scaRNA
+#'   \item rRNA
+#'   \item unitary pseudogene
+#'   \item 3prime overlapping ncRNA
+#'   \item polymorphic pseudogene
+#'   \item bidirectional promoter lncRNA
+#'   \item sense overlapping
+#'   \item pseudogene
+#'   \item IG V pseudogene
+#'   \item scRNA
+#'   \item IG C gene
+#'   \item IG J gene
+#'   \item IG V gene
+#'   \item sRNA
+#'   \item ribozyme
+#'   \item vaultRNA
+#'   \item non coding
+#'   \item TR J gene
+#'   \item TR C gene
+#'   \item TR V gene
+#'   \item TR V pseudogene
+#'   \item TR D gene
+#'   \item IG C pseudogene
+#'   \item macro lncRNA
+#'   \item TR J pseudogene
+#'   \item IG D gene
+#'   \item IG J pseudogene
+#'   \item IG pseudogene
+#'   \item Mt tRNA
+#'   \item Mt rRNA
+#'   }
 #' }
 #'
 #' @param geneType A character string. Types of queried genes. Options: "symbol" (default), "gencodeId", "entrezId";
@@ -47,6 +98,9 @@
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
 #'  # hg19:
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
+#'  # get all protein_coding genes:
+#'  proteinCoding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
+#'  miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
 #'  }
 GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", genomeBuild="GRCh38/hg38"){
   # check null/na
@@ -56,7 +110,7 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
   # geneType
   if( is.null(geneType) ||  is.na(geneType) || geneType=="" || length(geneType)!=1){
     stop("Parameter \"geneType\" should be choosen from \"symbol\", \"gencodeId\", \"entrezId\".")
-  }else if( !(geneType %in% c("symbol", "gencodeId", "entrezId")) ){
+  }else if( !(geneType %in% c("symbol", "gencodeId", "entrezId","geneCategory")) ){
     stop("Parameter \"geneType\" should be choosen from \"symbol\", \"gencodeId\", \"entrezId\".")
   }
   # gencodeVersion
@@ -135,6 +189,16 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
     }else{
       message("Queried ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
       return(data.table::data.table(genes=genes))
+    }
+    # geneCategory
+  }else if(geneType == "geneCategory"){
+    geneCategory = unique(gencodeGeneInfoV26$geneType)
+    if( length(genes)!=1 || any(!(genes %in% geneCategory)) ){
+      message(paste0(1:length(geneCategory),". ",geneCategory, collapse = "\n"))
+      stop("if \"geneType\" is  \"geneCategory\", input \"genes\" should be choosen from the above: ")
+    }else{
+      genesDTout <- cbind(data.table(genes=gencodeGeneInfo[geneType==genes,]$geneSymbol), gencodeGeneInfo[geneType==genes,])
+      return(genesDTout)
     }
   }else{
     return(data.table::data.table(genes=genes))
@@ -270,6 +334,7 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
 #' @export
 #' @examples
 #' \donttest{
+#'   #
 #'   GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
 #'   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
 #'   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
@@ -361,7 +426,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
     tmp <- data.table::as.data.table(url1GetText2Json$sample)
     outInfo <- rbind(outInfo, tmp)
     message("Total records: ",url1GetText2Json$recordsFiltered,"; total pages: ",url1GetText2Json$numPages,"; downloaded pages:",url1GetText2Json$page," records: ", nrow(tmp))
-    while(url1GetText2Json$page < (url1GetText2Json$numPages-1)){
+    while(url1GetText2Json$page <= (url1GetText2Json$numPages-1)){
       page_tmp <- page_tmp+1
       if( tissueSiteDetail =="All"){
         url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
@@ -389,8 +454,9 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
       tmp <- data.table::as.data.table(url1GetText2Json$sample)
       outInfo <- rbind(outInfo, tmp)
       message("Total records: ",url1GetText2Json$recordsFiltered,"; total pages: ",url1GetText2Json$numPages,"; downloaded pages:",url1GetText2Json$page," records: ", nrow(tmp))
-      return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
     }
+    return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
+
   }else{
     message("")
   }
@@ -545,6 +611,9 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #'   expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"), "gencodeId", "Liver", "gtex_v8")
 #'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8", toSummarizedExperiment=TRUE)
 #'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+#'   # get miRNA expression:
+#'   miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
+#'   miRNAExp <- GTExquery_exp(miRNA$gencodeId[1:10], geneType = "gencodeId")
 #'   }
 GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=FALSE ){
   # genes=c("ENSG00000210195.2","ENSG00000078808")
@@ -600,7 +669,7 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
 
   # get sample info:
   message("Fetching sample information from API server:")
-  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ",datasetId=datasetId, pageSize=200 )
+  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, pageSize=200 )
   if(!exists("sampleInfo")){
     stop("can not connect to API server, please try again later.")
   }
@@ -637,6 +706,8 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
     outInfo <- cbind(outInfo[,c("genes")], outInfo[,-c("genes")])
     expDT <- data.table::as.data.table(t(data.table::as.data.table(outInfo$data)))
     data.table::setDF(expDT)
+    # some genes were excluded from gtex:
+    excludedGenes <- geneInfo[gencodeId==setdiff(geneInfo$gencodeId, outInfo$gencodeId),]
     rownames(expDT) <- geneInfo$geneSymbol
     colnames(expDT) <- sampleInfo$sampleId
     message( length(outInfo$data[[1]])," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId)," were obtained."," Unit: ",paste0(unique(outInfo$unit), collapse = ","),"." )
