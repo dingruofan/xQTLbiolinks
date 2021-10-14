@@ -9,8 +9,10 @@
 #' @importFrom stringr str_split
 #' @importFrom usethis use_data
 #' @examples
-#'  gtfSubsGeneInfo("v26")
-#'  gtfSubsGeneInfo("v19")
+#' \dontrun{
+#'   gtfSubsGeneInfo("v26")
+#'   gtfSubsGeneInfo("v19")
+#'  }
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
   gtfDir <- tempdir()
   dir.create(gtfDir, recursive = TRUE)
@@ -82,10 +84,12 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 #' @return specificed attributes
 #' @importFrom data.table as.data.table
 #' @examples
-#'  # extract gene info:
-#'  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
-#'  # extract transcript info:
-#'  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id","transcript_id", "gene_type", "gene_name")))
+#'  \dontrun{
+#'   # extract gene info:
+#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
+#'   # extract transcript info:
+#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id","transcript_id", "gene_type", "gene_name")))
+#'  }
 gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_type", "gene_name")){
   att <- unlist(stringr::str_split(gtf_attributes, " ")[[1]])
   # att_of_interest <- c("gene_id", "gene_type", "gene_name")
@@ -107,8 +111,11 @@ gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_typ
 #' @return queried gene info table
 #' @importFrom jsonlite fromJSON
 #' @importFrom data.table as.data.table
+#' @export
 #' @examples
-#'  apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
+#' \dontrun{
+#'   apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
+#'  }
 apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg38" ){
   geneId <- as.character(unlist(geneId))
   if( any(is.na(geneId)) | any(geneId=="") | any(is.null(geneId)) ){
@@ -124,7 +131,7 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
                    )
 # use internal function: apiAdmin_ping
     pingOut <- apiAdmin_ping()
-    if( !is.null(pingOut) & pingOut==200 ){
+    if( !is.null(pingOut) && pingOut==200 ){
       message("GTEx API successfully accessed!")
       # url1Get <- httr::GET(url1, httr::progress())
       url1Get <- curl::curl_fetch_memory(url1)
@@ -141,43 +148,19 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
   }
 }
 
-#
-#' @title Heartbeat to check server connectivity.
-#' @description
-#'  test API server
-#' @import curl
-#' @return A boolean value.
-#' @export
-#' @examples
-#'  apiAdmin_ping()
-#'  apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
-#'  print(apiStatus)
-apiAdmin_ping <- function(){
-  url1Get <- "https://gtexportal.org/rest/v1/admin/ping"
-  tryCatch(
-    {
-      # httr::status_code(httr::GET(url1Get))
-      curl::curl_fetch_memory(url1Get)$status_code
-    },
-    # e = simpleError("test error"),
-    error=function(cond){
-      message(cond,"\nplease check your network!")
-    },
-    warning = function(cond){
-      message(cond)
-    }
-  )
-}
 
 #' @title create .rds file with GTExquery_sample function
 #'
 #' @param datasetId "gtex_v8" or "gtex_v7"
 #' @import usethis
+#'
 #' @return none
 #'
 #' @examples
-#'  createTissueSiteDetailMappingData("gtex_v8")
-#'  createTissueSiteDetailMappingData("gtex_v7")
+#' \dontrun{
+#'   createTissueSiteDetailMappingData("gtex_v8")
+#'   createTissueSiteDetailMappingData("gtex_v7")
+#'  }
 createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
   # obtain all tissueSiteDetail info:
   if( datasetId == "gtex_v8" ){

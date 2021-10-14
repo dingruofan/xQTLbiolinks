@@ -152,7 +152,9 @@ For GTEx v7, must be following terms:
 This function fetch queried genes' expression profiles in a tissue at the sample level.
 }
 \examples{
- expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Liver", "gtex_v8")
- expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
- expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+\donttest{
+  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "gencodeId", "Liver", "gtex_v8")
+  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
+  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+  }
 }

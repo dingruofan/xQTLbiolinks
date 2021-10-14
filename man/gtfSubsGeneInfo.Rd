@@ -16,6 +16,8 @@ gtfSubsGeneInfo(gencodeVersion = "v26")
 download gtf files and extract gene info from attribute column:
 }
 \examples{
- gtfSubsGeneInfo("v26")
- gtfSubsGeneInfo("v19")
+\dontrun{
+  gtfSubsGeneInfo("v26")
+  gtfSubsGeneInfo("v19")
+ }
 }

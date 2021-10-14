@@ -53,11 +53,13 @@ A data.table of queried gene information. including following columns:
 users can use this function to search gene of interest
 }
 \examples{
+\donttest{
  # test hg38:
  geneInfo <- GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
  geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
- geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "symbol", "v26", "GRCh38/hg38")
+ geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), geneType="gencodeId", "v26", "GRCh38/hg38")
  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
  # test hg19:
  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
+ }
 }

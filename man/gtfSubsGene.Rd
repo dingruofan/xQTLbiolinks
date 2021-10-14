@@ -19,8 +19,10 @@ specificed attributes
 as a funciton of lapply
 }
 \examples{
- # extract gene info:
- gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
- # extract transcript info:
- gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id","transcript_id", "gene_type", "gene_name")))
+ \dontrun{
+  # extract gene info:
+  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
+  # extract transcript info:
+  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id","transcript_id", "gene_type", "gene_name")))
+ }
 }

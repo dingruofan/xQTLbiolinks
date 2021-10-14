@@ -141,7 +141,8 @@ For GTEx v7, must be following terms:
 Fetch information of samples used in analyses from all datasets.
 }
 \examples{
- GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
- GTExquery_sample( tissueSiteDetail="Adipose - Visceral (Omentum)", dataType="RNASEQ", datasetId="gtex_v8",pageSize=200 )
+\donttest{
+  GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
+  GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
+  GTExquery_sample( tissueSiteDetail="Adipose - Visceral (Omentum)", dataType="RNASEQ", datasetId="gtex_v8",pageSize=200 )}
 }

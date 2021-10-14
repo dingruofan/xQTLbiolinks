@@ -20,5 +20,7 @@ queried gene info table
 fetch reference genes by API.
 }
 \examples{
- apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
+\dontrun{
+  apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
+ }
 }

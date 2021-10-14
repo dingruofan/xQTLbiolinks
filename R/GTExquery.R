@@ -39,17 +39,18 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #'  # test hg38:
 #'  geneInfo <- GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
-#'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "symbol", "v26", "GRCh38/hg38")
+#'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), geneType="gencodeId", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
 #'  # test hg19:
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
+#'  }
 GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", genomeBuild="GRCh38/hg38"){
   # check null/na
-  # genes
-  if( is.null(genes) ||  is.na(genes) || genes=="" || length(genes)==0 ){
+  if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
   }
   # geneType
@@ -65,13 +66,12 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
     stop("Parameter \"gencodeVersion\" should be choosen from \"v26\", \"v19\".")
   }
   # genomeBuild
+  # check gencodeVersion match with genomeBuild
   if( is.null(genomeBuild) ||  is.na(genomeBuild) || genomeBuild=="" || length(genomeBuild)!=1){
     stop("Parameter \"genomeBuild\" should be choosen from \"GRCh38/hg38\", \"GRCh37/hg19\".")
   }else if( !(genomeBuild %in% c("GRCh38/hg38", "GRCh37/hg19")) ){
     stop("Parameter \"genomeBuild\" should be choosen from \"GRCh38/hg38\", \"GRCh37/hg19\".")
-  }
-  # check gencodeVersion match with genomeBuild
-  else if(gencodeVersion=="v26" & genomeBuild=="GRCh38/hg38"){
+  } else if(gencodeVersion=="v26" & genomeBuild=="GRCh38/hg38"){
     # data(gencodeGeneInfoV26)
     gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV26)
   }else if(gencodeVersion=="v19" & genomeBuild=="GRCh37/hg19"){
@@ -114,27 +114,26 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
     genesDTout_1 <- merge(genesDT, gencodeGeneInfo, by ="gencodeIdUpper", sort=FALSE)
     genesDTout_2 <- merge( gencodeGeneInfo, genesDT, by.y ="gencodeIdUpper", by.x= "gencodIdUvUpper", sort=FALSE)
     genesDTout <- rbind(genesDTout_1, genesDTout_2)[,c("genes",names(gencodeGeneInfo[,-c("gencodeIdUpper", "gencodIdUv", "gencodIdUvUpper")])),with=FALSE]
-    genesDTout <- genesDTout[,-c("geneSymbolUpper")]
     if( nrow(genesDTout) >0){
-      message("Quired ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      message("Queried ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
       return(genesDTout)
     }else{
-      message("Quired ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
+      message("Queried ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
       return(data.table::data.table(genes=genes))
     }
     # entrezId
   }else if( geneType=="entrezId" ){
     if( !all(unlist(lapply(genes, is.numeric))) ){
-      stop("Integer is reQuired for entrezId!")
+      stop("Integer is requeried for entrezId!")
     }
     genesDT <- data.table::data.table(genes=genes)
     gencodeGeneInfo$genes <- gencodeGeneInfo$entrezGeneId
     genesDTout <- merge(genesDT, gencodeGeneInfo, by ="genes", sort=FALSE)
     if( nrow(genesDTout) >0){
-      message("Quired ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      message("Queried ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
       return(genesDTout)
     }else{
-      message("Quired ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
+      message("Queried ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
       return(data.table::data.table(genes=genes))
     }
   }else{
@@ -271,15 +270,16 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
 #' @export
 #'
 #' @examples
-#'  GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
-#'  GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
-#'  GTExquery_sample( tissueSiteDetail="Adipose - Visceral (Omentum)", dataType="RNASEQ", datasetId="gtex_v8",pageSize=200 )
+#' \donttest{
+#'   GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
+#'   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
+#'   GTExquery_sample( tissueSiteDetail="Adipose - Visceral (Omentum)", dataType="RNASEQ", datasetId="gtex_v8",pageSize=200 )}
 GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 ){
   page_tmp <- 0
   pageSize_tmp <- as.integer(pageSize)
 
-  ##########
-  # parameter check: tissueSiteDetail
+
+  ########## parameter check: tissueSiteDetail
   if(is.null(datasetId) ||  is.na(datasetId)){
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }else if(length(datasetId)!=1){
@@ -287,14 +287,14 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   }else if(  !(datasetId %in% c("gtex_v8", "gtex_v7"))  ){
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }
-  ##########
-  # parameter check: tissueSiteDetail
+
+  ########## parameter check: tissueSiteDetail
   # import tissueSiteDetailGTEx according to datasetId
   if(datasetId == "gtex_v8"){
-    data(tissueSiteDetailGTExv8)
+    # data(tissueSiteDetailGTExv8)
     tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
   }else if(datasetId == "gtex_v7"){
-    data(tissueSiteDetailGTExv7)
+    # data(tissueSiteDetailGTExv7)
     tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
   }
   # check tissueSiteDetail:
@@ -309,8 +309,8 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # convert tissueSiteDetail to tissueSiteDetailId:
   tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
 
-  ##########
-  # parameter check: pageSize_tmp
+
+  ########## parameter check: pageSize_tmp
   if(is.null(pageSize_tmp) ||  is.na(pageSize_tmp)){
     stop("Parameter \"pageSize\" should be a integer!")
     }else if(length(pageSize_tmp)!=1){
@@ -318,8 +318,8 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
     }else if( pageSize_tmp > 2000 | pageSize_tmp < 1){
       stop("pageSize must between 1 and 2000!")
     }
-  ########
-  # parameter check: dataType
+
+  ######## parameter check: dataType
   if(is.null(dataType) ||  is.na(dataType)){
     stop("Parameter \"dataType\" should be a character!")
   }else if(length(dataType)!=1){
@@ -328,8 +328,8 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
     stop("Parameter \"dataType\" should be chosen from: \"RNASEQ\", \"WGS\", \"WES\", \"OMNI\"." )
   }
 
-  ##########
-  # construct api url:
+
+  ########## construct api url:
   if( tissueSiteDetail =="All"){
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
                    "datasetId=", datasetId,"&",
@@ -354,7 +354,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetail=All&dataType=RNASEQ&format=json&page=0&pageSize=200&sortBy=sampleId&sortDirection=asc"
   outInfo <- data.table::data.table()
   pingOut <- apiAdmin_ping()
-  if( !is.null(pingOut) & pingOut==200 ){
+  if( !is.null(pingOut) && pingOut==200 ){
     message("GTEx API successfully accessed!")
     url1Get <- curl::curl_fetch_memory(url1)
     url1GetText <- rawToChar(url1Get$content)
@@ -390,12 +390,12 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
       tmp <- data.table::as.data.table(url1GetText2Json$sample)
       outInfo <- rbind(outInfo, tmp)
       message("Total records: ",url1GetText2Json$recordsFiltered,"; total pages: ",url1GetText2Json$numPages,"; downloaded pages:",url1GetText2Json$page," records: ", nrow(tmp))
+      return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
     }
   }else{
-    message("API server is overloaded; please wait several minutes!")
+    stop("API server is overloaded; please wait several minutes!")
   }
   # note: pathologyNotes info is ignored.
-  outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )]
 }
 
 
@@ -538,18 +538,14 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #' @export
 #'
 #' @examples
-#'  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Liver", "gtex_v8")
-#'  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "gencodeId", "Liver", "gtex_v8")
-#'  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
-#'  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+#' \donttest{
+#'   expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "gencodeId", "Liver", "gtex_v8")
+#'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
+#'   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+#'   }
 GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver", datasetId="gtex_v8" ){
-  # 参数检查
-  # gene id 转为 gencode ID
-  # 组织名转为 ID
-  # fetch data:
 
-  ##########
-  # parameter check: tissueSiteDetail
+  ########## parameter check: tissueSiteDetail
   if(is.null(datasetId) ||  is.na(datasetId)){
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }else if(length(datasetId)!=1){
@@ -557,21 +553,21 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
   }else if(  !(datasetId %in% c("gtex_v8", "gtex_v7"))  ){
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }
-  ##########
-  # parameter check: tissueSiteDetail
+
+  ########## parameter check: tissueSiteDetail
   # import tissueSiteDetailGTEx according to datasetId
   gencodeVersion <- "v26"
   genomeBuild <- "GRCh38/hg38"
   if(datasetId == "gtex_v8"){
-    data(tissueSiteDetailGTExv8)
-    data(gencodeGeneInfoV26)
+    # data(tissueSiteDetailGTExv8)
+    # data(gencodeGeneInfoV26)
     tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
     gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV26)
     gencodeVersion <- "v26"
     genomeBuild <- "GRCh38/hg38"
   }else if(datasetId == "gtex_v7"){
-    data(tissueSiteDetailGTExv7)
-    data(gencodeGeneInfoV19)
+    # data(tissueSiteDetailGTExv7)
+    # data(gencodeGeneInfoV19)
     tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
     gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV19)
     gencodeVersion <- "v19"
@@ -594,11 +590,14 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
   # geneInfo <-  GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
 
   # get sample info:
-  message("Fetch sample information:")
+  message("Fetch sample information from API server:")
   sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ",datasetId=datasetId, pageSize=1000 )
+  if(!exists("sampleInfo")){
+    stop("can not connect to API server, please try again later.")
+  }
 
-  #################
-  # construct url:
+
+  ################# construct url:
   if( tissueSiteDetail =="All"){
     url1 <- paste0("https://gtexportal.org/rest/v1/expression/geneExpression?",
                    "datasetId=", datasetId,"&",
@@ -638,8 +637,35 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
 }
 
 
-
-
+#
+#' @title Heartbeat to check server connectivity.
+#' @description
+#'  test API server
+#' @import curl
+#' @return A boolean value.
+#' @export
+#' @examples
+#' \donttest{
+#'   apiAdmin_ping()
+#'   apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
+#'   print(apiStatus)
+#'  }
+apiAdmin_ping <- function(){
+  url1Get <- "https://gtexportal.org/rest/v1/admin/ping"
+  tryCatch(
+    {
+      # httr::status_code(httr::GET(url1Get))
+      curl::curl_fetch_memory(url1Get)$status_code
+    },
+    # e = simpleError("test error"),
+    error=function(cond){
+      message(cond,"\n,network is busy or check your network!")
+    },
+    warning = function(cond){
+      message(cond)
+    }
+  )
+}
 
 
 
