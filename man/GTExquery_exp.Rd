@@ -30,7 +30,6 @@ A integer string or a integer vectors. like: 51150,5590,4509.
 
 \item{tissueSiteDetail}{For GTEx v8, must be following terms:
 \itemize{
-\item All
 \item Adipose - Subcutaneous
 \item Adipose - Visceral (Omentum)
 \item Adrenal Gland
@@ -88,7 +87,6 @@ A integer string or a integer vectors. like: 51150,5590,4509.
 }
 For GTEx v7, must be following terms:
 \itemize{
-\item All
 \item Adipose - Subcutaneous
 \item Adipose - Visceral (Omentum)
 \item Adrenal Gland
@@ -145,6 +143,8 @@ For GTEx v7, must be following terms:
 }}
 
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
+
+\item{toSummarizedExperiment}{return a data.frame or a summarizedExperiment object. Default return a data.frame.}
 }
 \value{
 return gene expression profiles.
@@ -155,7 +155,7 @@ This function fetch queried genes' expression profiles in a tissue at the sample
 \examples{
 \donttest{
   expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"), "gencodeId", "Liver", "gtex_v8")
-  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
+  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8", toSummarizedExperiment=TRUE)
   expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
   }
 }

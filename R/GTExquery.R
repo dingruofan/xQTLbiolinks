@@ -40,12 +40,12 @@
 #'
 #' @examples
 #' \donttest{
-#'  # test hg38:
+#'  # hg38:
 #'  geneInfo <- GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808"), geneType="gencodeId", "v26", "GRCh38/hg38")
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
-#'  # test hg19:
+#'  # hg19:
 #'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
 #'  }
 GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", genomeBuild="GRCh38/hg38"){
@@ -418,7 +418,6 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #' @param tissueSiteDetail
 #'  For GTEx v8, must be following terms:
 #'  \itemize{
-#'    \item All
 #'    \item Adipose - Subcutaneous
 #'    \item Adipose - Visceral (Omentum)
 #'    \item Adrenal Gland
@@ -476,7 +475,6 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #'  }
 #'  For GTEx v7, must be following terms:
 #'  \itemize{
-#'   \item All
 #'   \item Adipose - Subcutaneous
 #'   \item Adipose - Visceral (Omentum)
 #'   \item Adrenal Gland
@@ -532,6 +530,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #'   \item Whole Blood
 #'  }
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
+#' @param toSummarizedExperiment return a data.frame or a summarizedExperiment object. Default return a data.frame.
 #' @import data.table
 #' @import curl
 #' @import stringr
