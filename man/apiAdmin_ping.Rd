@@ -7,7 +7,7 @@
 apiAdmin_ping()
 }
 \value{
-boolean value
+A boolean value.
 }
 \description{
 test API server

@@ -146,7 +146,8 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 #' @description
 #'  test API server
 #' @import curl
-#' @return boolean value
+#' @return A boolean value.
+#' @export
 #' @examples
 #'  apiAdmin_ping()
 #'  apiStatus <- ifelse( apiAdmin_ping() ==200, "GTEx API can be accessed", "Please check your network!")
@@ -175,8 +176,8 @@ apiAdmin_ping <- function(){
 #' @return none
 #'
 #' @examples
-#'  createTissueSiteDetailMappingData("gtex_v8)
-#'  createTissueSiteDetailMappingData("gtex_v7)
+#'  createTissueSiteDetailMappingData("gtex_v8")
+#'  createTissueSiteDetailMappingData("gtex_v7")
 createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
   # obtain all tissueSiteDetail info:
   if( datasetId == "gtex_v8" ){

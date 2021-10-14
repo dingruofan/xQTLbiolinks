@@ -16,6 +16,6 @@ none
 create .rds file with GTExquery_sample function
 }
 \examples{
- createTissueSiteDetailMappingData("gtex_v8)
- createTissueSiteDetailMappingData("gtex_v7)
+ createTissueSiteDetailMappingData("gtex_v8")
+ createTissueSiteDetailMappingData("gtex_v7")
 }

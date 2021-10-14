@@ -40,16 +40,16 @@
 #'
 #' @examples
 #'  # test hg38:
-#'  GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
-#'  GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
-#'  GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "symbol", "v26", "GRCh38/hg38")
-#'  GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
+#'  geneInfo <- GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
+#'  geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
+#'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "symbol", "v26", "GRCh38/hg38")
+#'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
 #'  # test hg19:
-#'  GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
+#'  geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
 GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", genomeBuild="GRCh38/hg38"){
   # check null/na
   # genes
-  if( is.null(genes) ||  is.na(genes) || genes=="" || length(genes)==0){
+  if( is.null(genes) ||  is.na(genes) || genes=="" || length(genes)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
   }
   # geneType
@@ -89,10 +89,18 @@ GTExquery_gene <- function(genes="", geneType="symbol", gencodeVersion="v26", ge
     genesDTout <- merge(genesDT, gencodeGeneInfo, by ="geneSymbolUpper", sort=FALSE)
     genesDTout <- genesDTout[,-c("geneSymbolUpper")]
     if( nrow(genesDTout) >0){
-      message("Quired ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      if( length(genes)>1 ){
+        message("Queried ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      }else if( length(genes)==1 ){
+        message("Queried ",length(genes), " gene, finally ",nrow(genesDTout)," record matched!")
+      }
       return(genesDTout)
     }else{
-      message("Quired ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
+      if( length(genes)>1 ){
+        message("Queried ",length(genes), " genes, finally 0 record matched!\nplease check your input genes!")
+      }else if( length(genes)==1 ){
+        message("Queried ",length(genes), " gene, finally 0 record matched!\nplease check your input genes!")
+      }
       return(data.table::data.table(genes=genes))
     }
   }
@@ -389,6 +397,259 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # note: pathologyNotes info is ignored.
   outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )]
 }
+
+
+#' @title Fetch normalized gene expression.
+#' @description
+#'  This function fetch queried genes' expression profiles in a tissue at the sample level.
+#' @param genes Following gene types are supported:
+#' \itemize{
+#'   \item \strong{Gene symbol}.
+#'
+#'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
+#'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
+#'
+#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15".
+#'   \item \strong{Entrez gene ID}.
+#'
+#'   A integer string or a integer vectors. like: 51150,5590,4509.
+#' }
+#'
+#' @param geneType A character string. Types of queried genes. Options: "symbol" (default), "gencodeId", "entrezId";
+#' @param tissueSiteDetail
+#'  For GTEx v8, must be following terms:
+#'  \itemize{
+#'    \item All
+#'    \item Adipose - Subcutaneous
+#'    \item Adipose - Visceral (Omentum)
+#'    \item Adrenal Gland
+#'    \item Artery - Aorta
+#'    \item Artery - Coronary
+#'    \item Artery - Tibial
+#'    \item Bladder
+#'    \item Brain - Amygdala
+#'    \item Brain - Anterior cingulate cortex (BA24)
+#'    \item Brain - Caudate (basal ganglia)
+#'    \item Brain - Cerebellar Hemisphere
+#'    \item Brain - Cerebellum
+#'    \item Brain - Cortex
+#'    \item Brain - Frontal Cortex (BA9)
+#'    \item Brain - Hippocampus
+#'    \item Brain - Hypothalamus
+#'    \item Brain - Nucleus accumbens (basal ganglia)
+#'    \item Brain - Putamen (basal ganglia)
+#'    \item Brain - Spinal cord (cervical c-1)
+#'    \item Brain - Substantia nigra
+#'    \item Breast - Mammary Tissue
+#'    \item Cells - Cultured fibroblasts
+#'    \item Cells - EBV-transformed lymphocytes
+#'    \item Cervix - Ectocervix
+#'    \item Cervix - Endocervix
+#'    \item Colon - Sigmoid
+#'    \item Colon - Transverse
+#'    \item Esophagus - Gastroesophageal Junction
+#'    \item Esophagus - Mucosa
+#'    \item Esophagus - Muscularis
+#'    \item Fallopian Tube
+#'    \item Heart - Atrial Appendage
+#'    \item Heart - Left Ventricle
+#'    \item Kidney - Cortex
+#'    \item Kidney - Medulla
+#'    \item Liver
+#'    \item Lung
+#'    \item Minor Salivary Gland
+#'    \item Muscle - Skeletal
+#'    \item Nerve - Tibial
+#'    \item Ovary
+#'    \item Pancreas
+#'    \item Pituitary
+#'    \item Prostate
+#'    \item Skin - Not Sun Exposed (Suprapubic)
+#'    \item Skin - Sun Exposed (Lower leg)
+#'    \item Small Intestine - Terminal Ileum
+#'    \item Spleen
+#'    \item Stomach
+#'    \item Testis
+#'    \item Thyroid
+#'    \item Uterus
+#'    \item Vagina
+#'    \item Whole Blood
+#'  }
+#'  For GTEx v7, must be following terms:
+#'  \itemize{
+#'   \item All
+#'   \item Adipose - Subcutaneous
+#'   \item Adipose - Visceral (Omentum)
+#'   \item Adrenal Gland
+#'   \item Artery - Aorta
+#'   \item Artery - Coronary
+#'   \item Artery - Tibial
+#'   \item Bladder
+#'   \item Brain - Amygdala
+#'   \item Brain - Anterior cingulate cortex (BA24)
+#'   \item Brain - Caudate (basal ganglia)
+#'   \item Brain - Cerebellar Hemisphere
+#'   \item Brain - Cerebellum
+#'   \item Brain - Cortex
+#'   \item Brain - Frontal Cortex (BA9)
+#'   \item Brain - Hippocampus
+#'   \item Brain - Hypothalamus
+#'   \item Brain - Nucleus accumbens (basal ganglia)
+#'   \item Brain - Putamen (basal ganglia)
+#'   \item Brain - Spinal cord (cervical c-1)
+#'   \item Brain - Substantia nigra
+#'   \item Breast - Mammary Tissue
+#'   \item Cells - EBV-transformed lymphocytes
+#'   \item Cells - Transformed fibroblasts
+#'   \item Cervix - Ectocervix
+#'   \item Cervix - Endocervix
+#'   \item Colon - Sigmoid
+#'   \item Colon - Transverse
+#'   \item Esophagus - Gastroesophageal Junction
+#'   \item Esophagus - Mucosa
+#'   \item Esophagus - Muscularis
+#'   \item Fallopian Tube
+#'   \item Heart - Atrial Appendage
+#'   \item Heart - Left Ventricle
+#'   \item Kidney - Cortex
+#'   \item Liver
+#'   \item Lung
+#'   \item Minor Salivary Gland
+#'   \item Muscle - Skeletal
+#'   \item Nerve - Tibial
+#'   \item Ovary
+#'   \item Pancreas
+#'   \item Pituitary
+#'   \item Prostate
+#'   \item Skin - Not Sun Exposed (Suprapubic)
+#'   \item Skin - Sun Exposed (Lower leg)
+#'   \item Small Intestine - Terminal Ileum
+#'   \item Spleen
+#'   \item Stomach
+#'   \item Testis
+#'   \item Thyroid
+#'   \item Uterus
+#'   \item Vagina
+#'   \item Whole Blood
+#'  }
+#' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Liver", "gtex_v8")
+#'  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808","Ensg00000008130.15"), "gencodeId", "Liver", "gtex_v8")
+#'  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8")
+#'  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver", datasetId="gtex_v8" ){
+  # 参数检查
+  # gene id 转为 gencode ID
+  # 组织名转为 ID
+  # fetch data:
+
+  ##########
+  # parameter check: tissueSiteDetail
+  if(is.null(datasetId) ||  is.na(datasetId)){
+    stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }else if(length(datasetId)!=1){
+    stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }else if(  !(datasetId %in% c("gtex_v8", "gtex_v7"))  ){
+    stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }
+  ##########
+  # parameter check: tissueSiteDetail
+  # import tissueSiteDetailGTEx according to datasetId
+  gencodeVersion <- "v26"
+  genomeBuild <- "GRCh38/hg38"
+  if(datasetId == "gtex_v8"){
+    data(tissueSiteDetailGTExv8)
+    data(gencodeGeneInfoV26)
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+    gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV26)
+    gencodeVersion <- "v26"
+    genomeBuild <- "GRCh38/hg38"
+  }else if(datasetId == "gtex_v7"){
+    data(tissueSiteDetailGTExv7)
+    data(gencodeGeneInfoV19)
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+    gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV19)
+    gencodeVersion <- "v19"
+    genomeBuild <- "GRCh37/hg19"
+  }
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) ||  is.na(tissueSiteDetail)){
+    stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
+  }else if(length(datasetId)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
+  }else if( !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }
+  # convert tissueSiteDetail to tissueSiteDetailId:
+  tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+
+  # convert genes. parameter check is unnecessary for this, because GTExquery_gene check it internally.
+  geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, genomeBuild)
+  # geneInfo <-  GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
+
+  # get sample info:
+  message("Fetch sample information:")
+  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ",datasetId=datasetId, pageSize=1000 )
+
+  #################
+  # construct url:
+  if( tissueSiteDetail =="All"){
+    url1 <- paste0("https://gtexportal.org/rest/v1/expression/geneExpression?",
+                   "datasetId=", datasetId,"&",
+                   "gencodeId=", paste(geneInfo$gencodeId, collapse = ","), "&",
+                   "tissueSiteDetail=", "All","&",
+                   "&format=json"
+    )
+  }else{
+    url1 <- paste0("https://gtexportal.org/rest/v1/expression/geneExpression?",
+                   "datasetId=", datasetId,"&",
+                   "gencodeId=", paste(geneInfo$gencodeId, collapse = ","), "&",
+                   "tissueSiteDetailId=", tissueSiteDetailId,"&",
+                   "&format=json"
+    )
+  }
+  url1 <- utils::URLencode(url1)
+  # url1 <- "https://gtexportal.org/rest/v1/expression/geneExpression?datasetId=gtex_v8&gencodeId=ENSG00000240361.1%2CENSG00000222623.1%2CENSG00000008128.22%2CENSG00000008130.15&tissueSiteDetailId=Bladder&format=json"
+  # url1 <- "https://gtexportal.org/rest/v1/expression/geneExpression?datasetId=gtex_v8&gencodeId=ENSG00000240361.1%2CENSG00000222623.1%2CENSG00000008128.22%2CENSG00000008130.15&tissueSiteDetail=All&format=json"
+  outInfo <- data.table::data.table()
+  pingOut <- apiAdmin_ping()
+  if( !is.null(pingOut) && pingOut==200 ){
+    message("GTEx API successfully accessed!")
+    url1Get <- curl::curl_fetch_memory(url1)
+    url1GetText <- rawToChar(url1Get$content)
+    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+    outInfo <- data.table::as.data.table(url1GetText2Json$geneExpression)
+    outInfo <- merge(geneInfo, outInfo, by= c("geneSymbol", "gencodeId"))
+    outInfo <- cbind(outInfo[,c("genes")], outInfo[,-c("genes")])
+    message( length(outInfo$data[[1]])," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId)," were obtained." )
+    expDT <- data.table::as.data.table(t(data.table::as.data.table(outInfo$data)))
+    colnames(expDT) <- sampleInfo$sampleId
+    outInfo <- cbind(outInfo[,-c("data")], expDT)
+    return(outInfo)
+  }else{
+    message("API server is overloaded or network is busy, please wait several minutes.")
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
