@@ -9,7 +9,7 @@ GTExquery_exp(
   geneType = "symbol",
   tissueSiteDetail = "Liver",
   datasetId = "gtex_v8",
-  toSummarizedExperiment = FALSE
+  toSummarizedExperiment = TRUE
 )
 }
 \arguments{
@@ -147,18 +147,24 @@ For GTEx v7, must be following terms:
 \item{toSummarizedExperiment}{return a data.frame or a summarizedExperiment object. Default return a data.frame.}
 }
 \value{
-return gene expression profiles.
+return a SummarizedExperiment or data.frame object harbing gene expression profiles.
 }
 \description{
 This function fetch queried genes' expression profiles in a tissue at the sample level.
 }
 \examples{
 \donttest{
-  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"), "gencodeId", "Liver", "gtex_v8")
-  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v8", toSummarizedExperiment=TRUE)
-  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"), "symbol", "Artery - Coronary", "gtex_v7")
+  expProfiles <- GTExquery_exp(c("ENSG00000210195.2","ENSG00000078808"),
+                                 "gencodeId", "Liver", "gtex_v8")
+  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"),
+                                 "symbol", "Artery - Coronary", "gtex_v8",
+                                 toSummarizedExperiment=TRUE)
+  expProfiles <- GTExquery_exp(c("tp53","naDK","SDF4"),
+                                 "symbol", "Artery - Coronary", "gtex_v7")
   # get miRNA expression:
-  miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
+  miRNA <- apiRef_genes (genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
   miRNAExp <- GTExquery_exp(miRNA$gencodeId[1:10], geneType = "gencodeId")
+  proT <- apiRef_genes (genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
+  proTexp <- GTExquery_exp(proT$gencodeId[1:10], geneType = "gencodeId")
   }
 }

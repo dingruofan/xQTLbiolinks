@@ -23,8 +23,12 @@ as a funciton of lapply
 \examples{
  \dontrun{
   # extract gene info:
-  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
+  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
+                                              gtfSubsGene,
+                                              c("gene_id", "gene_type", "gene_name")))
   # extract transcript info:
-  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id","transcript_id", "gene_type", "gene_name")))
+  gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
+                                              gtfSubsGene,
+                                              c("gene_id","transcript_id", "gene_type", "gene_name")))
  }
 }

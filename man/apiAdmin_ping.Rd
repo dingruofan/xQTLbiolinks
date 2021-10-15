@@ -7,7 +7,7 @@
 apiAdmin_ping()
 }
 \value{
-A boolean value.
+A numeric value. Response code 200 indicates that the request has succeeded.
 }
 \description{
 test API server
@@ -15,7 +15,6 @@ test API server
 \examples{
 \donttest{
   apiAdmin_ping()
-  apiStatus <- ifelse( apiAdmin_ping() ==200, "accessed", "failed")
-  print(apiStatus)
+  ifelse( apiAdmin_ping() ==200, "accessed", "failed")
  }
 }

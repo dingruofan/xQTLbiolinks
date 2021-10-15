@@ -87,9 +87,13 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 #' @examples
 #'  \dontrun{
 #'   # extract gene info:
-#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id", "gene_type", "gene_name")))
+#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
+#'                                               gtfSubsGene,
+#'                                               c("gene_id", "gene_type", "gene_name")))
 #'   # extract transcript info:
-#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes, gtfSubsGene, att_of_interest= c("gene_id","transcript_id", "gene_type", "gene_name")))
+#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
+#'                                               gtfSubsGene,
+#'                                               c("gene_id","transcript_id", "gene_type", "gene_name")))
 #'  }
 gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_type", "gene_name")){
   att <- unlist(stringr::str_split(gtf_attributes, " ")[[1]])
@@ -180,17 +184,18 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
 #           # ,username="dd",password="123456"
 # )
 
-# usethis::use_package("data.table")
-# usethis::use_package("curl")
-# usethis::use_package("jsonlite")
-# usethis::use_package("stringr")
-# usethis::use_package("usethis")
-# usethis::use_package("utils")
-# usethis::use_package("SummarizedExperiment")
-# usethis::use_package("GenomicRanges")
-# usethis::use_package("IRanges")
-# usethis::use_package("GenomeInfoDb")
+# devtools::build("D:/R_project/GTExbiolinks","D:/R_project/GTExbiolinks.tar.gz")
 
+# usethis::use_package("data.table",min_version ="1.14.2")
+# usethis::use_package("curl", min_version = "4.3.2")
+# usethis::use_package("jsonlite", min_version = "1.7.2")
+# usethis::use_package("stringr", min_version = "1.4.0")
+# usethis::use_package("usethis", min_version = "2.0.1")
+# usethis::use_package("utils", min_version = "4.1.1")
+# usethis::use_package("SummarizedExperiment", min_version = "1.22.0")
+# usethis::use_package("GenomicRanges", min_version = "1.44.0")
+# usethis::use_package("IRanges", min_version = "2.26.0")
+# usethis::use_package("GenomeInfoDb", min_version = "1.28.4")
 
 
 

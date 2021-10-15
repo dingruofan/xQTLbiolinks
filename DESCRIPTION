@@ -13,13 +13,13 @@ RoxygenNote: 7.1.2
 Depends: 
     R (>= 2.10)
 Imports: 
-    curl,
-    jsonlite,
-    data.table,
-    stringr,
-    usethis,
-    utils,
-    SummarizedExperiment,
-    GenomicRanges,
-    IRanges,
-    GenomeInfoDb
+    curl (>= 4.3.2),
+    jsonlite (>= 1.7.2),
+    data.table (>= 1.14.2),
+    stringr (>= 1.4.0),
+    usethis (>= 2.0.1),
+    utils (>= 4.1.1),
+    SummarizedExperiment (>= 1.22.0),
+    GenomicRanges (>= 1.44.0),
+    IRanges (>= 2.26.0),
+    GenomeInfoDb (>= 1.28.4)

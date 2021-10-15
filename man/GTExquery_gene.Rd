@@ -2,118 +2,27 @@
 % Please edit documentation in R/GTExquery.R
 \name{GTExquery_gene}
 \alias{GTExquery_gene}
-\title{Query gene information}
+\title{Query gene info through API.}
 \usage{
 GTExquery_gene(
   genes = "",
   geneType = "symbol",
   gencodeVersion = "v26",
-  genomeBuild = "GRCh38/hg38"
+  recordPerChunk = 150
 )
 }
 \arguments{
-\item{genes}{Following gene types are supported:
-\itemize{
-\item \strong{Gene symbol}.
+\item{gencodeVersion}{"v26" or "v19"}
 
-A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
-\item \strong{Gencode/ensemble id} (versioned or unversioned).
-
-A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
-\item \strong{Entrez gene ID}.
-
-A integer string or a integer vectors. like: 51150,5590,4509.
-
-\item \strong{geneCategory}.
-
-When choose "geneCategory", "genes" must be chosen from following gene category:
-\itemize{
-\item protein coding
-\item antisense
-\item lincRNA
-\item unprocessed pseudogene
-\item miRNA
-\item transcribed unprocessed pseudogene
-\item snRNA
-\item processed pseudogene
-\item processed transcript
-\item TEC
-\item transcribed unitary pseudogene
-\item transcribed processed pseudogene
-\item sense intronic
-\item misc RNA
-\item snoRNA
-\item scaRNA
-\item rRNA
-\item unitary pseudogene
-\item 3prime overlapping ncRNA
-\item polymorphic pseudogene
-\item bidirectional promoter lncRNA
-\item sense overlapping
-\item pseudogene
-\item IG V pseudogene
-\item scRNA
-\item IG C gene
-\item IG J gene
-\item IG V gene
-\item sRNA
-\item ribozyme
-\item vaultRNA
-\item non coding
-\item TR J gene
-\item TR C gene
-\item TR V gene
-\item TR V pseudogene
-\item TR D gene
-\item IG C pseudogene
-\item macro lncRNA
-\item TR J pseudogene
-\item IG D gene
-\item IG J pseudogene
-\item IG pseudogene
-\item Mt tRNA
-\item Mt rRNA
-}
-}}
-
-\item{geneType}{A character string. Types of queried genes. Options: "symbol" (default), "gencodeId", "entrezId";}
-
-\item{gencodeVersion}{A character string. Two version are supported: "v26" (default) and "v19"}
-
-\item{genomeBuild}{A character string. "GRCh38/hg38"(default) for gencodeVersion "v26", "GRCh37/hg19" for gencodeVersion "v19"}
+\item{recordPerChunk}{A integer value. Defaulut: 150}
 }
 \value{
-A data.table of queried gene information. including following columns:
-\itemize{
-\item \strong{genes.} Input genes
-\item \strong{geneSymbol.} Gene symbol.
-\item \strong{gencodeId.} Gencode/ensemble id (versioned).
-\item \strong{entrezGeneId.} Entrez gene ID.
-\item \strong{geneType.} Gene type.
-\item \strong{chromosome.} Note: "chr" is added in gencode v26,
-\item \strong{start.}
-\item \strong{end.}
-\item \strong{strand.}
-\item \strong{tss.} Transcriptional start site.
-\item \strong{gencodeVersion.} Gencode Version.
-\item \strong{genomeBuild.} Genome version.
-\item \strong{description.}
-}
+A data.frame
 }
 \description{
-users can use this function to search gene of interest
+Query gene info through API.
 }
 \examples{
-\donttest{
- # hg38:
- geneInfo <- GTExquery_gene("TP53", "symbol", "v26", "GRCh38/hg38")
- geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "symbol", "v26", "GRCh38/hg38")
- geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808"), geneType="gencodeId", "v26", "GRCh38/hg38")
- geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v26", "GRCh38/hg38")
- # hg19:
- geneInfo <- GTExquery_gene(c(51150,5590,4509), "entrezId", "v19","GRCh37/hg19")
- # get all protein_coding genes:
- proteinCoding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
- miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
- }
+ miRNA <- apiRef_genes(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
+ a <- GTExquery_gene(miRNA$geneSymbol,"v26", 150)
 }
