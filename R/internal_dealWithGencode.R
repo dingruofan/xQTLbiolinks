@@ -191,11 +191,11 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
 # usethis::use_package("jsonlite", min_version = "1.7.2")
 # usethis::use_package("stringr", min_version = "1.4.0")
 # usethis::use_package("usethis", min_version = "2.0.1")
-# usethis::use_package("utils", min_version = "4.1.1")
-# usethis::use_package("SummarizedExperiment", min_version = "1.22.0")
-# usethis::use_package("GenomicRanges", min_version = "1.44.0")
-# usethis::use_package("IRanges", min_version = "2.26.0")
-# usethis::use_package("GenomeInfoDb", min_version = "1.28.4")
+# usethis::use_package("utils", min_version = "4.0.5")
+# usethis::use_package("SummarizedExperiment", min_version = "1.20.0")
+# usethis::use_package("GenomicRanges", min_version = "1.42.0")
+# usethis::use_package("IRanges", min_version = "2.24.1")
+# usethis::use_package("GenomeInfoDb", min_version = "1.26.7")
 
 
 

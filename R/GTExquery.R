@@ -744,7 +744,8 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #'                                  "symbol", "Artery - Coronary", "gtex_v7")
 #'   # get miRNA expression:
 #'   miRNA <- apiRef_genes (genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
-#'   miRNAExp <- GTExquery_exp(miRNA$gencodeId[1:10], geneType = "gencodeId")
+#'   miRNAExp <- GTExquery_exp(miRNA$gencodeId, geneType = "gencodeId")
+#'   miRNAExp <- GTExquery_exp(c("121adfFFAS",miRNA$gencodeId[1:100],"adfafAFA"), geneType = "gencodeId")
 #'   proT <- apiRef_genes (genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
 #'   proTexp <- GTExquery_exp(proT$gencodeId[1:10], geneType = "gencodeId")
 #'   }
@@ -854,6 +855,16 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
     message("Downloaded part ", i, "/",nrow(genesURL),"; ", nrow(outInfo), " records.")
     rm(url1, url1Get, url1GetText, url1GetText2Json, tmp)
   }
+  # expression, fill with NA if NULL:
+  tmpExp <- outInfo$data
+  # tmpExp <- lapply(tmpExp, function(x){ if(is.null(x)){return( data.table::data.table( matrix(rep(NA,nrow(sampleInfo)),nrow = 1) ) )}else{return( data.table::data.table( matrix(x, nrow=1) ) )} })
+  # expDT <- data.table::rbindlist(tmpExp)
+  tmpExp <- lapply(tmpExp, function(x){  if(is.null(x)){ rep(NA, nrow(sampleInfo) )}else{ x } })
+  expDT <- data.table::as.data.table(t(data.table::as.data.table(tmpExp)))
+  data.table::setDF(expDT)
+  colnames(expDT) <- sampleInfo$sampleId
+  rownames(expDT) <- geneInfo$genes
+  rm(tmpExp)
   geneInfo$genesUpper <- NULL
   geneInfo$cutF <- NULL
   # convert to SummarizedExperiment or not:
@@ -869,16 +880,7 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
     expColData <- data.table::copy(sampleInfo)
     # meta data:
     expMetadata <- paste0("Queried ", length(genes), " genes, finally ", length(outInfo$data[[which(unlist(lapply(outInfo$data,length))>0)[1]]])," expression profiles of ",length(na.omit(outInfo$gencodeId)), " genes in ",unique(na.omit(outInfo$tissueSiteDetailId)), " were obtained. Unit: ",paste0(unique(na.omit(outInfo$unit)), collapse = ","),".")
-    # expression, fill with NA if NULL:
-    tmpExp <- outInfo$data
-    # tmpExp <- lapply(tmpExp, function(x){ if(is.null(x)){return( data.table::data.table( matrix(rep(NA,nrow(sampleInfo)),nrow = 1) ) )}else{return( data.table::data.table( matrix(x, nrow=1) ) )} })
-    # expDT <- data.table::rbindlist(tmpExp)
-    tmpExp <- lapply(tmpExp, function(x){  if(is.null(x)){ rep(NA, nrow(sampleInfo) )}else{ x } })
-    expDT <- data.table::as.data.table(t(data.table::as.data.table(tmpExp)))
-    data.table::setDF(expDT)
-    colnames(expDT) <- sampleInfo$sampleId
-    rownames(expDT) <- geneInfo$genes
-    rm(tmpExp)
+
     # outInfoSE:
     outInfoSE <- SummarizedExperiment::SummarizedExperiment(assays=list(exp=expDT),
                                                             rowRanges=expRowRanges,
@@ -891,74 +893,6 @@ GTExquery_exp <- function(genes="", geneType="symbol", tissueSiteDetail="Liver",
     data.table::setDF(outInfoDF)
     message("== Done.")
     return(outInfoDF)
-  }
-
-
-  ################# construct url:
-  url1 <- paste0("https://gtexportal.org/rest/v1/expression/geneExpression?",
-                 "datasetId=", datasetId,"&",
-                 "gencodeId=", paste(geneInfo$gencodeId, collapse = ","), "&",
-                 "tissueSiteDetailId=", tissueSiteDetailId,"&",
-                 "&format=json"
-  )
-  url1 <- utils::URLencode(url1)
-  message("== Fetching sample information from API server:")
-  # url1 <- "https://gtexportal.org/rest/v1/expression/geneExpression?datasetId=gtex_v8&gencodeId=ENSG00000240361.1%2CENSG00000222623.1%2CENSG00000008128.22%2CENSG00000008130.15&tissueSiteDetailId=Bladder&format=json"
-  # url1 <- "https://gtexportal.org/rest/v1/expression/geneExpression?datasetId=gtex_v8&gencodeId=ENSG00000240361.1%2CENSG00000222623.1%2CENSG00000008128.22%2CENSG00000008130.15&tissueSiteDetail=All&format=json"
-  outInfo <- data.table::data.table()
-  pingOut <- apiAdmin_ping()
-  if( !is.null(pingOut) && pingOut==200 ){
-    message("GTEx API successfully accessed!")
-    url1Get <- curl::curl_fetch_memory(url1)
-    url1GetText <- rawToChar(url1Get$content)
-    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    outInfo <- data.table::as.data.table(url1GetText2Json$geneExpression)
-    if(nrow(outInfo)==0){
-      message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
-      message("== Done.")
-      return(data.table::data.table())
-    }
-    outInfo <- merge(geneInfo, outInfo, by= c("geneSymbol", "gencodeId"))
-    outInfo <- cbind(outInfo[,c("genes")], outInfo[,-c("genes")])
-    expDT <- data.table::as.data.table(t(data.table::as.data.table(outInfo$data)))
-    data.table::setDF(expDT)
-    # some genes were excluded from gtex:
-    excludedGenes <- data.table::fsetdiff(geneInfo[,.(gencodeId)],outInfo[,.(gencodeId)])
-    includedGenes <- data.table::fintersect(geneInfo[,.(gencodeId)],outInfo[,.(gencodeId)])
-    includedGenes <- merge(geneInfo, includedGenes, by="gencodeId", sort=FALSE)
-    # note: includedGenes replace geneInfo in following:
-    rownames(expDT) <- includedGenes$geneSymbol
-    colnames(expDT) <- sampleInfo$sampleId
-    message( ncol(expDT)," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId)," were obtained."," Unit: ",paste0(unique(outInfo$unit), collapse = ","),"." )
-    #
-    if( toSummarizedExperiment ){      # construc summarizedExperiment object::
-      # gene info:
-      expRowRanges <- GenomicRanges::GRanges(includedGenes$chromosome,
-                                             IRanges::IRanges(includedGenes$start, includedGenes$end),
-                                             strand= includedGenes$strand,
-                                             includedGenes[,.(genes, geneSymbol, gencodeId, entrezGeneId, geneType, tss, description)]
-                                             # ,seqinfo = GenomeInfoDb::Seqinfo(genome= stringr::str_split(unique(includedGenes$genomeBuild)[1],stringr::fixed("/"))[[1]][2])
-      )
-      # sample info:
-      expColData <- data.table::copy(sampleInfo)
-      # meta data:
-      expMetadata <- paste0(length(outInfo$data[[1]])," Expression profiles of ",length(unique(outInfo$gencodeId)), " genes in ",unique(outInfo$tissueSiteDetailId), ". Unit: ",paste0(unique(outInfo$unit), collapse = ","),".")
-      # outInfoSE:
-      outInfoSE <- SummarizedExperiment::SummarizedExperiment(assays=list(exp=expDT),
-                                                              rowRanges=expRowRanges,
-                                                              colData=expColData,
-                                                              metadata=expMetadata)
-      message("== Done.")
-      return(outInfoSE)
-    }else{
-      outInfoDF <- cbind(outInfo[,-c("data")], expDT)
-      data.table::setDF(outInfoDF)
-      message("== Done.")
-      return(outInfoDF)
-    }
-  }else{
-    message("")
-    return(data.frame())
   }
 }
 

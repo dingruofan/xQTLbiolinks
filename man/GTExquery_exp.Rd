@@ -9,7 +9,8 @@ GTExquery_exp(
   geneType = "symbol",
   tissueSiteDetail = "Liver",
   datasetId = "gtex_v8",
-  toSummarizedExperiment = TRUE
+  toSummarizedExperiment = TRUE,
+  recordPerChunk = 150
 )
 }
 \arguments{
@@ -163,7 +164,8 @@ This function fetch queried genes' expression profiles in a tissue at the sample
                                  "symbol", "Artery - Coronary", "gtex_v7")
   # get miRNA expression:
   miRNA <- apiRef_genes (genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
-  miRNAExp <- GTExquery_exp(miRNA$gencodeId[1:10], geneType = "gencodeId")
+  miRNAExp <- GTExquery_exp(miRNA$gencodeId, geneType = "gencodeId")
+  miRNAExp <- GTExquery_exp(c("121adfFFAS",miRNA$gencodeId[1:100],"adfafAFA"), geneType = "gencodeId")
   proT <- apiRef_genes (genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
   proTexp <- GTExquery_exp(proT$gencodeId[1:10], geneType = "gencodeId")
   }

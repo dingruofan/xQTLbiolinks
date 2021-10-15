@@ -12,6 +12,8 @@ GTExquery_gene(
 )
 }
 \arguments{
+\item{genes}{gene symbol or gencode id (versioned or unversioned).}
+
 \item{gencodeVersion}{"v26" or "v19"}
 
 \item{recordPerChunk}{A integer value. Defaulut: 150}
@@ -23,6 +25,9 @@ A data.frame
 Query gene info through API.
 }
 \examples{
+GTExquery_gene(miRNA$geneSymbol,"v26", 150)
  miRNA <- apiRef_genes(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
- a <- GTExquery_gene(miRNA$geneSymbol,"v26", 150)
+ proT <- apiRef_genes(genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
+ proT1 <- GTExquery_gene(proT$gencodeId[1:1000],"symbol","v26", 150)
+ proT2 <- GTExquery_gene(c("ENSG00000261459.1","ENSG00000283496.1"),"symbol","v26", 150)
 }
