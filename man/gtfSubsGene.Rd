@@ -29,6 +29,7 @@ as a funciton of lapply
   # extract transcript info:
   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
                                               gtfSubsGene,
-                                              c("gene_id","transcript_id", "gene_type", "gene_name")))
+                                              c("gene_id","transcript_id",
+                                              "gene_type", "gene_name")))
  }
 }

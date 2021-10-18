@@ -8,11 +8,11 @@ GTExquery_sample(
   tissueSiteDetail = "Liver",
   dataType = "RNASEQ",
   datasetId = "gtex_v8",
-  pageSize = 200
+  recordPerChunk = 200
 )
 }
 \arguments{
-\item{tissueSiteDetail}{For GTEx v8, must be following terms:
+\item{tissueSiteDetail}{For GTEx v8, must be chosen from the following terms:
 \itemize{
 \item All
 \item Adipose - Subcutaneous
@@ -132,7 +132,7 @@ For GTEx v7, must be following terms:
 
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
 
-\item{pageSize}{A integer value (1-2000). number of records fetched per request (default: 200).}
+\item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 200).}
 }
 \value{
 returen sample information
@@ -142,9 +142,10 @@ Fetch information of samples used in analyses from all datasets.
 }
 \examples{
 \donttest{
-  #
-  GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", pageSize=200 )
-  GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
+  GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ",
+                    datasetId="gtex_v8", recordPerChunk=200 )
+  GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
+                    datasetId="gtex_v8",recordPerChunk=2000 )
   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
   }
 }

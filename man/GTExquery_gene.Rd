@@ -2,32 +2,117 @@
 % Please edit documentation in R/GTExquery.R
 \name{GTExquery_gene}
 \alias{GTExquery_gene}
-\title{Query gene info through API.}
+\title{Query gene information through API.}
 \usage{
 GTExquery_gene(
   genes = "",
-  geneType = "symbol",
+  geneType = "geneSymbol",
   gencodeVersion = "v26",
   recordPerChunk = 150
 )
 }
 \arguments{
-\item{genes}{gene symbol or gencode id (versioned or unversioned).}
+\item{genes}{gene symbol, gencode id (versioned), or a charater string of gene type.
+\itemize{
+\item \strong{gene symbol (Default)}.
+
+A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
+\item \strong{gencode/ensemble id} (versioned or unversioned).
+
+A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
+\item \strong{gene classification}.
+
+"genes" must be chosen from following list when "geneType" is "geneCategory".
+\itemize{
+\item protein coding
+\item antisense
+\item lincRNA
+\item unprocessed pseudogene
+\item miRNA
+\item transcribed unprocessed pseudogene
+\item snRNA
+\item processed pseudogene
+\item processed transcript
+\item TEC
+\item transcribed unitary pseudogene
+\item transcribed processed pseudogene
+\item sense intronic
+\item misc RNA
+\item snoRNA
+\item scaRNA
+\item rRNA
+\item unitary pseudogene
+\item 3prime overlapping ncRNA
+\item polymorphic pseudogene
+\item bidirectional promoter lncRNA
+\item sense overlapping
+\item pseudogene
+\item IG V pseudogene
+\item scRNA
+\item IG C gene
+\item IG J gene
+\item IG V gene
+\item sRNA
+\item ribozyme
+\item vaultRNA
+\item non coding
+\item TR J gene
+\item TR C gene
+\item TR V gene
+\item TR V pseudogene
+\item TR D gene
+\item IG C pseudogene
+\item macro lncRNA
+\item TR J pseudogene
+\item IG D gene
+\item IG J pseudogene
+\item IG pseudogene
+\item Mt tRNA
+\item Mt rRNA
+}
+}}
+
+\item{geneType}{A character string in "geneSymbol"(default), "gencodeId" and "geneCategory".}
 
 \item{gencodeVersion}{"v26" or "v19"}
 
 \item{recordPerChunk}{A integer value. Defaulut: 150}
 }
 \value{
-A data.frame
+A data.table of queried gene information. including following columns:
+\itemize{
+\item \strong{genes.} Input genes
+\item \strong{geneSymbol.} Gene symbol.
+\item \strong{gencodeId.} Gencode/ensemble id (versioned).
+\item \strong{entrezGeneId.} Entrez gene ID.
+\item \strong{geneType.} Gene type.
+\item \strong{chromosome.} Note: "chr" is added in gencode v26,
+\item \strong{start.}
+\item \strong{end.}
+\item \strong{strand.}
+\item \strong{tss.} Transcriptional start site.
+\item \strong{gencodeVersion.} Gencode Version.
+\item \strong{genomeBuild.} Genome version.
+\item \strong{description.}
+}
 }
 \description{
-Query gene info through API.
+users can use this function to search gene of interest
 }
 \examples{
-GTExquery_gene(miRNA$geneSymbol,"v26", 150)
- miRNA <- apiRef_genes(genes="miRNA", geneType="geneCategory", "v26","GRCh38/hg38" )
- proT <- apiRef_genes(genes="protein coding", geneType="geneCategory", "v26","GRCh38/hg38" )
- proT1 <- GTExquery_gene(proT$gencodeId[1:1000],"symbol","v26", 150)
- proT2 <- GTExquery_gene(c("ENSG00000261459.1","ENSG00000283496.1"),"symbol","v26", 150)
+\donttest{
+ # get all protein coding genes and description:
+ protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
+ # get all miRNA and description:
+ miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v19")
+
+ # hg38 test:
+ geneInfo <- GTExquery_gene("TP53", "geneSymbol", "v26")
+ geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26")
+ geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
+                              geneType="gencodeId", "v26")
+ # hg19 test:
+ geneInfo <- GTExquery_gene(c("TP53","naDK"), "geneSymbol", "v19")
+ geneInfo <- GTExquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), "gencodeId", "v19")
+ }
 }

@@ -93,7 +93,8 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 #'   # extract transcript info:
 #'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
 #'                                               gtfSubsGene,
-#'                                               c("gene_id","transcript_id", "gene_type", "gene_name")))
+#'                                               c("gene_id","transcript_id",
+#'                                               "gene_type", "gene_name")))
 #'  }
 gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_type", "gene_name")){
   att <- unlist(stringr::str_split(gtf_attributes, " ")[[1]])
@@ -178,6 +179,201 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
     usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
   }
 }
+
+#' @title Query gene information through all genes' information
+#' @description
+#'  users can use this function to search gene of interest
+#' @param genes Following gene types are supported:
+#' \itemize{
+#'   \item \strong{Gene symbol}.
+#'
+#'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
+#'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
+#'
+#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
+#'   \item \strong{Entrez gene ID}.
+#'
+#'   A integer string or a integer vectors. like: 51150,5590,4509.
+#'
+#'   \item \strong{geneCategory}.
+#'
+#'   When choose "geneCategory", "genes" must be chosen from following gene category:
+#'   \itemize{
+#'   \item protein coding
+#'   \item antisense
+#'   \item lincRNA
+#'   \item unprocessed pseudogene
+#'   \item miRNA
+#'   \item transcribed unprocessed pseudogene
+#'   \item snRNA
+#'   \item processed pseudogene
+#'   \item processed transcript
+#'   \item TEC
+#'   \item transcribed unitary pseudogene
+#'   \item transcribed processed pseudogene
+#'   \item sense intronic
+#'   \item misc RNA
+#'   \item snoRNA
+#'   \item scaRNA
+#'   \item rRNA
+#'   \item unitary pseudogene
+#'   \item 3prime overlapping ncRNA
+#'   \item polymorphic pseudogene
+#'   \item bidirectional promoter lncRNA
+#'   \item sense overlapping
+#'   \item pseudogene
+#'   \item IG V pseudogene
+#'   \item scRNA
+#'   \item IG C gene
+#'   \item IG J gene
+#'   \item IG V gene
+#'   \item sRNA
+#'   \item ribozyme
+#'   \item vaultRNA
+#'   \item non coding
+#'   \item TR J gene
+#'   \item TR C gene
+#'   \item TR V gene
+#'   \item TR V pseudogene
+#'   \item TR D gene
+#'   \item IG C pseudogene
+#'   \item macro lncRNA
+#'   \item TR J pseudogene
+#'   \item IG D gene
+#'   \item IG J pseudogene
+#'   \item IG pseudogene
+#'   \item Mt tRNA
+#'   \item Mt rRNA
+#'   }
+#' }
+#'
+#' @param geneType A character string. Types of queried genes. Options: "geneSymbol" (default), "gencodeId", "entrezId";
+#' @param gencodeVersion A character string. Two version are supported: "v26" (default) and "v19"
+#' @param genomeBuild A character string. "GRCh38/hg38"(default) for gencodeVersion "v26", "GRCh37/hg19" for gencodeVersion "v19"
+#' @import data.table
+#' @import stringr
+#' @return A data.table of queried gene information. including following columns:
+#' \itemize{
+#'  \item \strong{genes.} Input genes
+#'  \item \strong{geneSymbol.} Gene symbol.
+#'  \item \strong{gencodeId.} Gencode/ensemble id (versioned).
+#'  \item \strong{entrezGeneId.} Entrez gene ID.
+#'  \item \strong{geneType.} Gene type.
+#'  \item \strong{chromosome.} Note: "chr" is added in gencode v26,
+#'  \item \strong{start.}
+#'  \item \strong{end.}
+#'  \item \strong{strand.}
+#'  \item \strong{tss.} Transcriptional start site.
+#'  \item \strong{gencodeVersion.} Gencode Version.
+#'  \item \strong{genomeBuild.} Genome version.
+#'  \item \strong{description.}
+#'  }
+#'
+apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", genomeBuild="GRCh38/hg38"){
+  # check null/na
+  if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
+    stop("Parameter \"genes\" can not be NULL or NA!")
+  }
+  # geneType
+  if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\", \"entrezId\".")
+  }else if( !(geneType %in% c("geneSymbol", "gencodeId", "entrezId","geneCategory")) ){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\", \"entrezId\",\"geneCategory\".")
+  }
+  # gencodeVersion
+  if( is.null(gencodeVersion) ||  any(is.na(gencodeVersion)) || any(gencodeVersion=="") || length(gencodeVersion)!=1){
+    stop("Parameter \"gencodeVersion\" should be choosen from \"v26\", \"v19\".")
+  }else if( !(gencodeVersion %in% c("v26", "v19")) ){
+    stop("Parameter \"gencodeVersion\" should be choosen from \"v26\", \"v19\".")
+  }
+  # genomeBuild
+  # check gencodeVersion match with genomeBuild
+  if( is.null(genomeBuild) ||  any(is.na(genomeBuild)) || any(genomeBuild=="") || length(genomeBuild)!=1){
+    stop("Parameter \"genomeBuild\" should be choosen from \"GRCh38/hg38\", \"GRCh37/hg19\".")
+  }else if( !(genomeBuild %in% c("GRCh38/hg38", "GRCh37/hg19")) ){
+    stop("Parameter \"genomeBuild\" should be choosen from \"GRCh38/hg38\", \"GRCh37/hg19\".")
+  } else if(gencodeVersion=="v26" & genomeBuild=="GRCh38/hg38"){
+    # data(gencodeGeneInfoV26)
+    # gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV26)
+    gencodeGeneInfo <- apiRef_geneAll("v26")
+  }else if(gencodeVersion=="v19" & genomeBuild=="GRCh37/hg19"){
+    # data(gencodeGeneInfoV19)
+    # gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV19)
+    gencodeGeneInfo <- apiRef_geneAll("v19")
+  }else{
+    stop("gencodeVersion must be matched with genomeBuild.\n eg. v26(GRCh38/hg38), v19(GRCh37/hg19)")
+  }
+
+  # merge:
+  if( geneType=="geneSymbol" ){
+    genesDT <- data.table::data.table(genes=as.character(genes))
+    genesDT$geneSymbolUpper <- toupper(genesDT$genes)
+    gencodeGeneInfo$geneSymbolUpper<- toupper(gencodeGeneInfo$geneSymbol)
+    genesDTout <- merge(genesDT, gencodeGeneInfo, by ="geneSymbolUpper", sort=FALSE)
+    genesDTout <- genesDTout[,-c("geneSymbolUpper")]
+    if( nrow(genesDTout) >0){
+      if( length(genes)>1 ){
+        message("Queried ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      }else if( length(genes)==1 ){
+        message("Queried ",length(genes), " gene, finally ",nrow(genesDTout)," record matched!")
+      }
+      return(genesDTout)
+    }else{
+      if( length(genes)>1 ){
+        message("Queried ",length(genes), " genes, finally 0 record matched!\nplease check your input genes!")
+      }else if( length(genes)==1 ){
+        message("Queried ",length(genes), " gene, finally 0 record matched!\nplease check your input genes!")
+      }
+      return(data.table::data.table(genes=genes))
+    }
+  }
+  # gencodeId
+  if( geneType=="gencodeId" ){
+    genesDT <- data.table::data.table(genes=as.character(genes))
+    genesDT$gencodeIdUpper <- toupper(genesDT$genes)
+    gencodeGeneInfo$gencodeIdUpper<- toupper(gencodeGeneInfo$gencodeId)
+    gencodeGeneInfo$gencodIdUv <- unlist(lapply(gencodeGeneInfo$gencodeId, function(x){ stringr::str_split_fixed(x, stringr::fixed("."),2)[1] }))
+    gencodeGeneInfo$gencodIdUvUpper<- toupper(gencodeGeneInfo$gencodIdUv)
+    genesDTout_1 <- merge(genesDT, gencodeGeneInfo, by ="gencodeIdUpper", sort=FALSE)
+    genesDTout_2 <- merge( gencodeGeneInfo, genesDT, by.y ="gencodeIdUpper", by.x= "gencodIdUvUpper", sort=FALSE)
+    genesDTout <- rbind(genesDTout_1, genesDTout_2)[,c("genes",names(gencodeGeneInfo[,-c("gencodeIdUpper", "gencodIdUv", "gencodIdUvUpper")])),with=FALSE]
+    if( nrow(genesDTout) >0){
+      message("Queried ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      return(genesDTout)
+    }else{
+      message("Queried ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
+      return(data.table::data.table(genes=genes))
+    }
+    # entrezId
+  }else if( geneType=="entrezId" ){
+    if( !all(unlist(lapply(genes, is.numeric))) ){
+      stop("Integer is requeried for entrezId!")
+    }
+    genesDT <- data.table::data.table(genes=genes)
+    gencodeGeneInfo$genes <- gencodeGeneInfo$entrezGeneId
+    genesDTout <- merge(genesDT, gencodeGeneInfo, by ="genes", sort=FALSE)
+    if( nrow(genesDTout) >0){
+      message("Queried ",length(genes), " genes, finally ",nrow(genesDTout)," records matched!")
+      return(genesDTout)
+    }else{
+      message("Queried ",length(genes), " genes, finally 0 records matched!\nplease check your input genes!")
+      return(data.table::data.table(genes=genes))
+    }
+    # geneCategory
+  }else if(geneType == "geneCategory"){
+    geneCategory = unique(gencodeGeneInfo$geneType)
+    if( length(genes)!=1 || any(!(genes %in% geneCategory)) ){
+      message(paste0(1:length(geneCategory),". ",geneCategory, collapse = "\n"))
+      stop("if \"geneType\" is  \"geneCategory\", input \"genes\" should be choosen from the above: ")
+    }else{
+      genesDTout <- cbind(data.table(genes=gencodeGeneInfo[geneType==genes,]$geneSymbol), gencodeGeneInfo[geneType==genes,])
+      return(genesDTout)
+    }
+  }else{
+    return(data.table::data.table(genes=genes))
+  }
+}
+
 
 
 # httr::use_proxy(url="127.0.0.1", port=7890
