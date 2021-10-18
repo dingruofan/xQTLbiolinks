@@ -3,6 +3,8 @@
 export(GTExdownload_exp)
 export(GTExquery_gene)
 export(GTExquery_sample)
+export(GTExquery_varId)
+export(GTExquery_varPos)
 export(apiAdmin_ping)
 export(apiRef_gene)
 import(curl)

@@ -12,7 +12,7 @@ GTExquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 \item{recordPerChunk}{A integer value. From 1 to 2000.}
 }
 \value{
-
+A data.table with all genes' information.
 }
 \description{
 Title

@@ -600,23 +600,31 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 
 #' @title Query variant information by snpId or variant ID.
 #'
-#' @param x
+#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
 #' @import stringr
 #' @import jsonlite
 #'
-#' @return
+#' @return A data.table.
 #' @export
 #'
 #' @examples
+#'  \donttest{
+#'   GTExquery_varId("rs12596338")
+#'   GTExquery_varId("rs12596338", datasetId="gtex_v7")
+#'   GTExquery_varId("chr11_66561248_T_C_b38", variantType="variantId", datasetId="gtex_v8")
+#'   GTExquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
+#'  }
 GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex_v8"){
   ########## parameter check: variantName
   if(is.null(variantName) ||  any(is.na(variantName)) ){
     stop("Parameter \"variantName\" can not be NULL or NA!")
   }else if(length(variantName)!=1){
     stop("Parameter \"variantName\" can not be NULL or NA!")
-  }else if(  !(stringr::str_detect(variantName, stringr::regex("^rs")))  ){
+  }else if( variantType=="snpId" && !(stringr::str_detect(variantName, stringr::regex("^rs")))  ){
     stop("Parameter \"variantName\" must begin with a \"rs\", like: \"rs147502335\", \"rs147538909\".")
   }
   ########## parameter check: variantType
@@ -641,8 +649,8 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
                    "datasetId=", datasetId,"&",
                    "snpId=", variantName)
-  ############# if variantType is "variantId":
-  }elseif( variantType == "variantId" ){
+    ############# if variantType is "variantId":
+  }else if( variantType == "variantId" ){
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
                    "datasetId=", datasetId,"&",
                    "variantId=", variantName)
@@ -667,24 +675,77 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
   if(datasetId == "gtex_v7"){
     tmp$b37VariantId <- tmp$variantId
   }
-  outInfo <- tmp[,c("variantId", "snpId", "chromosome")]
-
+  outInfo <- tmp[,c("variantId", "snpId","b37VariantId", "chromosome","pos", "ref", "alt","datasetId","maf01", "shorthand")]
+  return(outInfo)
 }
 
 #' @title Query variant information by position.
 #'
-#' @param chrom
-#' @param pos
-#' @param datasetId
+#' @param chrom A character string.
+#' @param pos An integer array.
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @import data.table
+#' @import curl
+#' @import stringr
+#' @import jsonlite
 #'
-#' @return
+#' @return A data.table.
 #' @export
 #'
 #' @examples
+#' \donttest{
+#'  GTExquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
+#'  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
+#' }
 GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
+  pos
+  ########## parameter check: variantName
+  if(is.null(chrom) ||  any(is.na(chrom)) ){
+    stop("Parameter \"chrom\" can not be NULL or NA!")
+  }else if(length(chrom)!=1){
+    stop("Parameter \"chrom\" can not be NULL or NA!")
+  }else if( datasetId=="gtex_v8" && !(chrom %in% c(paste0("chr",c(1:23,"X","Y"))))  ){
+    stop("For GTEx v8, Parameter \"chrom\" must begin with a \"chr\", like: \"chr1\", \"chrX\".")
+  }else if( datasetId=="gtex_v7" && !(chrom %in% c(1:23,"X","Y"))  ){
+    stop("For GTEx v7, Parameter \"chrom\" must begin without a \"chr\", like: \"1\", \"X\".")
+  }
+  ########## parameter check: pos
+  if(is.null(pos) ||  any(is.na(pos)) || length(pos)==0){
+    stop("Parameter \"pos\" can not be NULL or NA!")
+  }else if( any(!is.wholenumber(pos)) || any(pos<=0) ){
+    stop("Parameter \"pos\" should be an positive integer!")
+  }
+  ########## parameter check: datasetId
+  if(is.null(datasetId) ||  any(is.na(datasetId)) ){
+    stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }else if(length(datasetId)!=1){
+    stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }else if(  !(datasetId %in% c("gtex_v8", "gtex_v7"))  ){
+    stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }
 
-
-
+  url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
+                 "datasetId=", datasetId,"&",
+                 "chromosome=", chrom, "&",
+                 "pos=",paste0(pos,collapse=","))
+  # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&chromosome=chr11&pos=65592772
+  # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=16&pos=57190138
+  # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=1&pos=115746%2C135203%2C1086820
+  # fetch data:
+  url1Get <- curl::curl_fetch_memory(url1)
+  url1GetText <- rawToChar(url1Get$content)
+  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  tmp <- data.table::as.data.table(url1GetText2Json$variant)
+  if(nrow(tmp)==0){
+    message("No variant found, please check your input.")
+    return(data.table::data.table())
+  }
+  # eliminate the difference between the gtex_v7 and gtex_v8:
+  if(datasetId == "gtex_v7"){
+    tmp$b37VariantId <- tmp$variantId
+  }
+  outInfo <- tmp[,c("variantId", "snpId","b37VariantId", "chromosome","pos", "ref", "alt","datasetId","maf01", "shorthand")]
+  return(outInfo)
 }
 
 
@@ -720,7 +781,15 @@ apiAdmin_ping <- function(){
 }
 
 
-
+#' @title determine is a whole number:
+#'
+#' @param x A number
+#' @param tol Don't change
+#'
+#' @return TRUE or FALSE
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
+  abs(x - round(x)) < tol
+}
 
 
 
