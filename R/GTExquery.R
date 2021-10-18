@@ -636,17 +636,38 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }
 
-  ######################### if variantType is "snpId":
+  ############# if variantType is "snpId":
   if( variantType == "snpId" ){
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
                    "datasetId=", datasetId,"&",
                    "snpId=", variantName)
+  ############# if variantType is "variantId":
   }elseif( variantType == "variantId" ){
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
                    "datasetId=", datasetId,"&",
                    "variantId=", variantName)
   }
   # url1 <- "https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&snpId=rs12596338"
+  url1 <- utils::URLencode(url1)
+  # test api server accessibility:
+  pingOut <- apiAdmin_ping()
+  if( !(!is.null(pingOut) && pingOut==200) ){
+    return(data.table::data.table())
+  }
+  # fetch data:
+  url1Get <- curl::curl_fetch_memory(url1)
+  url1GetText <- rawToChar(url1Get$content)
+  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  tmp <- data.table::as.data.table(url1GetText2Json$variant)
+  if(nrow(tmp)==0){
+    message("No variant found, please check your input.")
+    return(data.table::data.table())
+  }
+  # eliminate the difference between the gtex_v7 and gtex_v8:
+  if(datasetId == "gtex_v7"){
+    tmp$b37VariantId <- tmp$variantId
+  }
+  outInfo <- tmp[,c("variantId", "snpId", "chromosome")]
 
 }
 
