@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{GTExdownload_eqtl}
 \alias{GTExdownload_eqtl}
-\title{Fetch significant eQTL data.}
+\title{Download significant eQTL data.}
 \usage{
 GTExdownload_eqtl(
   variantName = "",
@@ -34,7 +34,7 @@ Fetch significant eQTL associations with a variant or a gene or a variant-gene p
 }
 \examples{
 \donttest{
- # Search with a variant:
+ # Download eQTL info for a variant:
  GTExdownload_eqtl(variantName="rs201327123", variantType="snpId")
  GTExdownload_eqtl(variantName="chr1_14677_G_A_b38", variantType="variantId")
  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
@@ -42,13 +42,14 @@ Fetch significant eQTL associations with a variant or a gene or a variant-gene p
  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 
- # Search with a gene:
- GTExdownload_eqtl(gene="TP53", geneType="geneSymbol")
+ # Download eQTL info for a gene:
+ GTExdownload_eqtl(gene="ATAD3B")
+ GTExdownload_eqtl(gene="TP53",datasetId="gtex_v7")
  GTExdownload_eqtl(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
  GTExdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 
- # Search with a variant-gene pair:
+ # Download eQTL info for a variant-gene pair:
  GTExdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
  GTExdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
  GTExdownload_eqtl(variantName="chr1_1667948_A_G_b38", variantType="variantId",

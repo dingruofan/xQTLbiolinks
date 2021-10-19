@@ -327,7 +327,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'
 #' @examples
 #' \donttest{
-#'  # Search with a variant:
+#'  # Download eQTL info for a variant:
 #'  GTExdownload_eqtl(variantName="rs201327123", variantType="snpId")
 #'  GTExdownload_eqtl(variantName="chr1_14677_G_A_b38", variantType="variantId")
 #'  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
@@ -335,14 +335,14 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
 #'                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #'
-#'  # Search with a gene:
+#'  # Download eQTL info for a gene:
 #'  GTExdownload_eqtl(gene="ATAD3B")
 #'  GTExdownload_eqtl(gene="TP53",datasetId="gtex_v7")
 #'  GTExdownload_eqtl(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
 #'  GTExdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
-#'  # Search with a variant-gene pair:
+#'  # Download eQTL info for a variant-gene pair:
 #'  GTExdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
 #'  GTExdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
 #'  GTExdownload_eqtl(variantName="chr1_1667948_A_G_b38", variantType="variantId",
@@ -531,7 +531,34 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
     stop("Parameter \"gene\" can not be null!")
   }
 
-  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=rs201327123&tissueSiteDetailId=Liver&datasetId=gtex_v8"
+  # construct url
+  message("== Querying expression from API server:")
+  ########## construct url for sig association
+  url1 <- paste0("https://gtexportal.org/rest/v1/association/dyneqtl?",
+                 "gencodeId=",geneInfo$gencodeId,"&",
+                 "variantId=",varInfo$variantId,"&",
+                 "tissueSiteDetailId=",tissueSiteDetailId,"&",
+                 "datasetId=",datasetId
+  )
+  url1 <- utils::URLencode(url1)
+  url1Get <- curl::curl_fetch_memory(url1)
+  url1GetText <- rawToChar(url1Get$content)
+  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
+  if(nrow(tmp)==0){
+    message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")), " in ",datasetId)
+    return(data.table::data.table())
+  }else{
+    message("== Done.")
+  }
+  tmp <- merge(tmp, tissueSiteDetailGTEx, by = "tissueSiteDetailId")
+  outInfo <- tmp[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes,datasetId)]
+  message("=================================")
+  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!=""," -",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
+
+  return(outInfo)
+
+  url1 <- https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=rs201327123&tissueSiteDetailId=Liver&datasetId=gtex_v8
 }
 
 
