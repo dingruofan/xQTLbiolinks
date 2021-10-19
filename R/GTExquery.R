@@ -1,7 +1,7 @@
 #' @title Query gene information through API.
 #' @description
 #'  users can use this function to search gene of interest
-#' @param genes gene symbol, gencode id (versioned), or a charater string of gene type.
+#' @param genes A gene symbol, gencode id (versioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
 #'
@@ -87,6 +87,7 @@
 #' @import jsonlite
 #' @import utils
 #' @import curl
+#' @import stats
 #' @export
 #'
 #' @examples
@@ -106,6 +107,8 @@
 #'  geneInfo <- GTExquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), "gencodeId", "v19")
 #'  }
 GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", recordPerChunk=150){
+  geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
+  .<-NULL
   page_tmp <- 0
   pageSize_tmp <- recordPerChunk
   cutNum <- recordPerChunk
@@ -394,6 +397,8 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #'   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
 #'   }
 GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200 ){
+  sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
+  .<-NULL
   page_tmp <- 0
   pageSize_tmp <- as.integer(recordPerChunk)
 
@@ -528,6 +533,8 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #' @import utils
 #' @import data.table
 GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
+  geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
+  .<-NULL
   page_tmp <- 0
   pageSize_tmp <- recordPerChunk
   genomeBuild="GRCh38/hg38"

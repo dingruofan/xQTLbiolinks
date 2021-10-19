@@ -14,6 +14,7 @@
 #'   gtfSubsGeneInfo("v19")
 #'  }
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
+  type <- NULL
   gtfDir <- tempdir()
   dir.create(gtfDir, recursive = TRUE)
   message("created temp dir: ",gtfDir)
@@ -123,6 +124,8 @@ gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_typ
 #'   apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
 #'  }
 apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg38" ){
+  geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
+  .<-NULL
   geneId <- as.character(unlist(geneId))
   if( any(is.na(geneId)) | any(geneId=="") | any(is.null(geneId)) ){
     stop("gene ID can not be null!")
@@ -168,13 +171,15 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 #'   createTissueSiteDetailMappingData("gtex_v7")
 #'  }
 createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
+  tissueSiteDetail <- tissueSiteDetailId <- NULL
+  .<-NULL
   # obtain all tissueSiteDetail info:
   if( datasetId == "gtex_v8" ){
-    tissueSiteDetailGTExv8 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",pageSize=2000 )
+    tissueSiteDetailGTExv8 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",recordPerChunk =2000 )
     tissueSiteDetailGTExv8 <- unique(tissueSiteDetailGTExv8[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
     usethis::use_data(tissueSiteDetailGTExv8, overwrite = TRUE)
   }else if(datasetId == "gtex_v7" ){
-    tissueSiteDetailGTExv7 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",pageSize=2000 )
+    tissueSiteDetailGTExv7 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",recordPerChunk =2000 )
     tissueSiteDetailGTExv7 <- unique(tissueSiteDetailGTExv7[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
     usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
   }
@@ -295,11 +300,11 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
   } else if(gencodeVersion=="v26" & genomeBuild=="GRCh38/hg38"){
     # data(gencodeGeneInfoV26)
     # gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV26)
-    gencodeGeneInfo <- apiRef_geneAll("v26")
+    gencodeGeneInfo <- GTExquery_geneAll("v26")
   }else if(gencodeVersion=="v19" & genomeBuild=="GRCh37/hg19"){
     # data(gencodeGeneInfoV19)
     # gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV19)
-    gencodeGeneInfo <- apiRef_geneAll("v19")
+    gencodeGeneInfo <- GTExquery_geneAll("v19")
   }else{
     stop("gencodeVersion must be matched with genomeBuild.\n eg. v26(GRCh38/hg38), v19(GRCh37/hg19)")
   }
@@ -392,6 +397,7 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("GenomicRanges", min_version = "1.42.0")
 # usethis::use_package("IRanges", min_version = "2.24.1")
 # usethis::use_package("GenomeInfoDb", min_version = "1.26.7")
+# usethis::use_package("rlang", min_version = "0.4.11")
 
 
 

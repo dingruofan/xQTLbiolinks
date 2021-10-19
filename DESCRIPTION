@@ -22,4 +22,5 @@ Imports:
     SummarizedExperiment (>= 1.20.0),
     GenomicRanges (>= 1.42.0),
     IRanges (>= 2.24.1),
-    GenomeInfoDb (>= 1.26.7)
+    GenomeInfoDb (>= 1.26.7),
+    rlang (>= 0.4.11)

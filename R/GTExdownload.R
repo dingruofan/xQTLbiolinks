@@ -132,6 +132,7 @@
 #' @import curl
 #' @import stringr
 #' @import jsonlite
+#' @import stats
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom GenomicRanges GRanges
 #' @importFrom   IRanges IRanges
@@ -155,6 +156,8 @@
 #'   proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v7")
 #'   }
 GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150  ){
+  gencodeId <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
+  .<-NULL
   cutNum <- recordPerChunk
   # genes=c("ENSG00000210195.2","ENSG00000078808")
   # geneType="gencodeId"
@@ -200,7 +203,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) ){
     stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
-  }else if(length(datasetId)!=1){
+  }else if(length(tissueSiteDetail)!=1){
     stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
   }else if( !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
     message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
@@ -304,3 +307,236 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
     return(outInfoDF)
   }
 }
+
+#' @title Download significant eQTL data.
+#' @description
+#'  Fetch significant eQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.
+#'
+#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#' @param gene A gene symbol or a gencode id (versioned).
+#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
+#' @param geneType A character string in "geneSymbol"(default) and "gencodeId".
+#' @param tissueSiteDetail A character string. Tissue name.
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @import data.table
+#' @import curl
+#' @import stringr
+#' @import jsonlite
+#' @return A data.table
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  # Search with a variant:
+#'  GTExdownload_eqtl(variantName="rs201327123", variantType="snpId")
+#'  GTExdownload_eqtl(variantName="chr1_14677_G_A_b38", variantType="variantId")
+#'  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
+#'                    datasetId="gtex_v7")
+#'  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
+#'                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+#'
+#'  # Search with a gene:
+#'  GTExdownload_eqtl(gene="ATAD3B")
+#'  GTExdownload_eqtl(gene="TP53",datasetId="gtex_v7")
+#'  GTExdownload_eqtl(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
+#'  GTExdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
+#'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
+#'
+#'  # Search with a variant-gene pair:
+#'  GTExdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+#'  GTExdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
+#'  GTExdownload_eqtl(variantName="chr1_1667948_A_G_b38", variantType="variantId",
+#'                    gene="SLC35E2B", geneType="geneSymbol", tissueSiteDetail="Kidney - Cortex")
+#' }
+GTExdownload_eqtl <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+  variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- NULL
+  .<-NULL
+  # variantName="chr1_14677_G_A_b38"
+  # variantType="variantId"
+  # datasetId="gtex_v8"
+  # tissueSiteDetail="Liver"
+  # gene = "ENSG00000228463.9"
+  # geneType="gencodeId"
+  # check version:
+  gencodeVersion <- "v26"
+  if( datasetId == "gtex_v8" ){
+    gencodeVersion <- "v26"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  }else if( datasetId == "gtex_v7" ){
+    gencodeVersion <- "v19"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+  }
+  # check gene:
+  if( length(gene) >1 || !is.character(gene) ){
+    stop("Parameter \"gene\" must be a character string. ")
+  }
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) ){
+    stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be a character string!")
+  }else if( tissueSiteDetail!="" && !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }else if( tissueSiteDetail!="" ){
+    # convert tissueSiteDetail to tissueSiteDetailId:
+    tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+  }
+  # check network:
+  pingOut <- apiAdmin_ping()
+  if( !(!is.null(pingOut) && pingOut==200) ){
+    return(data.table::data.table())
+  }
+  ##################### fetch varInfo
+  if(variantName!=""){
+    message("== Querying variant info from API server:")
+    varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    if(nrow(varInfo)==0){
+      stop("Invalid variant name or type, please correct your input, or leave \"variantName\" as null.")
+    }else{
+      message("== Done.")
+    }
+  }
+
+  ##################### fetch geneInfo:
+  if(gene !=""){
+    message("== Querying gene info from API server:")
+    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    if(nrow(geneInfo)==0){
+      stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
+    }else{
+      message("== Done.")
+    }
+  }
+  # both are null: error!
+  if(variantName=="" && gene == ""){
+    stop("Parameter \"variantName\" and \"gene\" can not be null at the same time. ")
+  }
+
+  # if( variantName is null || geneName is null; tissue 随意){
+    # return all sig
+  # }else if ( both is not null && tissue is not null){
+    # return unsig or sig with exp
+  # }
+  message("== Querying significant eQTL associations from API server:")
+  ########## construct url for sig association
+  url1 <- paste0("https://gtexportal.org/rest/v1/association/singleTissueEqtl?format=json",
+                 "&datasetId=",datasetId,
+                 ifelse(variantName=="","",paste0("&variantId=",varInfo$variantId)),
+                 ifelse(gene=="","",paste0("&gencodeId=",geneInfo$gencodeId)),
+                 ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
+                 )
+  url1 <- utils::URLencode(url1)
+  url1Get <- curl::curl_fetch_memory(url1)
+  url1GetText <- rawToChar(url1Get$content)
+  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
+  if(nrow(tmp)==0){
+    message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")), " in ",datasetId)
+    return(data.table::data.table())
+  }else{
+    message("== Done.")
+  }
+  tmp <- merge(tmp, tissueSiteDetailGTEx, by = "tissueSiteDetailId")
+  outInfo <- tmp[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes,datasetId)]
+  message("=================================")
+  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!=""," -",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
+
+  return(outInfo)
+}
+
+
+#' @title Download expression data for eQTL.
+#' @description
+#'  This function fetch normalized gene expression data for a eQTL pair.
+#' @param variantName
+#' @param gene
+#' @param variantType
+#' @param geneType
+#' @param tissueSiteDetail
+#' @param datasetId
+#' @import data.table
+#' @import curl
+#' @import stringr
+#' @import jsonlite
+#' @import stats
+#' @return
+#' @export
+#'
+#' @examples
+GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+  # variantName="chr1_14677_G_A_b38"
+  # variantType="variantId"
+  # datasetId="gtex_v8"
+  # tissueSiteDetail="Liver"
+  # gene = "ENSG00000228463.9"
+  # geneType="gencodeId"
+  # check version:
+  gencodeVersion <- "v26"
+  if( datasetId == "gtex_v8" ){
+    gencodeVersion <- "v26"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  }else if( datasetId == "gtex_v7" ){
+    gencodeVersion <- "v19"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+  }
+  # check gene:
+  if( length(gene) >1 || !is.character(gene) ){
+    stop("Parameter \"gene\" must be a character string. ")
+  }
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) ){
+    stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be a character string!")
+  }else if(  !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }else if( tissueSiteDetail!="" ){
+    # convert tissueSiteDetail to tissueSiteDetailId:
+    tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+  }else{
+    message("Invalid parameter \"tissueSiteDetail\".")
+    return(data.table::data.tbale())
+  }
+
+  # check network:
+  pingOut <- apiAdmin_ping()
+  if( !(!is.null(pingOut) && pingOut==200) ){
+    return(data.table::data.table())
+  }
+  ##################### fetch varInfo
+  if(variantName!=""){
+    message("== Querying variant info from API server:")
+    varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    if(nrow(varInfo)==0){
+      stop("Invalid variant name or type, please correct your input.")
+    }else{
+      message("== Done.")
+    }
+  }else{
+    stop("Parameter \"variantName\" can not be null!")
+  }
+
+  ##################### fetch geneInfo:
+  if(gene !=""){
+    message("== Querying gene info from API server:")
+    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    if(nrow(geneInfo)==0){
+      stop("Invalid gene name or type, please correct your input.")
+    }else{
+      message("== Done.")
+    }
+  }else{
+    stop("Parameter \"gene\" can not be null!")
+  }
+
+  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=rs201327123&tissueSiteDetailId=Liver&datasetId=gtex_v8"
+}
+
+
+GTExdownload_eqtlDIY <- function(x){
+
+}
+
+
