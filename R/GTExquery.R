@@ -264,121 +264,65 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #' @title  Fetch information of samples used in analyses from all datasets.
 #'
 #' @param tissueSiteDetail
-#' For GTEx v8, must be chosen from the following terms:
-#'  \itemize{
-#'    \item All
-#'    \item Adipose - Subcutaneous
-#'    \item Adipose - Visceral (Omentum)
-#'    \item Adrenal Gland
-#'    \item Artery - Aorta
-#'    \item Artery - Coronary
-#'    \item Artery - Tibial
-#'    \item Bladder
-#'    \item Brain - Amygdala
-#'    \item Brain - Anterior cingulate cortex (BA24)
-#'    \item Brain - Caudate (basal ganglia)
-#'    \item Brain - Cerebellar Hemisphere
-#'    \item Brain - Cerebellum
-#'    \item Brain - Cortex
-#'    \item Brain - Frontal Cortex (BA9)
-#'    \item Brain - Hippocampus
-#'    \item Brain - Hypothalamus
-#'    \item Brain - Nucleus accumbens (basal ganglia)
-#'    \item Brain - Putamen (basal ganglia)
-#'    \item Brain - Spinal cord (cervical c-1)
-#'    \item Brain - Substantia nigra
-#'    \item Breast - Mammary Tissue
-#'    \item Cells - Cultured fibroblasts
-#'    \item Cells - EBV-transformed lymphocytes
-#'    \item Cervix - Ectocervix
-#'    \item Cervix - Endocervix
-#'    \item Colon - Sigmoid
-#'    \item Colon - Transverse
-#'    \item Esophagus - Gastroesophageal Junction
-#'    \item Esophagus - Mucosa
-#'    \item Esophagus - Muscularis
-#'    \item Fallopian Tube
-#'    \item Heart - Atrial Appendage
-#'    \item Heart - Left Ventricle
-#'    \item Kidney - Cortex
-#'    \item Kidney - Medulla
-#'    \item Liver
-#'    \item Lung
-#'    \item Minor Salivary Gland
-#'    \item Muscle - Skeletal
-#'    \item Nerve - Tibial
-#'    \item Ovary
-#'    \item Pancreas
-#'    \item Pituitary
-#'    \item Prostate
-#'    \item Skin - Not Sun Exposed (Suprapubic)
-#'    \item Skin - Sun Exposed (Lower leg)
-#'    \item Small Intestine - Terminal Ileum
-#'    \item Spleen
-#'    \item Stomach
-#'    \item Testis
-#'    \item Thyroid
-#'    \item Uterus
-#'    \item Vagina
-#'    \item Whole Blood
-#'  }
-#'  For GTEx v7, must be following terms:
-#'  \itemize{
-#'   \item All
-#'   \item Adipose - Subcutaneous
-#'   \item Adipose - Visceral (Omentum)
-#'   \item Adrenal Gland
-#'   \item Artery - Aorta
-#'   \item Artery - Coronary
-#'   \item Artery - Tibial
-#'   \item Bladder
-#'   \item Brain - Amygdala
-#'   \item Brain - Anterior cingulate cortex (BA24)
-#'   \item Brain - Caudate (basal ganglia)
-#'   \item Brain - Cerebellar Hemisphere
-#'   \item Brain - Cerebellum
-#'   \item Brain - Cortex
-#'   \item Brain - Frontal Cortex (BA9)
-#'   \item Brain - Hippocampus
-#'   \item Brain - Hypothalamus
-#'   \item Brain - Nucleus accumbens (basal ganglia)
-#'   \item Brain - Putamen (basal ganglia)
-#'   \item Brain - Spinal cord (cervical c-1)
-#'   \item Brain - Substantia nigra
-#'   \item Breast - Mammary Tissue
-#'   \item Cells - EBV-transformed lymphocytes
-#'   \item Cells - Transformed fibroblasts
-#'   \item Cervix - Ectocervix
-#'   \item Cervix - Endocervix
-#'   \item Colon - Sigmoid
-#'   \item Colon - Transverse
-#'   \item Esophagus - Gastroesophageal Junction
-#'   \item Esophagus - Mucosa
-#'   \item Esophagus - Muscularis
-#'   \item Fallopian Tube
-#'   \item Heart - Atrial Appendage
-#'   \item Heart - Left Ventricle
-#'   \item Kidney - Cortex
-#'   \item Liver
-#'   \item Lung
-#'   \item Minor Salivary Gland
-#'   \item Muscle - Skeletal
-#'   \item Nerve - Tibial
-#'   \item Ovary
-#'   \item Pancreas
-#'   \item Pituitary
-#'   \item Prostate
-#'   \item Skin - Not Sun Exposed (Suprapubic)
-#'   \item Skin - Sun Exposed (Lower leg)
-#'   \item Small Intestine - Terminal Ileum
-#'   \item Spleen
-#'   \item Stomach
-#'   \item Testis
-#'   \item Thyroid
-#'   \item Uterus
-#'   \item Vagina
-#'   \item Whole Blood
-#'  }
+#'  Tissue must be chosen from the following terms:
+#' \tabular{rrrrr}{
+#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
+#'    Adipose - Subcutaneous \tab √ \tab √\cr
+#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
+#'    Adrenal Gland \tab √ \tab √\cr
+#'    Artery - Aorta \tab √ \tab √\cr
+#'    Artery - Coronary \tab √ \tab √\cr
+#'    Artery - Tibial \tab √ \tab √\cr
+#'    Bladder \tab √ \tab √\cr
+#'    Brain - Amygdala \tab √ \tab √\cr
+#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
+#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
+#'    Brain - Cerebellum \tab √ \tab √\cr
+#'    Brain - Cortex \tab √ \tab √\cr
+#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
+#'    Brain - Hippocampus \tab √ \tab √\cr
+#'    Brain - Hypothalamus \tab √ \tab √\cr
+#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
+#'    Brain - Substantia nigra \tab √ \tab √\cr
+#'    Breast - Mammary Tissue \tab √ \tab √\cr
+#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
+#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
+#'    Cells - Transformed fibroblasts \tab x \tab √\cr
+#'    Cervix - Ectocervix \tab √ \tab √\cr
+#'    Cervix - Endocervix \tab √ \tab √\cr
+#'    Colon - Sigmoid \tab √ \tab √\cr
+#'    Colon - Transverse \tab √ \tab √\cr
+#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
+#'    Esophagus - Mucosa \tab √ \tab √\cr
+#'    Esophagus - Muscularis \tab √ \tab √\cr
+#'    Fallopian Tube \tab √ \tab √\cr
+#'    Heart - Atrial Appendage \tab √ \tab √\cr
+#'    Heart - Left Ventricle \tab √ \tab √\cr
+#'    Kidney - Cortex \tab √ \tab √\cr
+#'    Kidney - Medulla \tab √ \tab x\cr
+#'    Liver \tab √ \tab √\cr
+#'    Lung \tab √ \tab √\cr
+#'    Minor Salivary Gland \tab √ \tab √\cr
+#'    Muscle - Skeletal \tab √ \tab √\cr
+#'    Nerve - Tibial \tab √ \tab √\cr
+#'    Ovary \tab √ \tab √\cr
+#'    Pancreas \tab √ \tab √\cr
+#'    Pituitary \tab √ \tab √\cr
+#'    Prostate \tab √ \tab √\cr
+#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
+#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
+#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
+#'    Spleen \tab √ \tab √\cr
+#'    Stomach \tab √ \tab √\cr
+#'    Testis \tab √ \tab √\cr
+#'    Thyroid \tab √ \tab √\cr
+#'    Uterus \tab √ \tab √\cr
+#'    Vagina \tab √ \tab √\cr
+#'    Whole Blood \tab √ \tab √\cr
+#' }
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 200).

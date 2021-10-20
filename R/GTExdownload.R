@@ -12,119 +12,65 @@
 #'
 #' @param geneType A character string. Types of queried genes. Options: "geneSymbol" (default) and "gencodeId";
 #' @param tissueSiteDetail
-#'  For GTEx v8, must be chosen from the following terms:
-#'  \itemize{
-#'    \item Adipose - Subcutaneous
-#'    \item Adipose - Visceral (Omentum)
-#'    \item Adrenal Gland
-#'    \item Artery - Aorta
-#'    \item Artery - Coronary
-#'    \item Artery - Tibial
-#'    \item Bladder
-#'    \item Brain - Amygdala
-#'    \item Brain - Anterior cingulate cortex (BA24)
-#'    \item Brain - Caudate (basal ganglia)
-#'    \item Brain - Cerebellar Hemisphere
-#'    \item Brain - Cerebellum
-#'    \item Brain - Cortex
-#'    \item Brain - Frontal Cortex (BA9)
-#'    \item Brain - Hippocampus
-#'    \item Brain - Hypothalamus
-#'    \item Brain - Nucleus accumbens (basal ganglia)
-#'    \item Brain - Putamen (basal ganglia)
-#'    \item Brain - Spinal cord (cervical c-1)
-#'    \item Brain - Substantia nigra
-#'    \item Breast - Mammary Tissue
-#'    \item Cells - Cultured fibroblasts
-#'    \item Cells - EBV-transformed lymphocytes
-#'    \item Cervix - Ectocervix
-#'    \item Cervix - Endocervix
-#'    \item Colon - Sigmoid
-#'    \item Colon - Transverse
-#'    \item Esophagus - Gastroesophageal Junction
-#'    \item Esophagus - Mucosa
-#'    \item Esophagus - Muscularis
-#'    \item Fallopian Tube
-#'    \item Heart - Atrial Appendage
-#'    \item Heart - Left Ventricle
-#'    \item Kidney - Cortex
-#'    \item Kidney - Medulla
-#'    \item Liver
-#'    \item Lung
-#'    \item Minor Salivary Gland
-#'    \item Muscle - Skeletal
-#'    \item Nerve - Tibial
-#'    \item Ovary
-#'    \item Pancreas
-#'    \item Pituitary
-#'    \item Prostate
-#'    \item Skin - Not Sun Exposed (Suprapubic)
-#'    \item Skin - Sun Exposed (Lower leg)
-#'    \item Small Intestine - Terminal Ileum
-#'    \item Spleen
-#'    \item Stomach
-#'    \item Testis
-#'    \item Thyroid
-#'    \item Uterus
-#'    \item Vagina
-#'    \item Whole Blood
-#'  }
-#'  For GTEx v7, must be following terms:
-#'  \itemize{
-#'   \item Adipose - Subcutaneous
-#'   \item Adipose - Visceral (Omentum)
-#'   \item Adrenal Gland
-#'   \item Artery - Aorta
-#'   \item Artery - Coronary
-#'   \item Artery - Tibial
-#'   \item Bladder
-#'   \item Brain - Amygdala
-#'   \item Brain - Anterior cingulate cortex (BA24)
-#'   \item Brain - Caudate (basal ganglia)
-#'   \item Brain - Cerebellar Hemisphere
-#'   \item Brain - Cerebellum
-#'   \item Brain - Cortex
-#'   \item Brain - Frontal Cortex (BA9)
-#'   \item Brain - Hippocampus
-#'   \item Brain - Hypothalamus
-#'   \item Brain - Nucleus accumbens (basal ganglia)
-#'   \item Brain - Putamen (basal ganglia)
-#'   \item Brain - Spinal cord (cervical c-1)
-#'   \item Brain - Substantia nigra
-#'   \item Breast - Mammary Tissue
-#'   \item Cells - EBV-transformed lymphocytes
-#'   \item Cells - Transformed fibroblasts
-#'   \item Cervix - Ectocervix
-#'   \item Cervix - Endocervix
-#'   \item Colon - Sigmoid
-#'   \item Colon - Transverse
-#'   \item Esophagus - Gastroesophageal Junction
-#'   \item Esophagus - Mucosa
-#'   \item Esophagus - Muscularis
-#'   \item Fallopian Tube
-#'   \item Heart - Atrial Appendage
-#'   \item Heart - Left Ventricle
-#'   \item Kidney - Cortex
-#'   \item Liver
-#'   \item Lung
-#'   \item Minor Salivary Gland
-#'   \item Muscle - Skeletal
-#'   \item Nerve - Tibial
-#'   \item Ovary
-#'   \item Pancreas
-#'   \item Pituitary
-#'   \item Prostate
-#'   \item Skin - Not Sun Exposed (Suprapubic)
-#'   \item Skin - Sun Exposed (Lower leg)
-#'   \item Small Intestine - Terminal Ileum
-#'   \item Spleen
-#'   \item Stomach
-#'   \item Testis
-#'   \item Thyroid
-#'   \item Uterus
-#'   \item Vagina
-#'   \item Whole Blood
-#'  }
+#'  Tissue must be chosen from the following terms:
+#' \tabular{rrrrr}{
+#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
+#'    Adipose - Subcutaneous \tab √ \tab √\cr
+#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
+#'    Adrenal Gland \tab √ \tab √\cr
+#'    Artery - Aorta \tab √ \tab √\cr
+#'    Artery - Coronary \tab √ \tab √\cr
+#'    Artery - Tibial \tab √ \tab √\cr
+#'    Bladder \tab √ \tab √\cr
+#'    Brain - Amygdala \tab √ \tab √\cr
+#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
+#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
+#'    Brain - Cerebellum \tab √ \tab √\cr
+#'    Brain - Cortex \tab √ \tab √\cr
+#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
+#'    Brain - Hippocampus \tab √ \tab √\cr
+#'    Brain - Hypothalamus \tab √ \tab √\cr
+#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
+#'    Brain - Substantia nigra \tab √ \tab √\cr
+#'    Breast - Mammary Tissue \tab √ \tab √\cr
+#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
+#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
+#'    Cells - Transformed fibroblasts \tab x \tab √\cr
+#'    Cervix - Ectocervix \tab √ \tab √\cr
+#'    Cervix - Endocervix \tab √ \tab √\cr
+#'    Colon - Sigmoid \tab √ \tab √\cr
+#'    Colon - Transverse \tab √ \tab √\cr
+#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
+#'    Esophagus - Mucosa \tab √ \tab √\cr
+#'    Esophagus - Muscularis \tab √ \tab √\cr
+#'    Fallopian Tube \tab √ \tab √\cr
+#'    Heart - Atrial Appendage \tab √ \tab √\cr
+#'    Heart - Left Ventricle \tab √ \tab √\cr
+#'    Kidney - Cortex \tab √ \tab √\cr
+#'    Kidney - Medulla \tab √ \tab x\cr
+#'    Liver \tab √ \tab √\cr
+#'    Lung \tab √ \tab √\cr
+#'    Minor Salivary Gland \tab √ \tab √\cr
+#'    Muscle - Skeletal \tab √ \tab √\cr
+#'    Nerve - Tibial \tab √ \tab √\cr
+#'    Ovary \tab √ \tab √\cr
+#'    Pancreas \tab √ \tab √\cr
+#'    Pituitary \tab √ \tab √\cr
+#'    Prostate \tab √ \tab √\cr
+#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
+#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
+#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
+#'    Spleen \tab √ \tab √\cr
+#'    Stomach \tab √ \tab √\cr
+#'    Testis \tab √ \tab √\cr
+#'    Thyroid \tab √ \tab √\cr
+#'    Uterus \tab √ \tab √\cr
+#'    Vagina \tab √ \tab √\cr
+#'    Whole Blood \tab √ \tab √\cr
+#' }
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param toSummarizedExperiment whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 150).
@@ -141,17 +87,22 @@
 #' @export
 #' @examples
 #' \donttest{
+#'   # Download gene expression with a genecode ID:
 #'   expProfiles <- GTExdownload_exp(c("ENSG00000210195.2"),
 #'                                  "gencodeId", "Liver", "gtex_v8")
+#'   # Download gene expression profiles with multiple genes:
 #'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v8",
 #'                                  toSummarizedExperiment=TRUE)
 #'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
-#'   # get miRNA expression:
+#'
+#'
+#'   # Get miRNA expression:
 #'   miRNA <- GTExquery_gene (genes="miRNA", geneType="geneCategory" )
 #'   miRNAExp <- GTExdownload_exp(miRNA$gencodeId, geneType = "gencodeId")
-#'   geneExp <- GTExdownload_exp(c("tp53",miRNA$geneSymbol[1:100],"naDK"), geneType = "geneSymbol")
+#'   RNAExp <- GTExdownload_exp(c("tp53",miRNA$geneSymbol[1:100],"naDK"), geneType = "geneSymbol")
+#'   # Get proteing-coding genes' expression:
 #'   proT <- GTExquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
 #'   proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v7")
 #'   }
@@ -316,7 +267,66 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
 #' @param geneType A character string in "geneSymbol"(default) and "gencodeId".
-#' @param tissueSiteDetail A character string. Tissue name.
+#' @param tissueSiteDetail A character string.
+#'  Tissue must be chosen from the following terms:
+#' \tabular{rrrrr}{
+#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
+#'    Adipose - Subcutaneous \tab √ \tab √\cr
+#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
+#'    Adrenal Gland \tab √ \tab √\cr
+#'    Artery - Aorta \tab √ \tab √\cr
+#'    Artery - Coronary \tab √ \tab √\cr
+#'    Artery - Tibial \tab √ \tab √\cr
+#'    Bladder \tab √ \tab √\cr
+#'    Brain - Amygdala \tab √ \tab √\cr
+#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
+#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
+#'    Brain - Cerebellum \tab √ \tab √\cr
+#'    Brain - Cortex \tab √ \tab √\cr
+#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
+#'    Brain - Hippocampus \tab √ \tab √\cr
+#'    Brain - Hypothalamus \tab √ \tab √\cr
+#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
+#'    Brain - Substantia nigra \tab √ \tab √\cr
+#'    Breast - Mammary Tissue \tab √ \tab √\cr
+#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
+#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
+#'    Cells - Transformed fibroblasts \tab x \tab √\cr
+#'    Cervix - Ectocervix \tab √ \tab √\cr
+#'    Cervix - Endocervix \tab √ \tab √\cr
+#'    Colon - Sigmoid \tab √ \tab √\cr
+#'    Colon - Transverse \tab √ \tab √\cr
+#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
+#'    Esophagus - Mucosa \tab √ \tab √\cr
+#'    Esophagus - Muscularis \tab √ \tab √\cr
+#'    Fallopian Tube \tab √ \tab √\cr
+#'    Heart - Atrial Appendage \tab √ \tab √\cr
+#'    Heart - Left Ventricle \tab √ \tab √\cr
+#'    Kidney - Cortex \tab √ \tab √\cr
+#'    Kidney - Medulla \tab √ \tab x\cr
+#'    Liver \tab √ \tab √\cr
+#'    Lung \tab √ \tab √\cr
+#'    Minor Salivary Gland \tab √ \tab √\cr
+#'    Muscle - Skeletal \tab √ \tab √\cr
+#'    Nerve - Tibial \tab √ \tab √\cr
+#'    Ovary \tab √ \tab √\cr
+#'    Pancreas \tab √ \tab √\cr
+#'    Pituitary \tab √ \tab √\cr
+#'    Prostate \tab √ \tab √\cr
+#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
+#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
+#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
+#'    Spleen \tab √ \tab √\cr
+#'    Stomach \tab √ \tab √\cr
+#'    Testis \tab √ \tab √\cr
+#'    Thyroid \tab √ \tab √\cr
+#'    Uterus \tab √ \tab √\cr
+#'    Vagina \tab √ \tab √\cr
+#'    Whole Blood \tab √ \tab √\cr
+#' }
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -334,6 +344,10 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'                    datasetId="gtex_v7")
 #'  GTExdownload_eqtl(variantName="11_66328719_T_C_b37", variantType="variantId",
 #'                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+#'
+#'  # Download eQTL association according to all tissues with genome info:
+#'  varInfo <-  GTExquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+#'  GTExdownload_eqtl(variantName=varInfo$snpId, variantType="snpId")
 #'
 #'  # Download eQTL info for a gene:
 #'  GTExdownload_eqtl(gene="ATAD3B")
@@ -391,7 +405,7 @@ GTExdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
   if(variantName!=""){
     message("== Querying variant info from API server:")
     varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
-    if(nrow(varInfo)==0){
+    if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input, or leave \"variantName\" as null.")
     }else{
       message("== Done.")
@@ -402,7 +416,7 @@ GTExdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
   if(gene !=""){
     message("== Querying gene info from API server:")
     geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
-    if(nrow(geneInfo)==0){
+    if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else{
       message("== Done.")
@@ -449,21 +463,86 @@ GTExdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
 #' @title Download expression data for eQTL.
 #' @description
 #'  This function fetch normalized gene expression data for a eQTL pair.
-#' @param variantName
-#' @param gene
-#' @param variantType
-#' @param geneType
-#' @param tissueSiteDetail
-#' @param datasetId
+#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#' @param gene A gene symbol or a gencode id (versioned).
+#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
+#' @param geneType A character string in "geneSymbol"(default) and "gencodeId".
+#' @param tissueSiteDetail A character string.
+#'  Tissue must be chosen from the following terms:
+#' \tabular{rrrrr}{
+#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
+#'    Adipose - Subcutaneous \tab √ \tab √\cr
+#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
+#'    Adrenal Gland \tab √ \tab √\cr
+#'    Artery - Aorta \tab √ \tab √\cr
+#'    Artery - Coronary \tab √ \tab √\cr
+#'    Artery - Tibial \tab √ \tab √\cr
+#'    Bladder \tab √ \tab √\cr
+#'    Brain - Amygdala \tab √ \tab √\cr
+#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
+#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
+#'    Brain - Cerebellum \tab √ \tab √\cr
+#'    Brain - Cortex \tab √ \tab √\cr
+#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
+#'    Brain - Hippocampus \tab √ \tab √\cr
+#'    Brain - Hypothalamus \tab √ \tab √\cr
+#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
+#'    Brain - Substantia nigra \tab √ \tab √\cr
+#'    Breast - Mammary Tissue \tab √ \tab √\cr
+#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
+#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
+#'    Cells - Transformed fibroblasts \tab x \tab √\cr
+#'    Cervix - Ectocervix \tab √ \tab √\cr
+#'    Cervix - Endocervix \tab √ \tab √\cr
+#'    Colon - Sigmoid \tab √ \tab √\cr
+#'    Colon - Transverse \tab √ \tab √\cr
+#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
+#'    Esophagus - Mucosa \tab √ \tab √\cr
+#'    Esophagus - Muscularis \tab √ \tab √\cr
+#'    Fallopian Tube \tab √ \tab √\cr
+#'    Heart - Atrial Appendage \tab √ \tab √\cr
+#'    Heart - Left Ventricle \tab √ \tab √\cr
+#'    Kidney - Cortex \tab √ \tab √\cr
+#'    Kidney - Medulla \tab √ \tab x\cr
+#'    Liver \tab √ \tab √\cr
+#'    Lung \tab √ \tab √\cr
+#'    Minor Salivary Gland \tab √ \tab √\cr
+#'    Muscle - Skeletal \tab √ \tab √\cr
+#'    Nerve - Tibial \tab √ \tab √\cr
+#'    Ovary \tab √ \tab √\cr
+#'    Pancreas \tab √ \tab √\cr
+#'    Pituitary \tab √ \tab √\cr
+#'    Prostate \tab √ \tab √\cr
+#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
+#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
+#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
+#'    Spleen \tab √ \tab √\cr
+#'    Stomach \tab √ \tab √\cr
+#'    Testis \tab √ \tab √\cr
+#'    Thyroid \tab √ \tab √\cr
+#'    Uterus \tab √ \tab √\cr
+#'    Vagina \tab √ \tab √\cr
+#'    Whole Blood \tab √ \tab √\cr
+#' }
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @import stats
-#' @return
+#' @return A data.table
 #' @export
 #'
 #' @examples
+#' \donttest{
+#'  GTExdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
+#'  GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B", tissueSiteDetail="Lung", datasetId="gtex_v8")
+#'  GTExdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
+#'                       variantType="variantId", geneType="gencodeId", tissueSiteDetail="Liver")
+#' }
 GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
@@ -497,7 +576,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
     tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
   }else{
     message("Invalid parameter \"tissueSiteDetail\".")
-    return(data.table::data.tbale())
+    return(data.table::data.table())
   }
 
   # check network:
@@ -509,7 +588,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
   if(variantName!=""){
     message("== Querying variant info from API server:")
     varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
-    if(nrow(varInfo)==0){
+    if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
     }else{
       message("== Done.")
@@ -522,7 +601,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
   if(gene !=""){
     message("== Querying gene info from API server:")
     geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
-    if(nrow(geneInfo)==0){
+    if(nrow(geneInfo)==0|| is.null(geneInfo) || !exists("geneInfo")){
       stop("Invalid gene name or type, please correct your input.")
     }else{
       message("== Done.")
@@ -544,26 +623,49 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
   url1Get <- curl::curl_fetch_memory(url1)
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-  tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
-  if(nrow(tmp)==0){
+  expData <- data.table::data.table(normExp=url1GetText2Json$data,genotypes=url1GetText2Json$genotypes)
+
+  if(nrow(expData)==0){
     message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")), " in ",datasetId)
     return(data.table::data.table())
   }else{
     message("== Done.")
   }
-  tmp <- merge(tmp, tissueSiteDetailGTEx, by = "tissueSiteDetailId")
-  outInfo <- tmp[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes,datasetId)]
   message("=================================")
-  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!=""," -",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
+  message("== Summary: ")
+  message("[ pValue ]:          ",url1GetText2Json$pValue)
+  message("[ pValueThreshold ]: ",url1GetText2Json$pValueThreshold)
+  message("[ nes ]:             ",url1GetText2Json$nes)
+  message("[ maf ]:             ",url1GetText2Json$maf)
+  message("[ error ]:           ",url1GetText2Json$error)
+  message("== Normalized expression and genotypes of [", nrow(expData), "] samples were found for", paste0(" variant [", variantName,"]"), " -",paste0(" gene [", gene,"]")," pair in tissue [", tissueSiteDetail,"] in [",datasetId,"]."  )
+  message("== Genotype: ",url1GetText2Json$hetCount," het; ",url1GetText2Json$homoAltCount," hom; " ,url1GetText2Json$homoRefCount," ref.")
 
-  return(outInfo)
-
-  url1 <- https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=rs201327123&tissueSiteDetailId=Liver&datasetId=gtex_v8
+  message("== For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. ")
+  return(expData)
 }
 
 
+#' @title query eQTLs that may or may not be significant
+#'
+#' @param x aa
+#' \tabular{rrrrr}{
+#'   \strong{mpg} \tab \strong{cyl} \tab \strong{disp} \tab \strong{hp} \tab \strong{drat} \cr
+#'   21.0 \tab 6 \tab 160 \tab 110 \tab 3.90\cr
+#'   21.0 \tab 6 \tab 160 \tab 110 \tab 3.90\cr
+#'   22.8 \tab 4 \tab 108 \tab  93 \tab 3.85\cr
+#'   21.4 \tab 6 \tab 258 \tab 110 \tab 3.08\cr
+#'   18.7 \tab 8 \tab 360 \tab 175 \tab 3.15
+#' }
+#' @return a data.table
+#' @export
+#'
+#' @examples
+#' /donttest{
+#'
+#' }
 GTExdownload_eqtlDIY <- function(x){
-
+  print(1)
 }
 
 
