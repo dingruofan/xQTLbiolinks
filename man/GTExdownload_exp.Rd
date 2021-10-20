@@ -24,7 +24,7 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 
 \item{geneType}{A character string. Types of queried genes. Options: "geneSymbol" (default) and "gencodeId";}
 
-\item{tissueSiteDetail}{Tissue must be chosen from the following terms:
+\item{tissueSiteDetail}{Tissue must be chosen from the following tissue names:
 \tabular{rrrrr}{
 \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
 Adipose - Subcutaneous \tab √ \tab √\cr

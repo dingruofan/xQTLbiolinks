@@ -264,7 +264,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #' @title  Fetch information of samples used in analyses from all datasets.
 #'
 #' @param tissueSiteDetail
-#'  Tissue must be chosen from the following terms:
+#'  Tissue must be chosen from the following tissue names:
 #' \tabular{rrrrr}{
 #'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
 #'    Adipose - Subcutaneous \tab √ \tab √\cr

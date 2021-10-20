@@ -12,7 +12,7 @@ GTExquery_sample(
 )
 }
 \arguments{
-\item{tissueSiteDetail}{Tissue must be chosen from the following terms:
+\item{tissueSiteDetail}{Tissue must be chosen from the following tissue names:
 \tabular{rrrrr}{
 \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
 Adipose - Subcutaneous \tab √ \tab √\cr
