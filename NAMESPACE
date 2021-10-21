@@ -2,7 +2,6 @@
 
 export(GTExdownload_eqtlAll)
 export(GTExdownload_eqtlDIY)
-export(GTExdownload_eqtlExp)
 export(GTExdownload_eqtlSig)
 export(GTExdownload_exp)
 export(GTExquery_gene)

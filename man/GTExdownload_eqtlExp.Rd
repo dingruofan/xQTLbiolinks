@@ -91,11 +91,3 @@ A data.table
 \description{
 This function fetch normalized gene expression data for a eQTL pair.
 }
-\examples{
-\donttest{
- GTExdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
- GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B", tissueSiteDetail="Lung", datasetId="gtex_v8")
- GTExdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
-                      variantType="variantId", geneType="gencodeId", tissueSiteDetail="Liver")
-}
-}

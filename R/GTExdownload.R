@@ -774,7 +774,6 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @return A data.table
 #' @export
 #'
-#' @examples
 #' \donttest{
 #'  GTExdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
 #'  GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B", tissueSiteDetail="Lung", datasetId="gtex_v8")
