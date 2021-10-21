@@ -17,10 +17,8 @@ Imports:
     jsonlite (>= 1.7.2),
     data.table (>= 1.14.2),
     stringr (>= 1.4.0),
-    usethis (>= 2.0.1),
-    utils (>= 4.0.5),
-    SummarizedExperiment (>= 1.20.0),
-    GenomicRanges (>= 1.42.0),
-    IRanges (>= 2.24.1),
-    GenomeInfoDb (>= 1.26.7),
-    rlang (>= 0.4.11)
+    utils (>= 4.0.3),
+    SummarizedExperiment (>= 1.18.2),
+    GenomicRanges (>= 1.40.0),
+    IRanges (>= 2.22.2),
+    GenomeInfoDb (>= 1.24.2)

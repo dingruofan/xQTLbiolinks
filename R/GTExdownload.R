@@ -462,7 +462,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 
 #' @title Download significant or unsignificant eQTL data.
 #' @description
-#'  Fetch significant eQTL associations with a gene or a variant-gene pair in a tissue or across all tissues.
+#'  Fetch significant or unsignificant eQTL associations with a gene or a variant-gene pair in a tissue or across all tissues.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned). Can not be null

@@ -7,7 +7,6 @@
 #' @importFrom utils download.file
 #' @importFrom data.table fread rbindlist setnames as.data.table data.table
 #' @importFrom stringr str_split
-#' @importFrom usethis use_data
 #' @examples
 #' \dontrun{
 #'   gtfSubsGeneInfo("v26")
@@ -161,7 +160,6 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 #' @title create .rds file with GTExquery_sample function
 #'
 #' @param datasetId "gtex_v8" or "gtex_v7"
-#' @import usethis
 #'
 #' @return none
 #'
@@ -385,21 +383,25 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 #           # ,username="dd",password="123456"
 # )
 
+
 # devtools::build("D:/R_project/GTExbiolinks","D:/R_project/GTExbiolinks.tar.gz")
+#
+# install.packages("~/GTExbiolinks.tar.gz", repos = NULL, type = "source")
+# install.packages("~/GTExbiolinks.tar.gz", repos = NULL, type = "source", lib="/home/dingruofan/anaconda3/envs/work/lib/R/library")
+# install.packages("~/GTExbiolinks_0.0.0.9000.tar.gz", repos = NULL, type = "source", lib="/home/dingruofan/anaconda3/envs/work/lib/R/library")
 
 # usethis::use_package("data.table",min_version ="1.14.2")
 # usethis::use_package("curl", min_version = "4.3.2")
 # usethis::use_package("jsonlite", min_version = "1.7.2")
 # usethis::use_package("stringr", min_version = "1.4.0")
+# usethis::use_package("utils", min_version = "4.0.3")
+# usethis::use_package("SummarizedExperiment", min_version = "1.18.2")
+# usethis::use_package("GenomicRanges", min_version = "1.40.0")
+# usethis::use_package("IRanges", min_version = "2.22.2")
+# usethis::use_package("GenomeInfoDb", min_version = "1.24.2")
+
+
 # usethis::use_package("usethis", min_version = "2.0.1")
-# usethis::use_package("utils", min_version = "4.0.5")
-# usethis::use_package("SummarizedExperiment", min_version = "1.20.0")
-# usethis::use_package("GenomicRanges", min_version = "1.42.0")
-# usethis::use_package("IRanges", min_version = "2.24.1")
-# usethis::use_package("GenomeInfoDb", min_version = "1.26.7")
 # usethis::use_package("rlang", min_version = "0.4.11")
-
-
-
 
 
