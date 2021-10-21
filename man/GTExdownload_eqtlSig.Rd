@@ -101,7 +101,7 @@ Fetch significant eQTL associations with a variant or a gene or a variant-gene p
  GTExdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 
- # Download eQTL association according to all tissues with genome info:
+ # Download eQTL association according to all tissues with genome location:
  varInfo <-  GTExquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
  GTExdownload_eqtlSig(variantName=varInfo$snpId, variantType="snpId")
 

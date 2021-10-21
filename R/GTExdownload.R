@@ -345,7 +345,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'  GTExdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
 #'                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #'
-#'  # Download eQTL association according to all tissues with genome info:
+#'  # Download eQTL association according to all tissues with genome location:
 #'  varInfo <-  GTExquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
 #'  GTExdownload_eqtlSig(variantName=varInfo$snpId, variantType="snpId")
 #'
@@ -529,6 +529,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'    Whole Blood \tab √ \tab √\cr
 #' }
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param querySnpId TRUE or FALSE. Query snpId (dbSNP ID) or not. Default: TRUE.
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -540,30 +541,35 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'
 #'  # Download eQTL info for a gene:
-#'  GTExdownload_eqtlAll(gene="ATAD3B")
-#'  GTExdownload_eqtlAll(gene="TP53",datasetId="gtex_v7")
+#'  GTExdownload_eqtlAll(gene="TP53")
+#'  GTExdownload_eqtlAll(gene="TP53",querySnpId=TRUE)
+#'  GTExdownload_eqtlAll(gene="ATAD3B",datasetId="gtex_v8")
+#'
 #'  # Unversioned gencode ID in GTEx V7:
-#'  eqtl_v7 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId", datasetId="gtex_v7")
+#'  eqtl_v7 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
+#'                                  datasetId="gtex_v7", querySnpId=TRUE)
 #'  # Unversioned gencode ID in GTEx V8:
-#'  eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId", datasetId="gtex_v8")
-#'  eqtl_v7$snpId<-unlist(lapply(eqtl_v7$variantId,function(x){
-#'                        GTExquery_varId(x,variantType = "variantId", datasetId = "gtex_v7")$snpId}))
-#'  eqtl_v8$snpId<-unlist(lapply(eqtl_v8$variantId,function(x){
-#'                        GTExquery_varId(x,variantType = "variantId", datasetId = "gtex_v8")$snpId}))
-#'  # No intersection of eQTLs for gene ENSG00000141510! Such a big difference between GTEx v7 and v8.
+#'  eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
+#'                                  datasetId="gtex_v8", querySnpId=TRUE)
+#'  # No intersection of eQTLs for gene ENSG00000141510!
 #'  intersect(eqtl_v7$snpId, eqtl_v8$snpId)
-#'  data.table::fintersect(eqtl_v7[,c("tissueSiteDetail", "snpId")], eqtl_v8[,c("tissueSiteDetail", "snpId")])
+#'
 #'  # In a specific tissue:
 #'  GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
-#'                       datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
+#'                       datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
 #'  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
-#'  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
+#'  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53",
+#'                       datasetId="gtex_v7", querySnpId=TRUE)
 #'  GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
-#'                    gene="SLC35E2B", geneType="geneSymbol", tissueSiteDetail="Kidney - Cortex")
+#'                       gene="SLC35E2B", geneType="geneSymbol",
+#'                       tissueSiteDetail="Kidney - Cortex", querySnpId=TRUE)
+#'  GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
+#'                       gene="SLC35E2B", geneType="geneSymbol",
+#'                       tissueSiteDetail="Kidney - Cortex")
 #' }
-GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", querySnpId=FALSE){
   .<-NULL
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
@@ -647,10 +653,12 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   if( length(url1GetText2Json$metasoft)==0 ){
     message("No eQTL association found for gene [",gene,"]",ifelse(variantName=="","",paste0(" - variant [",variantName,"].")))
     return( data.table::data.table() )
+  }else{
+    message("== Done.")
   }
   tmp <- url1GetText2Json$metasoft
 
-  tmp_info <- data.table( gencodeId=tmp$gencodeId, variantId=tmp$variantId, datasetId=tmp$datasetId, metaP=tmp$metaP )
+  tmp_info <- data.table::data.table( gencodeId=tmp$gencodeId, variantId=tmp$variantId, datasetId=tmp$datasetId, metaP=tmp$metaP )
   tmp <- tmp[,-which(names(tmp) %in% c("datasetId", "gencodeId", "metaP","variantId"))]
   outInfo <- data.table::data.table()
   for(i in 1:length(names(tmp))){
@@ -661,8 +669,30 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
     outInfo <- cbind(outInfo[,-c("datasetId")], outInfo[,c("datasetId")])
   }
   if(tissueSiteDetail!=""){
-    outInfo <- outInfo[which(outInfo$tissueSiteDetail==tissueSiteDetailId), ]
+    outInfo <- outInfo[tissueSiteDetail, on="tissueSiteDetail"]
   }
+  # add geneSymbol:
+  outInfo$geneSymbol <- geneInfo$geneSymbol
+  if(querySnpId){
+    # Fetch dbSNP ID:
+    message("== Querying dbsnp ID from API server:")
+    pingOut <- apiAdmin_ping()
+    if( !(!is.null(pingOut) && pingOut==200) ){
+      return(data.table::data.table())
+    }
+    var_tmp <- data.table::data.table(variantId =unique(outInfo$variantId))
+    # var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
+    # for( ii in 1:nrow(var_tmp)){
+    #   GTExquery_varPos(unique(var_tmp[1:100]$chrom), pos=as.integer(var_tmp[1:100]$pos), datasetId = datasetId)
+    # }
+    var_tmp$snpId <- unlist(lapply(1:nrow(var_tmp), function(x){message("   -varint: ",x,"/",nrow(var_tmp));GTExquery_varId(var_tmp$variantId[x], variantType = "variantId", datasetId = datasetId)$snpId; }))
+    outInfo <- merge(outInfo, var_tmp, by="variantId")
+    message("== Done.")
+  }else{
+    outInfo$snpId <- ""
+  }
+  outInfo <- outInfo[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes, se, datasetId)]
+
   message("=================================")
   message("In total of ", nrow(outInfo) ," eQTL associations were found for ", ifelse(gene=="","",paste0(" Gene [", gene,"]")), ifelse(variantName=="","",paste0(" - Variant [",variantName,"]")), ifelse(tissueSiteDetail=="", paste0(" in ",length(unique(outInfo$tissueSiteDetail)),ifelse(length(unique(outInfo$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
   return(outInfo)

@@ -649,7 +649,6 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #'  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
 #' }
 GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
-  pos
   ########## parameter check: variantName
   if(is.null(chrom) ||  any(is.na(chrom)) ){
     stop("Parameter \"chrom\" can not be NULL or NA!")
