@@ -97,9 +97,17 @@ Fetch significant eQTL associations with a gene or a variant-gene pair in a tiss
  # Download eQTL info for a gene:
  GTExdownload_eqtlAll(gene="ATAD3B")
  GTExdownload_eqtlAll(gene="TP53",datasetId="gtex_v7")
- GTExdownload_eqtlAll(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
+ # Unversioned gencode ID in GTEx V7:
+ eqtl_v7 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId", datasetId="gtex_v7")
+ # Unversioned gencode ID in GTEx V8:
+ eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId", datasetId="gtex_v8")
+ eqtl_v7$snpId <- unlist(lapply(eqtl_v7$variantId,function(x){GTExquery_varId(x,variantType = "variantId", datasetId = "gtex_v7")$snpId}))
+ eqtl_v8$snpId <- unlist(lapply(eqtl_v8$variantId,function(x){GTExquery_varId(x,variantType = "variantId", datasetId = "gtex_v8")$snpId}))
+ # No intersection of eQTL for gene ENSG00000141510! A big difference between GTEx v7 and v8.
+ fintersect(eqtl_v7[,c("tissueSiteDetail", "snpId")], eqtl_v8[,c("tissueSiteDetail", "snpId")])
+ # In a specific tissue:
  GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
-                   datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
+                      datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 
  # Download eQTL info for a variant-gene pair:
  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")

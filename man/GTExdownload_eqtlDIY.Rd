@@ -24,7 +24,7 @@ a data.table
 query eQTLs that may or may not be significant
 }
 \examples{
-/donttest{
+\donttest{
 
 }
 }
