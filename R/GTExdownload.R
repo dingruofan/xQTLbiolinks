@@ -644,8 +644,9 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   url1Get <- curl::curl_fetch_memory(url1)
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-  if(length(url1GetText2Json$metasoft)==0){
-    stop("No eQTL association found for gene [",gene,"]",ifelse(variantName=="","",paste0(" - variant [",variantName,"].")))
+  if( length(url1GetText2Json$metasoft)==0 ){
+    message("No eQTL association found for gene [",gene,"]",ifelse(variantName=="","",paste0(" - variant [",variantName,"].")))
+    return( data.table::data.table() )
   }
   tmp <- url1GetText2Json$metasoft
 
