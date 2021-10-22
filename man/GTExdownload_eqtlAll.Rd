@@ -10,18 +10,17 @@ GTExdownload_eqtlAll(
   variantType = "snpId",
   geneType = "geneSymbol",
   tissueSiteDetail = "",
-  datasetId = "gtex_v8",
-  querySnpId = FALSE
+  datasetId = "gtex_v8"
 )
 }
 \arguments{
 \item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
 
-\item{gene}{A gene symbol or a gencode id (versioned). Can not be null}
+\item{gene}{A gene symbol or a gencode id (versioned). Can not be null.}
 
 \item{variantType}{A character string. "snpId" or "variantId". Default: "snpId".}
 
-\item{geneType}{A character string in "geneSymbol"(default) and "gencodeId".}
+\item{geneType}{A character string. "geneSymbol"(default) or "gencodeId".}
 
 \item{tissueSiteDetail}{A character string.
 Tissue must be chosen from the following tissue names:
@@ -85,29 +84,26 @@ Whole Blood \tab √ \tab √\cr
 }}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
-
-\item{querySnpId}{TRUE or FALSE. Query snpId (dbSNP ID) or not. Default: TRUE.}
 }
 \value{
 A data.table
 }
 \description{
-Fetch significant eQTL associations with a gene or a variant-gene pair in a tissue or across all tissues.
+Fetch significant or unsignificant eQTL associations with a gene or a variant-gene pair in a tissue or across all tissues.
 }
 \examples{
 \donttest{
 
  # Download eQTL info for a gene:
  GTExdownload_eqtlAll(gene="TP53")
- GTExdownload_eqtlAll(gene="TP53",querySnpId=TRUE)
- GTExdownload_eqtlAll(gene="ATAD3B",datasetId="gtex_v8")
+ GTExdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
 
  # Unversioned gencode ID in GTEx V7:
  eqtl_v7 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
-                                 datasetId="gtex_v7", querySnpId=TRUE)
+                                 datasetId="gtex_v7")
  # Unversioned gencode ID in GTEx V8:
  eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
-                                 datasetId="gtex_v8", querySnpId=TRUE)
+                                 datasetId="gtex_v8")
  # No intersection of eQTLs for gene ENSG00000141510!
  intersect(eqtl_v7$snpId, eqtl_v8$snpId)
 
@@ -118,10 +114,10 @@ Fetch significant eQTL associations with a gene or a variant-gene pair in a tiss
  # Download eQTL info for a variant-gene pair:
  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53",
-                      datasetId="gtex_v7", querySnpId=TRUE)
- GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
+                      datasetId="gtex_v7")
+ GTExdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
                       gene="SLC35E2B", geneType="geneSymbol",
-                      tissueSiteDetail="Kidney - Cortex", querySnpId=TRUE)
+                      tissueSiteDetail="Kidney - Cortex")
  GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
                       gene="SLC35E2B", geneType="geneSymbol",
                       tissueSiteDetail="Kidney - Cortex")

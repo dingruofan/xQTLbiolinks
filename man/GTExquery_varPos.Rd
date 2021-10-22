@@ -23,5 +23,6 @@ Query variant information by position.
 \donttest{
  GTExquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
+ GTExquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 }
 }

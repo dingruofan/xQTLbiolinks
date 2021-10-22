@@ -72,7 +72,7 @@ A character string or a character vector (case ignored). like: "ENSG00000210195.
 }
 }}
 
-\item{geneType}{A character string in "geneSymbol"(default), "gencodeId" and "geneCategory".}
+\item{geneType}{A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".}
 
 \item{gencodeVersion}{"v26" or "v19"}
 

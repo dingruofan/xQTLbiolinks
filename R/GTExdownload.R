@@ -203,6 +203,9 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
     )
     url1 <- utils::URLencode(url1)
     url1Get <- curl::curl_fetch_memory(url1)
+    if(url1Get$status_code!=200){
+      stop("Http status code: ", url1Get$status_code)
+    }
     url1GetText <- rawToChar(url1Get$content)
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
     tmp <- data.table::as.data.table(url1GetText2Json$geneExpression)
@@ -266,7 +269,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string in "geneSymbol"(default) and "gencodeId".
+#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
 #' @param tissueSiteDetail A character string.
 #'  Tissue must be chosen from the following tissue names:
 #' \tabular{rrrrr}{
@@ -442,6 +445,9 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
                  )
   url1 <- utils::URLencode(url1)
   url1Get <- curl::curl_fetch_memory(url1)
+  if(url1Get$status_code!=200){
+    stop("Http status code: ", url1Get$status_code)
+  }
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
   tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
@@ -465,9 +471,9 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'  Fetch significant or unsignificant eQTL associations with a gene or a variant-gene pair in a tissue or across all tissues.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned). Can not be null
+#' @param gene A gene symbol or a gencode id (versioned). Can not be null.
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string in "geneSymbol"(default) and "gencodeId".
+#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
 #' @param tissueSiteDetail A character string.
 #'  Tissue must be chosen from the following tissue names:
 #' \tabular{rrrrr}{
@@ -529,7 +535,6 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'    Whole Blood \tab √ \tab √\cr
 #' }
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
-#' @param querySnpId TRUE or FALSE. Query snpId (dbSNP ID) or not. Default: TRUE.
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -542,15 +547,14 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'
 #'  # Download eQTL info for a gene:
 #'  GTExdownload_eqtlAll(gene="TP53")
-#'  GTExdownload_eqtlAll(gene="TP53",querySnpId=TRUE)
-#'  GTExdownload_eqtlAll(gene="ATAD3B",datasetId="gtex_v8")
+#'  GTExdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
 #'
 #'  # Unversioned gencode ID in GTEx V7:
 #'  eqtl_v7 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
-#'                                  datasetId="gtex_v7", querySnpId=TRUE)
+#'                                  datasetId="gtex_v7")
 #'  # Unversioned gencode ID in GTEx V8:
 #'  eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
-#'                                  datasetId="gtex_v8", querySnpId=TRUE)
+#'                                  datasetId="gtex_v8")
 #'  # No intersection of eQTLs for gene ENSG00000141510!
 #'  intersect(eqtl_v7$snpId, eqtl_v8$snpId)
 #'
@@ -561,16 +565,18 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'  # Download eQTL info for a variant-gene pair:
 #'  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
 #'  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53",
-#'                       datasetId="gtex_v7", querySnpId=TRUE)
-#'  GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
+#'                       datasetId="gtex_v7")
+#'  GTExdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
 #'                       gene="SLC35E2B", geneType="geneSymbol",
-#'                       tissueSiteDetail="Kidney - Cortex", querySnpId=TRUE)
+#'                       tissueSiteDetail="Kidney - Cortex")
 #'  GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
 #'                       gene="SLC35E2B", geneType="geneSymbol",
 #'                       tissueSiteDetail="Kidney - Cortex")
 #' }
-GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", querySnpId=FALSE){
+GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
   .<-NULL
+  cutNum<-100
+  querySnpId=TRUE
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
   # datasetId="gtex_v8"
@@ -582,8 +588,8 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   # variantType="variantId"
   # datasetId="gtex_v7"
   # tissueSiteDetail="Liver"
-  # gene = "ENSG00000141510.11"
-  # geneType="gencodeId"
+  # gene = "ATAD3B"
+  # geneType="geneSymbol"
 
   # check version:
   gencodeVersion <- "v26"
@@ -648,6 +654,9 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   )
   url1 <- utils::URLencode(url1)
   url1Get <- curl::curl_fetch_memory(url1)
+  if(url1Get$status_code!=200){
+    stop("Http status code: ", url1Get$status_code)
+  }
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
   if( length(url1GetText2Json$metasoft)==0 ){
@@ -681,11 +690,25 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
       return(data.table::data.table())
     }
     var_tmp <- data.table::data.table(variantId =unique(outInfo$variantId))
-    # var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
-    # for( ii in 1:nrow(var_tmp)){
-    #   GTExquery_varPos(unique(var_tmp[1:100]$chrom), pos=as.integer(var_tmp[1:100]$pos), datasetId = datasetId)
-    # }
-    var_tmp$snpId <- unlist(lapply(1:nrow(var_tmp), function(x){message("   -varint: ",x,"/",nrow(var_tmp));GTExquery_varId(var_tmp$variantId[x], variantType = "variantId", datasetId = datasetId)$snpId; }))
+
+    ##### query with GTExquery_varId: START
+    # var_tmp$snpId <- unlist(lapply(1:nrow(var_tmp), function(x){message("   Got varints: ",x,"/",nrow(var_tmp));GTExquery_varId(var_tmp$variantId[x], variantType = "variantId", datasetId = datasetId)$snpId; }))
+    ##### query with GTExquery_varId: END
+
+    ##### query with GTExquery_varPos: START
+    var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
+    # query pos in batch per 100 terms.
+    var_tmpCut <- cbind(var_tmp, data.table::data.table( ID=1:nrow(var_tmp), cutF = as.character(cut(1:nrow(var_tmp),breaks=seq(0,nrow(var_tmp)+cutNum,cutNum) )) ))
+    var_tmpCut <- var_tmpCut[,.(posLis=list(pos)),by=c("chrom","cutF")]
+    # out:
+    var_tmpGot <- data.table::data.table()
+    for( ii in 1:nrow(var_tmpCut)){
+      message("   Got varints: ",nrow(var_tmpGot)+length(unlist(var_tmpCut[ii,]$posLis)),"/",nrow(var_tmp))
+      var_tmpGot <- rbind(var_tmpGot, GTExquery_varPos(var_tmpCut[ii,]$chrom, pos=as.integer(unlist(var_tmpCut[ii,]$posLis)), datasetId = datasetId))
+    }
+    var_tmp <- merge(var_tmp[,.(variantId)], var_tmpGot, by="variantId", all.x=TRUE)
+    ##### query with GTExquery_varPos: END
+
     outInfo <- merge(outInfo, var_tmp, by="variantId")
     message("== Done.")
   }else{
@@ -694,7 +717,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   outInfo <- outInfo[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes, se, datasetId)]
 
   message("=================================")
-  message("In total of ", nrow(outInfo) ," eQTL associations were found for ", ifelse(gene=="","",paste0(" Gene [", gene,"]")), ifelse(variantName=="","",paste0(" - Variant [",variantName,"]")), ifelse(tissueSiteDetail=="", paste0(" in ",length(unique(outInfo$tissueSiteDetail)),ifelse(length(unique(outInfo$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
+  message("In total of ", nrow(outInfo) ," eQTL associations were found for ", ifelse(gene=="","",paste0("Gene [", gene,"]")), ifelse(variantName=="","",paste0(" - Variant [",variantName,"]")), ifelse(tissueSiteDetail=="", paste0(" in ",length(unique(outInfo$tissueSiteDetail)),ifelse(length(unique(outInfo$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
   return(outInfo)
 }
 
@@ -704,7 +727,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string in "geneSymbol"(default) and "gencodeId".
+#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
 #' @param tissueSiteDetail A character string.
 #'  Tissue must be chosen from the following tissue names:
 #' \tabular{rrrrr}{
@@ -773,12 +796,18 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @import stats
 #' @return A data.table
 #' @export
-#'
+#' @examples
 #' \donttest{
+#'  # Download exp in different tissues:
 #'  GTExdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
 #'  GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B", tissueSiteDetail="Lung", datasetId="gtex_v8")
+#'
+#'  # Download exp in gtex v7:
+#'  GTExdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B", tissueSiteDetail="Adipose - Visceral (Omentum)", datasetId="gtex_v7")
+#'
+#'  # Dowload exp using variant ID and gencode ID.
 #'  GTExdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
-#'                       variantType="variantId", geneType="gencodeId", tissueSiteDetail="Liver")
+#'                       variantType="variantId", geneType="gencodeId", tissueSiteDetail="Stomach")
 #' }
 GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
   # variantName="chr1_14677_G_A_b38"
@@ -858,6 +887,9 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
   )
   url1 <- utils::URLencode(url1)
   url1Get <- curl::curl_fetch_memory(url1)
+  if(url1Get$status_code!=200){
+    stop("Http status code: ", url1Get$status_code)
+  }
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
   expData <- data.table::data.table(normExp=url1GetText2Json$data,genotypes=url1GetText2Json$genotypes)
@@ -883,26 +915,5 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 }
 
 
-#' @title query eQTLs that may or may not be significant
-#'
-#' @param x aa
-#' \tabular{rrrrr}{
-#'   \strong{mpg} \tab \strong{cyl} \tab \strong{disp} \tab \strong{hp} \tab \strong{drat} \cr
-#'   21.0 \tab 6 \tab 160 \tab 110 \tab 3.90\cr
-#'   21.0 \tab 6 \tab 160 \tab 110 \tab 3.90\cr
-#'   22.8 \tab 4 \tab 108 \tab  93 \tab 3.85\cr
-#'   21.4 \tab 6 \tab 258 \tab 110 \tab 3.08\cr
-#'   18.7 \tab 8 \tab 360 \tab 175 \tab 3.15
-#' }
-#' @return a data.table
-#' @export
-#'
-#' @examples
-#' \donttest{
-#'
-#' }
-GTExdownload_eqtlDIY <- function(x){
-  print(1)
-}
 
 

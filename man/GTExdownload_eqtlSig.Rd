@@ -20,7 +20,7 @@ GTExdownload_eqtlSig(
 
 \item{variantType}{A character string. "snpId" or "variantId". Default: "snpId".}
 
-\item{geneType}{A character string in "geneSymbol"(default) and "gencodeId".}
+\item{geneType}{A character string. "geneSymbol"(default) or "gencodeId".}
 
 \item{tissueSiteDetail}{A character string.
 Tissue must be chosen from the following tissue names:

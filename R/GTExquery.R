@@ -61,7 +61,7 @@
 #'   \item Mt rRNA
 #'   }
 #' }
-#' @param geneType A character string in "geneSymbol"(default), "gencodeId" and "geneCategory".
+#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
 #'
 #' @param gencodeVersion "v26" or "v19"
 #' @param recordPerChunk A integer value. Defaulut: 150
@@ -183,6 +183,9 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         message("GTEx API successfully accessed!")
         # url1Get <- httr::GET(url1, httr::progress())
         url1Get <- curl::curl_fetch_memory(url1)
+        if(url1Get$status_code!=200){
+          stop("Http status code: ", url1Get$status_code)
+        }
         # url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
         url1GetText <- rawToChar(url1Get$content)
         url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
@@ -227,6 +230,9 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         )
         url1 <- utils::URLencode(url1)
         url1Get <- curl::curl_fetch_memory(url1)
+        if(url1Get$status_code!=200){
+          stop("Http status code: ", url1Get$status_code)
+        }
         url1GetText <- rawToChar(url1Get$content)
         url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
         url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
@@ -424,6 +430,9 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   if( !is.null(pingOut) && pingOut==200 ){
     message("GTEx API successfully accessed!")
     url1Get <- curl::curl_fetch_memory(url1)
+    if(url1Get$status_code!=200){
+      stop("Http status code: ", url1Get$status_code)
+    }
     url1GetText <- rawToChar(url1Get$content)
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
     tmp <- data.table::as.data.table(url1GetText2Json$sample)
@@ -452,6 +461,9 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
       }
       url1 <- utils::URLencode(url1)
       url1Get <- curl::curl_fetch_memory(url1)
+      if(url1Get$status_code!=200){
+        stop("Http status code: ", url1Get$status_code)
+      }
       url1GetText <- rawToChar(url1Get$content)
       url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
       tmp <- data.table::as.data.table(url1GetText2Json$sample)
@@ -512,6 +524,9 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
     message("GTEx API successfully accessed!")
     # url1Get <- httr::GET(url1, httr::progress())
     url1Get <- curl::curl_fetch_memory(url1)
+    if(url1Get$status_code!=200){
+      stop("Http status code: ", url1Get$status_code)
+    }
     # url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
     url1GetText <- rawToChar(url1Get$content)
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
@@ -532,6 +547,9 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
       )
       url1 <- utils::URLencode(url1)
       url1Get <- curl::curl_fetch_memory(url1)
+      if(url1Get$status_code!=200){
+        stop("Http status code: ", url1Get$status_code)
+      }
       url1GetText <- rawToChar(url1Get$content)
       url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
@@ -615,6 +633,9 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
   }
   # fetch data:
   url1Get <- curl::curl_fetch_memory(url1)
+  if(url1Get$status_code!=200){
+    stop("Http status code: ", url1Get$status_code)
+  }
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
   tmp <- data.table::as.data.table(url1GetText2Json$variant)
@@ -647,6 +668,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #' \donttest{
 #'  GTExquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
 #'  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
+#'  GTExquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 #' }
 GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
   ########## parameter check: variantName
@@ -683,6 +705,9 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
   # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=1&pos=115746%2C135203%2C1086820
   # fetch data:
   url1Get <- curl::curl_fetch_memory(url1)
+  if(url1Get$status_code!=200){
+    stop("Http status code: ", url1Get$status_code)
+  }
   url1GetText <- rawToChar(url1Get$content)
   url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
   tmp <- data.table::as.data.table(url1GetText2Json$variant)
