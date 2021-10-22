@@ -140,8 +140,8 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
     return(data.table::data.table())
   }
   eqtlInfo <- GTExdownload_eqtlSig(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail)
-  eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol,geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail)
-  eqtlInfo[,.(stringr::str_split(variantId,))]
+  eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol, tissueSiteDetail = tissueSiteDetail)
+  eqtlInfo <- cbind(eqtlInfo, data.table::rbindlist(lapply(eqtlInfo$variantId, function(x){var_tmp = stringr::str_split(x,stringr::fixed("_"))[[1]]; data.table(chrom=var_tmp[1], pos=var_tmp[2], ref=var_tmp[3], alt=var_tmp[4])  })))
 
   p <- ggplot(eqtlExp)+
     geom_boxplot(aes(x=reorder(ATC,ADR_NUM,median),y=ADR_NUM,fill=ATC))+
