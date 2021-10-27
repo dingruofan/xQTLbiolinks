@@ -400,6 +400,7 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("IRanges", min_version = "2.22.2")
 # usethis::use_package("GenomeInfoDb", min_version = "1.24.2")
 # usethis::use_package("ggplot2", min_version = "3.3.5")
+# usethis::use_package("gridExtra", min_version = "2.3")
 
 # usethis::use_package("usethis", min_version = "2.0.1")
 # usethis::use_package("rlang", min_version = "0.4.11")

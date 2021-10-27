@@ -22,4 +22,5 @@ Imports:
     GenomicRanges (>= 1.40.0),
     IRanges (>= 2.22.2),
     GenomeInfoDb (>= 1.24.2),
-    ggplot2 (>= 3.3.5)
+    ggplot2 (>= 3.3.5),
+    gridExtra (>= 2.3)

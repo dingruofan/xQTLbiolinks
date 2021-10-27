@@ -97,6 +97,7 @@ Plot normalize expression among genotypes.
  eqtlInfo <- GTExdownload_eqtlSig(gene = "TP53", tissueSiteDetail = "Esophagus - Mucosa")
  eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol,
                                  tissueSiteDetail = "Esophagus - Mucosa")
-variantName="rs78378222"
+ GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
+ GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
 }
 }
