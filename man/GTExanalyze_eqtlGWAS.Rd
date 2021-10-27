@@ -8,6 +8,8 @@ GTExanalyze_eqtlGWAS(
   gwasDF,
   queryTerm = "",
   queryType = "snpId",
+  eqtlTrait = "",
+  eqtlType = "",
   flankUp = 100,
   flankDown = 100,
   coordinate = "chr1:1-300000",

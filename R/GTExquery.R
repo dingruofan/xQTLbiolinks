@@ -700,6 +700,9 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
                  "datasetId=", datasetId,"&",
                  "chromosome=", chrom, "&",
                  "pos=",paste0(pos,collapse=","))
+  if(nchar(url1)>4000){
+    stop("Too many positions were received, please reduce the number of positions.")
+  }
   # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&chromosome=chr11&pos=65592772
   # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=16&pos=57190138
   # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=1&pos=115746%2C135203%2C1086820
