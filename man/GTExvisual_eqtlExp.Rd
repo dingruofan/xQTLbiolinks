@@ -86,7 +86,7 @@ Whole Blood \tab √ \tab √\cr
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-
+A plot
 }
 \description{
 Plot normalize expression among genotypes.

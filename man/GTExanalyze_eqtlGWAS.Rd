@@ -10,6 +10,7 @@ GTExanalyze_eqtlGWAS(
   queryType = "snpId",
   eqtlTrait = "",
   eqtlType = "",
+  tissueSiteDetail = "",
   flankUp = 100,
   flankDown = 100,
   coordinate = "chr1:1-300000",
@@ -17,15 +18,37 @@ GTExanalyze_eqtlGWAS(
 )
 }
 \arguments{
-\item{queryType}{A character string. for variant, "snpId", "variantId". For gene, "geneSymbol" or "gencodeId".}
+\item{gwasDF}{A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".}
 
-\item{flankUp}{A whole integer. KB. Default: 100}
+\item{queryTerm}{Term of interest, which can be a gene or a variant.}
 
-\item{flankDown}{A whole integer. KB. Default: 100}
+\item{queryType}{A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId".}
+
+\item{eqtlTrait}{eqtl trait}
+
+\item{eqtlType}{eqtl type}
+
+\item{tissueSiteDetail}{tissue}
+
+\item{flankUp}{A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100.}
+
+\item{flankDown}{A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100}
+
+\item{coordinate}{Specified genomic range. format: chromesome:start-end, like: chr1:1-300000}
+
+\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-
+A plot.
 }
 \description{
 significance analysis of GTEX and eQTL
+}
+\examples{
+\donttest{
+ gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+ gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
+ GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ABCB9", queryType="geneSymbol",
+                      tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+}
 }

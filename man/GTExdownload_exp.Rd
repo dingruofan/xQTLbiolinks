@@ -109,12 +109,8 @@ This function fetch queried genes' expression profiles in a tissue at the sample
                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
 
 
-  # Get miRNA expression:
-  miRNA <- GTExquery_gene (genes="miRNA", geneType="geneCategory" )
-  miRNAExp <- GTExdownload_exp(miRNA$gencodeId, geneType = "gencodeId")
-  RNAExp <- GTExdownload_exp(c("tp53",miRNA$geneSymbol[1:100],"naDK"), geneType = "geneSymbol")
   # Get proteing-coding genes' expression:
   proT <- GTExquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
-  proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v7")
+  proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
   }
 }

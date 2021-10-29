@@ -68,7 +68,9 @@
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
-#' @return
+#' @import curl
+#' @import jsonlite
+#' @return A plot
 #' @export
 #'
 #' @examples
@@ -81,6 +83,7 @@
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
 #' }
 GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
+  genoLabels <- normExp <- labelNum <- p <- NULL
   # variantName="rs78378222"
   # gene="TP53"
   # tissueSiteDetail="Esophagus - Mucosa"
@@ -154,22 +157,20 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
     message("== Done")
   }
 
-  eqtlInfo <- cbind(eqtlInfo, data.table::rbindlist(lapply(eqtlInfo$variantId, function(x){var_tmp = stringr::str_split(x,stringr::fixed("_"))[[1]]; data.table(chrom=var_tmp[1], pos=var_tmp[2], ref=var_tmp[3], alt=var_tmp[4])  })))
+  eqtlInfo <- cbind(eqtlInfo, data.table::rbindlist(lapply(eqtlInfo$variantId, function(x){var_tmp = stringr::str_split(x,stringr::fixed("_"))[[1]]; data.table::data.table(chrom=var_tmp[1], pos=var_tmp[2], ref=var_tmp[3], alt=var_tmp[4])  })))
   # replace genotypes with ref and alt:
-  genoLable <- data.table(genotypes=0:2, genoLabels = c( ifelse(nchar(eqtlInfo$ref)==1, paste0(rep(eqtlInfo$ref,2),collapse = ""), "Ref"),
+  genoLable <- data.table::data.table(genotypes=0:2, genoLabels = c( ifelse(nchar(eqtlInfo$ref)==1, paste0(rep(eqtlInfo$ref,2),collapse = ""), "Ref"),
                                             ifelse(nchar(eqtlInfo$ref)==1, paste0(c(eqtlInfo$ref, eqtlInfo$alt),collapse = ""), "Het"),
                                             ifelse(nchar(eqtlInfo$ref)==1, paste0(rep(eqtlInfo$alt,2),collapse = ""), "Hom")) )
   genoLable$genoLabels <- factor(genoLable$genoLabels, levels = genoLable$genoLabels)
   genoLable <- merge(eqtlExp, genoLable, by ="genotypes")
   # for Pie:
-  genoLabelPie <- data.table(table(genoLable$genoLabels))
+  genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
   names(genoLabelPie) <- c("genoLabels", "labelNum")
-  genoLable <- merge(genoLable, genoLabelPie, by="genoLabels", sort = FALSE)
-
+  genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
   p <- ggplot(genoLable)+
     geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.6)+
-    geom_bar( aes(x=Num, y=genoLabels, fill=genoLabels),width = 1, stat = "identity") + coord_polar("y", start=0)
     # scale_fill_manual(values=c("green", "red"))+
     # scale_fill_brewer(palette = "Dark2")+
     theme_bw()+
@@ -183,6 +184,22 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
                                            size=0.5, linetype="solid",
                                            colour ="white")
     )
+  # ggplot(genoLabelPie) +
+  #   geom_bar( aes(x="", y=labelNum, fill=genoLabels), stat = "identity") + coord_polar("y", start=0)+
+  #   labs(x = "", y = "", title = "") +
+  #   theme_bw()+
+  #   theme(
+  #     axis.ticks = element_blank(),
+  #     axis.text.x = element_blank(),
+  #     legend.title =element_text(face="bold",size=rel(1.1)),
+  #     legend.position = "right",
+  #     legend.text = element_text(size=rel(1.1)),
+  #     panel.border = element_blank(),
+  #     panel.grid = element_blank()
+  #   )+ scale_fill_discrete("geno Labels",breaks=genoLabelPie$genoLabels, label=genoLabelPie$legends)
+
+  # gridExtra::grid.arrange()
+
   print(p)
   return(p)
 }
@@ -190,48 +207,51 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 # 用户设定范围：1. SNP 上下游，2. gene 上下游 3. 自定义范围。
 # 根据范围获得GWAS的SNP。
 # 根据GWAS SNP获得 eqtl 信息。
-
-# GWAS数据：1. snpId, 2.chrom 3. pos
-
 #' @title significance analysis of GTEX and eQTL
 #'
-#' @param gwasDF
-#' @param queryTerm
-#' @param queryType A character string. for variant, "snpId", "variantId". For gene, "geneSymbol" or "gencodeId".
-#' @param flankUp A whole integer. KB. Default: 100
-#' @param flankDown A whole integer. KB. Default: 100
-#' @param coordinate
-#' @param datasetId
+#' @param gwasDF A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".
+#' @param queryTerm Term of interest, which can be a gene or a variant.
+#' @param queryType A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId".
+#' @param eqtlTrait eqtl trait
+#' @param eqtlType eqtl type
+#' @param tissueSiteDetail tissue
+#' @param flankUp A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100.
+#' @param flankDown A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100
+#' @param coordinate Specified genomic range. format: chromesome:start-end, like: chr1:1-300000
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
+#' @import curl
 #' @import stringr
-#' @return
+#' @import jsonlite
+#' @import ggplot2
+#' @return A plot.
 #' @export
 #'
 #' @examples
-GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTrait="", eqtlType="", flankUp=100, flankDown=100, coordinate="chr1:1-300000", datasetId="gtex_v8"){
-  # Default:
-
+#' \donttest{
+#'  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+#'  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ABCB9", queryType="geneSymbol",
+#'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+#' }
+GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTrait="", eqtlType="", tissueSiteDetail="", flankUp=100, flankDown=100, coordinate="chr1:1-300000", datasetId="gtex_v8"){
+  pos <- pValue.gwas <- pValue.etql <-NULL
   # gwasDF <- data.table::fread("../GWAS_White-Blood-Cell-Traits_Tajuddin_2016.txt", sep="\t", header=TRUE)
-  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+  # gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
   # gwasDF <- gwasDF[trait=="White-Blood-Cell-Counts",][,.(rsid, chr, POS)]
-  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
+  # gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
 
-  queryTerm="ABCB9"
-  queryType="geneSymbol"
-  eqtlTrait=""
-  eqtlType=""
-  tissueSiteDetail="Whole Blood"
-  datasetId="gtex_v7"
-  flankUp=100
-  flankDown=100
+  # queryTerm="ABCB9"
+  # queryType="geneSymbol"
+  # eqtlTrait=""
+  # eqtlType=""
+  # tissueSiteDetail="Whole Blood"
+  # datasetId="gtex_v7"
+  # flankUp=100
+  # flankDown=100
 
-  queryTerm="rs7953894"
-  queryType ="snpId"
-
-
-
-
-
+  # queryTerm="rs7953894"
+  # queryType ="snpId"
 
   if(eqtlTrait=="" && eqtlType==""){
     eqtlTrait <- queryTerm
@@ -241,15 +261,20 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   cutNum <- 100
   gencodeVersion <- "v26"
   # rename:
+  gwasDF <- gwasDF[,1:4]
   names(gwasDF)[1:4] <- c("snpId", "chrom", "pos","pValue")
 
-
   # parameter check: snpId
-  message("Checking parameter!")
-  # if( !all(unlist(lapply(gwasDF$snpId, function(x){ stringr::str_detect(x,stringr::regex("^rs[0-9]{1,30}[0-9]$")) }))) ){
-  #   message("The first column of \"gwasDF\" must be snp ID, which start with \"rs\"! ")
-  #   return(data.table::data.table())
-  # }
+  message("==Checking parameter!")
+  # random check:
+  if( nrow(gwasDF)>10000){
+    set.seed(1)
+    randomId <- sample(nrow(gwasDF),10000,replace = FALSE)
+    if( !all(unlist(lapply(gwasDF$snpId[randomId], function(x){ stringr::str_detect(x,stringr::regex("^rs[0-9]{1,30}[0-9]$")) }))) ){
+      message("The first column of \"gwasDF\" must be snp ID, which start with \"rs\"! ")
+      return(data.table::data.table())
+    }
+  }
   # parameter check: chorm
   if(datasetId=="gtex_v7"){
     gencodeVersion <- "v19"
@@ -280,10 +305,21 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   if( is.null(queryTerm) || is.na(queryTerm) || length(queryTerm)!=1 || queryTerm=="" ){
     stop("Parameter \"queryTerm\" can not be NULL or NA!")
   }
+  message("== Done")
 
   #
-  if( queryType == "geneSymbol" ||queryType == "gencodeId" ){
-    queryInfo <- GTExquery_gene(queryTerm, geneType = eqtlType, gencodeVersion = gencodeVersion)
+  if( queryType %in% c("geneSymbol", "gencodeId") ){
+    message("== Querying gene info from API server:")
+    pingOut <- apiAdmin_ping()
+    if( !(!is.null(pingOut) && pingOut==200) ){
+      return(data.table::data.table())
+    }
+    suppressMessages( queryInfo <- GTExquery_gene(queryTerm, geneType = eqtlType, gencodeVersion = gencodeVersion) )
+    if( exists("queryInfo") && nrow(queryInfo)>0 ){
+      message("== Done")
+    }else{
+      message("Can not get gene info for [", queryTerm,"] in ", datasetId,".")
+    }
     # Obtain snps in  queried range:
     if(queryInfo$strand=="+"){
       queryInfo$rangeStart=queryInfo$start - as.integer( flankUp*1000)
@@ -293,7 +329,7 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
       queryInfo$rangeEnd=queryInfo$start + as.integer( flankUp*1000 )
     }
     eqtlAsso <- GTExdownload_eqtlAll(gene=eqtlTrait, geneType = eqtlType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId )
-  }else if( queryType == "snpId" ||queryType == "variantId" ){
+  }else if( queryType %in% c("snpId", "variantId") ){
     queryInfo <- GTExquery_varId(queryTerm, variantType = eqtlType, datasetId = datasetId)
     queryInfo$rangeStart=queryInfo$pos - as.integer( flankUp*1000)
     queryInfo$rangeEnd=queryInfo$pos + as.integer( flankDown*1000 )
@@ -301,11 +337,12 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   }else{
     stop("Please enter the right parameter of \"queryType\". ")
   }
+  # if no eqtl got:
   if(nrow(eqtlAsso)==0 || !exists("eqtlAsso")){
     stop("No eqtl associations were found for ",queryType,": [",queryTerm,"].")
   }
   gwasDFsub <- gwasDF[pos>=queryInfo$rangeStart & pos<=queryInfo$rangeEnd]
-  if(nrwo(gwasDFsub)==0 || !exists("gwasDFsub")){
+  if(nrow(gwasDFsub)==0 || !exists("gwasDFsub")){
     stop("Queried range is too small. please extend queried range.")
   }
 
@@ -325,17 +362,14 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   # }
   # var_tmp <- merge(var_tmp[,.(variantId)], var_tmpGot, by="variantId", all.x=TRUE)
 
-
-
-  eqtlAsso <- GTExdownload_eqtlAll(gene=eqtlTrait, geneType = eqtlType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId )
   gwas_eqtl <- merge(gwasDFsub, eqtlAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
   if( nrow(gwas_eqtl)==0 || !exists("gwas_eqtl") ){
     message("No intersection of GWAS and eQTL dataset!")
     return(data.table::data.table())
   }
 
-  ggplot2::ggplot(gwas_eqtl)+
-    ggplot2::geom_point( aes(x= (-1) * log(pValue.gwas,10), y = (-1)* log(pValue.etql,10)) )+
+  p<- ggplot(gwas_eqtl)+
+    geom_point( aes(x= (-1) * log(pValue.gwas,10), y = (-1)* log(pValue.etql,10)) )+
     theme_bw()+
     theme(axis.title.x=element_text(size=rel(1.3)),
           axis.title.y=element_text(size=rel(1.3)),
@@ -343,8 +377,7 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
           legend.text = element_text(size=rel(1.1)),
           legend.position = "none",
           )
-
-1
-
+  print(p)
+  return(p)
 
 }

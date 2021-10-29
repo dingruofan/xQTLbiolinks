@@ -49,7 +49,6 @@ Brain - Substantia nigra \tab √ \tab √\cr
 Breast - Mammary Tissue \tab √ \tab √\cr
 Cells - Cultured fibroblasts \tab √ \tab x\cr
 Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-Cells - Transformed fibroblasts \tab x \tab √\cr
 Cervix - Ectocervix \tab √ \tab √\cr
 Cervix - Endocervix \tab √ \tab √\cr
 Colon - Sigmoid \tab √ \tab √\cr
@@ -95,13 +94,17 @@ This function fetch normalized gene expression data for a eQTL pair.
 \donttest{
  # Download exp in different tissues:
  GTExdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
- GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B", tissueSiteDetail="Lung", datasetId="gtex_v8")
+ GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B",
+                      tissueSiteDetail="Lung", datasetId="gtex_v8")
 
  # Download exp in gtex v7:
- GTExdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B", tissueSiteDetail="Adipose - Visceral (Omentum)", datasetId="gtex_v7")
+ GTExdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B",
+                      tissueSiteDetail="Adipose - Visceral (Omentum)",
+                      datasetId="gtex_v7")
 
  # Dowload exp using variant ID and gencode ID.
  GTExdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
-                      variantType="variantId", geneType="gencodeId", tissueSiteDetail="Stomach")
+                      variantType="variantId", geneType="gencodeId",
+                     tissueSiteDetail="Stomach")
 }
 }
