@@ -210,14 +210,13 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @title significance analysis of GTEX and eQTL
 #'
 #' @param gwasDF A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".
-#' @param queryTerm Term of interest, which can be a gene or a variant.
-#' @param queryType A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId".
-#' @param eqtlTrait eqtl trait
-#' @param eqtlType eqtl type
+#' @param queryTerm Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").
+#' @param queryType A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId", for genome coordinate, "coordinate".
+#' @param eqtlTrait eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".
+#' @param eqtlType eqtl type. If this parameter is not specified, it is the same as the "queryType".
 #' @param tissueSiteDetail tissue
-#' @param flankUp A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100.
-#' @param flankDown A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100
-#' @param coordinate Specified genomic range. format: chromesome:start-end, like: chr1:1-300000
+#' @param flankUp A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.
+#' @param flankDown A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -233,8 +232,12 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ABCB9", queryType="geneSymbol",
 #'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs7953894", queryType="snpId",
+#'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
+#'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
 #' }
-GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTrait="", eqtlType="", tissueSiteDetail="", flankUp=100, flankDown=100, coordinate="chr1:1-300000", datasetId="gtex_v8"){
+GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTrait="", eqtlType="", tissueSiteDetail="", flankUp=100, flankDown=100, datasetId="gtex_v8"){
   pos <- pValue.gwas <- pValue.etql <-NULL
   # gwasDF <- data.table::fread("../GWAS_White-Blood-Cell-Traits_Tajuddin_2016.txt", sep="\t", header=TRUE)
   # gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
@@ -253,7 +256,7 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   # queryTerm="rs7953894"
   # queryType ="snpId"
 
-  if(eqtlTrait=="" && eqtlType==""){
+  if( eqtlTrait=="" && eqtlType==""){
     eqtlTrait <- queryTerm
     eqtlType <- queryType
   }
@@ -275,14 +278,14 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
       return(data.table::data.table())
     }
   }
-  # parameter check: chorm
-  if(datasetId=="gtex_v7"){
+  # parameter check: gwasDF : chromesome
+  if( datasetId=="gtex_v7"){
     gencodeVersion <- "v19"
     if( !all( unlist( lapply( unique(gwasDF$chrom), function(x){ stringr::str_detect(x, stringr::regex("^1[0-9]$|^2[0-3]$|^[1-9]$|^[xXyY]$")) })) ) ){
       message("For dataset gtex_v7, The second column of \"gwasDF\" must be chromosome, which must be chosen from \"1-23, x, y\" ")
       return(data.table::data.table())
     }
-  }else if(datasetId=="gtex_v8"){
+  }else if( datasetId=="gtex_v8"){
     gencodeVersion <- "v26"
     if( !all( unlist( lapply( unique(gwasDF$chrom), function(x){ stringr::str_detect(x, stringr::regex("^chr1[0-9]$|^chr2[0-3]$|^chr[1-9]$|^chr[xXyY]$")) })) ) ){
       message("For dataset gtex_v8, the second column of \"gwasDF\" must be chromosome, which must be chosen from \"chr1-chr23, chrx, chry\" ")
@@ -299,8 +302,8 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   # parameter check: queryType
   if( is.null(queryType) || is.na(queryType) || length(queryType)!=1 ){
     stop("Parameter \"queryType\" can not be NULL or NA!")
-  }else if( !queryType %in% c("snpId", "variantId", "geneSymbol", "gencodeId") ){
-    stop("Parameter \"queryType\" must be chosen from \"snpId\", \"variantId\", \"geneSymbol\", \"gencodeId\"")
+  }else if( !queryType %in% c("snpId", "variantId", "geneSymbol", "gencodeId", "coordinate") ){
+    stop("Parameter \"queryType\" must be chosen from \"snpId\", \"variantId\", \"geneSymbol\", \"gencodeId\", and \"coordinate\" ")
   }
   if( is.null(queryTerm) || is.na(queryTerm) || length(queryTerm)!=1 || queryTerm=="" ){
     stop("Parameter \"queryTerm\" can not be NULL or NA!")
@@ -333,6 +336,37 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
     queryInfo <- GTExquery_varId(queryTerm, variantType = eqtlType, datasetId = datasetId)
     queryInfo$rangeStart=queryInfo$pos - as.integer( flankUp*1000)
     queryInfo$rangeEnd=queryInfo$pos + as.integer( flankDown*1000 )
+    eqtlAsso <- GTExdownload_eqtlAll(variantName=eqtlTrait, variantType = eqtlType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId )
+  }else if ( queryType == "coordinate" ){
+    queryInfo <- stringr::str_split(queryTerm, stringr::regex("[:-]"))[[1]]
+    if( is.null(queryInfo) || is.na(queryInfo) || length(queryInfo)!=3 ){
+      message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
+      return(NULL)
+    }
+    # check the first splited string:
+    if( datasetId=="gtex_v7"){
+      if( stringr::str_detect(queryInfo[1], stringr::regex("^1[0-9]$|^2[0-3]$|^[1-9]$|^[xXyY]$")) ){
+        message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"1:1-300000\" ")
+        message("For dataset gtex_v8, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
+        return(NULL)
+      }
+    }else if( datasetId=="gtex_v8"){
+      if( stringr::str_detect(queryInfo[1], stringr::regex("^chr1[0-9]$|^chr2[0-3]$|^chr[1-9]$|^chr[xXyY]$")) ){
+        message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"1:1-300000\" ")
+        message("For dataset gtex_v8, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
+        return(NULL)
+      }
+    }
+    # check the last splited string:
+    if( any(!is.wholenumber(as.integer(queryInfo[2:3]))) || any(as.integer(queryInfo[2:3])<=0) || diff(as.integer(queryInfo[2:3]))<=0  ){
+      message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"1:1-300000\" ")
+      message("For dataset gtex_v8, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
+      return(NULL)
+    }
+
+    queryInfo <- data.table(chrom=queryInfo[1], start=queryInfo[2], end=queryInfo[3])
+    queryInfo$rangeStart = queryInfo$start
+    queryInfo$rangeEnd = queryInfo$end
     eqtlAsso <- GTExdownload_eqtlAll(variantName=eqtlTrait, variantType = eqtlType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId )
   }else{
     stop("Please enter the right parameter of \"queryType\". ")
