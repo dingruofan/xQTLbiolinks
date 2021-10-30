@@ -15,9 +15,3 @@ create .rds file
 \description{
 download gtf files and extract gene info from attribute column:
 }
-\examples{
-\dontrun{
-  gtfSubsGeneInfo("v26")
-  gtfSubsGeneInfo("v19")
- }
-}

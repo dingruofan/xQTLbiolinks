@@ -15,9 +15,3 @@ none
 \description{
 create .rds file with GTExquery_sample function
 }
-\examples{
-\dontrun{
-  createTissueSiteDetailMappingData("gtex_v8")
-  createTissueSiteDetailMappingData("gtex_v7")
- }
-}

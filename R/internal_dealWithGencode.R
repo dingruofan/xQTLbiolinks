@@ -7,11 +7,6 @@
 #' @importFrom utils download.file
 #' @importFrom data.table fread rbindlist setnames as.data.table data.table
 #' @importFrom stringr str_split
-#' @examples
-#' \dontrun{
-#'   gtfSubsGeneInfo("v26")
-#'   gtfSubsGeneInfo("v19")
-#'  }
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
   type <- NULL
   gtfDir <- tempdir()
@@ -53,7 +48,7 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
       gencodeGeneInfoV26 <- rbind(gencodeGeneInfoV26, apiRef_geneOut_tmp)
       rm(apiRef_geneOut_tmp)
       # create .rds file with gencodeGeneInfoV26
-      usethis::use_data(gencodeGeneInfoV26)
+      # usethis::use_data(gencodeGeneInfoV26)
     }
     if(gencodeVersion=="v19"){
       rowRange1 <- c(seq(from=1, to=nrow(gencodeENSG), by=200), nrow(gencodeENSG))
@@ -70,9 +65,10 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
       gencodeGeneInfoV19 <- rbind(gencodeGeneInfoV19, apiRef_geneOut_tmp)
       rm(apiRef_geneOut_tmp)
       # create .rds file with gencodeGeneInfoV19
-      usethis::use_data(gencodeGeneInfoV19, overwrite = TRUE)
+      # usethis::use_data(gencodeGeneInfoV19, overwrite = TRUE)
     }
   }
+  return(NULL)
 }
 
 
@@ -162,25 +158,20 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 #' @param datasetId "gtex_v8" or "gtex_v7"
 #'
 #' @return none
-#'
-#' @examples
-#' \dontrun{
-#'   createTissueSiteDetailMappingData("gtex_v8")
-#'   createTissueSiteDetailMappingData("gtex_v7")
-#'  }
 createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
-  tissueSiteDetail <- tissueSiteDetailId <- NULL
-  .<-NULL
-  # obtain all tissueSiteDetail info:
-  if( datasetId == "gtex_v8" ){
-    tissueSiteDetailGTExv8 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",recordPerChunk =2000 )
-    tissueSiteDetailGTExv8 <- unique(tissueSiteDetailGTExv8[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
-    usethis::use_data(tissueSiteDetailGTExv8, overwrite = TRUE)
-  }else if(datasetId == "gtex_v7" ){
-    tissueSiteDetailGTExv7 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",recordPerChunk =2000 )
-    tissueSiteDetailGTExv7 <- unique(tissueSiteDetailGTExv7[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
-    usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
-  }
+  # tissueSiteDetail <- tissueSiteDetailId <- NULL
+  # .<-NULL
+  # # obtain all tissueSiteDetail info:
+  # if( datasetId == "gtex_v8" ){
+  #   tissueSiteDetailGTExv8 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",recordPerChunk =2000 )
+  #   tissueSiteDetailGTExv8 <- unique(tissueSiteDetailGTExv8[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
+  #   usethis::use_data(tissueSiteDetailGTExv8, overwrite = TRUE)
+  # }else if(datasetId == "gtex_v7" ){
+  #   tissueSiteDetailGTExv7 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",recordPerChunk =2000 )
+  #   tissueSiteDetailGTExv7 <- unique(tissueSiteDetailGTExv7[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
+  #   usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
+  # }
+  return(NULL)
 }
 
 #' @title Query gene information through all genes' information
