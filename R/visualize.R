@@ -204,6 +204,8 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   return(p)
 }
 
+
+#  注意，这里使用了 dbsnp api 来获取一定基因组范围内的 snp，GTEx v8 用的是 dbsnp 151， GTEx v7 用的是 dbsnp 147. 详见：https://www.gtexportal.org/home/datasets; https://zenodo.org/record/3572799/files/GTEx-V7_HapMap-2017-11-29_README.txt
 # 用户设定范围：1. SNP 上下游，2. gene 上下游 3. 自定义范围。
 # 根据范围获得GWAS的SNP。
 # 根据GWAS SNP获得 eqtl 信息。
@@ -230,10 +232,10 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' \donttest{
 #'  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
 #'  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
-#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ABCB9", queryType="geneSymbol",
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ATAD3B", queryType="geneSymbol",
 #'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
-#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs7953894", queryType="snpId",
-#'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs55945496", queryType="snpId",
+#'                       tissueSiteDetail="Thyroid", datasetId="gtex_v7")
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
 #'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
 #' }
@@ -281,12 +283,14 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   # parameter check: gwasDF : chromesome
   if( datasetId=="gtex_v7"){
     gencodeVersion <- "v19"
+    genomeBuild="GRCh37/hg19"
     if( !all( unlist( lapply( unique(gwasDF$chrom), function(x){ stringr::str_detect(x, stringr::regex("^1[0-9]$|^2[0-3]$|^[1-9]$|^[xXyY]$")) })) ) ){
       message("For dataset gtex_v7, The second column of \"gwasDF\" must be chromosome, which must be chosen from \"1-23, x, y\" ")
       return(data.table::data.table())
     }
   }else if( datasetId=="gtex_v8"){
     gencodeVersion <- "v26"
+    genomeBuild="GRCh38/hg38"
     if( !all( unlist( lapply( unique(gwasDF$chrom), function(x){ stringr::str_detect(x, stringr::regex("^chr1[0-9]$|^chr2[0-3]$|^chr[1-9]$|^chr[xXyY]$")) })) ) ){
       message("For dataset gtex_v8, the second column of \"gwasDF\" must be chromosome, which must be chosen from \"chr1-chr23, chrx, chry\" ")
       return(data.table::data.table())
@@ -336,8 +340,22 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
     queryInfo <- GTExquery_varId(queryTerm, variantType = eqtlType, datasetId = datasetId)
     queryInfo$rangeStart=queryInfo$pos - as.integer( flankUp*1000)
     queryInfo$rangeEnd=queryInfo$pos + as.integer( flankDown*1000 )
-    eqtlAsso <- GTExdownload_eqtlAll(variantName=eqtlTrait, variantType = eqtlType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId )
+    # get all snps in a range.
+    rangedVariants <- dbsnpQueryRange(ifelse(datasetId=="gtex_v8", queryInfo$chromosome, paste0("chr",queryInfo$chromosome)),
+                                      startPos = queryInfo$rangeStart, endPos = queryInfo$rangeEnd, genomeBuild = genomeBuild )
+    if(exists("rangedVariants") && nrow(rangedVariants)>1){
+      message("== Totally ",  nrow(rangedVariants), " variants detected in genome coordinate: ", paste0(queryInfo$chromosome,":",queryInfo$rangeStart,"-",queryInfo$rangeEnd),".")
+    }else{
+      stop("No variants detected in genome coordinate: ", paste0(queryInfo$chromosome,":",queryInfo$rangeStart,"-",queryInfo$rangeEnd),".")
+    }
+
+    eqtlAsso <- GTExdownload_eqtlAll(gene=eqtlTrait, variantType = eqtlType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId )
+    if(nrow(eqtlAsso) == 0 || !exists(eqtlAsso)){
+      message("No significant associations were found for ",eqtlType," [",eqtlTrait,"] in Whole Blood in gtex_v7")
+      return(NULL)
+    }
   }else if ( queryType == "coordinate" ){
+    message("Querying coordinate!")
     queryInfo <- stringr::str_split(queryTerm, stringr::regex("[:-]"))[[1]]
     if( is.null(queryInfo) || is.na(queryInfo) || length(queryInfo)!=3 ){
       message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
@@ -345,13 +363,13 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
     }
     # check the first splited string:
     if( datasetId=="gtex_v7"){
-      if( stringr::str_detect(queryInfo[1], stringr::regex("^1[0-9]$|^2[0-3]$|^[1-9]$|^[xXyY]$")) ){
+      if( !stringr::str_detect(queryInfo[1], stringr::regex("^1[0-9]$|^2[0-3]$|^[1-9]$|^[xXyY]$")) ){
         message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"1:1-300000\" ")
         message("For dataset gtex_v8, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
         return(NULL)
       }
     }else if( datasetId=="gtex_v8"){
-      if( stringr::str_detect(queryInfo[1], stringr::regex("^chr1[0-9]$|^chr2[0-3]$|^chr[1-9]$|^chr[xXyY]$")) ){
+      if( !stringr::str_detect(queryInfo[1], stringr::regex("^chr1[0-9]$|^chr2[0-3]$|^chr[1-9]$|^chr[xXyY]$")) ){
         message("For dataset gtex_v7, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"1:1-300000\" ")
         message("For dataset gtex_v8, the format of specified genomic coordinate should be: \"chromesome:start-end\", like: \"chr1:1-300000\" ")
         return(NULL)

@@ -13,28 +13,25 @@ GTExanalyze_eqtlGWAS(
   tissueSiteDetail = "",
   flankUp = 100,
   flankDown = 100,
-  coordinate = "chr1:1-300000",
   datasetId = "gtex_v8"
 )
 }
 \arguments{
 \item{gwasDF}{A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".}
 
-\item{queryTerm}{Term of interest, which can be a gene or a variant.}
+\item{queryTerm}{Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").}
 
-\item{queryType}{A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId".}
+\item{queryType}{A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId", for genome coordinate, "coordinate".}
 
-\item{eqtlTrait}{eqtl trait}
+\item{eqtlTrait}{eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".}
 
-\item{eqtlType}{eqtl type}
+\item{eqtlType}{eqtl type. If this parameter is not specified, it is the same as the "queryType".}
 
 \item{tissueSiteDetail}{tissue}
 
-\item{flankUp}{A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100.}
+\item{flankUp}{A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.}
 
-\item{flankDown}{A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100}
-
-\item{coordinate}{Specified genomic range. format: chromesome:start-end, like: chr1:1-300000}
+\item{flankDown}{A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
@@ -48,7 +45,11 @@ significance analysis of GTEX and eQTL
 \donttest{
  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
- GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ABCB9", queryType="geneSymbol",
+ GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ATAD3B", queryType="geneSymbol",
+                      tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+ GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs55945496", queryType="snpId",
+                      tissueSiteDetail="Thyroid", datasetId="gtex_v7")
+ GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
 }
 }

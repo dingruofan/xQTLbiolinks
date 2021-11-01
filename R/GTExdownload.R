@@ -258,6 +258,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
   }
 }
 
+
 #' @title Download significant eQTL data.
 #' @description
 #'  Fetch significant eQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.

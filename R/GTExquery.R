@@ -758,6 +758,86 @@ apiAdmin_ping <- function(){
   )
 }
 
+#' @title retrieve snps from dbSNP using genome range.
+#'
+#' @param chrom A character string. Chromesome of human, including chr1-chr23, chrX, chrY.
+#' @param startPos A positive integer.
+#' @param endPos A positive integer.
+#' @param genomeBuild "GRCh38/hg38" or "GRCh38/hg19". Default: "GRCh38/hg38".
+#' @param track "snp151Common", "snp150Common" or "snp147Common". Default: "snp151Common".
+#' @import data.table
+#' @import stringr
+#' @import utils
+#' @import curl
+#' @import jsonlite
+#' @return A data.table.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1, endPos=10000000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+#' }
+dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
+  # chrom="chr1"
+  # startPos=1
+  # endPos=1000000
+  # genomeBuild="GRCh38/hg38"
+  # track="snp151Common"
+
+  # Parameter check: chrom
+  if(  is.null(chrom) || is.na(chrom) || length(chrom)!=1 ){
+    stop("Parameter \"chrom\" can not be NULL or NA!")
+  }
+  if( !stringr::str_detect(chrom, stringr::regex("^[cC][hH][rR]1[0-9]$|^[cC][hH][rR]2[0-3]$|^[cC][hH][rR][1-9]$|^[xXyY]$"))  ){
+    stop("Parameter \"chrom\" stands for chromosome, which must be chosen from \"chr1-chr23, chrx, chry\" ")
+  }
+
+  # Parameter check: startPos
+  if(  is.null(startPos) || is.na(startPos) || length(startPos)!=1 || !is.wholenumber(startPos) || startPos<0 ){
+    stop("Parameter \"startPos\" must be a whole number.")
+  }
+  # Parameter check: endPos
+  if(  is.null(endPos) || is.na(endPos) || length(endPos)!=1 || !is.wholenumber(endPos)|| endPos<0 ){
+    stop("Parameter \"chrom\" must be a whole number.")
+  }else{
+    endPos <- as.integer(endPos)
+  }
+  # Parameter check: genomeBuild
+  if(  is.null(genomeBuild) || is.na(genomeBuild) || length(genomeBuild)!=1 ){
+    stop("Parameter \"chrom\" must be a whole number.")
+  }else if(genomeBuild =="GRCh38/hg38"){
+    genomeBuild="hg38"
+  }else if(genomeBuild =="GRCh37/hg19"){
+    genomeBuild="hg19"
+  }else{
+    stop("Parameter \"genomeBuild\" must be chosen form \"GRCh38/hg38\" and \"GRCh37/hg19\" ")
+  }
+  # Parameter check: track
+  if(  is.null(track) || is.na(track) || length(track)!=1 ){
+    stop("Parameter \"track\" can not be NULL or NA!")
+  }else if( !track %in% c("snp151Common", "snp150Common", "snp147Common") ){
+    stop("Parameter \"track\" should be chosen from \"snp151Common\", \"snp150Common\" and \"snp147Common\".")
+  }
+
+  # construct url:
+  url1 <- paste0("https://api.genome.ucsc.edu/getData/track?",
+                 "genome=",genomeBuild,
+                 ";track=",track,
+                 ";chrom=",chrom,
+                 ";start=",startPos,
+                 ";end=",endPos)
+
+  url1 <- utils::URLencode(url1)
+  url1Get <- curl::curl_fetch_memory(url1)
+  if(url1Get$status_code!=200){
+    stop("Http status code: ", url1Get$status_code)
+  }
+  url1GetText <- rawToChar(url1Get$content)
+  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  outInfo <- as.data.table(url1GetText2Json[track][[track]])
+  return(outInfo)
+}
+
 
 #' @title determine is a whole number:
 #'
