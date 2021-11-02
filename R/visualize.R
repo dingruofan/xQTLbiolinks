@@ -77,10 +77,14 @@
 #' \donttest{
 #'  # EQTL associatons of TP53:
 #'  eqtlInfo <- GTExdownload_eqtlSig(gene = "TP53", tissueSiteDetail = "Esophagus - Mucosa")
+#'  eqtlInfo <- GTExdownload_eqtlSig(gene = "IRF5", tissueSiteDetail = "Esophagus - Mucosa")
 #'  eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol,
 #'                                  tissueSiteDetail = "Esophagus - Mucosa")
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+#'
+#'  GTExvisual_eqtlExp(variantName="rs4728150", gene ="IRF5", tissueSiteDetail="Esophagus - Mucosa")
+#'
 #' }
 GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
@@ -169,6 +173,8 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   names(genoLabelPie) <- c("genoLabels", "labelNum")
   genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
+  stopifnot(require(ggplot2))
+  stopifnot(require(ggrepel))
   p <- ggplot(genoLable)+
     geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.6)+
     # scale_fill_manual(values=c("green", "red"))+
@@ -213,7 +219,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'
 #' @param gwasDF A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".
 #' @param queryTerm Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").
-#' @param queryType A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId", for genome coordinate, "coordinate".
+#' @param queryType A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for genome coordinate, "coordinate".
 #' @param eqtlTrait eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".
 #' @param eqtlType eqtl type. If this parameter is not specified, it is the same as the "queryType".
 #' @param tissueSiteDetail tissue
@@ -232,9 +238,9 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' \donttest{
 #'  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
 #'  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
-#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ATAD3B", queryType="geneSymbol",
-#'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
-#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs55945496", queryType="snpId",
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="SFTPD", queryType="geneSymbol",
+#'                       tissueSiteDetail="Artery - Tibial", datasetId="gtex_v7")
+#'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs12778583", queryType="snpId",
 #'                       tissueSiteDetail="Thyroid", datasetId="gtex_v7")
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
 #'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
@@ -420,6 +426,8 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
     return(data.table::data.table())
   }
 
+  stopifnot(require(ggplot2))
+  stopifnot(require(ggrepel))
   p<- ggplot(gwas_eqtl)+
     geom_point( aes(x= (-1) * log(pValue.gwas,10), y = (-1)* log(pValue.etql,10)) )+
     theme_bw()+
@@ -433,3 +441,92 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   return(p)
 
 }
+
+
+#' @title
+#'
+#' @param gene
+#' @param geneType
+#' @param coordinate
+#' @param tissueSiteDetail
+#' @param datasetId
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @import ggrepel
+#' @return
+#' @export
+#'
+#' @examples
+GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr1:1-3", tissueSiteDetail="", datasetId="gtex_v8"){
+  eqtlOfgene <- GTExdownload_eqtlAll( gene="ENSG00000112137.12", geneType = "gencodeId", tissueSiteDetail = "Adipose - Subcutaneous", datasetId = "gtex_v7")
+  if( nrow(eqtlOfgene)<=2 ){
+    warning("Only ",nrow(eqtlOfgene)," eqtl ", ifelse(nrow(eqtlOfgene)==1,"association was","associations were")," detected, please extend the genome range using parameter \"coordinate\". " )
+    return(NULL)
+  }
+  # split coordinate from variantId:
+  eqtlOfgene <- cbind(eqtlOfgene, data.table::rbindlist( lapply(eqtlOfgene$variantId, function(x){ splitOut =stringr::str_split(x, stringr::fixed("_"))[[1]]; data.table(chrom=splitOut[1], pos=splitOut[2]) } )  ))
+  eqtlOfgene$logP <- (-1*log(eqtlOfgene$pValue, 10))
+  eqtlOfgene$pos <- as.integer(eqtlOfgene$pos)
+  # order by logP desc:
+  eqtlOfgene <- eqtlOfgene[order(-logP)]
+
+  # title:
+  plotTitle <- paste0(gene, " (",ifelse(datasetId=="gtex_v8",unique(eqtlOfgene$chrom), paste0("chr",unique(eqtlOfgene$chrom))),
+                      ":",
+                      paste0(range(eqtlOfgene$pos), collapse = "-")
+                      ,")")
+
+  # ylab and unit:
+  posUnit <- "Bb"
+  if( any(range(eqtlOfgene$pos)>10^6)){
+    eqtlOfgene$pos <- eqtlOfgene$pos/10^6
+    posUnit <- "Mb"
+  }else if( all(range(eqtlOfgene$pos)<10^6) && all(range(eqtlOfgene$pos)>10^3) ){
+    eqtlOfgene$pos <- eqtlOfgene$pos/10^3
+    posUnit <- "Kb"
+  }else{
+    posUnit <- "Bb"
+  }
+  yLab <-expression(-log["10"]("Pvalue"))
+
+  # xlab:
+  xLab <- paste0(ifelse(datasetId=="gtex_v8",unique(eqtlOfgene$chrom),paste0("chr",unique(eqtlOfgene$chrom)))," (",posUnit,")")
+
+  # color: 高亮最显著的那一个，并标注。
+  eqtlOfgene$colorP <- "grey"
+  eqtlOfgene$sizeP <- 1
+  eqtlOfgene[which(eqtlOfgene$logP>=quantile(eqtlOfgene$logP, seq(0,1,0.1))[10] & eqtlOfgene$logP<quantile(eqtlOfgene$logP, seq(0,1,0.1))[11] ),]$colorP <- "green"
+  eqtlOfgene[which(eqtlOfgene$logP>=quantile(eqtlOfgene$logP, seq(0,1,0.1))[10] & eqtlOfgene$logP<quantile(eqtlOfgene$logP, seq(0,1,0.1))[11] ),]$sizeP <- 2
+  eqtlOfgene[1,]$colorP <- "red"
+  eqtlOfgene[1,]$sizeP <- 3
+
+  stopifnot(require(ggplot2))
+  stopifnot(require(ggrepel))
+  ggplot(eqtlOfgene)+
+    geom_point(aes(x=pos, y=logP, color=colorP, size=colorP))+
+    scale_color_manual(breaks = eqtlOfgene$colorP, values = eqtlOfgene$colorP)+
+    scale_size_manual(breaks = eqtlOfgene$sizeP, values =  rel(as.numeric(eqtlOfgene$sizeP)) )+
+    # geom_text(aes(x=pos, y=logP, label=snpId ))+
+    geom_label_repel(data=eqtlOfgene[1:1,], aes(x=pos, y=logP, label=snpId) )+
+    labs(title = plotTitle )+
+    xlab( xLab )+
+    ylab( yLab )+
+    theme_bw()+
+    theme(axis.text.x=element_text(size=rel(1.3)),
+          axis.title.x=element_text(size=rel(1.3)),
+          axis.title.y=element_text(size=rel(1.3)),
+          plot.title = element_text(hjust=0.5)
+    )
+
+
+1
+
+
+}
+
+
+
+
+
+

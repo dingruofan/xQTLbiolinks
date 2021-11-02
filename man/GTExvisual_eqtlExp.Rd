@@ -95,9 +95,13 @@ Plot normalize expression among genotypes.
 \donttest{
  # EQTL associatons of TP53:
  eqtlInfo <- GTExdownload_eqtlSig(gene = "TP53", tissueSiteDetail = "Esophagus - Mucosa")
+ eqtlInfo <- GTExdownload_eqtlSig(gene = "IRF5", tissueSiteDetail = "Esophagus - Mucosa")
  eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol,
                                  tissueSiteDetail = "Esophagus - Mucosa")
  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+
+ GTExvisual_eqtlExp(variantName="rs4728150", gene ="IRF5", tissueSiteDetail="Esophagus - Mucosa")
+
 }
 }

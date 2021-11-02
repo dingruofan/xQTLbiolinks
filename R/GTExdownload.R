@@ -406,7 +406,8 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
     message("== Querying variant info from API server:")
     varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
-      stop("Invalid variant name or type, please correct your input, or leave \"variantName\" as null.")
+      message("The variant [",variantName, "] is not incuded in [",datasetId,"].")
+      return(NULL)
     }else{
       message("== Done.")
     }
@@ -651,6 +652,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
                  "&gencodeId=",geneInfo$gencodeId
   )
   url1 <- utils::URLencode(url1)
+  utils::download.file(url1)
   url1Get <- curl::curl_fetch_memory(url1)
   if(url1Get$status_code!=200){
     stop("Http status code: ", url1Get$status_code)

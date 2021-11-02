@@ -746,6 +746,10 @@ apiAdmin_ping <- function(){
     {
       # httr::status_code(httr::GET(url1Get))
       curl::curl_fetch_memory(url1Get)$status_code
+      # utils::download.file(url1Get, "../tmp.txt")
+      # utils::download.file(url1, "../tmp.txt")
+      # downloader::download(url1Get,"../a.txt")
+      # download.file(url1, "../a.txt")
     },
     # e = simpleError("test error"),
     error=function(cond){

@@ -21,7 +21,7 @@ GTExanalyze_eqtlGWAS(
 
 \item{queryTerm}{Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").}
 
-\item{queryType}{A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for variant, "snpId", "variantId", for genome coordinate, "coordinate".}
+\item{queryType}{A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for genome coordinate, "coordinate".}
 
 \item{eqtlTrait}{eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".}
 
@@ -45,9 +45,9 @@ significance analysis of GTEX and eQTL
 \donttest{
  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
- GTExanalyze_eqtlGWAS(gwasDF, queryTerm="ATAD3B", queryType="geneSymbol",
-                      tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
- GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs55945496", queryType="snpId",
+ GTExanalyze_eqtlGWAS(gwasDF, queryTerm="SFTPD", queryType="geneSymbol",
+                      tissueSiteDetail="Artery - Tibial", datasetId="gtex_v7")
+ GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs12778583", queryType="snpId",
                       tissueSiteDetail="Thyroid", datasetId="gtex_v7")
  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
