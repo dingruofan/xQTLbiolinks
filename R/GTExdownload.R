@@ -1119,7 +1119,7 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
   # geneType
   if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
-  }else if( !(geneType %in% c("geneSymbol", "gencodeId", "geneCategory")) ){
+  }else if( !(geneType %in% c("geneSymbol", "gencodeId")) ){
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
   }
 
@@ -1177,3 +1177,290 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
   return(ldInfo)
 }
 
+
+#' @title Fetch eGenes (eQTL Genes) from the specified dataset.
+#' @description
+#'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
+#' @param gene  A charater string of gene symbol, gencode id (versioned).
+#' @param geneType A character string. "geneSymbol"(default) or"gencodeId".
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param tissueSiteDetail A character string.
+#'  Tissue must be chosen from the following tissue names:
+#' \tabular{rrrrr}{
+#'   \strong{tissue name} \tab \strong{GTEx V8} \cr
+#'    Adipose - Subcutaneous \tab √ \cr
+#'    Adipose - Visceral (Omentum) \tab √ \cr
+#'    Adrenal Gland \tab √ \cr
+#'    Artery - Aorta \tab √ \cr
+#'    Artery - Coronary \tab √ \cr
+#'    Artery - Tibial \tab √ \cr
+#'    Bladder \tab √ \cr
+#'    Brain - Amygdala \tab √ \cr
+#'    Brain - Anterior cingulate cortex (BA24) \tab √ \cr
+#'    Brain - Caudate (basal ganglia) \tab √ \cr
+#'    Brain - Cerebellar Hemisphere \tab √ \cr
+#'    Brain - Cerebellum \tab √ \cr
+#'    Brain - Cortex \tab √ \cr
+#'    Brain - Frontal Cortex (BA9) \tab √ \cr
+#'    Brain - Hippocampus \tab √ \cr
+#'    Brain - Hypothalamus \tab √ \cr
+#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \cr
+#'    Brain - Putamen (basal ganglia) \tab √ \cr
+#'    Brain - Spinal cord (cervical c-1) \tab √ \cr
+#'    Brain - Substantia nigra \tab √ \cr
+#'    Breast - Mammary Tissue \tab √ \cr
+#'    Cells - Cultured fibroblasts \tab √ \cr
+#'    Cells - EBV-transformed lymphocytes \tab √ \cr
+#'    Cells - Transformed fibroblasts \tab x \cr
+#'    Cervix - Ectocervix \tab √ \cr
+#'    Cervix - Endocervix \tab √ \cr
+#'    Colon - Sigmoid \tab √ \cr
+#'    Colon - Transverse \tab √ \cr
+#'    Esophagus - Gastroesophageal Junction \tab √ \cr
+#'    Esophagus - Mucosa \tab √ \cr
+#'    Esophagus - Muscularis \tab √ \cr
+#'    Fallopian Tube \tab √ \cr
+#'    Heart - Atrial Appendage \tab √ \cr
+#'    Heart - Left Ventricle \tab √ \cr
+#'    Kidney - Cortex \tab √ \cr
+#'    Kidney - Medulla \tab √ \cr
+#'    Liver \tab √ \cr
+#'    Lung \tab √ \cr
+#'    Minor Salivary Gland \tab √ \cr
+#'    Muscle - Skeletal \tab √ \cr
+#'    Nerve - Tibial \tab √ \cr
+#'    Ovary \tab √ \cr
+#'    Pancreas \tab √ \cr
+#'    Pituitary \tab √ \cr
+#'    Prostate \tab √ \cr
+#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \cr
+#'    Skin - Sun Exposed (Lower leg) \tab √ \cr
+#'    Small Intestine - Terminal Ileum \tab √ \cr
+#'    Spleen \tab √ \cr
+#'    Stomach \tab √ \cr
+#'    Testis \tab √ \cr
+#'    Thyroid \tab √ \cr
+#'    Uterus \tab √ \cr
+#'    Vagina \tab √ \cr
+#'    Whole Blood \tab √ \cr
+#' }
+#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
+#' @import data.table
+#' @import stringr
+#' @import utils
+#' @return a data.table
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  GTExdownload_egene("DDX11")
+#'  a <- GTExdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
+#'  a <- GTExdownload_egene( recordPerChunk=2000)
+#'  GTExdownload_egene("ENSG00000141510.16", geneType="gencodeId")
+#'  GTExdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
+#' }
+GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
+  # gene="DDX11"
+  # geneType="geneSymbol"
+  # datasetId = "gtex_v8"
+  # tissueSiteDetail="Lung"
+  # recordPerChunk=100
+
+  page_tmp <- 0
+  pageSize_tmp <- recordPerChunk
+
+  # check genes
+  if( is.null(gene) ||  any(is.na(gene)) || length(gene)==0 ){
+    stop("Parameter \"genes\" can not be NULL or NA!")
+  }else if(length(gene)!=1){
+    stop("Parameter \"genes\" should be a character string!")
+  }
+
+  # geneType
+  if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }else if( !(geneType %in% c("geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }
+
+  # parameter check: datasetId
+  if( datasetId=="gtex_v7"){
+    gencodeVersion <- "v19"
+    genomeBuild="GRCh37/hg19"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+  }else if( datasetId=="gtex_v8"){
+    gencodeVersion <- "v26"
+    genomeBuild="GRCh38/hg38"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  }else{
+    message("Parameter \"datasetId\" must be chosen from \"gtex_v7\" and \"gtex_v8\"  ")
+    return(data.table::data.table())
+  }
+
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail))){
+    stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be a character string!")
+  }else if( tissueSiteDetail!="" && !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }else if( tissueSiteDetail!="" ){
+    # convert tissueSiteDetail to tissueSiteDetailId:
+    tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+  }
+
+  # Fetch gene info:
+  if(gene!=""){
+    message("== Querying gene info from API server:")
+    geneInfo <- GTExquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+    if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
+      stop("The gene [",gene,"] you entered could not be found!")
+    }
+    message("== Done.")
+  }
+
+  # url1 <- "https://gtexportal.org/rest/v1/association/egene?pageSize=250&searchTerm=ENSG00000013573.16&sortBy=log2AllelicFoldChange&sortDirection=asc&tissueSiteDetailId=Thyroid&datasetId=gtex_v8"
+  outInfo <- data.table::data.table()
+  url1 <- paste0("https://gtexportal.org/rest/v1/association/egene?",
+                 "page=",page_tmp,"&",
+                 "pageSize=",pageSize_tmp,
+                 ifelse(gene=="","&",paste0("&searchTerm=",geneInfo$gencodeId)),
+                 "sortBy=log2AllelicFoldChange&sortDirection=asc",
+                 ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
+                 "&datasetId=",datasetId)
+  url1 <- utils::URLencode(url1)
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  message("GTEx API successfully accessed!")
+  suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod))
+  tmp <- data.table::as.data.table(url1GetText2Json$egene)
+  outInfo <- rbind(outInfo, tmp)
+  message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+  page_tmp<-page_tmp+1
+  while( page_tmp <= (url1GetText2Json$numPages-1) ){
+    url1 <- paste0("https://gtexportal.org/rest/v1/association/egene?",
+                   "page=",page_tmp,"&",
+                   "pageSize=",pageSize_tmp,
+                   ifelse(gene=="","&",paste0("&searchTerm=",geneInfo$gencodeId)),
+                   "sortBy=log2AllelicFoldChange&sortDirection=asc",
+                   ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
+                   "&datasetId=",datasetId)
+    url1 <- utils::URLencode(url1)
+    suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod))
+    tmp <- data.table::as.data.table(url1GetText2Json$egene)
+    outInfo <- rbind(outInfo, tmp)
+    message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+    page_tmp <- page_tmp+1
+  }
+  outInfo <- merge(outInfo, tissueSiteDetailGTEx, by="tissueSiteDetailId")
+
+  if(gene!=""){
+    outInfo <- merge( geneInfo[,.(gencodeId, geneSymbol, entrezGeneId, geneType, chromosome, start, end, tss)],
+                      outInfo[,.(gencodeId, log2AllelicFoldChange, empiricalPValue, pValue, pValueThreshold, qValue, tissueSiteDetail, datasetId)],
+                      by="gencodeId")
+  }else{
+    outInfo <- outInfo[,.(gencodeId, log2AllelicFoldChange, empiricalPValue, pValue, pValueThreshold, qValue, tissueSiteDetail, datasetId)]
+  }
+
+  return(outInfo)
+
+}
+
+
+
+GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
+  # check genes
+  if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
+    stop("Parameter \"genes\" can not be NULL or NA!")
+  }
+
+  # geneType
+  if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }else if( !(geneType %in% c("geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }
+
+
+  # parameter check: datasetId
+  if( datasetId=="gtex_v7"){
+    gencodeVersion <- "v19"
+    genomeBuild="GRCh37/hg19"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+  }else if( datasetId=="gtex_v8"){
+    gencodeVersion <- "v26"
+    genomeBuild="GRCh38/hg38"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  }else{
+    message("Parameter \"datasetId\" must be chosen from \"gtex_v7\" and \"gtex_v8\"  ")
+    return(data.table::data.table())
+  }
+
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail))){
+    stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be a character string!")
+  }else if( tissueSiteDetail!="" && !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }else if( tissueSiteDetail!="" ){
+    # convert tissueSiteDetail to tissueSiteDetailId:
+    tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+  }
+
+  # Fetch gene info:
+  if(genes!="" || length(genes)>1){
+    message("== Querying gene info from API server:")
+    suppressMessages(geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion))
+    if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
+      stop("The gene [",stringr::str_sub(paste(genes, collapse = ","),1,20),"....] you entered could not be found!")
+    }
+    message("== Done.")
+  }
+
+  #
+  outInfo <- data.table::data.table()
+  genesCut <- data.table::data.table(gencodeId=geneInfo$gencodeId, ID=1:length(genes), cutF = as.character(cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+recordPerChunk,recordPerChunk) )) )
+  genesURL <- genesCut[,.(genesURL=paste0(gencodeId,collapse = "%2C")),by=c("cutF")]
+  if( any(unlist(lapply(genesURL$genesURL, nchar)) >3900) ){
+    stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")
+  }
+  outInfo <- data.table::data.table()
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  message("GTEx API successfully accessed!")
+  for(i in 1:nrow(genesURL)){
+    # construct url:
+    url1 <- paste0("https://gtexportal.org/rest/v1/expression/medianGeneExpression?",
+                   "datasetId=",datasetId,"&",
+                   "gencodeId=", genesURL[i,]$genesURL,
+                   ifelse(tissueSiteDetail=="","&", paste0("&tissueSiteDetailId=", tissueSiteDetailId)),"&",
+                   "format=json"
+    )
+    url1 <- utils::URLencode(url1)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$medianGeneExpression)
+    if( nrow(url1GetText2Json2DT)==0 ){
+      message( "0 record fatched!" )
+      return(NULL)
+    }
+    tmp <- url1GetText2Json2DT[,.(gencodeId, geneSymbol, median, unit,tissueSiteDetailId)]
+
+    outInfo <- rbind(outInfo, tmp)
+    message("Downloaded  ", nrow(outInfo), " records.")
+    # message("Downloaded  ", round(i/nrow(genesURL)*100,2),"%; totally ", length(na.omit(outInfo$gencodeId)), " records fetched!")
+    # rm(url1, url1Get, url1GetText, url1GetText2Json, url1GetText2Json2DT)
+  }
+  outInfo <- merge(outInfo, tissueSiteDetailGTEx, by="tissueSiteDetailId")
+  outInfo <- merge(outInfo[,.(gencodeId, geneSymbol, median, tissueSiteDetail)], geneInfo[,.(gencodeId, geneSymbol, entrezGeneId, geneType, chromosome, start, end, strand, tss)], by=c("gencodeId", "geneSymbol"))
+  message("Unit of expression: ",unique(tmp$unit))
+  return(outInfo)
+}

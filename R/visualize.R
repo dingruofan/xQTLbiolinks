@@ -141,11 +141,6 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
     return(data.table::data.table())
   }
 
-  # check network:
-  pingOut <- apiAdmin_ping()
-  if( !(!is.null(pingOut) && pingOut==200) ){
-    return(data.table::data.table())
-  }
   message("== Querying significant eQTL associations from API server:")
   suppressMessages(eqtlInfo <- GTExdownload_eqtlAll(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
@@ -325,9 +320,11 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   #
   if( queryType %in% c("geneSymbol", "gencodeId") ){
     message("== Querying gene info from API server:")
-    pingOut <- apiAdmin_ping()
-    if( !(!is.null(pingOut) && pingOut==200) ){
-      return(data.table::data.table())
+    # check network:
+    bestFetchMethod <- apiAdmin_ping()
+    if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+      message("Note: API server is busy or your network has latency, please try again later.")
+      return(NULL)
     }
     suppressMessages( queryInfo <- GTExquery_gene(queryTerm, geneType = eqtlType, gencodeVersion = gencodeVersion) )
     if( exists("queryInfo") && nrow(queryInfo)>0 ){

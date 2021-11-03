@@ -4,7 +4,12 @@
 \alias{GTExdownload_ld}
 \title{Fetch linkage disequilibrium data}
 \usage{
-GTExdownload_ld(gene = "", geneType = "geneSymbol", datasetId = "gtex_v8")
+GTExdownload_ld(
+  gene = "",
+  geneType = "geneSymbol",
+  datasetId = "gtex_v8",
+  recordPerChunk = 100
+)
 }
 \arguments{
 \item{gene}{A gene symbol, gencode id (versioned), or a charater string of gene type.}
@@ -12,6 +17,8 @@ GTExdownload_ld(gene = "", geneType = "geneSymbol", datasetId = "gtex_v8")
 \item{geneType}{A character string. "geneSymbol"(default), or "gencodeId".}
 
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
+
+\item{recordPerChunk}{A integer value (1-500). number of records fetched per request (default: 100).}
 }
 \value{
 

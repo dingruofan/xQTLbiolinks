@@ -117,6 +117,8 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
   # check genes
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
+  }else if( any(duplicated(genes)) ){
+    stop("Please remove duplicated genes.")
   }
 
   # geneType
@@ -720,13 +722,13 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'   apiAdmin_ping()
 #'  }
 apiAdmin_ping <- function(){
-  url1Get <- "https://gtexportal.org/rest/v1/admin/ping"
+  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
   fetchMethod = c("curl", "download","GET")
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
         message("== test method:",fetchMethod[i])
-        suppressWarnings(outInfo <- fetchContent(url1Get, method = fetchMethod[i]))
+        suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
         if( exists("outInfo") && outInfo=="Ping!"){
           # print(fetchMethod[i])
           return(fetchMethod[i])
@@ -778,7 +780,7 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
       # replace NAN with NULL:
       url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
       url1GetText2Json <- jsonlite::fromJSON(url1GetText)
-      if(names(url1GetText2Json)==""){
+      if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
         message("No data fetched, please check your input.")
         return(NULL)
       }
@@ -796,7 +798,7 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
     # replace NAN with NULL:
     url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    if(names(url1GetText2Json)==""){
+    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
       message("No data fetched, please check your input.")
       return(NULL)
     }
@@ -810,7 +812,7 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
     # replace NAN with NULL:
     url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    if(names(url1GetText2Json)==""){
+    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
       message("No data fetched, please check your input.")
       return(NULL)
     }

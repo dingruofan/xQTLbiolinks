@@ -134,21 +134,19 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
                    "page=0&pageSize=2000&format=json"
                    )
 # use internal function: apiAdmin_ping
-    pingOut <- apiAdmin_ping()
-    if( !is.null(pingOut) && pingOut==200 ){
-      message("GTEx API successfully accessed!")
-      # url1Get <- httr::GET(url1, httr::progress())
-      url1Get <- curl::curl_fetch_memory(url1)
-      # url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
-      url1GetText <- rawToChar(url1Get$content)
-      url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-      url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
-      url1GetText2Json2DT$genomeBuild <- genomeBuild
-      outInfo <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
-      return(outInfo)
-    }else{
-      message("")
+    # check network:
+    bestFetchMethod <- apiAdmin_ping()
+    if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+      message("Note: API server is busy or your network has latency, please try again later.")
+      return(NULL)
     }
+    message("GTEx API successfully accessed!")
+    # url1Get <- httr::GET(url1, httr::progress())
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+    url1GetText2Json2DT$genomeBuild <- genomeBuild
+    outInfo <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
+    return(outInfo)
   }
 }
 
