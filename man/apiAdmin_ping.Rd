@@ -8,13 +8,14 @@ apiAdmin_ping()
 }
 \value{
 A numeric value. Response code 200 indicates that the request has succeeded.
+
+A character of fetchContent method.
 }
 \description{
-test API server
+test API server and return download method.
 }
 \examples{
 \donttest{
   apiAdmin_ping()
-  ifelse( apiAdmin_ping() ==200, "accessed", "failed")
  }
 }

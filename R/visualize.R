@@ -68,6 +68,7 @@
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
+#' @import ggrepel
 #' @import curl
 #' @import jsonlite
 #' @return A plot
@@ -231,6 +232,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @import stringr
 #' @import jsonlite
 #' @import ggplot2
+#' @import ggrepel
 #' @return A plot.
 #' @export
 #'
@@ -459,7 +461,13 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
 #'
 #' @examples
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr1:1-3", tissueSiteDetail="", datasetId="gtex_v8"){
-  eqtlOfgene <- GTExdownload_eqtlAll( gene="ENSG00000112137.12", geneType = "gencodeId", tissueSiteDetail = "Adipose - Subcutaneous", datasetId = "gtex_v7")
+
+  # gene = "ENSG00000112137.12"
+  # geneType = "gencodeId"
+  # tissueSiteDetail = "Adipose - Subcutaneous"
+  # datasetId = "gtex_v7"
+
+  # eqtlOfgene <- GTExdownload_eqtlAll( gene=gene, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId)
   if( nrow(eqtlOfgene)<=2 ){
     warning("Only ",nrow(eqtlOfgene)," eqtl ", ifelse(nrow(eqtlOfgene)==1,"association was","associations were")," detected, please extend the genome range using parameter \"coordinate\". " )
     return(NULL)

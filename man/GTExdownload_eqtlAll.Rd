@@ -10,7 +10,8 @@ GTExdownload_eqtlAll(
   variantType = "snpId",
   geneType = "geneSymbol",
   tissueSiteDetail = "",
-  datasetId = "gtex_v8"
+  datasetId = "gtex_v8",
+  recordPerChunk = 100
 )
 }
 \arguments{
@@ -22,7 +23,11 @@ GTExdownload_eqtlAll(
 
 \item{geneType}{A character string. "geneSymbol"(default) or "gencodeId".}
 
-\item{tissueSiteDetail}{A character string.
+\item{tissueSiteDetail}{A character string.}
+
+\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+
+\item{recordPerChunk}{A integer value (1-500). number of records fetched per request (default: 100).
 Tissue must be chosen from the following tissue names:
 \tabular{rrrrr}{
 \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
@@ -82,8 +87,6 @@ Uterus \tab √ \tab √\cr
 Vagina \tab √ \tab √\cr
 Whole Blood \tab √ \tab √\cr
 }}
-
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
 A data.table
@@ -104,8 +107,6 @@ Fetch significant or unsignificant eQTL associations with a gene or a variant-ge
  # Unversioned gencode ID in GTEx V8:
  eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
                                  datasetId="gtex_v8")
- # No intersection of eQTLs for gene ENSG00000141510!
- intersect(eqtl_v7$snpId, eqtl_v8$snpId)
 
  # In a specific tissue:
  GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
@@ -113,13 +114,13 @@ Fetch significant or unsignificant eQTL associations with a gene or a variant-ge
 
  # Download eQTL info for a variant-gene pair:
  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
- GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53",
+ GTExdownload_eqtlAll(variantName="rs11657498",gene="TP53",
                       datasetId="gtex_v7")
  GTExdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
                       gene="SLC35E2B", geneType="geneSymbol",
                       tissueSiteDetail="Kidney - Cortex")
- GTExdownload_eqtlAll(variantName="chr1_1667948_A_G_b38", variantType="variantId",
-                      gene="SLC35E2B", geneType="geneSymbol",
-                      tissueSiteDetail="Kidney - Cortex")
+ GTExdownload_eqtlAll(variantName="17_7492388_G_A_b37", variantType="variantId",
+                      gene="TP53", geneType="geneSymbol",
+                      tissueSiteDetail="Uterus",  datasetId="gtex_v7")
 }
 }

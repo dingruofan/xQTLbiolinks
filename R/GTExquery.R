@@ -1,7 +1,7 @@
 #' @title Query gene information through API.
 #' @description
 #'  users can use this function to search gene of interest
-#' @param genes A gene symbol, gencode id (versioned), or a charater string of gene type.
+#' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
 #'
@@ -178,32 +178,24 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
       url1 <- utils::URLencode(url1)
       outInfo <- data.table::data.table()
       # use internal function: apiAdmin_ping
-      pingOut <- apiAdmin_ping()
-      if( !is.null(pingOut) && pingOut==200 ){
-        message("GTEx API successfully accessed!")
-        # url1Get <- httr::GET(url1, httr::progress())
-        url1Get <- curl::curl_fetch_memory(url1)
-        if(url1Get$status_code!=200){
-          stop("Http status code: ", url1Get$status_code)
-        }
-        # url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
-        url1GetText <- rawToChar(url1Get$content)
-        url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-        url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
-        if( nrow(url1GetText2Json2DT)==0 ){
-          message( "0 record fatched!" )
-          return(data.table::data.table())
-        }else{
-          url1GetText2Json2DT$genomeBuild <- genomeBuild
-          tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
-          outInfo <- rbind(outInfo, tmp)
-          outInfo <- cbind(data.table(genes=genes), outInfo)
-          message( nrow(tmp), " record has been obtained!" )
-          return(outInfo)
-        }
-      }else{
-        message("")
+      bestFetchMethod <- apiAdmin_ping()
+      if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+        message("Note: API server is busy or your network has latency, please try again later.")
+        return(NULL)
+      }
+      message("GTEx API successfully accessed!")
+      url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+      url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+      if( nrow(url1GetText2Json2DT)==0 ){
+        message( "0 record fatched!" )
         return(data.table::data.table())
+      }else{
+        url1GetText2Json2DT$genomeBuild <- genomeBuild
+        tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
+        outInfo <- rbind(outInfo, tmp)
+        outInfo <- cbind(data.table(genes=genes), outInfo)
+        message( nrow(tmp), " record has been obtained!" )
+        return(outInfo)
       }
     }else if( length(genes)>1 ){
       # 分批下载：
@@ -214,10 +206,12 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")
       }
       outInfo <- data.table::data.table()
-      pingOut <- apiAdmin_ping()
-      if( !(!is.null(pingOut) && pingOut==200) ){
-        return(data.table::data.table())
+      bestFetchMethod <- apiAdmin_ping()
+      if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+        message("Note: API server is busy or your network has latency, please try again later.")
+        return(NULL)
       }
+      message("GTEx API successfully accessed!")
       for(i in 1:nrow(genesURL)){
         # construct url:
         url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
@@ -229,12 +223,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
                        "format=json"
         )
         url1 <- utils::URLencode(url1)
-        url1Get <- curl::curl_fetch_memory(url1)
-        if(url1Get$status_code!=200){
-          stop("Http status code: ", url1Get$status_code)
-        }
-        url1GetText <- rawToChar(url1Get$content)
-        url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+        url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
         url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
         if( nrow(url1GetText2Json2DT)==0 ){
           message( "0 record fatched!" )
@@ -426,56 +415,45 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetailId=Liver&dataType=RNASEQ&format=json&page=0&pageSize=2000&sortBy=sampleId&sortDirection=asc"
   # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetail=All&dataType=RNASEQ&format=json&page=0&pageSize=200&sortBy=sampleId&sortDirection=asc"
   outInfo <- data.table::data.table()
-  pingOut <- apiAdmin_ping()
-  if( !is.null(pingOut) && pingOut==200 ){
-    message("GTEx API successfully accessed!")
-    url1Get <- curl::curl_fetch_memory(url1)
-    if(url1Get$status_code!=200){
-      stop("Http status code: ", url1Get$status_code)
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  message("GTEx API successfully accessed!")
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  tmp <- data.table::as.data.table(url1GetText2Json$sample)
+  outInfo <- rbind(outInfo, tmp)
+  message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+  page_tmp<-page_tmp+1
+  while( page_tmp <= (url1GetText2Json$numPages-1)){
+    if( tissueSiteDetail =="All"){
+      url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+                     "datasetId=", datasetId,"&",
+                     "tissueSiteDetail=", "All","&",
+                     "dataType=",dataType,"&",
+                     "page=",page_tmp,"&",
+                     "pageSize=", pageSize_tmp, "&",
+                     "sortBy=sampleId&sortDirection=asc"
+      )
+    }else{
+      url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+                     "datasetId=", datasetId,"&",
+                     "tissueSiteDetailId=", tissueSiteDetailId,"&",
+                     "dataType=",dataType,"&",
+                     "page=",page_tmp,"&",
+                     "pageSize=", pageSize_tmp, "&",
+                     "sortBy=sampleId&sortDirection=asc"
+      )
     }
-    url1GetText <- rawToChar(url1Get$content)
-    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+    url1 <- utils::URLencode(url1)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
     tmp <- data.table::as.data.table(url1GetText2Json$sample)
     outInfo <- rbind(outInfo, tmp)
     message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
-    page_tmp<-page_tmp+1
-    while( page_tmp <= (url1GetText2Json$numPages-1)){
-      if( tissueSiteDetail =="All"){
-        url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
-                       "datasetId=", datasetId,"&",
-                       "tissueSiteDetail=", "All","&",
-                       "dataType=",dataType,"&",
-                       "page=",page_tmp,"&",
-                       "pageSize=", pageSize_tmp, "&",
-                       "sortBy=sampleId&sortDirection=asc"
-        )
-      }else{
-        url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
-                       "datasetId=", datasetId,"&",
-                       "tissueSiteDetailId=", tissueSiteDetailId,"&",
-                       "dataType=",dataType,"&",
-                       "page=",page_tmp,"&",
-                       "pageSize=", pageSize_tmp, "&",
-                       "sortBy=sampleId&sortDirection=asc"
-        )
-      }
-      url1 <- utils::URLencode(url1)
-      url1Get <- curl::curl_fetch_memory(url1)
-      if(url1Get$status_code!=200){
-        stop("Http status code: ", url1Get$status_code)
-      }
-      url1GetText <- rawToChar(url1Get$content)
-      url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-      tmp <- data.table::as.data.table(url1GetText2Json$sample)
-      outInfo <- rbind(outInfo, tmp)
-      message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
-      page_tmp <- page_tmp+1
-    }
-    return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
-
-  }else{
-    message("")
+    page_tmp <- page_tmp+1
   }
+  return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
   # note: pathologyNotes info is ignored.
 }
 
@@ -519,51 +497,38 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   url1 <- utils::URLencode(url1)
   outInfo <- data.table::data.table()
   # use internal function: apiAdmin_ping
-  pingOut <- apiAdmin_ping()
-  if( !is.null(pingOut) && pingOut==200 ){
-    message("GTEx API successfully accessed!")
-    # url1Get <- httr::GET(url1, httr::progress())
-    url1Get <- curl::curl_fetch_memory(url1)
-    if(url1Get$status_code!=200){
-      stop("Http status code: ", url1Get$status_code)
-    }
-    # url1GetText <- httr::content(url1Get,"text", encoding = "UTF-8")
-    url1GetText <- rawToChar(url1Get$content)
-    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  message("GTEx API successfully accessed!")
+  suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod))
+  url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+  url1GetText2Json2DT$genomeBuild <- genomeBuild
+  tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
+  outInfo <- rbind(outInfo, tmp)
+  message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+  page_tmp <- page_tmp+1
+  while( page_tmp <= (url1GetText2Json$numPages-1) ){
+    url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
+                   "geneId=", "[a-zA-Z0-9]","&",
+                   "gencodeVersion=", gencodeVersion,"&",
+                   "genomeBuild=",genomeBuild,"&",
+                   "page=",page_tmp,"&",
+                   "pageSize=", pageSize_tmp,"&",
+                   "format=json"
+    )
+    url1 <- utils::URLencode(url1)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
     url1GetText2Json2DT$genomeBuild <- genomeBuild
     tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
     outInfo <- rbind(outInfo, tmp)
     message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
     page_tmp <- page_tmp+1
-    while( page_tmp <= (url1GetText2Json$numPages-1) ){
-      url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                     "geneId=", "[a-zA-Z0-9]","&",
-                     "gencodeVersion=", gencodeVersion,"&",
-                     "genomeBuild=",genomeBuild,"&",
-                     "page=",page_tmp,"&",
-                     "pageSize=", pageSize_tmp,"&",
-                     "format=json"
-      )
-      url1 <- utils::URLencode(url1)
-      url1Get <- curl::curl_fetch_memory(url1)
-      if(url1Get$status_code!=200){
-        stop("Http status code: ", url1Get$status_code)
-      }
-      url1GetText <- rawToChar(url1Get$content)
-      url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-      url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
-      url1GetText2Json2DT$genomeBuild <- genomeBuild
-      tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
-      outInfo <- rbind(outInfo, tmp)
-      message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
-      page_tmp <- page_tmp+1
-    }
-    return(outInfo)
-  }else{
-    stop("Network error!")
-    return(data.table::data.table())
   }
+  return(outInfo)
 }
 
 
@@ -627,17 +592,14 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
   # url1 <- "https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&snpId=rs12596338"
   url1 <- utils::URLencode(url1)
   # test api server accessibility:
-  pingOut <- apiAdmin_ping()
-  if( !(!is.null(pingOut) && pingOut==200) ){
-    return(data.table::data.table())
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
   }
   # fetch data:
-  url1Get <- curl::curl_fetch_memory(url1)
-  if(url1Get$status_code!=200){
-    stop("Http status code: ", url1Get$status_code)
-  }
-  url1GetText <- rawToChar(url1Get$content)
-  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  message("GTEx API successfully accessed!")
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
   tmp <- data.table::as.data.table(url1GetText2Json$variant)
   if(nrow(tmp)==0){
     message("No variant found, please check your input.")
@@ -660,6 +622,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #' @import curl
 #' @import stringr
 #' @import jsonlite
+#' @import utils
 #'
 #' @return A data.table.
 #' @export
@@ -670,7 +633,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #'  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
 #'  GTExquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 #' }
-GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
+GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=100){
   ########## parameter check: variantName
   if(is.null(chrom) ||  any(is.na(chrom)) ){
     stop("Parameter \"chrom\" can not be NULL or NA!")
@@ -696,32 +659,49 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }
 
-  url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
-                 "datasetId=", datasetId,"&",
-                 "chromosome=", chrom, "&",
-                 "pos=",paste0(pos,collapse=","))
-  if(nchar(url1)>4000){
-    stop("Too many positions were received, please reduce the number of positions.")
+  var_tmp <- data.table(ID=1:length(pos), chrom=chrom, pos=pos)
+  cutNum <- recordPerChunk
+  ############### query with GTExquery_varPos: START
+  # var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
+  # query pos in batch per 100 terms.
+  var_tmpCut <- cbind(var_tmp, data.table::data.table( ID=1:nrow(var_tmp), cutF = as.character(cut(1:nrow(var_tmp),breaks=seq(0,nrow(var_tmp)+cutNum,cutNum) )) ))
+  var_tmpCut <- var_tmpCut[,.(posLis=list(pos)),by=c("chrom","cutF")]
+
+  # check network:
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
   }
-  # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&chromosome=chr11&pos=65592772
-  # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=16&pos=57190138
-  # https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v7&chromosome=1&pos=115746%2C135203%2C1086820
-  # fetch data:
-  url1Get <- curl::curl_fetch_memory(url1)
-  if(url1Get$status_code!=200){
-    stop("Http status code: ", url1Get$status_code)
+  # out:
+  outInfo <- data.table::data.table()
+  for( ii in 1:nrow(var_tmpCut)){
+    message("   Got varints: ",nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)),"/",nrow(var_tmp))
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
+                   "datasetId=", datasetId,"&",
+                   "chromosome=", chrom, "&",
+                   "pos=",paste0(unlist(var_tmpCut[ii,]$posLis),collapse=",") )
+    url1 <- utils::URLencode(url1)
+    if(nchar(url1)>4000){
+      stop("Too many positions were received, please reduce the number of positions or recordPerChunk.")
+    }
+    # fetch data:
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    tmp <- data.table::as.data.table(url1GetText2Json$variant)
+    # eliminate the difference between the gtex_v7 and gtex_v8:
+    if(datasetId == "gtex_v7"){
+      tmp$b37VariantId <- tmp$variantId
+    }
+    tmp <- tmp[,c("variantId", "snpId","b37VariantId", "chromosome","pos", "ref", "alt","datasetId","maf01", "shorthand")]
+
+    outInfo <- rbind(outInfo, tmp)
   }
-  url1GetText <- rawToChar(url1Get$content)
-  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-  tmp <- data.table::as.data.table(url1GetText2Json$variant)
-  if(nrow(tmp)==0){
+
+  if(nrow(outInfo)==0){
     message("No variant found, please check your input.")
     return(data.table::data.table())
   }
-  # eliminate the difference between the gtex_v7 and gtex_v8:
-  if(datasetId == "gtex_v7"){
-    tmp$b37VariantId <- tmp$variantId
-  }
+
   outInfo <- tmp[,c("variantId", "snpId","b37VariantId", "chromosome","pos", "ref", "alt","datasetId","maf01", "shorthand")]
   return(outInfo)
 }
@@ -731,36 +711,115 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8"){
 #
 #' @title Heartbeat to check server connectivity.
 #' @description
-#'  test API server
-#' @import curl
+#'  test API server and return download method.
 #' @return A numeric value. Response code 200 indicates that the request has succeeded.
 #' @export
+#' @return A character of fetchContent method.
 #' @examples
 #' \donttest{
 #'   apiAdmin_ping()
-#'   ifelse( apiAdmin_ping() ==200, "accessed", "failed")
 #'  }
 apiAdmin_ping <- function(){
   url1Get <- "https://gtexportal.org/rest/v1/admin/ping"
-  tryCatch(
-    {
-      # httr::status_code(httr::GET(url1Get))
-      curl::curl_fetch_memory(url1Get)$status_code
-      # utils::download.file(url1Get, "../tmp.txt")
-      # utils::download.file(url1, "../tmp.txt")
-      # downloader::download(url1Get,"../a.txt")
-      # download.file(url1, "../a.txt")
-    },
-    # e = simpleError("test error"),
-    error=function(cond){
-      message("Note: API server is busy or your network has latency, please try again later.")
-      return(NULL)
-    },
-    warning = function(cond){
-      message(cond)
-    }
-  )
+  fetchMethod = c("curl", "download","GET")
+  for( i in 1:length(fetchMethod)){
+    tryCatch(
+      {
+        message("== test method:",fetchMethod[i])
+        suppressWarnings(outInfo <- fetchContent(url1Get, method = fetchMethod[i]))
+        if( exists("outInfo") && outInfo=="Ping!"){
+          # print(fetchMethod[i])
+          return(fetchMethod[i])
+        }else{
+          next()
+        }
+      },
+      # e = simpleError("test error"),
+      error=function(cond){
+        message("   Method [",fetchMethod[i],"] failed!")
+        return(NULL)
+      },
+      warning = function(cond){
+        message(cond)
+      }
+    )
+  }
+  message("Note: API server is busy or your network has latency, please try again later.")
+  return(NULL)
 }
+
+#' @title Fetch data using url by three methods
+#'
+#' @param url1 A url string.
+#' @param method Can be chosen from "download", "curl" or "GET".
+#' @param downloadMethod The same methods from utils::download.file function.
+#' @import utils
+#' @import jsonlite
+#' @importFrom curl curl_fetch_memory
+#' @importFrom httr GET
+#' @return A json object.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=chr11_66561248_T_C_b38&tissueSiteDetailId=Liver&datasetId=gtex_v8"
+#'  fetchContent(url1, method="curl")
+#'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
+#'  fetchContent(url1, method="download")
+#' }
+fetchContent <- function(url1, method="download", downloadMethod="auto"){
+  if( method=="download" ){
+    tmpFile <- tempfile(pattern = "file")
+    suppressMessages(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod ))
+    url1GetText2Json <-""
+    if( file.exists(tmpFile) ){
+      # url1GetText <- fread(tmpFile,sep="\n", header=FALSE)
+      url1GetText <- readLines(tmpFile)
+      # replace NAN with NULL:
+      url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
+      url1GetText2Json <- jsonlite::fromJSON(url1GetText)
+      if(names(url1GetText2Json)==""){
+        message("No data fetched, please check your input.")
+        return(NULL)
+      }
+      file.remove(tmpFile)
+      return(url1GetText2Json)
+    }else{
+      stop("File download error.")
+    }
+  }else if( method == "curl"){
+    url1Get <- curl::curl_fetch_memory(url1)
+    if( url1Get$status_code!=200){
+      mesage("Http status code: ", url1Get$status_code)
+    }
+    url1GetText <- rawToChar(url1Get$content)
+    # replace NAN with NULL:
+    url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
+    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+    if(names(url1GetText2Json)==""){
+      message("No data fetched, please check your input.")
+      return(NULL)
+    }
+    return(url1GetText2Json)
+  }else if( method == "GET" ){
+    url1Get <- httr::GET(url1)
+    if( url1Get$status_code!=200){
+      message("Http status code: ", url1Get$status_code)
+    }
+    url1GetText <- rawToChar(url1Get$content)
+    # replace NAN with NULL:
+    url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
+    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+    if(names(url1GetText2Json)==""){
+      message("No data fetched, please check your input.")
+      return(NULL)
+    }
+    return(url1GetText2Json)
+  }else{
+    stop("please choose the right method.")
+  }
+}
+
 
 #' @title retrieve snps from dbSNP using genome range.
 #'
@@ -823,6 +882,12 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
     stop("Parameter \"track\" should be chosen from \"snp151Common\", \"snp150Common\" and \"snp147Common\".")
   }
 
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+
   # construct url:
   url1 <- paste0("https://api.genome.ucsc.edu/getData/track?",
                  "genome=",genomeBuild,
@@ -832,12 +897,8 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
                  ";end=",endPos)
 
   url1 <- utils::URLencode(url1)
-  url1Get <- curl::curl_fetch_memory(url1)
-  if(url1Get$status_code!=200){
-    stop("Http status code: ", url1Get$status_code)
-  }
-  url1GetText <- rawToChar(url1Get$content)
-  url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+  message("GTEx API successfully accessed!")
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
   outInfo <- as.data.table(url1GetText2Json[track][[track]])
   return(outInfo)
 }

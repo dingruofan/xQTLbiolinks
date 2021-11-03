@@ -4,7 +4,12 @@
 \alias{GTExquery_varPos}
 \title{Query variant information by position.}
 \usage{
-GTExquery_varPos(chrom = "", pos = numeric(0), datasetId = "gtex_v8")
+GTExquery_varPos(
+  chrom = "",
+  pos = numeric(0),
+  datasetId = "gtex_v8",
+  recordPerChunk = 100
+)
 }
 \arguments{
 \item{chrom}{A character string.}

@@ -12,7 +12,7 @@ GTExquery_gene(
 )
 }
 \arguments{
-\item{genes}{A gene symbol, gencode id (versioned), or a charater string of gene type.
+\item{genes}{A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
 \itemize{
 \item \strong{gene symbol (Default)}.
 
