@@ -76,6 +76,7 @@
 #'
 #' @examples
 #' \donttest{
+#'   dot num+++
 #'  # EQTL associatons of TP53:
 #'  eqtlInfo <- GTExdownload_eqtlSig(gene = "TP53", tissueSiteDetail = "Esophagus - Mucosa")
 #'  eqtlInfo <- GTExdownload_eqtlSig(gene = "IRF5", tissueSiteDetail = "Esophagus - Mucosa")
@@ -86,6 +87,7 @@
 #'
 #'  GTExvisual_eqtlExp(variantName="rs4728150", gene ="IRF5", tissueSiteDetail="Esophagus - Mucosa")
 #'
+#'  GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5", tissueSiteDetail="Whole Blood")
 #' }
 GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
@@ -211,7 +213,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 # 用户设定范围：1. SNP 上下游，2. gene 上下游 3. 自定义范围。
 # 根据范围获得GWAS的SNP。
 # 根据GWAS SNP获得 eqtl 信息。
-#' @title significance analysis of GTEX and eQTL
+#' @title significance analysis of GTEX and eQTL  NO.
 #'
 #' @param gwasDF A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".
 #' @param queryTerm Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").
@@ -457,6 +459,9 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
 #' @export
 #'
 #' @examples
+#' \donttest{
+#'  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+#' }
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr1:1-3", tissueSiteDetail="", datasetId="gtex_v8"){
 
   # gene = "ENSG00000112137.12"
@@ -464,7 +469,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr
   # tissueSiteDetail = "Adipose - Subcutaneous"
   # datasetId = "gtex_v7"
 
-  # eqtlOfgene <- GTExdownload_eqtlAll( gene=gene, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId)
+  eqtlOfgene <- GTExdownload_eqtlAll( gene=gene, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId)
   if( nrow(eqtlOfgene)<=2 ){
     warning("Only ",nrow(eqtlOfgene)," eqtl ", ifelse(nrow(eqtlOfgene)==1,"association was","associations were")," detected, please extend the genome range using parameter \"coordinate\". " )
     return(NULL)
@@ -508,7 +513,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr
 
   stopifnot(require(ggplot2))
   stopifnot(require(ggrepel))
-  ggplot(eqtlOfgene)+
+  p <- ggplot(eqtlOfgene)+
     geom_point(aes(x=pos, y=logP, color=colorP, size=colorP))+
     scale_color_manual(breaks = eqtlOfgene$colorP, values = eqtlOfgene$colorP)+
     scale_size_manual(breaks = eqtlOfgene$sizeP, values =  rel(as.numeric(eqtlOfgene$sizeP)) )+
@@ -523,6 +528,8 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr
           axis.title.y=element_text(size=rel(1.3)),
           plot.title = element_text(hjust=0.5)
     )
+  print(p)
+  p
 
 
 1

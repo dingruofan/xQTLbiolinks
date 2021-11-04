@@ -351,6 +351,8 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'  GTExdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
 #'  GTExdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
+#'  GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+#'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
 #'  GTExdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
@@ -537,7 +539,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'
 #'  # Download eQTL info for a gene:
-#'  GTExdownload_eqtlAll(gene="TP53")
+#'  a <- GTExdownload_eqtlAll(gene="TP53")
 #'  GTExdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
 #'
 #'  # Unversioned gencode ID in GTEx V7:
@@ -1102,7 +1104,8 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #'
 #' @examples
 #' \donttest{
-#'  GTExdownload_ld("TP53" )
+#'  aa <- GTExdownload_ld("TP53" )
+#'  gtex
 #'  GTExdownload_ld(gene = "DDX11", datasetId="gtex_v7")
 #'  GTExdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
 #'
@@ -1252,7 +1255,7 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #'
 #' @examples
 #' \donttest{
-#'  GTExdownload_egene("DDX11")
+#'  GTExdownload_egene("TP53")
 #'  a <- GTExdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
 #'  a <- GTExdownload_egene( recordPerChunk=2000)
 #'  GTExdownload_egene("ENSG00000141510.16", geneType="gencodeId")
@@ -1370,7 +1373,21 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 }
 
 
-
+#' Title
+#'
+#' @param genes
+#' @param geneType
+#' @param datasetId
+#' @param tissueSiteDetail
+#' @param recordPerChunk
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  GTExdownload_geneMedExp(genes="TP53", "geneSymbol")
+#' }
 GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
   # check genes
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
