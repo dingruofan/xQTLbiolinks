@@ -739,7 +739,6 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 
 
 
-#
 #' @title Heartbeat to check server connectivity.
 #' @description
 #'  test API server and return download method.
@@ -757,7 +756,7 @@ apiAdmin_ping <- function(){
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
-        message("== test method:",fetchMethod[i])
+        message("== Test network: ",fetchMethod[i])
         suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
         if( exists("outInfo") && outInfo=="Ping!"){
           # print(fetchMethod[i])
@@ -768,7 +767,7 @@ apiAdmin_ping <- function(){
       },
       # e = simpleError("test error"),
       error=function(cond){
-        message("   Method [",fetchMethod[i],"] failed!")
+        # message("   Method [",fetchMethod[i],"] failed!")
         return(NULL)
       },
       warning = function(cond){
@@ -802,7 +801,7 @@ apiAdmin_ping <- function(){
 fetchContent <- function(url1, method="download", downloadMethod="auto"){
   if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
-    suppressMessages(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod ))
+    utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
     url1GetText2Json <-""
     if( file.exists(tmpFile) ){
       # url1GetText <- fread(tmpFile,sep="\n", header=FALSE)
@@ -853,7 +852,7 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
 }
 
 
-#' @title retrieve snps from dbSNP using genome range.
+#' @title retrieve snps from dbSNP using coordinate.
 #'
 #' @param chrom A character string. Chromesome of human, including chr1-chr23, chrX, chrY.
 #' @param startPos A positive integer.
@@ -870,7 +869,7 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
 #'
 #' @examples
 #' \donttest{
-#'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1, endPos=10000000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+#'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1, endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 #' }
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
   # chrom="chr1"
@@ -929,9 +928,11 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
                  ";end=",endPos)
 
   url1 <- utils::URLencode(url1)
-  message("GTEx API successfully accessed!")
+  message("  GTEx API successfully accessed!")
+  message("  Downloading...")
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
   outInfo <- as.data.table(url1GetText2Json[track][[track]])
+  message("  Done")
   return(outInfo)
 }
 

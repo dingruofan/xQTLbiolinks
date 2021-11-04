@@ -97,7 +97,6 @@
 #'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
 #'
-#'
 #'   # Get proteing-coding genes' expression:
 #'   proT <- GTExquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
 #'   proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
