@@ -1416,7 +1416,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   # Fetch gene info:
   if(genes!="" || length(genes)>1){
     message("== Querying gene info from API server:")
-    suppressMessages(geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion))
+    suppressMessages( geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",stringr::str_sub(paste(genes, collapse = ","),1,20),"....] you entered could not be found!")
     }
@@ -1425,7 +1425,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
 
   #
   outInfo <- data.table::data.table()
-  genesCut <- data.table::data.table(gencodeId=geneInfo$gencodeId, ID=1:length(genes), cutF = as.character(cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+recordPerChunk,recordPerChunk) )) )
+  genesCut <- data.table::data.table(gencodeId=geneInfo$gencodeId, ID=1:nrow(geneInfo), cutF = as.character(cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+recordPerChunk,recordPerChunk) )) )
   genesURL <- genesCut[,.(genesURL=paste0(gencodeId,collapse = "%2C")),by=c("cutF")]
   if( any(unlist(lapply(genesURL$genesURL, nchar)) >3900) ){
     stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")

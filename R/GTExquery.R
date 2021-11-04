@@ -203,7 +203,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
       # 分批下载：
       genesCut <- data.table::data.table(genes=genes, ID=1:length(genes), cutF = as.character(cut(1:length(genes),breaks=seq(0,length(genes)+cutNum,cutNum) )) )
       genesCut$genesUpper <- toupper(genesCut$genes)
-      genesURL <- genesCut[,.(genesURL=paste0(genes,collapse = "%2C")),by=c("cutF")]
+      genesURL <- genesCut[,.(genesURL=paste0(genes,collapse = ",")),by=c("cutF")]
       if( any(unlist(lapply(genesURL$genesURL, nchar)) >3900) ){
         stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")
       }
@@ -214,7 +214,8 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         return(NULL)
       }
       message("GTEx API successfully accessed!")
-      for(i in 1:nrow(genesURL)){
+      tmp_all <- data.table()
+      for(i in 1: nrow(genesURL) ){
         # construct url:
         url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
                        "geneId=", genesURL[i,]$genesURL,"&",
@@ -234,20 +235,48 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         url1GetText2Json2DT$genomeBuild <- genomeBuild
         tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
         tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
+        tmp_all <- rbind(tmp_all, tmp)
+        message("Downloaded  ", i, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId)), " records.")
+
+        # if more pages:
+        page_tmp<-page_tmp+1
+        while( page_tmp <= (url1GetText2Json$numPages-1) ){
+          url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
+                         "geneId=", genesURL[i,]$genesURL,"&",
+                         "gencodeVersion=", gencodeVersion,"&",
+                         "genomeBuild=",genomeBuild,"&",
+                         "page=",page_tmp,"&",
+                         "pageSize=", pageSize_tmp,"&",
+                         "format=json"
+          )
+          url1 <- utils::URLencode(url1)
+          url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+          url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+          if( nrow(url1GetText2Json2DT)==0 ){
+            message( "0 record fatched!" )
+            return(data.table::data.table())
+          }
+          url1GetText2Json2DT$genomeBuild <- genomeBuild
+          tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
+          tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
+          tmp_all <- rbind(tmp_all, tmp)
+          message("Downloaded  ", i, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId)), " records.")
+          page_tmp <- page_tmp+1
+        }
         # because of versioned and unversioned gencodeID, merge separately is needed!
         if(geneType == "gencodeId"){
           # versioned:
-          tmp1 <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp, by="genesUpper", sort = FALSE)[,-c("genesUpper")]
+          tmp1 <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp_all, by="genesUpper", sort = FALSE)[,-c("genesUpper")]
           # unversioned:
-          tmp$genesUpper <- unlist(lapply(tmp$genesUpper, function(x){ stringr::str_split(x,stringr::fixed("."))[[1]][1] }))
-          tmp2 <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp, by="genesUpper", sort = FALSE)[,-c("genesUpper")]
+          tmp_all$genesUpper <- unlist(lapply(tmp_all$genesUpper, function(x){ stringr::str_split(x,stringr::fixed("."))[[1]][1] }))
+          tmp2 <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp_all, by="genesUpper", sort = FALSE)[,-c("genesUpper")]
           # combination:
-          tmp <- merge(genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], rbind(tmp1, tmp2), by="genes",all.x=TRUE,sort = FALSE)
+          tmp_all <- merge(genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], rbind(tmp1, tmp2), by="genes",all.x=TRUE,sort = FALSE)
         }else{
-          tmp <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp, by="genesUpper",all.x=TRUE, sort = FALSE)[,-c("genesUpper")]
+          tmp_all <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp_all, by="genesUpper",all.x=TRUE, sort = FALSE)[,-c("genesUpper")]
         }
-        outInfo <- rbind(outInfo, tmp)
-        message("Downloaded  ", i, "/",nrow(genesURL),"; ", length(na.omit(outInfo$gencodeId)), " records.")
+        outInfo <- rbind(outInfo, tmp_all)
+
         # message("Downloaded  ", round(i/nrow(genesURL)*100,2),"%; totally ", length(na.omit(outInfo$gencodeId)), " records fetched!")
         # rm(url1, url1Get, url1GetText, url1GetText2Json, url1GetText2Json2DT)
       }
@@ -724,6 +753,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 apiAdmin_ping <- function(){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
   fetchMethod = c("curl", "download","GET")
+  downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
