@@ -76,19 +76,16 @@
 #'
 #' @examples
 #' \donttest{
+#'
+#'
 #'   dot num+++
 #'  # EQTL associatons of TP53:
-#'  eqtlInfo <- GTExdownload_eqtlSig(gene = "TP53", tissueSiteDetail = "Esophagus - Mucosa")
-#'  eqtlInfo <- GTExdownload_eqtlSig(gene = "IRF5", tissueSiteDetail = "Esophagus - Mucosa")
-#'  eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol,
-#'                                  tissueSiteDetail = "Esophagus - Mucosa")
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
-#'
-#'  GTExvisual_eqtlExp(variantName="rs4728150", gene ="IRF5", tissueSiteDetail="Esophagus - Mucosa")
-#'
 #'  GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5", tissueSiteDetail="Whole Blood")
 #' }
+#'
+#'
 GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
   # variantName="rs78378222"
@@ -97,6 +94,13 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   # datasetId="gtex_v8"
   # variantType="snpId"
   # geneType="geneSymbol"
+
+  library(crayon)
+  cat(green(
+    'I am a green line ' %+%
+      blue$underline$bold('with a blue substring') %+%
+      yellow$italic(' that becomes yellow and italicised!\n')
+  ))
 
   # gene="ENSG00000248746.5"
   # geneType="gencodeId"
@@ -148,6 +152,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
+    message()
     message("== Done")
   }
 

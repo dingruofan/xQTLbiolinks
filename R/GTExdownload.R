@@ -660,7 +660,6 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   tmp <- tmp[,-which(names(tmp) %in% c("datasetId", "gencodeId", "metaP","variantId"))]
   outInfo <- data.table::data.table()
   for(i in 1:length(names(tmp))){
-    print(i)
     tmp_i <- cbind( tmp_info, tmp[[i]])
     tmp_i_tissue <- tissueSiteDetailGTEx[names(tmp)[i], on="tissueSiteDetailId"]$tissueSiteDetail
     tmp_i$tissueSiteDetail <- tmp_i_tissue
