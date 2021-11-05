@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{dbsnpQueryRange}
 \alias{dbsnpQueryRange}
-\title{retrieve snps from dbSNP using genome range.}
+\title{retrieve snps from dbSNP using coordinate.}
 \usage{
 dbsnpQueryRange(
   chrom = "",
@@ -27,10 +27,10 @@ dbsnpQueryRange(
 A data.table.
 }
 \description{
-retrieve snps from dbSNP using genome range.
+retrieve snps from dbSNP using coordinate.
 }
 \examples{
 \donttest{
- snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1, endPos=10000000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+ snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1, endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 }
 }

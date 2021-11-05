@@ -111,6 +111,8 @@ Fetch significant eQTL associations with a variant or a gene or a variant-gene p
  GTExdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
  GTExdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
+ GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+                   datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 
  # Download eQTL info for a variant-gene pair:
  GTExdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")

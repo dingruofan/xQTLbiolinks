@@ -28,7 +28,8 @@ Fetch linkage disequilibrium data for the cis-eQTLs found associated with this g
 }
 \examples{
 \donttest{
- GTExdownload_ld("TP53" )
+ aa <- GTExdownload_ld("TP53" )
+ gtex
  GTExdownload_ld(gene = "DDX11", datasetId="gtex_v7")
  GTExdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
 

@@ -98,7 +98,7 @@ Fetch significant or unsignificant eQTL associations with a gene or a variant-ge
 \donttest{
 
  # Download eQTL info for a gene:
- GTExdownload_eqtlAll(gene="TP53")
+ a <- GTExdownload_eqtlAll(gene="TP53")
  GTExdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
 
  # Unversioned gencode ID in GTEx V7:

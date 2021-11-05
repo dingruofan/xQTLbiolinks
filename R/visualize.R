@@ -95,12 +95,12 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   # variantType="snpId"
   # geneType="geneSymbol"
 
-  library(crayon)
-  cat(green(
-    'I am a green line ' %+%
-      blue$underline$bold('with a blue substring') %+%
-      yellow$italic(' that becomes yellow and italicised!\n')
-  ))
+  # library(crayon)
+  # cat(green(
+  #   'I am a green line ' %+%
+  #     blue$underline$bold('with a blue substring') %+%
+  #     yellow$italic(' that becomes yellow and italicised!\n')
+  # ))
 
   # gene="ENSG00000248746.5"
   # geneType="gencodeId"
@@ -152,7 +152,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
-    message()
+    message("   eQTL association was found in ", datasetId, " of gene [", gene,"] and variant [", variantName," in [", tissueSiteDetail,"].")
     message("== Done")
   }
 
@@ -161,6 +161,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   if( !exists("eqtlExp") || is.null(eqtlExp) || nrow(eqtlExp)==0 ){
     stop("No expression profiles were found for gene [", gene, "] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
+    message("   Normalized expression of [",nrow(eqtlExp), "] samples were obtaioned in ", tissueSiteDetail, " in ", datasetId,".")
     message("== Done")
   }
 
@@ -171,6 +172,13 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
                                             ifelse(nchar(eqtlInfo$ref)==1, paste0(rep(eqtlInfo$alt,2),collapse = ""), "Hom")) )
   genoLable$genoLabels <- factor(genoLable$genoLabels, levels = genoLable$genoLabels)
   genoLable <- merge(eqtlExp, genoLable, by ="genotypes")
+
+  # x axis label:
+  genoLableX <- data.table::as.data.table(table(genoLable$genoLabels))
+  names(genoLableX) <- c("genoLabels", "Num")
+  genoLableX$label <- paste0(genoLableX$genoLabels, "(",genoLableX$Num,")")
+  genoLableX <- merge(data.table(genoLabels = levels(genoLable$genoLabels)),genoLableX, by="genoLabels", sort=FALSE)
+
   # for Pie:
   genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
   names(genoLabelPie) <- c("genoLabels", "labelNum")
@@ -179,10 +187,13 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   stopifnot(require(ggplot2))
   stopifnot(require(ggrepel))
   p <- ggplot(genoLable)+
-    geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.6)+
+    geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
+    geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
+    scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
     # scale_fill_manual(values=c("green", "red"))+
     # scale_fill_brewer(palette = "Dark2")+
     theme_bw()+
+    labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol, " (",tissueSiteDetail,")") )+
     xlab("Genotypes")+
     ylab("Normalized expression")+
     theme(axis.text.x=element_text(size=rel(1.3)),
@@ -191,8 +202,10 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
           legend.position = "none",
           legend.background = element_rect(fill="white",
                                            size=0.5, linetype="solid",
-                                           colour ="white")
+                                           colour ="white"),
+          plot.title = element_text(hjust=0.5)
     )
+  print(p)
   # ggplot(genoLabelPie) +
   #   geom_bar( aes(x="", y=labelNum, fill=genoLabels), stat = "identity") + coord_polar("y", start=0)+
   #   labs(x = "", y = "", title = "") +
@@ -210,7 +223,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   # gridExtra::grid.arrange()
 
   print(p)
-  return(p)
+  return(list(eqtl=eqtlInfo, exp=genoLable))
 }
 
 
@@ -453,7 +466,6 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
 #'
 #' @param gene
 #' @param geneType
-#' @param coordinate
 #' @param tissueSiteDetail
 #' @param datasetId
 #' @import data.table
@@ -467,14 +479,53 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
 #' \donttest{
 #'  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
 #' }
-GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr1:1-3", tissueSiteDetail="", datasetId="gtex_v8"){
+GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
 
   # gene = "ENSG00000112137.12"
   # geneType = "gencodeId"
   # tissueSiteDetail = "Adipose - Subcutaneous"
   # datasetId = "gtex_v7"
 
-  eqtlOfgene <- GTExdownload_eqtlAll( gene=gene, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId)
+  gencodeVersion <- "v26"
+  if( datasetId == "gtex_v8" ){
+    gencodeVersion <- "v26"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  }else if( datasetId == "gtex_v7" ){
+    gencodeVersion <- "v19"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+  }
+  # check gene:
+  if( length(gene) >1 || !is.character(gene) ){
+    stop("Parameter \"gene\" must be a character string. ")
+  }else if(gene ==""){
+    stop("Parameter \"gene\" can not be null. ")
+  }
+
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) || any(is.na(tissueSiteDetail)) || tissueSiteDetail=="" ){
+    stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be a character string!")
+  }else if(  !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }else if( tissueSiteDetail!="" ){
+    # convert tissueSiteDetail to tissueSiteDetailId:
+    tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+  }else{
+    message("Invalid parameter \"tissueSiteDetail\".")
+    return(data.table::data.table())
+  }
+
+  message("== Querying significant eQTL associations from API server:")
+  suppressMessages( eqtlOfgene <- GTExdownload_eqtlAll( gene=gene, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId))
+  if( !exists("eqtlOfgene") || is.null(eqtlOfgene) || nrow(eqtlOfgene)==0 ){
+    stop("No eqtl associations were found for gene [", gene, "] in ", tissueSiteDetail, " in ", datasetId,".")
+  }else{
+    message("   Totally, ", nrow(eqtlOfgene)," eQTL association was found in ", datasetId, " of gene [", gene,"] in [", tissueSiteDetail,"].")
+    message("== Done")
+  }
+
   if( nrow(eqtlOfgene)<=2 ){
     warning("Only ",nrow(eqtlOfgene)," eqtl ", ifelse(nrow(eqtlOfgene)==1,"association was","associations were")," detected, please extend the genome range using parameter \"coordinate\". " )
     return(NULL)
@@ -514,14 +565,14 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr
   eqtlOfgene[which(eqtlOfgene$logP>=quantile(eqtlOfgene$logP, seq(0,1,0.1))[10] & eqtlOfgene$logP<quantile(eqtlOfgene$logP, seq(0,1,0.1))[11] ),]$colorP <- "green"
   eqtlOfgene[which(eqtlOfgene$logP>=quantile(eqtlOfgene$logP, seq(0,1,0.1))[10] & eqtlOfgene$logP<quantile(eqtlOfgene$logP, seq(0,1,0.1))[11] ),]$sizeP <- 2
   eqtlOfgene[1,]$colorP <- "red"
-  eqtlOfgene[1,]$sizeP <- 3
+  eqtlOfgene[1,]$sizeP <- 4
 
   stopifnot(require(ggplot2))
   stopifnot(require(ggrepel))
   p <- ggplot(eqtlOfgene)+
-    geom_point(aes(x=pos, y=logP, color=colorP, size=colorP))+
+    geom_point(aes(x=pos, y=logP, color=colorP, size=sizeP))+
     scale_color_manual(breaks = eqtlOfgene$colorP, values = eqtlOfgene$colorP)+
-    scale_size_manual(breaks = eqtlOfgene$sizeP, values =  rel(as.numeric(eqtlOfgene$sizeP)) )+
+    # scale_size_manual(breaks = as.character(eqtlOfgene$sizeP), values =  as.numeric(eqtlOfgene$sizeP) )+
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
     geom_label_repel(data=eqtlOfgene[1:1,], aes(x=pos, y=logP, label=snpId) )+
     labs(title = plotTitle )+
@@ -532,12 +583,9 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", coordinate="chr
           axis.title.x=element_text(size=rel(1.3)),
           axis.title.y=element_text(size=rel(1.3)),
           plot.title = element_text(hjust=0.5)
-    )
+    )+guides(color="none", size="none")
   print(p)
   p
-
-
-1
 
 
 }

@@ -7,7 +7,6 @@
 GTExvisual_eqtlTrait(
   gene = "",
   geneType = "geneSymbol",
-  coordinate = "chr1:1-3",
   tissueSiteDetail = "",
   datasetId = "gtex_v8"
 )
@@ -17,4 +16,9 @@ GTExvisual_eqtlTrait(
 }
 \description{
 
+}
+\examples{
+\donttest{
+ GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+}
 }

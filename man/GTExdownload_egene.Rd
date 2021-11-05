@@ -90,7 +90,7 @@ eGenes are genes that have at least one significant cis-eQTL acting upon them. R
 }
 \examples{
 \donttest{
- GTExdownload_egene("DDX11")
+ GTExdownload_egene("TP53")
  a <- GTExdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
  a <- GTExdownload_egene( recordPerChunk=2000)
  GTExdownload_egene("ENSG00000141510.16", geneType="gencodeId")

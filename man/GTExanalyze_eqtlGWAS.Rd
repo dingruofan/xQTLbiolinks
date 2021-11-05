@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{GTExanalyze_eqtlGWAS}
 \alias{GTExanalyze_eqtlGWAS}
-\title{significance analysis of GTEX and eQTL}
+\title{significance analysis of GTEX and eQTL  NO.}
 \usage{
 GTExanalyze_eqtlGWAS(
   gwasDF,
@@ -39,7 +39,7 @@ GTExanalyze_eqtlGWAS(
 A plot.
 }
 \description{
-significance analysis of GTEX and eQTL
+significance analysis of GTEX and eQTL  NO.
 }
 \examples{
 \donttest{
