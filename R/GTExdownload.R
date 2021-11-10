@@ -1479,3 +1479,23 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   message("Unit of expression: ",unique(tmp$unit))
   return(outInfo)
 }
+
+################### EBI download:
+EBIdownload_asso <- function(gene="", geneType="geneSymbol", study_accession="gtex_v8", tissue_label="" ){
+  # gene="tp53"
+  # geneType="geneSymbol"
+  # study_accession="gtex_v8"
+  # tissue_label=""
+
+  message("GTEx API successfully accessed!")
+  geneInfo <- GTExquery_gene(gene, geneType = geneType)
+
+  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?links=False&gene_id=ENSG00000141510&qtl_group=Ovary")
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  gtexAsoo <- fetchContentEbi(url1)
+}
+

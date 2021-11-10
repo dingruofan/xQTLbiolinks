@@ -948,6 +948,80 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 }
 
 
+###################### EBI:
+EBIquery_allStudies <- function( ){
+  bestFetchMethod <- apiEbi_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+
+  # Fetch all studies name:
+  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies"
+  allStudies <- fetchContentEbi(url1)
+  allStudies <- rbindlist(lapply(allStudies$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
+  allStudies <- allStudies[,.(study_accession)]
+  # Fetch tissues of studies:
+  # allStudiesTissues <- data.table()
+  # for(i in 1:nrow(allStudies)){
+  #   message(i,". ", allStudies[i,]$study_accession)
+  #   tissuesTmp <- fetchContentEbi(allStudies[i,]$tissue)
+  #   tissuesTmp <- tissuesTmp$tissues
+  #   tissuesTmp$study_accession <- allStudies[i,]$study_accession
+  #   allStudiesTissues <- rbind(allStudiesTissues, tissuesTmp)
+  # }
+  # allStudiesTissues$value=1
+  # allStudiesTissues <- data.table::dcast(allStudiesTissues, tissue_label+tissue~study_accession, value.var = "value", fill=0)
+  return(allStudies)
+}
+
+EBIquery_allQtlGroups <- function(){
+  bestFetchMethod <- apiEbi_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  # Fetch all tissue name and id:
+  url1 <- "https://www.ebi.ac.uk/eqtl/api/qtl_groups"
+  allQtlGroups <- fetchContentEbi(url1)
+  allQtlGroups <- allQtlGroups$qtl_groups
+  return(allQtlGroups)
+}
 
 
+
+
+EBIquery_allTerm <- function( term="genes"){
+  bestFetchMethod <- apiEbi_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  url1 <- "https://www.ebi.ac.uk/eqtl/api/"
+  allTerms <- fetchContent(url1,method = bestFetchMethod)
+  allTerms <- names(allTerms$`_links`)
+  if( !(term %in% allTerms) ){
+    message("Parameter \"term\" must be chosen from \"", paste0(allTerms, collapse = "\", \""),".")
+  }
+  #
+  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/", term)
+  termInfo <- fetchContentEbi(url1, method = bestFetchMethod, termSize = 5000)
+  # studies:
+  if(term == "studies"){
+    termInfo <- rbindlist(lapply(termInfo$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
+    termInfo <- termInfo[,.(study_accession)]
+  }else if(term == "tissues"){
+    termInfo <- termInfo$tissues
+    termInfo$tissueType <- unlist(lapply(termInfo$tissue, function(x){ splitOut <- stringr::str_split(x, stringr::fixed("_"))[[1]]; splitOut[1] }))
+  }else if(term =="genes"){
+    termInfoAll <- data.frame()
+    for( i in 1:length(termInfo)){
+      termInfoAll <- rbind(termInfoAll, termInfo[[i]][,"gene",drop=FALSE])
+    }
+    termInfo <- termInfoAll
+  }else{
+    termInfo <- termInfo[[1]]
+  }
+  return(termInfo)
+}
 

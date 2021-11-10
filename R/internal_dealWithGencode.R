@@ -739,10 +739,9 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 
 
 
-#' @title Heartbeat to check server connectivity.
+#' @title Heartbeat to check GTEx API server connectivity.
 #' @description
-#'  test API server and return download method.
-#' @return A numeric value. Response code 200 indicates that the request has succeeded.
+#'  test GTEx API server and return download method.
 #' @export
 #' @return A character of fetchContent method.
 #' @examples
@@ -775,7 +774,46 @@ apiAdmin_ping <- function(){
       }
     )
   }
-  message("Note: API server is busy or your network has latency, please try again later.")
+  message("Note: GTEx API server is busy or your network has latency, please try again later.")
+  return(NULL)
+}
+
+#' @title Heartbeat to check EBI API server connectivity.
+#' @description
+#'  test EBI API server and return download method.
+#' @export
+#' @return A character of fetchContent method.
+#' @examples
+#' \donttest{
+#'   apiEbi_ping()
+#'  }
+apiEbi_ping <- function(){
+  url1 <- "https://www.ebi.ac.uk/eqtl/api/"
+  fetchMethod = c("curl", "download","GET")
+  downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
+  for( i in 1:length(fetchMethod)){
+    tryCatch(
+      {
+        message("== Test network: ",fetchMethod[i])
+        suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
+        if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
+          # print(fetchMethod[i])
+          return(fetchMethod[i])
+        }else{
+          next()
+        }
+      },
+      # e = simpleError("test error"),
+      error=function(cond){
+        # message("   Method [",fetchMethod[i],"] failed!")
+        return(NULL)
+      },
+      warning = function(cond){
+        message(cond)
+      }
+    )
+  }
+  message("Note: EBI API server is busy or your network has latency, please try again later.")
   return(NULL)
 }
 
@@ -860,23 +898,32 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
 #' @import data.table
-#' @import crayon
+#' @importFrom crayon magenta underline
 #' @return
 #' @export
 #'
 #' @examples
 #' \donttest{
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057"
-#'  geneEqtl <- fetchContentEbi(url1)
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?gene_id=ENSG00000141510&tissue=CL_0000057"
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057&study_id=Alasoo_2018"
+#'  geneEqtl2 <- fetchContentEbi(url1)
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/tissues"
-#'  tissueAll <- fetchContentEbi(url1)
+#'  tissueAll <- fetchContentEbi(url1, termSize=20, termStart=0)
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies"
+#'  studiesAll <- fetchContentEbi(url1, termSize=10, termStart=0)
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?links=False&gene_id=ENSG00000141510&qtl_group=Ovary"
+#'  gtexAsoo <- fetchContentEbi(url1)
+#'  GTExquery_gene("ENSG00000141510", "gencodeId")
+#'  eqtlv8 <- GTExdownload_eqtlAll(gene="TP53", tissueSiteDetail = "Ovary")
+#'  a <- merge(eqtlv8, gtexAsoo, by.x="snpId", by.y="rsid")
+#'  a[,.(pvalue, pValue)]
 #' }
 fetchContentEbi <- function(url1, method="curl", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
   # downloadMethod="auto"
   # termSize=1000
   # termStart=0
-  # url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000070031/associations?links=False&tissue=CL_0000057"
   # i=1
 
   # message <- function(...){
@@ -887,22 +934,38 @@ fetchContentEbi <- function(url1, method="curl", downloadMethod="auto", termSize
   #   cat( warn(argsTest),"\n" )
   # }
 
-  outInfo <- data.table::data.table()
-  for(i in 1:100000000000){
-    urlGot <- paste0(url1,
-                     "&size=",as.integer(termSize),
-                     "&start=",as.integer(termStart))
+  embeddedList <- list()
+  # Don't append size and start.
+  if( termSize ==0 ){
+    urlGot <- url1
     contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
-    if( length(contentGot[[1]][[1]])==0){
-      break
-    }else{
-      outInfo <- rbind(outInfo, suppressWarnings(data.table::rbindlist(contentGot[[1]][[1]])) )
-      message("Requset: ",i,"; Got records: ",length(contentGot[[1]][[1]]),"; Total records: ", nrow(outInfo))
-      termStart <- termStart+as.integer(termSize)
+    embeddedList <- c(embeddedList,contentGot[[1]])
+    embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
+    contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+    message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
+  }else if(termSize > 0){
+    for(i in 1:1000000000){
+      urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
+                       "size=",as.integer(termSize),
+                       "&start=",as.integer(termStart))
+      contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
+      if( !is.null(contentGot$status) && contentGot$status==404 ){
+        return(NULL)
+      }else if( length(contentGot[[1]])==0 || length(contentGot[[1]][[1]])==0  ){
+        break
+      }else{
+        embeddedList <- c(embeddedList,contentGot[[1]])
+        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
+        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+        message("Requset: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+        termStart <- termStart+as.integer(termSize)
+      }
     }
+  }else{
+    return(NULL)
   }
-  if(nrow(outInfo)>0){
-    return(outInfo)
+  if(length(embeddedList)>0){
+    return(embeddedList)
   }else{
     return(NULL)
   }
