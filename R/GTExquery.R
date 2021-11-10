@@ -991,6 +991,17 @@ EBIquery_allQtlGroups <- function(){
 
 
 
+#' @title EBIquery_allTerm
+#'
+#' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
+#' @return a data.table
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  a <- EBIquery_allTerm("genes")
+#'  a <- EBIquery_allTerm("associations")
+#' }
 EBIquery_allTerm <- function( term="genes"){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
@@ -1014,11 +1025,8 @@ EBIquery_allTerm <- function( term="genes"){
     termInfo <- termInfo$tissues
     termInfo$tissueType <- unlist(lapply(termInfo$tissue, function(x){ splitOut <- stringr::str_split(x, stringr::fixed("_"))[[1]]; splitOut[1] }))
   }else if(term =="genes"){
-    termInfoAll <- data.frame()
-    for( i in 1:length(termInfo)){
-      termInfoAll <- rbind(termInfoAll, termInfo[[i]][,"gene",drop=FALSE])
-    }
-    termInfo <- termInfoAll
+    termInfo <- do.call(rbind, lapply(termInfo, function(x){x['gene']}))
+    row.names(termInfo) <- NULL
   }else{
     termInfo <- termInfo[[1]]
   }

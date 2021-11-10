@@ -43,7 +43,7 @@ significance analysis of GTEX and eQTL  NO.
 }
 \examples{
 \donttest{
- gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+ gwasDF <- data.table::fread("D:\\\\Download\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="SFTPD", queryType="geneSymbol",
                       tissueSiteDetail="Artery - Tibial", datasetId="gtex_v7")

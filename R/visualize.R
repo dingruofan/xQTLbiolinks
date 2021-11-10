@@ -253,7 +253,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'
 #' @examples
 #' \donttest{
-#'  gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+#'  gwasDF <- data.table::fread("D:\\Download\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
 #'  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="SFTPD", queryType="geneSymbol",
 #'                       tissueSiteDetail="Artery - Tibial", datasetId="gtex_v7")
@@ -478,6 +478,7 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
 #' @examples
 #' \donttest{
 #'  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+#'  GTExvisual_eqtlTrait("tp53",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
 #' }
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
 
@@ -561,11 +562,11 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 
   # color: 高亮最显著的那一个，并标注。
   eqtlOfgene$colorP <- "grey"
-  eqtlOfgene$sizeP <- 1
+  eqtlOfgene$sizeP <- 2
   eqtlOfgene[which(eqtlOfgene$logP>=quantile(eqtlOfgene$logP, seq(0,1,0.1))[10] & eqtlOfgene$logP<quantile(eqtlOfgene$logP, seq(0,1,0.1))[11] ),]$colorP <- "green"
   eqtlOfgene[which(eqtlOfgene$logP>=quantile(eqtlOfgene$logP, seq(0,1,0.1))[10] & eqtlOfgene$logP<quantile(eqtlOfgene$logP, seq(0,1,0.1))[11] ),]$sizeP <- 2
   eqtlOfgene[1,]$colorP <- "red"
-  eqtlOfgene[1,]$sizeP <- 4
+  eqtlOfgene[1,]$sizeP <- 2
 
   stopifnot(require(ggplot2))
   stopifnot(require(ggrepel))

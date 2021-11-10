@@ -20,5 +20,6 @@ GTExvisual_eqtlTrait(
 \examples{
 \donttest{
  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+ GTExvisual_eqtlTrait("tp53",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
 }
 }
