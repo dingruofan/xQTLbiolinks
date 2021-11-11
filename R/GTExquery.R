@@ -999,10 +999,16 @@ EBIquery_allQtlGroups <- function(){
 #'
 #' @examples
 #' \donttest{
+#'
+#'  a <- EBIquery_allTerm("associations",termSize=0)
+#'  a <- EBIquery_allTerm("molecular_phenotypes")
+#'  a <- EBIquery_allTerm("studies")
+#'  a <- EBIquery_allTerm("tissues")
+#'  a <- EBIquery_allTerm("qtl_groups")
 #'  a <- EBIquery_allTerm("genes")
-#'  a <- EBIquery_allTerm("associations")
+#'  a <- EBIquery_allTerm("chromosomes")
 #' }
-EBIquery_allTerm <- function( term="genes"){
+EBIquery_allTerm <- function( term="genes",termSize=5000){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
     message("Note: API server is busy or your network has latency, please try again later.")
@@ -1016,11 +1022,11 @@ EBIquery_allTerm <- function( term="genes"){
   }
   #
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/", term)
-  termInfo <- fetchContentEbi(url1, method = bestFetchMethod, termSize = 5000)
+  termInfo <- fetchContentEbi(url1, method = bestFetchMethod, termSize = termSize)
   # studies:
   if(term == "studies"){
-    termInfo <- rbindlist(lapply(termInfo$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
-    termInfo <- termInfo[,.(study_accession)]
+    termInfo <- data.table::rbindlist(lapply(termInfo$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
+    termInfo <- termInfo[,c("study_accession")]
   }else if(term == "tissues"){
     termInfo <- termInfo$tissues
     termInfo$tissueType <- unlist(lapply(termInfo$tissue, function(x){ splitOut <- stringr::str_split(x, stringr::fixed("_"))[[1]]; splitOut[1] }))
