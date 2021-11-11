@@ -1481,7 +1481,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
 }
 
 ################### EBI download:
-EBIdownload_asso <- function(gene="", geneType="geneSymbol", study_accession="gtex_v8", tissue_label="" ){
+GTExdownload_asso <- function(gene="", geneType="geneSymbol", study_accession="gtex_v8", tissue_label="" ){
   # gene="tp53"
   # geneType="geneSymbol"
   # study_accession="gtex_v8"

@@ -944,14 +944,14 @@ fetchContentEbi <- function(url1, method="curl", downloadMethod="auto", termSize
     contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
     message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
   }else if(termSize > 0){
-    for(i in 1:1000000000){
+    for(i in 1:10^10){
       urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
                        "size=",as.integer(termSize),
                        "&start=",as.integer(termStart))
       contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
       if( !is.null(contentGot$status) && contentGot$status==404 ){
         return(NULL)
-      }else if( length(contentGot[[1]])==0 || length(contentGot[[1]][[1]])==0  ){
+      }else if( is.null(contentGot$`_links`$`next`$href) ){
         break
       }else{
         embeddedList <- c(embeddedList,contentGot[[1]])

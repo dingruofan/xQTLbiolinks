@@ -948,49 +948,6 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 }
 
 
-###################### EBI:
-EBIquery_allStudies <- function( ){
-  bestFetchMethod <- apiEbi_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
-
-  # Fetch all studies name:
-  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies"
-  allStudies <- fetchContentEbi(url1)
-  allStudies <- rbindlist(lapply(allStudies$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
-  allStudies <- allStudies[,.(study_accession)]
-  # Fetch tissues of studies:
-  # allStudiesTissues <- data.table()
-  # for(i in 1:nrow(allStudies)){
-  #   message(i,". ", allStudies[i,]$study_accession)
-  #   tissuesTmp <- fetchContentEbi(allStudies[i,]$tissue)
-  #   tissuesTmp <- tissuesTmp$tissues
-  #   tissuesTmp$study_accession <- allStudies[i,]$study_accession
-  #   allStudiesTissues <- rbind(allStudiesTissues, tissuesTmp)
-  # }
-  # allStudiesTissues$value=1
-  # allStudiesTissues <- data.table::dcast(allStudiesTissues, tissue_label+tissue~study_accession, value.var = "value", fill=0)
-  return(allStudies)
-}
-
-EBIquery_allQtlGroups <- function(){
-  bestFetchMethod <- apiEbi_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
-  # Fetch all tissue name and id:
-  url1 <- "https://www.ebi.ac.uk/eqtl/api/qtl_groups"
-  allQtlGroups <- fetchContentEbi(url1)
-  allQtlGroups <- allQtlGroups$qtl_groups
-  return(allQtlGroups)
-}
-
-
-
-
 #' @title EBIquery_allTerm
 #'
 #' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
@@ -1000,13 +957,14 @@ EBIquery_allQtlGroups <- function(){
 #' @examples
 #' \donttest{
 #'
-#'  a <- EBIquery_allTerm("associations",termSize=0)
-#'  a <- EBIquery_allTerm("molecular_phenotypes")
+#'  a <- rbindlist(EBIquery_allTerm("associations",termSize=0))
+#'  a <- EBIquery_allTerm("molecular_phenotypes", termSize=0)
 #'  a <- EBIquery_allTerm("studies")
 #'  a <- EBIquery_allTerm("tissues")
 #'  a <- EBIquery_allTerm("qtl_groups")
 #'  a <- EBIquery_allTerm("genes")
 #'  a <- EBIquery_allTerm("chromosomes")
+#'
 #' }
 EBIquery_allTerm <- function( term="genes",termSize=5000){
   bestFetchMethod <- apiEbi_ping()
