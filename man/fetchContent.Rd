@@ -4,7 +4,7 @@
 \alias{fetchContent}
 \title{Fetch data using url by three methods}
 \usage{
-fetchContent(url1, method = "download", downloadMethod = "auto")
+fetchContent(url1, method = "curl", downloadMethod = "auto")
 }
 \arguments{
 \item{url1}{A url string.}

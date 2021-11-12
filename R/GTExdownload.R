@@ -691,6 +691,90 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 }
 
 
+
+#' @title  GTExdownload_assoAll
+#'
+#' @param gene gene
+#' @param geneType geneType
+#' @param tissueSiteDetail tissueSiteDetail
+#' @import data.table
+#' @import stringr
+#' @return a data.table
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   GTExdownload_assoAll("tp53")
+#' }
+GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail=""){
+  study="GTEx_V8"
+
+  ########## check genes
+  if( is.null(gene) ||  any(is.na(gene)) || any(gene=="") ||length(gene)==0 ){
+    stop("Parameter \"gene\" can not be NULL or NA!")
+  }else if( length(gene)!=1 ){
+    stop("Gene list is not supported, please input a gene symbol or gencode ID.")
+  }
+
+  ########## geneType
+  if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }else if( !(geneType %in% c("geneSymbol", "gencodeId", "geneCategory")) ){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }
+
+  ########## parameter check: tissueSiteDetail
+  # import tissueSiteDetailGTEx according to datasetId
+  tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  gencodeVersion <- "v26"
+  qtl_groups <- EBIquery_allTerm("qtl_groups")
+  qtl_tissue <- merge( tissueSiteDetailGTEx,qtl_groups, by.x="tissueSiteDetailId", by.y="qtl_group")
+  setDT(qtl_tissue)
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) || tissueSiteDetail==""   ){
+    stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
+  }else if( !(tissueSiteDetail %in% c("All", tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c(paste0(1:nrow(qtl_tissue),". ",qtl_tissue$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }
+  # convert tissueSiteDetail to tissueSiteDetailId:
+  tissueSiteDetailId <- qtl_tissue[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+
+  ##################### fetch geneInfo:
+  if(gene !=""){
+    message("== Querying gene info from API server:")
+    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
+      stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
+    }else{
+      message("== Done.")
+    }
+  }else{
+    stop("Parameter \"gene\" can not be null! ")
+  }
+  geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
+
+  # construct url:
+  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
+                 "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
+                 "&qtl_group=",tissueSiteDetailId)
+  gtexAsoo <- fetchContentEbi(url1, termSize=1000)
+  gtexAsooList <- do.call(c, gtexAsoo)
+  if(length(gtexAsooList)==0){
+    message("No association found!")
+    return(NULL)
+  }
+  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variant= x$variant, rsid=x$rsid,type=x$type,maf=x$maf,beta=x$beta, chrom=x$chromosome, pos=x$position, se=x$se, median_tpm=x$median_tpm, pvalue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
+                                                    ref=x$ref, alt=x$alt, tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
+                                                     molecular_trait_id = x$molecular_trait_id, gene_id= x$gene_id,study_id=x$study_id
+                                                    ) })
+  gtexAsooDT <- data.table::rbindlist(gtexAsooList, fill=TRUE)
+  return(gtexAsooDT)
+}
+
+
 #' @title Download significant sQTL data.
 #' @description
 #'  Fetch significant sQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.
@@ -1457,7 +1541,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
     url1 <- paste0("https://gtexportal.org/rest/v1/expression/medianGeneExpression?",
                    "datasetId=",datasetId,"&",
                    "gencodeId=", genesURL[i,]$genesURL,
-                   ifelse(tissueSiteDetail=="","&", paste0("&tissueSiteDetailId=", tissueSiteDetailId)),"&",
+                   ifelse(tissueSiteDetail=="","&", paste0("&tissueSiteDetailId=", tissueSiteDetailId)),
                    "format=json"
     )
     url1 <- utils::URLencode(url1)
@@ -1480,22 +1564,4 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   return(outInfo)
 }
 
-################### EBI download:
-GTExdownload_asso <- function(gene="", geneType="geneSymbol", study_accession="gtex_v8", tissue_label="" ){
-  # gene="tp53"
-  # geneType="geneSymbol"
-  # study_accession="gtex_v8"
-  # tissue_label=""
-
-  message("GTEx API successfully accessed!")
-  geneInfo <- GTExquery_gene(gene, geneType = geneType)
-
-  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?links=False&gene_id=ENSG00000141510&qtl_group=Ovary")
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
-  gtexAsoo <- fetchContentEbi(url1)
-}
 

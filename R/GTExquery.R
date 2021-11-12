@@ -182,7 +182,6 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
       # use internal function: apiAdmin_ping
       bestFetchMethod <- apiAdmin_ping()
       if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-        message("Note: API server is busy or your network has latency, please try again later.")
         return(NULL)
       }
       message("GTEx API successfully accessed!")
@@ -214,8 +213,8 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         return(NULL)
       }
       message("GTEx API successfully accessed!")
-      tmp_all <- data.table()
       for(i in 1: nrow(genesURL) ){
+        tmp_all <- data.table()
         # construct url:
         url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
                        "geneId=", genesURL[i,]$genesURL,"&",
@@ -236,7 +235,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
         tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
         tmp_all <- rbind(tmp_all, tmp)
-        message("Downloaded  ", i, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId)), " records.")
+        message("Batch ",i,". Downloaded  ", url1GetText2Json$page+1, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
 
         # if more pages:
         page_tmp<-page_tmp+1
@@ -254,13 +253,13 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
           url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
           if( nrow(url1GetText2Json2DT)==0 ){
             message( "0 record fatched!" )
-            return(data.table::data.table())
+            break
           }
           url1GetText2Json2DT$genomeBuild <- genomeBuild
           tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
           tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
           tmp_all <- rbind(tmp_all, tmp)
-          message("Downloaded  ", i, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId)), " records.")
+          message("Batch ",i,". Downloaded  ", url1GetText2Json$page+1, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
           page_tmp <- page_tmp+1
         }
         # because of versioned and unversioned gencodeID, merge separately is needed!
@@ -275,6 +274,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         }else{
           tmp_all <- merge( genesCut[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp_all, by="genesUpper",all.x=TRUE, sort = FALSE)[,-c("genesUpper")]
         }
+        page_tmp=0
         outInfo <- rbind(outInfo, tmp_all)
 
         # message("Downloaded  ", round(i/nrow(genesURL)*100,2),"%; totally ", length(na.omit(outInfo$gencodeId)), " records fetched!")
@@ -393,7 +393,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail))  ){
     stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
-  }else if(length(datasetId)!=1){
+  }else if(length(tissueSiteDetail)!=1){
     stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
   }else if( !(tissueSiteDetail %in% c("All", tissueSiteDetailGTEx$tissueSiteDetail)) ){
     message("",paste0(c("0. All", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
@@ -742,7 +742,6 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #' @title Heartbeat to check GTEx API server connectivity.
 #' @description
 #'  test GTEx API server and return download method.
-#' @import
 #' @export
 #' @return A character of fetchContent method.
 #' @examples
@@ -751,7 +750,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'  }
 apiAdmin_ping <- function(){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  fetchMethod = c("fromJSON","curl", "download","GET")
+  fetchMethod = c("curl", "download","GET","fromJSON")
   downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
   for( i in 1:length(fetchMethod)){
     tryCatch(
@@ -839,7 +838,7 @@ apiEbi_ping <- function(){
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
 #' }
-fetchContent <- function(url1, method="download", downloadMethod="auto"){
+fetchContent <- function(url1, method="curl", downloadMethod="auto"){
   if( method == "fromJSON"){
     url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
     if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
@@ -915,7 +914,7 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
 #'
 #' @examples
 #' \donttest{
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057"
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue_id=CL_0000057"
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?gene_id=ENSG00000141510&tissue=CL_0000057"
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057&study_id=Alasoo_2018"
 #'  geneEqtl2 <- fetchContentEbi(url1)
@@ -924,13 +923,18 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies"
 #'  studiesAll <- fetchContentEbi(url1, termSize=10, termStart=0)
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?links=False&gene_id=ENSG00000141510&qtl_group=Ovary"
-#'  gtexAsoo <- fetchContentEbi(url1)
+#'  gtexAsoo <- fetchContentEbi(url1, termSize=1000)
+#'  a <- do.call(c, gtexAsoo)
+#'  aa <- data.table::rbindlist(a)
 #'  GTExquery_gene("ENSG00000141510", "gencodeId")
 #'  eqtlv8 <- GTExdownload_eqtlAll(gene="TP53", tissueSiteDetail = "Ovary")
 #'  a <- merge(eqtlv8, gtexAsoo, by.x="snpId", by.y="rsid")
 #'  a[,.(pvalue, pValue)]
+#'
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
+#'  gtexAsoo <- fetchContentEbi(url1)
 #' }
-fetchContentEbi <- function(url1, method="curl", downloadMethod="auto", termSize=1000, termStart=0){
+fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
   # downloadMethod="auto"
   # termSize=1000
@@ -1094,14 +1098,15 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @examples
 #' \donttest{
 #'
-#'  a <- rbindlist(EBIquery_allTerm("associations",termSize=0))
-#'  a <- EBIquery_allTerm("molecular_phenotypes", termSize=0)
-#'  a <- EBIquery_allTerm("studies")
-#'  a <- EBIquery_allTerm("tissues")
-#'  a <- EBIquery_allTerm("qtl_groups")
-#'  a <- EBIquery_allTerm("genes")
-#'  a <- EBIquery_allTerm("chromosomes")
+#'  associations <- rbindlist(EBIquery_allTerm("associations",termSize=0))
+#'  molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
+#'  studies <- EBIquery_allTerm("studies")
+#'  tissues <- EBIquery_allTerm("tissues")
+#'  qtl_groups <- EBIquery_allTerm("qtl_groups")
+#'  genes <- EBIquery_allTerm("genes")
+#'  chromosomes <- EBIquery_allTerm("chromosomes")
 #'
+#'  merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 #' }
 EBIquery_allTerm <- function( term="genes",termSize=5000){
   bestFetchMethod <- apiEbi_ping()
