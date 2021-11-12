@@ -739,10 +739,10 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 
 
 
-#' @title Heartbeat to check server connectivity.
+#' @title Heartbeat to check GTEx API server connectivity.
 #' @description
-#'  test API server and return download method.
-#' @return A numeric value. Response code 200 indicates that the request has succeeded.
+#'  test GTEx API server and return download method.
+#' @import
 #' @export
 #' @return A character of fetchContent method.
 #' @examples
@@ -751,7 +751,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'  }
 apiAdmin_ping <- function(){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  fetchMethod = c("curl", "download","GET")
+  fetchMethod = c("fromJSON","curl", "download","GET")
   downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
   for( i in 1:length(fetchMethod)){
     tryCatch(
@@ -775,7 +775,46 @@ apiAdmin_ping <- function(){
       }
     )
   }
-  message("Note: API server is busy or your network has latency, please try again later.")
+  message("Note: GTEx API server is busy or your network has latency, please try again later.")
+  return(NULL)
+}
+
+#' @title Heartbeat to check EBI API server connectivity.
+#' @description
+#'  test EBI API server and return download method.
+#' @export
+#' @return A character of fetchContent method.
+#' @examples
+#' \donttest{
+#'   apiEbi_ping()
+#'  }
+apiEbi_ping <- function(){
+  url1 <- "https://www.ebi.ac.uk/eqtl/api/"
+  fetchMethod = c("fromJSON","curl", "download","GET")
+  downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
+  for( i in 1:length(fetchMethod)){
+    tryCatch(
+      {
+        message("== Test network: ",fetchMethod[i])
+        suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
+        if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
+          # print(fetchMethod[i])
+          return(fetchMethod[i])
+        }else{
+          next()
+        }
+      },
+      # e = simpleError("test error"),
+      error=function(cond){
+        # message("   Method [",fetchMethod[i],"] failed!")
+        return(NULL)
+      },
+      warning = function(cond){
+        message(cond)
+      }
+    )
+  }
+  message("Note: EBI API server is busy or your network has latency, please try again later.")
   return(NULL)
 }
 
@@ -786,6 +825,8 @@ apiAdmin_ping <- function(){
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @import utils
 #' @import jsonlite
+#' @import stringr
+#' @import data.table
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
@@ -799,6 +840,14 @@ apiAdmin_ping <- function(){
 #'  fetchContent(url1, method="download")
 #' }
 fetchContent <- function(url1, method="download", downloadMethod="auto"){
+  if( method == "fromJSON"){
+    url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
+    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+      message("No data fetched, please check your input.")
+      return(NULL)
+    }
+    return(url1GetText2Json)
+  }
   if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
     utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
@@ -820,9 +869,9 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
     }
   }else if( method == "curl"){
     url1Get <- curl::curl_fetch_memory(url1)
-    if( url1Get$status_code!=200){
-      mesage("Http status code: ", url1Get$status_code)
-    }
+    # if( url1Get$status_code!=200){
+    #   mesage("Http status code: ", url1Get$status_code)
+    # }
     url1GetText <- rawToChar(url1Get$content)
     # replace NAN with NULL:
     url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
@@ -834,9 +883,9 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
     return(url1GetText2Json)
   }else if( method == "GET" ){
     url1Get <- httr::GET(url1)
-    if( url1Get$status_code!=200){
-      message("Http status code: ", url1Get$status_code)
-    }
+    # if( url1Get$status_code!=200){
+    #   message("Http status code: ", url1Get$status_code)
+    # }
     url1GetText <- rawToChar(url1Get$content)
     # replace NAN with NULL:
     url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
@@ -848,6 +897,94 @@ fetchContent <- function(url1, method="download", downloadMethod="auto"){
     return(url1GetText2Json)
   }else{
     stop("please choose the right method.")
+  }
+}
+
+
+#' @title Fetch records from
+#'
+#' @param url1 A url string.
+#' @param method Can be chosen from "download", "curl" or "GET".
+#' @param downloadMethodThe same methods from utils::download.file function.
+#' @param termSize Number of records per request.
+#' @param termStart Start position per request.
+#' @import data.table
+#' @importFrom crayon magenta underline
+#' @return
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057"
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?gene_id=ENSG00000141510&tissue=CL_0000057"
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057&study_id=Alasoo_2018"
+#'  geneEqtl2 <- fetchContentEbi(url1)
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/tissues"
+#'  tissueAll <- fetchContentEbi(url1, termSize=20, termStart=0)
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies"
+#'  studiesAll <- fetchContentEbi(url1, termSize=10, termStart=0)
+#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?links=False&gene_id=ENSG00000141510&qtl_group=Ovary"
+#'  gtexAsoo <- fetchContentEbi(url1)
+#'  GTExquery_gene("ENSG00000141510", "gencodeId")
+#'  eqtlv8 <- GTExdownload_eqtlAll(gene="TP53", tissueSiteDetail = "Ovary")
+#'  a <- merge(eqtlv8, gtexAsoo, by.x="snpId", by.y="rsid")
+#'  a[,.(pvalue, pValue)]
+#' }
+fetchContentEbi <- function(url1, method="curl", downloadMethod="auto", termSize=1000, termStart=0){
+  # method="curl"
+  # downloadMethod="auto"
+  # termSize=1000
+  # termStart=0
+  # i=1
+
+  # message <- function(...){
+  #   args <- list(...)
+  #   argsTest <- paste0(args, collapse = "")
+  #   stopifnot(require(crayon))
+  #   warn <- magenta$underline
+  #   cat( warn(argsTest),"\n" )
+  # }
+
+  embeddedList <- list()
+  # Don't append size and start.
+  if( termSize ==0 ){
+    urlGot <- url1
+    contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
+    embeddedList <- c(embeddedList,contentGot[[1]])
+    embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
+    contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+    message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
+  }else if(termSize > 0){
+    for(i in 1:1000000){
+      urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
+                       "size=",as.integer(termSize),
+                       "&start=",as.integer(termStart))
+      contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
+      if( !is.null(contentGot$status) && contentGot$status==404 ){
+        print(i)
+        return(NULL)
+      }else if( is.null(contentGot$`_links`$`next`$href) ){
+      # }else if( length(contentGot[[1]][[1]])==0|| length(contentGot[[1]][[1]][[1]])==0 ){
+        embeddedList <- c(embeddedList,contentGot[[1]])
+        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
+        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+        message("Requset: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+        break
+      }else{
+        embeddedList <- c(embeddedList,contentGot[[1]])
+        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
+        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+        message("Requset: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+        termStart <- termStart+as.integer(termSize)
+      }
+    }
+  }else{
+    return(NULL)
+  }
+  if(length(embeddedList)>0){
+    return(embeddedList)
+  }else{
+    return(NULL)
   }
 }
 
