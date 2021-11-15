@@ -751,7 +751,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'  }
 apiAdmin_ping <- function(){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  fetchMethod = c("curl", "rvest", "GET", "getWithHeader", "download", "fromJSON")
+  fetchMethod = c("curl", "download", "rvest", "GET", "getWithHeader",  "fromJSON")
   # download method:
   downloadMethod <-"auto"
   for( i in 1:length(fetchMethod)){
@@ -823,7 +823,7 @@ apiEbi_ping <- function(){
     tryCatch(
       {
         message("== Test EBI network: ",fetchMethod[i])
-        suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
+        outInfo <- fetchContent(url1, method = fetchMethod[i], downloadMethod = downloadMethod)
         if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
           # print(fetchMethod[i])
           return(fetchMethod[i], downloadMethod)
@@ -905,6 +905,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
   }
   if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
+    if( file.exists(tmpFile) ){ file.remove(tmpFile) }
     utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
     url1GetText2Json <-""
     if( file.exists(tmpFile) ){
@@ -1167,7 +1168,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 EBIquery_allTerm <- function( term="genes",termSize=5000){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
