@@ -199,7 +199,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
                    "&format=json"
     )
     url1 <- utils::URLencode(url1)
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     tmp <- data.table::as.data.table(url1GetText2Json$geneExpression)
     if(nrow(tmp)==0){
       message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
@@ -441,7 +441,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
                  )
   url1 <- utils::URLencode(url1)
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
   if(nrow(tmp)==0){
     message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
@@ -647,7 +647,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
                  "&gencodeId=",geneInfo$gencodeId
   )
   url1 <- utils::URLencode(url1)
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   if( length(url1GetText2Json$metasoft)==0 ){
     message("No eQTL association found for gene [",gene,"]",ifelse(variantName=="","",paste0(" - variant [",variantName,"].")))
     return( data.table::data.table() )
@@ -708,6 +708,10 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
 GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail=""){
+  gene="CYP2W1"
+  geneType="geneSymbol"
+  tissueSiteDetail="Lung"
+
   study="GTEx_V8"
 
   ########## check genes
@@ -761,7 +765,13 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
                  "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
                  "&qtl_group=",tissueSiteDetailId)
-  gtexAsoo <- fetchContentEbi(url1, termSize=1000)
+  # check network:
+  bestFetchMethod <- apiEbi_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: EBI API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
+  gtexAsoo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2],  termSize=1000)
   gtexAsooList <- do.call(c, gtexAsoo)
   if(length(gtexAsooList)==0){
     message("No association found!")
@@ -961,7 +971,7 @@ GTExdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
     return(NULL)
   }
   url1 <- utils::URLencode(url1)
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   tmp <- data.table::as.data.table(url1GetText2Json$singleTissueSqtl)
   if(nrow(tmp)==0){
     message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
@@ -1146,7 +1156,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
                  "datasetId=",datasetId
   )
   url1 <- utils::URLencode(url1)
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   expData <- data.table::data.table(normExp=url1GetText2Json$data,genotypes=url1GetText2Json$genotypes)
 
   if(nrow(expData)==0){
@@ -1238,7 +1248,7 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
                  "gencodeId=",geneInfo$gencodeId,
                  "&datasetId=", datasetId)
   url1 <- utils::URLencode(url1)
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   ldInfo <- data.table::data.table(url1GetText2Json$ld)
   if(nrow(ldInfo)==0){
     message("No LD information were found for", ifelse(gene=="","",paste0(" gene [", gene,"]")), " in ",datasetId)
@@ -1422,7 +1432,7 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
     return(NULL)
   }
   message("GTEx API successfully accessed!")
-  suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod))
+  suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
   tmp <- data.table::as.data.table(url1GetText2Json$egene)
   outInfo <- rbind(outInfo, tmp)
   message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
@@ -1436,7 +1446,7 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
                    ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
                    "&datasetId=",datasetId)
     url1 <- utils::URLencode(url1)
-    suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod))
+    suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
     tmp <- data.table::as.data.table(url1GetText2Json$egene)
     outInfo <- rbind(outInfo, tmp)
     message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
@@ -1546,7 +1556,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
                    "format=json"
     )
     url1 <- utils::URLencode(url1)
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$medianGeneExpression)
     if( nrow(url1GetText2Json2DT)==0 ){
       message( "0 record fatched!" )

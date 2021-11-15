@@ -185,7 +185,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         return(NULL)
       }
       message("GTEx API successfully accessed!")
-      url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+      url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
       if( nrow(url1GetText2Json2DT)==0 ){
         message( "0 record fatched!" )
@@ -225,7 +225,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
                        "format=json"
         )
         url1 <- utils::URLencode(url1)
-        url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+        url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
         url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
         if( nrow(url1GetText2Json2DT)==0 ){
           message( "0 record fatched!" )
@@ -249,11 +249,11 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
                          "format=json"
           )
           url1 <- utils::URLencode(url1)
-          url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+          url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
           url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
           if( nrow(url1GetText2Json2DT)==0 ){
             message( "0 record fatched!" )
-            break
+            break()
           }
           url1GetText2Json2DT$genomeBuild <- genomeBuild
           tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
@@ -452,7 +452,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
     return(NULL)
   }
   message("GTEx API successfully accessed!")
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   tmp <- data.table::as.data.table(url1GetText2Json$sample)
   outInfo <- rbind(outInfo, tmp)
   message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
@@ -534,7 +534,7 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
     return(NULL)
   }
   message("GTEx API successfully accessed!")
-  suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod))
+  suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
   url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
   url1GetText2Json2DT$genomeBuild <- genomeBuild
   tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
@@ -551,7 +551,7 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
                    "format=json"
     )
     url1 <- utils::URLencode(url1)
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
     url1GetText2Json2DT$genomeBuild <- genomeBuild
     tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
@@ -630,7 +630,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
   }
   # fetch data:
   message("GTEx API successfully accessed!")
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2] )
   tmp <- data.table::as.data.table(url1GetText2Json$variant)
   if(nrow(tmp)==0){
     message("No variant found, please check your input.")
@@ -717,7 +717,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
       stop("Too many positions were received, please reduce the number of positions or recordPerChunk.")
     }
     # fetch data:
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     tmp <- data.table::as.data.table(url1GetText2Json$variant)
     # eliminate the difference between the gtex_v7 and gtex_v8:
     if(datasetId == "gtex_v7"){
@@ -732,8 +732,9 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
     message("No variant found, please check your input.")
     return(data.table::data.table())
   }
+  # print(paste("outInfo 行数：", nrow(outInfo)))
 
-  outInfo <- tmp[,c("variantId", "snpId","b37VariantId", "chromosome","pos", "ref", "alt","datasetId","maf01", "shorthand")]
+  outInfo <- outInfo[,c("variantId", "snpId","b37VariantId", "chromosome","pos", "ref", "alt","datasetId","maf01", "shorthand")]
   return(outInfo)
 }
 
@@ -750,16 +751,43 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'  }
 apiAdmin_ping <- function(){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  fetchMethod = c("curl", "download","GET","fromJSON")
-  downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
+  fetchMethod = c("curl", "rvest", "GET", "getWithHeader", "download", "fromJSON")
+  # download method:
+  downloadMethod <-"auto"
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
         message("== Test GTEx network: ",fetchMethod[i])
-        suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
+        # if download:
+        if( fetchMethod[i]=="download" ){
+          if( !capabilities("libcurl")){
+            message(" \"libcurl\" can not be called, please install curl package  ")
+            return(NULL)}
+          if( !is.null(.Platform$OS.type) ){
+            if( .Platform$OS.type =="windows"){ downloadMethod<-c("wininet", "libcurl" )}else{ downloadMethod<-  c("wget",  "libcurl"  )}
+          }
+          # start download:
+            for(downM in 1:length(downloadMethod)){
+              message( "    ==testing download method: ", downloadMethod[downM])
+              tryCatch({
+                suppressWarnings(suppressMessages( outInfo <- fetchContent(url1, method = fetchMethod[i], downloadMethod = downloadMethod[downM]) ))
+              },error=function(e){
+                  # cat("ERROR :",conditionMessage(e), "\n")
+                } )
+              if( exists("outInfo") && outInfo=="Ping!"){
+                # print(fetchMethod[i])
+                return(c(fetchMethod[i], downloadMethod[downM]))
+              }else{ next()}
+            }
+        }else{
+          suppressWarnings(
+            outInfo <- fetchContent(url1, method = fetchMethod[i])
+          )
+        }
+        #
         if( exists("outInfo") && outInfo=="Ping!"){
           # print(fetchMethod[i])
-          return(fetchMethod[i])
+          return(fetchMethod[i], downloadMethod)
         }else{
           next()
         }
@@ -790,7 +818,7 @@ apiAdmin_ping <- function(){
 apiEbi_ping <- function(){
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
   fetchMethod = c("fromJSON","curl", "download","GET")
-  downloadMethod = c("auto", "internal", "wininet", "libcurl", "wget", "curl")
+  downloadMethod = "auto"
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
@@ -798,7 +826,7 @@ apiEbi_ping <- function(){
         suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
         if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
           # print(fetchMethod[i])
-          return(fetchMethod[i])
+          return(fetchMethod[i], downloadMethod)
         }else{
           next()
         }
@@ -820,12 +848,13 @@ apiEbi_ping <- function(){
 #' @title Fetch data using url by three methods
 #'
 #' @param url1 A url string.
-#' @param method Can be chosen from "download", "curl" or "GET".
+#' @param method Can be chosen from "download", "curl", "GetWithHeader", "rvest" or "GET".
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @import utils
 #' @import jsonlite
 #' @import stringr
 #' @import data.table
+#' @import rvest
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
@@ -839,6 +868,33 @@ apiEbi_ping <- function(){
 #'  fetchContent(url1, method="download")
 #' }
 fetchContent <- function(url1, method="curl", downloadMethod="auto"){
+  if( method == "GetWithHeader"){
+    mycookie <- ''
+    myheaders <- c('accept' ='ext/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                   'accept-encoding' = 'gzip, deflate, br',
+                   'accept-language' = 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+                   'user-agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
+                   'cookie' = mycookie)
+    responseTmp <- httr::GET(url = url1, httr::add_headers(.headers = myheaders), encode="raw")
+    #read_html()函数读入并解析网页内容
+    webTmp <- rvest::read_html(responseTmp, encoding ="utf-8")
+    url1GetText2Json<- jsonlite::fromJSON(rvest::html_text(webTmp))
+    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+      message("No data fetched, please check your input.")
+      return(NULL)
+    }
+    return(url1GetText2Json)
+  }
+
+  if(method == "rvest"){
+    url1GetText2Json <- jsonlite::fromJSON( rvest::html_text( rvest::read_html(url1) ) )
+    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+      message("No data fetched, please check your input.")
+      return(NULL)
+    }
+    return(url1GetText2Json)
+  }
+
   if( method == "fromJSON"){
     url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
     if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
@@ -973,7 +1029,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
         embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
         contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
         message("Requset: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
-        break
+        break()
       }else{
         embeddedList <- c(embeddedList,contentGot[[1]])
         embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
@@ -1071,7 +1127,7 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
   url1 <- utils::URLencode(url1)
   message("  GTEx API successfully accessed!")
   message("  Downloading...")
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   outInfo <- as.data.table(url1GetText2Json[track][[track]])
   message("  Done")
   return(outInfo)
@@ -1115,14 +1171,14 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
     return(NULL)
   }
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
-  allTerms <- fetchContent(url1,method = bestFetchMethod)
+  allTerms <- fetchContent(url1,method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   allTerms <- names(allTerms$`_links`)
   if( !(term %in% allTerms) ){
     message("Parameter \"term\" must be chosen from \"", paste0(allTerms, collapse = "\", \""),".")
   }
   #
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/", term)
-  termInfo <- fetchContentEbi(url1, method = bestFetchMethod, termSize = termSize)
+  termInfo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2], termSize = termSize)
   # studies:
   if(term == "studies"){
     termInfo <- data.table::rbindlist(lapply(termInfo$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))

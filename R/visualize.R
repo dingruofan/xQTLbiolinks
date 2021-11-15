@@ -253,16 +253,24 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'
 #' @examples
 #' \donttest{
-#'  gwasDF <- data.table::fread("D:\\Download\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+#'  gwasDF <- data.table::fread("D:\\R_project\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
 #'  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="SFTPD", queryType="geneSymbol",
-#'                       tissueSiteDetail="Artery - Tibial", datasetId="gtex_v7")
+#'                       tissueSiteDetail="Artery - Tibial", datasetId="gtex_v8")
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs12778583", queryType="snpId",
 #'                       tissueSiteDetail="Thyroid", datasetId="gtex_v7")
 #'  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
 #'                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+#'
+#'  traitGene="SFTPD"
+#'  tissueSiteDetail="Artery - Tibial"
+#'  geneAsso<- GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
+#'  # convert to v7:
+#'  geneAssoVar <- GTExquery_varPos(chrom = paste0("chr",unique(geneAsso$chrom)), pos = geneAsso$pos, datasetId = "gtex_v8",recordPerChunk = 300)
+#'  geneAssoVar$variant <- unlist(lapply(geneAssoVar$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+#'  geneAssoB37 <- merge(geneAsso, geneAssoVar[,.(variant, b37VariantId)], by=c("variant") )
 #' }
-GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTrait="", eqtlType="", tissueSiteDetail="", flankUp=100, flankDown=100, datasetId="gtex_v8"){
+GTExanalyze_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
   pos <- pValue.gwas <- pValue.etql <-NULL
   # gwasDF <- data.table::fread("../GWAS_White-Blood-Cell-Traits_Tajuddin_2016.txt", sep="\t", header=TRUE)
   # gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
@@ -274,17 +282,12 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, queryTerm="", queryType="snpId", eqtlTr
   # eqtlTrait=""
   # eqtlType=""
   # tissueSiteDetail="Whole Blood"
-  # datasetId="gtex_v7"
+  # datasetId="gtex_v8"
   # flankUp=100
   # flankDown=100
 
   # queryTerm="rs7953894"
   # queryType ="snpId"
-
-  if( eqtlTrait=="" && eqtlType==""){
-    eqtlTrait <- queryTerm
-    eqtlType <- queryType
-  }
 
   cutNum <- 100
   gencodeVersion <- "v26"

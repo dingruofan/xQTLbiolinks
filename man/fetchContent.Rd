@@ -9,7 +9,7 @@ fetchContent(url1, method = "curl", downloadMethod = "auto")
 \arguments{
 \item{url1}{A url string.}
 
-\item{method}{Can be chosen from "download", "curl" or "GET".}
+\item{method}{Can be chosen from "download", "curl", "GetWithHeader", "rvest" or "GET".}
 
 \item{downloadMethod}{The same methods from utils::download.file function.}
 }

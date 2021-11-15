@@ -6,18 +6,18 @@
 \usage{
 GTExanalyze_eqtlGWAS(
   gwasDF,
-  queryTerm = "",
-  queryType = "snpId",
-  eqtlTrait = "",
-  eqtlType = "",
+  traitGene = "",
+  traitGeneType = "geneSymbol",
   tissueSiteDetail = "",
-  flankUp = 100,
-  flankDown = 100,
   datasetId = "gtex_v8"
 )
 }
 \arguments{
 \item{gwasDF}{A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".}
+
+\item{tissueSiteDetail}{tissue}
+
+\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 
 \item{queryTerm}{Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").}
 
@@ -27,13 +27,9 @@ GTExanalyze_eqtlGWAS(
 
 \item{eqtlType}{eqtl type. If this parameter is not specified, it is the same as the "queryType".}
 
-\item{tissueSiteDetail}{tissue}
-
 \item{flankUp}{A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.}
 
 \item{flankDown}{A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.}
-
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
 A plot.
@@ -43,13 +39,21 @@ significance analysis of GTEX and eQTL  NO.
 }
 \examples{
 \donttest{
- gwasDF <- data.table::fread("D:\\\\Download\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+ gwasDF <- data.table::fread("D:\\\\R_project\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
  gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="SFTPD", queryType="geneSymbol",
-                      tissueSiteDetail="Artery - Tibial", datasetId="gtex_v7")
+                      tissueSiteDetail="Artery - Tibial", datasetId="gtex_v8")
  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="rs12778583", queryType="snpId",
                       tissueSiteDetail="Thyroid", datasetId="gtex_v7")
  GTExanalyze_eqtlGWAS(gwasDF, queryTerm="12:122404966-124404966", queryType="coordinate",
                       tissueSiteDetail="Whole Blood", datasetId="gtex_v7")
+
+ traitGene="SFTPD"
+ tissueSiteDetail="Artery - Tibial"
+ geneAsso<- GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
+ # convert to v7:
+ geneAssoVar <- GTExquery_varPos(chrom = paste0("chr",unique(geneAsso$chrom)), pos = geneAsso$pos, datasetId = "gtex_v8",recordPerChunk = 300)
+ geneAssoVar$variant <- unlist(lapply(geneAssoVar$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+ geneAssoB37 <- merge(geneAsso, geneAssoVar[,.(variant, b37VariantId)], by=c("variant") )
 }
 }

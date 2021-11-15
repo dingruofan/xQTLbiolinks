@@ -142,7 +142,7 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
     }
     message("GTEx API successfully accessed!")
     # url1Get <- httr::GET(url1, httr::progress())
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
     url1GetText2Json2DT$genomeBuild <- genomeBuild
     outInfo <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
@@ -389,6 +389,7 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("IRanges", min_version = "2.22.2")
 # usethis::use_package("GenomeInfoDb", min_version = "1.24.2")
 # usethis::use_package("ggplot2", min_version = "3.3.5")
+# usethis::use_package("rvest", min_version = "1.0.1")
 # usethis::use_package("gridExtra", min_version = "2.3")
 # usethis::use_package("tidyr", min_version = "1.1.4")
 # usethis::use_package("ggrepel", min_version = "1.1.4")
