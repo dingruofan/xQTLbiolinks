@@ -755,7 +755,7 @@ apiAdmin_ping <- function(){
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
-        message("== Test network: ",fetchMethod[i])
+        message("== Test GTEx network: ",fetchMethod[i])
         suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
         if( exists("outInfo") && outInfo=="Ping!"){
           # print(fetchMethod[i])
@@ -794,7 +794,7 @@ apiEbi_ping <- function(){
   for( i in 1:length(fetchMethod)){
     tryCatch(
       {
-        message("== Test network: ",fetchMethod[i])
+        message("== Test EBI network: ",fetchMethod[i])
         suppressWarnings(outInfo <- fetchContent(url1, method = fetchMethod[i]))
         if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
           # print(fetchMethod[i])
