@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{GTExvisual_eqtlTrait}
 \alias{GTExvisual_eqtlTrait}
-\title{}
+\title{eql trait plot}
 \usage{
 GTExvisual_eqtlTrait(
   gene = "",
@@ -11,11 +11,20 @@ GTExvisual_eqtlTrait(
   datasetId = "gtex_v8"
 )
 }
-\value{
+\arguments{
+\item{gene}{gene name/gencode ID}
 
+\item{geneType}{"geneSymbol" or "gencodeId"}
+
+\item{tissueSiteDetail}{gene name}
+
+\item{datasetId}{"gtex_v7" or "gtex_v8"}
+}
+\value{
+A data.table
 }
 \description{
-
+eql trait plot
 }
 \examples{
 \donttest{

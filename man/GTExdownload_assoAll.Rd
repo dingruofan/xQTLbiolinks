@@ -24,4 +24,5 @@ GTExdownload_assoAll
   GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 }
+add hg19 cordinate:
 }

@@ -708,9 +708,9 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
 GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail=""){
-  gene="CYP2W1"
-  geneType="geneSymbol"
-  tissueSiteDetail="Lung"
+  # gene="CYP2W1"
+  # geneType="geneSymbol"
+  # tissueSiteDetail="Lung"
 
   study="GTEx_V8"
 
@@ -751,8 +751,11 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   if(gene !=""){
     message("== Querying gene info from API server:")
     geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfoV19 <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19", recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
+    }else if( nrow(geneInfo)>1 || nrow(geneInfoV19)>1 ){
+      stop("Totally, ",nrow(geneInfo), " gencode ID of queried gene [", gene,"] were detected, please enter the gencode ID (versioned or unversioned) for querying!")
     }else{
       message("== Done.")
     }
@@ -777,11 +780,23 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
     message("No association found!")
     return(NULL)
   }
-  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variant= x$variant, rsid=x$rsid,type=x$type,maf=x$maf,beta=x$beta, chrom=x$chromosome, pos=x$position, se=x$se, median_tpm=x$median_tpm, pvalue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
-                                                    ref=x$ref, alt=x$alt, tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
-                                                     molecular_trait_id = x$molecular_trait_id, gene_id= x$gene_id,study_id=x$study_id
-                                                    ) })
+  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variant= x$variant, rsid=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
+                                                               chrom=x$chromosome, pos=x$position,
+                                                               # ref=x$ref, alt=x$alt, gene_id= x$gene_id, study_id=x$study_id
+                                                               se=x$se, median_tpm=x$median_tpm, pvalue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
+                                                               tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
+                                                               molecular_trait_id = x$molecular_trait_id
+                                                               ) })
   gtexAsooDT <- data.table::rbindlist(gtexAsooList, fill=TRUE)
+  gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
+  gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
+  gtexAsooDT$gencodeId_GTEX_v7 <- ifelse(nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
+  #' add hg19 cordinate:
+  gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = 300)
+  gtexAsooDTb37$variant <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+  gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variant, b37VariantId)], by=c("variant"), all.x=TRUE )
+  gtexAsooDT$variant <- paste0(gtexAsooDT$variant,"_b38")
+  gtexAsooDT <- cbind(gtexAsooDT[,.(rsid, variant, b37VariantId)], gtexAsooDT[,-c("rsid", "variant", "b37VariantId", "chrom", "pos")])
   return(gtexAsooDT)
 }
 
@@ -1467,15 +1482,17 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 }
 
 
-#' Title
+#' @title fetch gene median expression
 #'
-#' @param genes
-#' @param geneType
-#' @param datasetId
-#' @param tissueSiteDetail
-#' @param recordPerChunk
-#'
-#' @return
+#' @param genes A character vector of gene symbol/gencode ID.
+#' @param geneType "geneSymbol" or "gencodeID".
+#' @param datasetId "gtex_v7" or "gtex_v8"
+#' @param tissueSiteDetail tissue name.
+#' @param recordPerChunk 1-2000. Default: 150.
+#' @import data.table
+#' @import utils
+#' @import stringr
+#' @return A data.frame
 #' @export
 #'
 #' @examples

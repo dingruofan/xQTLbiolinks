@@ -465,17 +465,17 @@ GTExanalyze_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol
 }
 
 
-#' @title
+#' @title eql trait plot
 #'
-#' @param gene
-#' @param geneType
-#' @param tissueSiteDetail
-#' @param datasetId
+#' @param gene gene name/gencode ID
+#' @param geneType "geneSymbol" or "gencodeId"
+#' @param tissueSiteDetail gene name
+#' @param datasetId "gtex_v7" or "gtex_v8"
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
 #' @import ggrepel
-#' @return
+#' @return A data.table
 #' @export
 #'
 #' @examples

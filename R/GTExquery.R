@@ -971,23 +971,6 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
 #'
 #' @examples
 #' \donttest{
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue_id=CL_0000057"
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?gene_id=ENSG00000141510&tissue=CL_0000057"
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000141510/associations?links=False&tissue=CL_0000057&study_id=Alasoo_2018"
-#'  geneEqtl2 <- fetchContentEbi(url1)
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/tissues"
-#'  tissueAll <- fetchContentEbi(url1, termSize=20, termStart=0)
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies"
-#'  studiesAll <- fetchContentEbi(url1, termSize=10, termStart=0)
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations?links=False&gene_id=ENSG00000141510&qtl_group=Ovary"
-#'  gtexAsoo <- fetchContentEbi(url1, termSize=1000)
-#'  a <- do.call(c, gtexAsoo)
-#'  aa <- data.table::rbindlist(a)
-#'  GTExquery_gene("ENSG00000141510", "gencodeId")
-#'  eqtlv8 <- GTExdownload_eqtlAll(gene="TP53", tissueSiteDetail = "Ovary")
-#'  a <- merge(eqtlv8, gtexAsoo, by.x="snpId", by.y="rsid")
-#'  a[,.(pvalue, pValue)]
-#'
 #'  url1 <- "https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
 #'  gtexAsoo <- fetchContentEbi(url1)
 #' }

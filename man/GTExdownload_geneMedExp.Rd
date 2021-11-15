@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{GTExdownload_geneMedExp}
 \alias{GTExdownload_geneMedExp}
-\title{Title}
+\title{fetch gene median expression}
 \usage{
 GTExdownload_geneMedExp(
   genes = "",
@@ -13,13 +13,21 @@ GTExdownload_geneMedExp(
 )
 }
 \arguments{
-\item{recordPerChunk}{}
+\item{genes}{A character vector of gene symbol/gencode ID.}
+
+\item{geneType}{"geneSymbol" or "gencodeID".}
+
+\item{datasetId}{"gtex_v7" or "gtex_v8"}
+
+\item{tissueSiteDetail}{tissue name.}
+
+\item{recordPerChunk}{1-2000. Default: 150.}
 }
 \value{
-
+A data.frame
 }
 \description{
-Title
+fetch gene median expression
 }
 \examples{
 \donttest{
