@@ -787,7 +787,7 @@ apiAdmin_ping <- function(){
         #
         if( exists("outInfo") && outInfo=="Ping!"){
           # print(fetchMethod[i])
-          return(fetchMethod[i], downloadMethod)
+          return(c(fetchMethod[i], downloadMethod))
         }else{
           next()
         }
@@ -826,7 +826,7 @@ apiEbi_ping <- function(){
         outInfo <- fetchContent(url1, method = fetchMethod[i], downloadMethod = downloadMethod)
         if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
           # print(fetchMethod[i])
-          return(fetchMethod[i], downloadMethod)
+          return(c(fetchMethod[i], downloadMethod))
         }else{
           next()
         }
