@@ -18,13 +18,13 @@ EBIquery_allTerm
 \examples{
 \donttest{
 
- associations <- rbindlist(EBIquery_allTerm("associations",termSize=0))
- molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
+ associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+ # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
  studies <- EBIquery_allTerm("studies")
  tissues <- EBIquery_allTerm("tissues")
  qtl_groups <- EBIquery_allTerm("qtl_groups")
- genes <- EBIquery_allTerm("genes")
- chromosomes <- EBIquery_allTerm("chromosomes")
+ # genes <- EBIquery_allTerm("genes")
+ # chromosomes <- EBIquery_allTerm("chromosomes")
 
  merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 }

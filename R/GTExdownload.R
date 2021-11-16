@@ -186,10 +186,10 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
   outInfo <- data.table::data.table()
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
   for(i in 1:nrow(genesURL)){
     # construct url:
     url1 <- paste0("https://gtexportal.org/rest/v1/expression/geneExpression?",
@@ -610,10 +610,10 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   # check network:
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
 
   ##################### fetch geneInfo:
   if(gene !=""){
@@ -707,7 +707,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'   GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
 #'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
-GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail=""){
+GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=300){
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -750,8 +750,8 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   ##################### fetch geneInfo:
   if(gene !=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
-    geneInfoV19 <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19", recordPerChunk = 150)
+    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion)
+    geneInfoV19 <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else if( nrow(geneInfo)>1 || nrow(geneInfoV19)>1 ){
@@ -780,10 +780,10 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
     message("No association found!")
     return(NULL)
   }
-  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variant= x$variant, rsid=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
+  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variant= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
                                                                chrom=x$chromosome, pos=x$position,
                                                                # ref=x$ref, alt=x$alt, gene_id= x$gene_id, study_id=x$study_id
-                                                               se=x$se, median_tpm=x$median_tpm, pvalue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
+                                                               se=x$se, median_tpm=x$median_tpm, pValue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
                                                                tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
                                                                molecular_trait_id = x$molecular_trait_id
                                                                ) })
@@ -792,11 +792,11 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
   gtexAsooDT$gencodeId_GTEX_v7 <- ifelse(nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
   #' add hg19 cordinate:
-  gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = 300)
+  gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
   gtexAsooDTb37$variant <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
   gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variant, b37VariantId)], by=c("variant"), all.x=TRUE )
   gtexAsooDT$variant <- paste0(gtexAsooDT$variant,"_b38")
-  gtexAsooDT <- cbind(gtexAsooDT[,.(rsid, variant, b37VariantId)], gtexAsooDT[,-c("rsid", "variant", "b37VariantId", "chrom", "pos")])
+  gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variant, b37VariantId)], gtexAsooDT[,-c("snpId", "variant", "b37VariantId", "chrom", "pos")])
   return(gtexAsooDT)
 }
 
@@ -1214,12 +1214,11 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #' @examples
 #' \donttest{
 #'  aa <- GTExdownload_ld("TP53" )
-#'  gtex
 #'  GTExdownload_ld(gene = "DDX11", datasetId="gtex_v7")
 #'  GTExdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
 #'
 #' }
-GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=100){
+GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=300){
   # check genes
   if( is.null(gene) ||  any(is.na(gene)) || any(gene=="") ||length(gene)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
@@ -1263,6 +1262,7 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
                  "gencodeId=",geneInfo$gencodeId,
                  "&datasetId=", datasetId)
   url1 <- utils::URLencode(url1)
+  message("== Downloading...")
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   ldInfo <- data.table::data.table(url1GetText2Json$ld)
   if(nrow(ldInfo)==0){
@@ -1443,10 +1443,10 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
   url1 <- utils::URLencode(url1)
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
   suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
   tmp <- data.table::as.data.table(url1GetText2Json$egene)
   outInfo <- rbind(outInfo, tmp)
@@ -1560,10 +1560,10 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   outInfo <- data.table::data.table()
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
   for(i in 1:nrow(genesURL)){
     # construct url:
     url1 <- paste0("https://gtexportal.org/rest/v1/expression/medianGeneExpression?",

@@ -184,7 +184,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
       if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
         return(NULL)
       }
-      message("GTEx API successfully accessed!")
+      # message("GTEx API successfully accessed!")
       url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
       if( nrow(url1GetText2Json2DT)==0 ){
@@ -209,10 +209,10 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
       outInfo <- data.table::data.table()
       bestFetchMethod <- apiAdmin_ping()
       if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-        message("Note: API server is busy or your network has latency, please try again later.")
+        # message("Note: API server is busy or your network has latency, please try again later.")
         return(NULL)
       }
-      message("GTEx API successfully accessed!")
+      # message("GTEx API successfully accessed!")
       for(i in 1: nrow(genesURL) ){
         tmp_all <- data.table()
         # construct url:
@@ -448,10 +448,10 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   outInfo <- data.table::data.table()
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   tmp <- data.table::as.data.table(url1GetText2Json$sample)
   outInfo <- rbind(outInfo, tmp)
@@ -530,10 +530,10 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   # use internal function: apiAdmin_ping
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
   suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
   url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
   url1GetText2Json2DT$genomeBuild <- genomeBuild
@@ -625,11 +625,11 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
   # test api server accessibility:
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
   # fetch data:
-  message("GTEx API successfully accessed!")
+  # message("GTEx API successfully accessed!")
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2] )
   tmp <- data.table::as.data.table(url1GetText2Json$variant)
   if(nrow(tmp)==0){
@@ -664,7 +664,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #'  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
 #'  GTExquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 #' }
-GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=100){
+GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=200){
   ########## parameter check: variantName
   if(is.null(chrom) ||  any(is.na(chrom)) ){
     stop("Parameter \"chrom\" can not be NULL or NA!")
@@ -719,6 +719,10 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
     # fetch data:
     url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     tmp <- data.table::as.data.table(url1GetText2Json$variant)
+    if(nrow(tmp)<1){
+      message("No variants were found at thses positions.")
+      return(NULL)
+    }
     # eliminate the difference between the gtex_v7 and gtex_v8:
     if(datasetId == "gtex_v7"){
       tmp$b37VariantId <- tmp$variantId
@@ -751,7 +755,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'  }
 apiAdmin_ping <- function(){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  fetchMethod = c("curl", "download", "rvest", "GET", "getWithHeader",  "fromJSON")
+  fetchMethod = c("download","curl",  "rvest", "GET", "getWithHeader",  "fromJSON")
   # download method:
   downloadMethod <-"auto"
   for( i in 1:length(fetchMethod)){
@@ -776,6 +780,7 @@ apiAdmin_ping <- function(){
                 } )
               if( exists("outInfo") && outInfo=="Ping!"){
                 # print(fetchMethod[i])
+                message("== GTEx API successfully accessed!")
                 return(c(fetchMethod[i], downloadMethod[downM]))
               }else{ next()}
             }
@@ -787,6 +792,7 @@ apiAdmin_ping <- function(){
         #
         if( exists("outInfo") && outInfo=="Ping!"){
           # print(fetchMethod[i])
+          message("== GTEx API successfully accessed!")
           return(c(fetchMethod[i], downloadMethod))
         }else{
           next()
@@ -826,6 +832,7 @@ apiEbi_ping <- function(){
         outInfo <- fetchContent(url1, method = fetchMethod[i], downloadMethod = downloadMethod)
         if( exists("outInfo") && !is.null(outInfo$`_links`) && length(outInfo$`_links`)>1 ){
           # print(fetchMethod[i])
+          message("== EBI API successfully accessed!")
           return(c(fetchMethod[i], downloadMethod))
         }else{
           next()
@@ -1096,7 +1103,7 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
 
   bestFetchMethod <- apiAdmin_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
+    # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
   }
 
@@ -1109,7 +1116,6 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
                  ";end=",endPos)
 
   url1 <- utils::URLencode(url1)
-  message("  GTEx API successfully accessed!")
   message("  Downloading...")
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   outInfo <- as.data.table(url1GetText2Json[track][[track]])
@@ -1122,7 +1128,7 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
 #'
 #' @param x A number
 #' @param tol Don't change
-#'
+#' @export
 #' @return TRUE or FALSE
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
   abs(x - round(x)) < tol
@@ -1138,13 +1144,13 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @examples
 #' \donttest{
 #'
-#'  associations <- rbindlist(EBIquery_allTerm("associations",termSize=0))
-#'  molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
+#'  associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+#'  # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
 #'  studies <- EBIquery_allTerm("studies")
 #'  tissues <- EBIquery_allTerm("tissues")
 #'  qtl_groups <- EBIquery_allTerm("qtl_groups")
-#'  genes <- EBIquery_allTerm("genes")
-#'  chromosomes <- EBIquery_allTerm("chromosomes")
+#'  # genes <- EBIquery_allTerm("genes")
+#'  # chromosomes <- EBIquery_allTerm("chromosomes")
 #'
 #'  merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 #' }
@@ -1153,6 +1159,8 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
     # message("Note: API server is busy or your network has latency, please try again later.")
     return(NULL)
+  }else{
+    message("EBI API server connected.")
   }
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
   allTerms <- fetchContent(url1,method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])

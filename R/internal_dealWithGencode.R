@@ -392,7 +392,10 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("rvest", min_version = "1.0.1")
 # usethis::use_package("gridExtra", min_version = "2.3")
 # usethis::use_package("tidyr", min_version = "1.1.4")
-# usethis::use_package("ggrepel", min_version = "1.1.4")
+# usethis::use_package("ggrepel", min_version = "0.9.1")
+# usethis::use_package("crayon", min_version = "1.4.1")
+# usethis::use_package("httr", min_version = "1.4.2")
+
 
 
 # usethis::use_package("usethis", min_version = "2.0.1")

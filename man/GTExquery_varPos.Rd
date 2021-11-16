@@ -8,7 +8,7 @@ GTExquery_varPos(
   chrom = "",
   pos = numeric(0),
   datasetId = "gtex_v8",
-  recordPerChunk = 100
+  recordPerChunk = 200
 )
 }
 \arguments{

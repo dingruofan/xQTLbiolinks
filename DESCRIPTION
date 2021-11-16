@@ -23,5 +23,9 @@ Imports:
     IRanges (>= 2.22.2),
     GenomeInfoDb (>= 1.24.2),
     ggplot2 (>= 3.3.5),
+    rvest (>= 1.0.1),
     gridExtra (>= 2.3),
-    rvest (>= 1.0.1)
+    tidyr (>= 1.1.4),
+    ggrepel (>= 0.9.1),
+    crayon (>= 1.4.1),
+    httr (>= 1.4.2)

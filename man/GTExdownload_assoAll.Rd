@@ -4,7 +4,12 @@
 \alias{GTExdownload_assoAll}
 \title{GTExdownload_assoAll}
 \usage{
-GTExdownload_assoAll(gene = "", geneType = "geneSymbol", tissueSiteDetail = "")
+GTExdownload_assoAll(
+  gene = "",
+  geneType = "geneSymbol",
+  tissueSiteDetail = "",
+  recordPerChunk = 300
+)
 }
 \arguments{
 \item{gene}{gene}
