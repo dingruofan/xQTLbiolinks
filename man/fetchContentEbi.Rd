@@ -17,14 +17,14 @@ fetchContentEbi(
 
 \item{method}{Can be chosen from "download", "curl" or "GET".}
 
+\item{downloadMethod}{The same methods from utils::download.file function.}
+
 \item{termSize}{Number of records per request.}
 
 \item{termStart}{Start position per request.}
-
-\item{downloadMethodThe}{same methods from utils::download.file function.}
 }
 \value{
-
+A data.frame
 }
 \description{
 Fetch records from

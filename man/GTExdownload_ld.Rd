@@ -21,7 +21,7 @@ GTExdownload_ld(
 \item{recordPerChunk}{A integer value (1-500). number of records fetched per request (default: 100).}
 }
 \value{
-
+A data.frame
 }
 \description{
 Fetch linkage disequilibrium data for the cis-eQTLs found associated with this gene in a specified dataset.

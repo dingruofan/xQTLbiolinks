@@ -478,7 +478,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
       )
     }
     url1 <- utils::URLencode(url1)
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod)
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     tmp <- data.table::as.data.table(url1GetText2Json$sample)
     outInfo <- rbind(outInfo, tmp)
     message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
@@ -649,6 +649,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #' @param chrom A character string.
 #' @param pos An integer array.
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -665,6 +666,7 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #'  GTExquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 #' }
 GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=200){
+  .<-NULL
   ########## parameter check: variantName
   if(is.null(chrom) ||  any(is.na(chrom)) ){
     stop("Parameter \"chrom\" can not be NULL or NA!")
@@ -747,15 +749,22 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #' @title Heartbeat to check GTEx API server connectivity.
 #' @description
 #'  test GTEx API server and return download method.
+#' @param fetchMethod fetchMethod.
 #' @export
 #' @return A character of fetchContent method.
 #' @examples
 #' \donttest{
 #'   apiAdmin_ping()
 #'  }
-apiAdmin_ping <- function(){
+apiAdmin_ping <- function(fetchMethod=""){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  fetchMethod = c("download","curl",  "rvest", "GET", "getWithHeader",  "fromJSON")
+  methods_all <- c("download","curl",  "rvest", "GET",  "fromJSON")
+  if(fetchMethod==""){
+    fetchMethod <- methods_all
+  }else if( any(!fetchMethod %in% methods_all) ){
+    stop("Invalid fetchMethod! ")
+  }
+
   # download method:
   downloadMethod <-"auto"
   for( i in 1:length(fetchMethod)){
@@ -869,48 +878,43 @@ apiEbi_ping <- function(){
 #'
 #' @examples
 #' \donttest{
-#'  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=chr11_66561248_T_C_b38&tissueSiteDetailId=Liver&datasetId=gtex_v8"
-#'  fetchContent(url1, method="curl")
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
 #' }
 fetchContent <- function(url1, method="curl", downloadMethod="auto"){
-  if( method == "GetWithHeader"){
-    mycookie <- ''
-    myheaders <- c('accept' ='ext/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-                   'accept-encoding' = 'gzip, deflate, br',
-                   'accept-language' = 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-                   'user-agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
-                   'cookie' = mycookie)
-    responseTmp <- httr::GET(url = url1, httr::add_headers(.headers = myheaders), encode="raw")
-    #read_html()函数读入并解析网页内容
-    webTmp <- rvest::read_html(responseTmp, encoding ="utf-8")
-    url1GetText2Json<- jsonlite::fromJSON(rvest::html_text(webTmp))
-    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
-      message("No data fetched, please check your input.")
-      return(NULL)
-    }
-    return(url1GetText2Json)
-  }
+  # if( method == "GetWithHeader"){
+  #   mycookie <- ''
+  #   myheaders <- c('accept' ='ext/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  #                  'accept-encoding' = 'gzip, deflate, br',
+  #                  'accept-language' = 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+  #                  'user-agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
+  #                  'cookie' = mycookie)
+  #   responseTmp <- httr::GET(url = url1, httr::add_headers(.headers = myheaders), encode="raw")
+  #   #read_html()函数读入并解析网页内容
+  #   webTmp <- rvest::read_html(responseTmp, encoding ="utf-8")
+  #   url1GetText2Json<- jsonlite::fromJSON(rvest::html_text(webTmp))
+  #   if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+  #     message("No data fetched, please check your input.")
+  #     return(NULL)
+  #   }
+  #   return(url1GetText2Json)
+  # }
 
   if(method == "rvest"){
     url1GetText2Json <- jsonlite::fromJSON( rvest::html_text( rvest::read_html(url1) ) )
-    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
       message("No data fetched, please check your input.")
       return(NULL)
     }
     return(url1GetText2Json)
-  }
-
-  if( method == "fromJSON"){
+  }else if( method == "fromJSON"){
     url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
-    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
       message("No data fetched, please check your input.")
       return(NULL)
     }
     return(url1GetText2Json)
-  }
-  if( method=="download" ){
+  }else if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
     if( file.exists(tmpFile) ){ file.remove(tmpFile) }
     utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
@@ -921,7 +925,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
       # replace NAN with NULL:
       url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
       url1GetText2Json <- jsonlite::fromJSON(url1GetText)
-      if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+      if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
         message("No data fetched, please check your input.")
         return(NULL)
       }
@@ -939,7 +943,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
     # replace NAN with NULL:
     url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
       message("No data fetched, please check your input.")
       return(NULL)
     }
@@ -953,13 +957,13 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
     # replace NAN with NULL:
     url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
     url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    if( url1GetText2Json=="" || length(url1GetText2Json)==0 ){
+    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
       message("No data fetched, please check your input.")
       return(NULL)
     }
     return(url1GetText2Json)
   }else{
-    stop("please choose the right method.")
+    stop("please choose the right download method.")
   }
 }
 
@@ -968,12 +972,12 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
 #'
 #' @param url1 A url string.
 #' @param method Can be chosen from "download", "curl" or "GET".
-#' @param downloadMethodThe same methods from utils::download.file function.
+#' @param downloadMethod The same methods from utils::download.file function.
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
 #' @import data.table
 #' @importFrom crayon magenta underline
-#' @return
+#' @return A data.frame
 #' @export
 #'
 #' @examples
@@ -1057,7 +1061,8 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #'
 #' @examples
 #' \donttest{
-#'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1, endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+#'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
+#'    endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 #' }
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
   # chrom="chr1"
@@ -1138,6 +1143,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @title EBIquery_allTerm
 #'
 #' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
+#' @param termSize Number of fetched term.
 #' @return a data.table
 #' @export
 #'

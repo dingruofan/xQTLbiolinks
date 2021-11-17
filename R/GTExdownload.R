@@ -394,12 +394,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
     # convert tissueSiteDetail to tissueSiteDetailId:
     tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
   }
-  # check network:
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
+
   ##################### fetch varInfo
   if(variantName!=""){
     message("== Querying variant info from API server:")
@@ -441,9 +436,15 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
                  )
   url1 <- utils::URLencode(url1)
+  # check network:
+  bestFetchMethod <- apiAdmin_ping()
+  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    message("Note: API server is busy or your network has latency, please try again later.")
+    return(NULL)
+  }
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
-  if(nrow(tmp)==0){
+  if( !exists("tmp")||nrow(tmp)==0){
     message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
     return(data.table::data.table())
   }else{
@@ -697,6 +698,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @param gene gene
 #' @param geneType geneType
 #' @param tissueSiteDetail tissueSiteDetail
+#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
 #' @import data.table
 #' @import stringr
 #' @return a data.table
@@ -708,6 +710,8 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
 GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=300){
+  .<-NULL
+  variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -791,7 +795,7 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
   gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
   gtexAsooDT$gencodeId_GTEX_v7 <- ifelse(nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
-  #' add hg19 cordinate:
+  # add hg19 cordinate:
   gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
   gtexAsooDTb37$variant <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
   gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variant, b37VariantId)], by=c("variant"), all.x=TRUE )
@@ -1208,7 +1212,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #' @import curl
 #' @import jsonlite
 #' @import tidyr
-#' @return
+#' @return A data.frame
 #' @export
 #'
 #' @examples
@@ -1219,6 +1223,8 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #'
 #' }
 GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=300){
+  .<-NULL
+  variantId<-snpId <- snpId_1 <- variantId_1 <- snpId_2 <-variantId_2<- ldScore <- NULL
   # check genes
   if( is.null(gene) ||  any(is.na(gene)) || any(gene=="") ||length(gene)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
@@ -1371,6 +1377,8 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #'  GTExdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
 #' }
 GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
+  .<-NULL
+  gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="DDX11"
   # geneType="geneSymbol"
   # datasetId = "gtex_v8"
@@ -1436,8 +1444,8 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
   url1 <- paste0("https://gtexportal.org/rest/v1/association/egene?",
                  "page=",page_tmp,"&",
                  "pageSize=",pageSize_tmp,
-                 ifelse(gene=="","&",paste0("&searchTerm=",geneInfo$gencodeId)),
-                 "sortBy=log2AllelicFoldChange&sortDirection=asc",
+                 ifelse(gene=="","",paste0("&searchTerm=",geneInfo$gencodeId)),
+                 "&sortBy=log2AllelicFoldChange&sortDirection=asc",
                  ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
                  "&datasetId=",datasetId)
   url1 <- utils::URLencode(url1)
@@ -1500,6 +1508,8 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 #'  GTExdownload_geneMedExp(genes="TP53", "geneSymbol")
 #' }
 GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
+  .<-NULL
+  gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss<-strand <- NULL
   # check genes
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")

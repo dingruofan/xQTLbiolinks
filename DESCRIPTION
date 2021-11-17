@@ -29,3 +29,8 @@ Imports:
     ggrepel (>= 0.9.1),
     crayon (>= 1.4.1),
     httr (>= 1.4.2)
+Suggests: 
+    rmarkdown,
+    knitr,
+    coloc (>= 5.1.0)
+VignetteBuilder: knitr

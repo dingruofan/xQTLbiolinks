@@ -21,8 +21,6 @@ Fetch data using url by three methods
 }
 \examples{
 \donttest{
- url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=chr11_66561248_T_C_b38&tissueSiteDetailId=Liver&datasetId=gtex_v8"
- fetchContent(url1, method="curl")
  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
  fetchContent(url1, method="download")
 }

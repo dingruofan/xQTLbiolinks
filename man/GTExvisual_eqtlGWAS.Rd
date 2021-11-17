@@ -15,21 +15,13 @@ GTExvisual_eqtlGWAS(
 \arguments{
 \item{gwasDF}{A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".}
 
+\item{traitGene}{eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".}
+
+\item{traitGeneType}{eqtl type. If this parameter is not specified, it is the same as the "queryType".}
+
 \item{tissueSiteDetail}{tissue}
 
-\item{queryTerm}{Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").}
-
-\item{queryType}{A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for genome coordinate, "coordinate".}
-
-\item{eqtlTrait}{eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".}
-
-\item{eqtlType}{eqtl type. If this parameter is not specified, it is the same as the "queryType".}
-
-\item{flankUp}{A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.}
-
-\item{flankDown}{A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.}
-
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{study_id}{A character string. Default: "gtex_v8".}
 }
 \value{
 A plot.
@@ -39,25 +31,20 @@ significance analysis of GTEX and eQTL  NO.
 }
 \examples{
 \donttest{
- gwasDF_raw <- data.table::fread("D:\\\\R_project\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
- gwasDF <- gwasDF_raw[,.(rsid, pvalue)]
+ gwasDF_raw <- data.table::fread(
+ "D:\\\\R_project\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+ gwasDF <- gwasDF_raw[,.(rsid, pvalue, Freq)]
+ names(gwasDF) <- c("snpId","pValue","freq")
 
-
- GTExanalyze_eqtlGWAS(gwasDF, traitGene="SFTPD", traitGeneType="geneSymbol",
-                      tissueSiteDetail="Artery - Tibial", study_id="gtex_v8")
- GTExanalyze_eqtlGWAS(gwasDF, traitGene="rs12778583", traitGeneType="snpId",
-                      tissueSiteDetail="Thyroid", study_id="gtex_v7")
- GTExanalyze_eqtlGWAS(gwasDF, traitGene="12:122404966-124404966", traitGeneType="coordinate",
-                      tissueSiteDetail="Whole Blood", study_id="gtex_v7")
-
- traitGene="SFTPD"
- tissueSiteDetail="Artery - Tibial"
+ traitGene="ABCB9"
+ tissueSiteDetail="Whole Blood"
  geneAsso<- GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
-
- gwasDF <- data.table::fread("D:\\\\R_project\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
- gwasDF <- gwasDF[,.(rsid, pvalue, Freq)]
- colocResult <- coloc.abf(dataset1=list(pvalues=gwas_eqtl$pValue.gwas, type="cc", S=0.33, N=nrow(gwasDF)),
- dataset2=list(pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(eqtlAsso)), MAF=gwas_eqtl$maf)
+ gwas_eqtl <- merge(gwasDF, geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
+ colocResult <- coloc::coloc.abf(dataset1=list(
+   pvalues=gwas_eqtl$pValue.gwas, type="cc", s=0.33, N=nrow(gwasDF_raw)),
+ dataset2=list(
+   pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso)),
+   MAF=gwas_eqtl$maf)
 
 }
 }

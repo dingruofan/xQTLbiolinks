@@ -379,6 +379,7 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # install.packages("~/GTExbiolinks.tar.gz", repos = NULL, type = "source", lib="/home/dingruofan/anaconda3/envs/work/lib/R/library")
 # install.packages("~/GTExbiolinks_0.0.0.9000.tar.gz", repos = NULL, type = "source", lib="/home/dingruofan/anaconda3/envs/work/lib/R/library")
 
+# import:
 # usethis::use_package("data.table",min_version ="1.14.2")
 # usethis::use_package("curl", min_version = "4.3.2")
 # usethis::use_package("jsonlite", min_version = "1.7.2")
@@ -396,7 +397,8 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("crayon", min_version = "1.4.1")
 # usethis::use_package("httr", min_version = "1.4.2")
 
-
+# suggest:
+# usethis::use_package("coloc", min_version = "5.1.0", type="Suggests")
 
 # usethis::use_package("usethis", min_version = "2.0.1")
 # usethis::use_package("rlang", min_version = "0.4.11")

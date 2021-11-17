@@ -4,7 +4,10 @@
 \alias{apiAdmin_ping}
 \title{Heartbeat to check GTEx API server connectivity.}
 \usage{
-apiAdmin_ping()
+apiAdmin_ping(fetchMethod = "")
+}
+\arguments{
+\item{fetchMethod}{fetchMethod.}
 }
 \value{
 A character of fetchContent method.

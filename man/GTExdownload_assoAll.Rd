@@ -17,6 +17,8 @@ GTExdownload_assoAll(
 \item{geneType}{geneType}
 
 \item{tissueSiteDetail}{tissueSiteDetail}
+
+\item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
 }
 \value{
 a data.table
@@ -29,5 +31,4 @@ GTExdownload_assoAll
   GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 }
-add hg19 cordinate:
 }

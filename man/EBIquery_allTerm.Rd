@@ -8,6 +8,8 @@ EBIquery_allTerm(term = "genes", termSize = 5000)
 }
 \arguments{
 \item{term}{"associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".}
+
+\item{termSize}{Number of fetched term.}
 }
 \value{
 a data.table

@@ -17,6 +17,8 @@ GTExquery_varPos(
 \item{pos}{An integer array.}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+
+\item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
 }
 \value{
 A data.table.

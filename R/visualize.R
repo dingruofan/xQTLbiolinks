@@ -78,7 +78,7 @@
 #' \donttest{
 #'
 #'
-#'   dot num+++
+#'
 #'  # EQTL associatons of TP53:
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
 #'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
@@ -184,28 +184,29 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   names(genoLabelPie) <- c("genoLabels", "labelNum")
   genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
-  stopifnot(require(ggplot2))
-  stopifnot(require(ggrepel))
-  p <- ggplot(genoLable)+
-    geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
-    geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
-    scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
-    # scale_fill_manual(values=c("green", "red"))+
-    # scale_fill_brewer(palette = "Dark2")+
-    theme_bw()+
-    labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol, " (",tissueSiteDetail,")") )+
-    xlab("Genotypes")+
-    ylab("Normalized expression")+
-    theme(axis.text.x=element_text(size=rel(1.3)),
-          axis.text.y = element_text(size=rel(1.3)),
-          axis.title = element_text(size=rel(1.3)),
-          legend.position = "none",
-          legend.background = element_rect(fill="white",
-                                           size=0.5, linetype="solid",
-                                           colour ="white"),
-          plot.title = element_text(hjust=0.5)
-    )
-  print(p)
+  if( requireNamespace("ggplot2") ){
+    p <- ggplot(genoLable)+
+      geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
+      geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
+      scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
+      # scale_fill_manual(values=c("green", "red"))+
+      # scale_fill_brewer(palette = "Dark2")+
+      theme_bw()+
+      labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol, " (",tissueSiteDetail,")") )+
+      xlab("Genotypes")+
+      ylab("Normalized expression")+
+      theme(axis.text.x=element_text(size=rel(1.3)),
+            axis.text.y = element_text(size=rel(1.3)),
+            axis.title = element_text(size=rel(1.3)),
+            legend.position = "none",
+            legend.background = element_rect(fill="white",
+                                             size=0.5, linetype="solid",
+                                             colour ="white"),
+            plot.title = element_text(hjust=0.5)
+      )
+    print(p)
+  }
+
   # ggplot(genoLabelPie) +
   #   geom_bar( aes(x="", y=labelNum, fill=genoLabels), stat = "identity") + coord_polar("y", start=0)+
   #   labs(x = "", y = "", title = "") +
@@ -234,14 +235,10 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @title significance analysis of GTEX and eQTL  NO.
 #'
 #' @param gwasDF A data.frame containing GWAS summary info. At least four columns are expected, including "snpId", "chrom", "pos" and "pValue".
-#' @param queryTerm Term of interest, which can be a gene (like "ABCB9", "ENSG00000141510.16"), a variant (like "rs7953894", "chr12_122920419_C_A_b38") or a genome coordinate (default: "chr1:1-300000").
-#' @param queryType A character string that stands for the type of \"queryTerm\". For gene, "geneSymbol" or "gencodeId", for genome coordinate, "coordinate".
-#' @param eqtlTrait eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".
-#' @param eqtlType eqtl type. If this parameter is not specified, it is the same as the "queryType".
+#' @param traitGene eqtl trait. If this parameter is not specified, it is the same as the "queryTerm".
+#' @param traitGeneType eqtl type. If this parameter is not specified, it is the same as the "queryType".
 #' @param tissueSiteDetail tissue
-#' @param flankUp A whole integer. Upstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.
-#' @param flankDown A whole integer. Downstream flanking distance of queried term. Uint: KB. Default: 100. Note: when "queryType" is "coordinate", this parameter is ignored.
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param study_id A character string. Default: "gtex_v8".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -253,35 +250,32 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'
 #' @examples
 #' \donttest{
-#'  gwasDF_raw <- data.table::fread("D:\\R_project\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
-#'  gwasDF <- gwasDF_raw[,.(rsid, pvalue)]
+#'  gwasDF_raw <- data.table::fread(
+#'  "D:\\R_project\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
+#'  gwasDF <- gwasDF_raw[,.(rsid, pvalue, Freq)]
+#'  names(gwasDF) <- c("snpId","pValue","freq")
 #'
-#'
-#'  GTExanalyze_eqtlGWAS(gwasDF, traitGene="SFTPD", traitGeneType="geneSymbol",
-#'                       tissueSiteDetail="Artery - Tibial", study_id="gtex_v8")
-#'  GTExanalyze_eqtlGWAS(gwasDF, traitGene="rs12778583", traitGeneType="snpId",
-#'                       tissueSiteDetail="Thyroid", study_id="gtex_v7")
-#'  GTExanalyze_eqtlGWAS(gwasDF, traitGene="12:122404966-124404966", traitGeneType="coordinate",
-#'                       tissueSiteDetail="Whole Blood", study_id="gtex_v7")
-#'
-#'  traitGene="SFTPD"
-#'  tissueSiteDetail="Artery - Tibial"
+#'  traitGene="ABCB9"
+#'  tissueSiteDetail="Whole Blood"
 #'  geneAsso<- GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
-#'
-#'  gwasDF <- data.table::fread("D:\\R_project\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
-#'  gwasDF <- gwasDF[,.(rsid, pvalue, Freq)]
-#'  colocResult <- coloc.abf(dataset1=list(pvalues=gwas_eqtl$pValue.gwas, type="cc", S=0.33, N=nrow(gwasDF)),
-#'  dataset2=list(pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(eqtlAsso)), MAF=gwas_eqtl$maf)
+#'  gwas_eqtl <- merge(gwasDF, geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
+#'  colocResult <- coloc::coloc.abf(dataset1=list(
+#'    pvalues=gwas_eqtl$pValue.gwas, type="cc", s=0.33, N=nrow(gwasDF_raw)),
+#'  dataset2=list(
+#'    pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso)),
+#'    MAF=gwas_eqtl$maf)
 #'
 #' }
 GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol", tissueSiteDetail="", study_id="gtex_v8"){
+  .<-NULL
+  snpId <- variant <- logP <- pos <- colorP <- sizeP <- snpId <- NULL
   pos <- pValue.gwas <- pValue.etql <-NULL
   # gwasDF <- data.table::fread("../GWAS_White-Blood-Cell-Traits_Tajuddin_2016.txt", sep="\t", header=TRUE)
   # gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
   # gwasDF <- gwasDF[trait=="White-Blood-Cell-Counts",][,.(rsid, chr, POS)]
   # gwasDF <- gwasDF[,.(rsid, chr, snp_pos, pvalue, effect_allele, non_effect_allele)]
 
-  # traitGene="ABCB9"
+  # traitGene="LPAR2"
   # traitGeneType="geneSymbol"
   # tissueSiteDetail="Whole Blood"
   # study_id="gtex_v8"
@@ -360,14 +354,20 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
     message("No intersection of GWAS and eQTL dataset!")
     return(data.table::data.table())
   }
-
-  result <- coloc.abf(dataset1=list(pvalues=gwas_eqtl$pValue.gwas, type="cc", s=0.33, N=50000),
-                      dataset2=list(pvalues=gwas_eqtl$pValue.etql, type="quant", N=10000), MAF=gwas_eqtl$maf)
-
-
   ######## Fetch all LD info:
-  geneLD <- GTExdownload_ld(gene=geneInfo$gencodeId, geneType = "gencodeId", datasetId = study_id, recordPerChunk = recordPerChunk)
+  snpSig <- "rs11671619"
+  snpEqtl <- GTExdownload_eqtlSig(snpSig)
+  geneLD <- data.table::data.table()
+  for(i in unique(snpEqtl$gencodeId)){
+    message(i)
+    suppressMessages( geneLDTmp <- GTExdownload_ld(gene=i, geneType = "gencodeId", datasetId = study_id, recordPerChunk = recordPerChunk) )
+    geneLD <- rbind(geneLD, geneLDTmp)
+  }
+  snpSigLD <- rbind(geneLD[snpId_1==snpSig,], geneLD[snpId_2==snpSig,])
 
+  geneLD <- GTExdownload_ld(gene=geneInfo$gencodeId, geneType = "gencodeId", datasetId = study_id, recordPerChunk = recordPerChunk)
+  snpSig <- "rs11671619"
+  gwas_eqtl <- merge(gwas_eqtl, )
 
   gwas_eqtlLD <- gwas_eqtl[,.(snpId, pValue.gwas, pValue.etql,variant)]
 
@@ -404,11 +404,14 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 #'
 #' @examples
 #' \donttest{
-#'  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
-#'  GTExvisual_eqtlTrait("tp53",tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+#'  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",
+#'    tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+#'  GTExvisual_eqtlTrait("tp53",
+#'    tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
 #' }
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
-
+  .<-NULL
+  logP <- pos <- colorP <- sizeP <- snpId<-NULL
   # gene = "ENSG00000112137.12"
   # geneType = "gencodeId"
   # tissueSiteDetail = "Adipose - Subcutaneous"
@@ -495,24 +498,25 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   eqtlOfgene[1,]$colorP <- "red"
   eqtlOfgene[1,]$sizeP <- 2
 
-  stopifnot(require(ggplot2))
-  stopifnot(require(ggrepel))
-  p <- ggplot(eqtlOfgene)+
-    geom_point(aes(x=pos, y=logP, color=colorP, size=sizeP))+
-    scale_color_manual(breaks = eqtlOfgene$colorP, values = eqtlOfgene$colorP)+
-    # scale_size_manual(breaks = as.character(eqtlOfgene$sizeP), values =  as.numeric(eqtlOfgene$sizeP) )+
-    # geom_text(aes(x=pos, y=logP, label=snpId ))+
-    geom_label_repel(data=eqtlOfgene[1:1,], aes(x=pos, y=logP, label=snpId) )+
-    labs(title = plotTitle )+
-    xlab( xLab )+
-    ylab( yLab )+
-    theme_bw()+
-    theme(axis.text.x=element_text(size=rel(1.3)),
-          axis.title.x=element_text(size=rel(1.3)),
-          axis.title.y=element_text(size=rel(1.3)),
-          plot.title = element_text(hjust=0.5)
-    )+guides(color="none", size="none")
-  print(p)
+  if( requireNamespace("ggplot2") ){
+    p <- ggplot(eqtlOfgene)+
+      geom_point(aes(x=pos, y=logP, color=colorP, size=sizeP))+
+      scale_color_manual(breaks = eqtlOfgene$colorP, values = eqtlOfgene$colorP)+
+      # scale_size_manual(breaks = as.character(eqtlOfgene$sizeP), values =  as.numeric(eqtlOfgene$sizeP) )+
+      # geom_text(aes(x=pos, y=logP, label=snpId ))+
+      geom_label_repel(data=eqtlOfgene[1:1,], aes(x=pos, y=logP, label=snpId) )+
+      labs(title = plotTitle )+
+      xlab( xLab )+
+      ylab( yLab )+
+      theme_bw()+
+      theme(axis.text.x=element_text(size=rel(1.3)),
+            axis.title.x=element_text(size=rel(1.3)),
+            axis.title.y=element_text(size=rel(1.3)),
+            plot.title = element_text(hjust=0.5)
+      )+guides(color="none", size="none")
+    print(p)
+  }
+
   p
 
 
