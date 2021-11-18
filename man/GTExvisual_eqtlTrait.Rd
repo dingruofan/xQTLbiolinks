@@ -7,8 +7,9 @@
 GTExvisual_eqtlTrait(
   gene = "",
   geneType = "geneSymbol",
+  highlightSnp = "",
   tissueSiteDetail = "",
-  datasetId = "gtex_v8"
+  study = "gtex_v8"
 )
 }
 \arguments{

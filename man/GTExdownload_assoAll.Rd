@@ -8,7 +8,8 @@ GTExdownload_assoAll(
   gene = "",
   geneType = "geneSymbol",
   tissueSiteDetail = "",
-  recordPerChunk = 300
+  recordPerChunk = 300,
+  study = "GTEx_V8"
 )
 }
 \arguments{

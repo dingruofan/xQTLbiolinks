@@ -17,3 +17,46 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(GTExbiolinks)
 ```
+
+```{r}
+# gwasFile <- tempfile(pattern = "file")
+gwasFile <- "C:\\Users\\DELL\\AppData\\Local\\Temp\\RtmpGaJB1c\\file3da43b0673b8"
+gwasURL <- "http://www.mcgill.ca/genepi/files/genepi/adipogen.discovery.eur_.meta_.public.release.part1_.txt"
+if( file.exists(gwasFile) ){ 
+  message("File exists: ",gwasFile)
+}else{
+  utils::download.file(gwasURL, destfile=gwasFile)
+}
+# If your dataset provides the standard error, simply square it to get the variance.
+gwasDF_raw <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+gwasDF_raw <- na.omit(gwasDF_raw)
+gwasDF_raw$varbeta <- gwasDF_raw$se^2
+gwasDF <- gwasDF_raw[,.(marker, pvalue, beta, varbeta, maf)]
+names(gwasDF) <- c("snpId","pValue","beta", "varbeta", "maf")
+gwasDF
+```
+
+```{r}
+traitGene="ABCB9"
+tissueSiteDetail="Whole Blood"
+geneAsso<- suppressMessages( GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail) )
+geneAsso <- geneAsso[,c("snpId", "pValue", "maf")]
+geneAsso
+```
+
+```{r}
+gwas_eqtl <- merge(gwasDF, geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
+
+gwas_eqtl
+```
+
+```{r}
+library(coloc)
+colocResult <- coloc.abf(
+  dataset1=list(
+    pvalues=gwas_eqtl$pValue.gwas, beta=gwas_eqtl$beta, type="quant", varbeta=gwas_eqtl$varbeta, N=nrow(gwasDF_raw),MAF=gwas_eqtl$maf.gwas),
+ dataset2=list(
+   pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso),
+   MAF=gwas_eqtl$maf.etql))
+gwas_eqtl[which(colocResult$results$SNP.PP.H4 > 0.75)]
+```

@@ -709,7 +709,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'   GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
 #'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
-GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=300){
+GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=300, study="GTEx_V8"){
   .<-NULL
   variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
@@ -784,7 +784,7 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
     message("No association found!")
     return(NULL)
   }
-  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variant= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
+  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variantId= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
                                                                chrom=x$chromosome, pos=x$position,
                                                                # ref=x$ref, alt=x$alt, gene_id= x$gene_id, study_id=x$study_id
                                                                se=x$se, median_tpm=x$median_tpm, pValue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
@@ -797,10 +797,10 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   gtexAsooDT$gencodeId_GTEX_v7 <- ifelse(nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
   # add hg19 cordinate:
   gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
-  gtexAsooDTb37$variant <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
-  gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variant, b37VariantId)], by=c("variant"), all.x=TRUE )
-  gtexAsooDT$variant <- paste0(gtexAsooDT$variant,"_b38")
-  gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variant, b37VariantId)], gtexAsooDT[,-c("snpId", "variant", "b37VariantId", "chrom", "pos")])
+  gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+  gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
+  gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+  gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
   return(gtexAsooDT)
 }
 

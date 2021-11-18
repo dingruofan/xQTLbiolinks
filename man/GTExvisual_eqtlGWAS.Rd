@@ -31,20 +31,7 @@ significance analysis of GTEX and eQTL  NO.
 }
 \examples{
 \donttest{
- gwasDF_raw <- data.table::fread(
- "D:\\\\R_project\\\\GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
- gwasDF <- gwasDF_raw[,.(rsid, pvalue, Freq)]
- names(gwasDF) <- c("snpId","pValue","freq")
 
- traitGene="ABCB9"
- tissueSiteDetail="Whole Blood"
- geneAsso<- GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
- gwas_eqtl <- merge(gwasDF, geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
- colocResult <- coloc::coloc.abf(dataset1=list(
-   pvalues=gwas_eqtl$pValue.gwas, type="cc", s=0.33, N=nrow(gwasDF_raw)),
- dataset2=list(
-   pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso)),
-   MAF=gwas_eqtl$maf)
 
 }
 }
