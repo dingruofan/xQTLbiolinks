@@ -392,19 +392,18 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 #'
 #' @examples
 #' \donttest{
-#'  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",
-#'    tissueSiteDetail = "Adipose - Subcutaneous", study="gtex_v8")
-#'  GTExvisual_eqtlTrait("tp53",
-#'    tissueSiteDetail = "Adipose - Subcutaneous", study="gtex_v8")
+#'  GTExvisual_eqtlTrait("tp53", tissueSiteDetail = "Lung", population="ALL")
+#'  GTExvisual_eqtlTrait("ENSG00000103642", "gencodeId",
+#'    tissueSiteDetail = "Liver", study="gtex_v8", population=c("EAS","SAS","AMR"))
 #' }
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp="", tissueSiteDetail="", study ="gtex_v8", population="ALL"){
   .<-NULL
   logP <- pos <- colorP <- sizeP <- snpId<-NULL
-  # gene = "ENSG00000112137"
+  # gene = "ENSG00000076242"
   # geneType = "gencodeId"
-  # tissueSiteDetail = "Adipose - Subcutaneous"
+  # tissueSiteDetail = "Liver"
   # study = "gtex_v8"
-  # population="ALL"
+  # population="AFR"
 
   population1000G <- c('AFR', 'AMR', 'EAS', 'EUR', 'SAS')
   gencodeVersion <- "v26"
@@ -487,8 +486,6 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
       message("Parameter \"population\" should be chosen from \"AFR\", \"AMR\", \"EAS\", \"EUR\", or \"SAS\". ")
       return(NULL)
     }
-    # 由于多个人种存在重复LD，所以取均值：
-    snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
   }else{
     highlightSnp <- eqtlAsso[1,]$snpId
     # Get LD info of all population:
@@ -518,21 +515,20 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
       message("Parameter \"population\" should be chosen from \"AFR\", \"AMR\", \"EAS\", \"EUR\", or \"SAS\". ")
       return(NULL)
     }
-    # 由于多个人种存在重复LD，所以取均值：
-    snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
   }
+
   # Set LD SNP color:
   if(nrow(snpLD)>0){
+    # 由于多个人种存在重复LD，所以取均值：
+    snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
     # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
     snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1]'), include.lowest=TRUE))
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
     message("No LD information of [",highlightSnp,"].")
-    snpLD$color<-""
+    snpLD <- data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
   }
 
-  # eqtlAsso$colorP <- "grey"
-  # eqtlAsso$sizeP <- 1
   # set color:
   eqtlAsso <- merge(eqtlAsso, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
   eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0-0.2]"
@@ -585,7 +581,13 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
             plot.title = element_text(hjust=0.5),
             legend.title = element_text(size=rel(1.3)),
             legend.text = element_text(size=rel(1.2))
-      )+guides( size="none", color = guide_legend(override.aes = list(size = 4) ) )
+      )
+    if(nrow(snpLD)==0){
+      p <- p+ guides( size="none", color = "none" )
+    }else{
+      p <- p+ guides( size="none", color = guide_legend(override.aes = list(size = 4)) )
+    }
+
     print(p)
   }
 

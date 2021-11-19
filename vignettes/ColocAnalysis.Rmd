@@ -19,8 +19,7 @@ library(GTExbiolinks)
 ```
 
 ```{r}
-# gwasFile <- tempfile(pattern = "file")
-gwasFile <- "C:\\Users\\DELL\\AppData\\Local\\Temp\\RtmpGaJB1c\\file3da43b0673b8"
+gwasFile <- tempfile(pattern = "file")
 gwasURL <- "http://www.mcgill.ca/genepi/files/genepi/adipogen.discovery.eur_.meta_.public.release.part1_.txt"
 if( file.exists(gwasFile) ){ 
   message("File exists: ",gwasFile)
@@ -45,6 +44,10 @@ geneAsso
 ```
 
 ```{r}
+eqtlAsso <- suppressMessages( GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail) )
+```
+
+```{r}
 gwas_eqtl <- merge(gwasDF, geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
 
 gwas_eqtl
@@ -59,4 +62,9 @@ colocResult <- coloc.abf(
    pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso),
    MAF=gwas_eqtl$maf.etql))
 gwas_eqtl[which(colocResult$results$SNP.PP.H4 > 0.75)]
+```
+
+```{r}
+eqtlAsso2 <-  GTExvisual_eqtlTrait(traitGene,highlightSnp = gwas_eqtl[which(colocResult$results$SNP.PP.H4 > 0.75)]$snpId, tissueSiteDetail=tissueSiteDetail) 
+
 ```

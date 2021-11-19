@@ -32,9 +32,8 @@ eql trait plot
 }
 \examples{
 \donttest{
- GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",
-   tissueSiteDetail = "Adipose - Subcutaneous", study="gtex_v8")
- GTExvisual_eqtlTrait("tp53",
-   tissueSiteDetail = "Adipose - Subcutaneous", study="gtex_v8")
+ GTExvisual_eqtlTrait("tp53", tissueSiteDetail = "Lung", population="ALL")
+ GTExvisual_eqtlTrait("ENSG00000103642", "gencodeId",
+   tissueSiteDetail = "Liver", study="gtex_v8", population=c("EAS","SAS","AMR"))
 }
 }

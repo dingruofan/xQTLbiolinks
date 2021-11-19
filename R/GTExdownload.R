@@ -412,7 +412,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
     message("== Querying gene info from API server:")
     geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
-      stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
+      stop("Invalid gene name or type, please correct your input.")
     }else{
       message("== Done.")
     }
@@ -709,7 +709,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'   GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
 #'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
-GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=300, study="GTEx_V8"){
+GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8"){
   .<-NULL
   variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
