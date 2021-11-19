@@ -9,7 +9,8 @@ GTExvisual_eqtlTrait(
   geneType = "geneSymbol",
   highlightSnp = "",
   tissueSiteDetail = "",
-  study = "gtex_v8"
+  study = "gtex_v8",
+  population = "ALL"
 )
 }
 \arguments{
@@ -18,6 +19,8 @@ GTExvisual_eqtlTrait(
 \item{geneType}{"geneSymbol" or "gencodeId"}
 
 \item{tissueSiteDetail}{gene name}
+
+\item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.}
 
 \item{datasetId}{"gtex_v7" or "gtex_v8"}
 }
@@ -30,8 +33,8 @@ eql trait plot
 \examples{
 \donttest{
  GTExvisual_eqtlTrait("ENSG00000112137.12", "gencodeId",
-   tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+   tissueSiteDetail = "Adipose - Subcutaneous", study="gtex_v8")
  GTExvisual_eqtlTrait("tp53",
-   tissueSiteDetail = "Adipose - Subcutaneous", datasetId="gtex_v7")
+   tissueSiteDetail = "Adipose - Subcutaneous", study="gtex_v8")
 }
 }

@@ -1602,4 +1602,48 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   return(outInfo)
 }
 
+#' @title Retrive SNP pairwise LD from database.
+#' @description
+#'  SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
+#'  For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.
+#' @param chr (string) Chromosome name. e.g. '22'. Notice that the name should not contain 'chr'.
+#' @param snp (string) SNP rsID.
+#' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
+#' @import RMySQL
+#' @examples
+#'  retrieve_LD('6', 'rs9349379', 'AFR')
+#'
+#' @export
+retrieve_LD = function(chr,snp,population){
 
+  # conn = RMySQL::dbConnect(RMySQL::MySQL(),"locuscompare",config$b,config$c,config$a)
+  conn = RMySQL::dbConnect(RMySQL::MySQL(),"locuscompare", "locuscomparer" ,"12345678","locuscompare-us-west-2a.cvocub39nnri.us-west-2.rds.amazonaws.com")
+  on.exit(RMySQL::dbDisconnect(conn))
+
+  res1 = DBI::dbGetQuery(
+    conn = conn,
+    statement = sprintf(
+      "select SNP_A, SNP_B, R2
+            from tkg_p3v5a_ld_chr%s_%s
+            where SNP_A = '%s';",
+      chr,
+      population,
+      snp
+    )
+  )
+
+  res2 = DBI::dbGetQuery(
+    conn = conn,
+    statement = sprintf(
+      "select SNP_B as SNP_A, SNP_A as SNP_B, R2
+            from tkg_p3v5a_ld_chr%s_%s
+            where SNP_B = '%s';",
+      chr,
+      population,
+      snp
+    )
+  )
+
+  res = rbind(res1,res2)
+  return(res)
+}
