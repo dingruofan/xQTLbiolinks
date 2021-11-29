@@ -44,7 +44,7 @@ geneAsso
 ```
 
 ```{r}
-eqtlAsso <- suppressMessages( GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail) )
+# eqtlAsso <- suppressMessages( GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail) )
 ```
 
 ```{r}
@@ -57,10 +57,10 @@ gwas_eqtl
 library(coloc)
 colocResult <- coloc.abf(
   dataset1=list(
-    pvalues=gwas_eqtl$pValue.gwas, beta=gwas_eqtl$beta, type="quant", varbeta=gwas_eqtl$varbeta, N=nrow(gwasDF_raw),MAF=gwas_eqtl$maf.gwas),
+    pvalues=gwas_eqtl$pValue.gwas, beta=gwas_eqtl$beta.gwas, type="cc", varbeta=gwas_eqtl$varbeta, s=0.4,MAF=gwas_eqtl$maf.gwas),
  dataset2=list(
    pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso),
-   MAF=gwas_eqtl$maf.etql))
+   MAF=gwas_eqtl$maf.gwas))
 gwas_eqtl[which(colocResult$results$SNP.PP.H4 > 0.75)]
 ```
 
