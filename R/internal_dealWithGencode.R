@@ -396,10 +396,11 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("ggrepel", min_version = "0.9.1")
 # usethis::use_package("crayon", min_version = "1.4.1")
 # usethis::use_package("httr", min_version = "1.4.2")
+# usethis::use_package("RMySQL", min_version = "0.10.22")
+# usethis::use_package("DBI", min_version = "1.1.1")
 
 # suggest:
 # usethis::use_package("coloc", min_version = "5.1.0", type="Suggests")
-
 # usethis::use_package("usethis", min_version = "2.0.1")
 # usethis::use_package("rlang", min_version = "0.4.11")
 

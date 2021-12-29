@@ -699,6 +699,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @param geneType geneType
 #' @param tissueSiteDetail tissueSiteDetail
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
+#' @param study "GTEx_V8"
 #' @import data.table
 #' @import stringr
 #' @return a data.table
@@ -711,7 +712,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' }
 GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8"){
   .<-NULL
-  variant <- b37VariantId <- snpId <- NULL
+  variantId <- variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -1611,10 +1612,10 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
 #' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @import RMySQL
 #' @examples
-#'  retrieve_LD('6', 'rs9349379', 'AFR')
+#'  retrieveLD('6', 'rs9349379', 'AFR')
 #'
 #' @export
-retrieve_LD = function(chr,snp,population){
+retrieveLD = function(chr,snp,population){
 
   # conn = RMySQL::dbConnect(RMySQL::MySQL(),"locuscompare",config$b,config$c,config$a)
   conn = RMySQL::dbConnect(RMySQL::MySQL(),"locuscompare", "locuscomparer" ,"12345678","locuscompare-us-west-2a.cvocub39nnri.us-west-2.rds.amazonaws.com")

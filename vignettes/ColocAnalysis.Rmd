@@ -15,30 +15,27 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(GTExbiolinks)
+library(devtools)
+load_all()
 ```
 
 ```{r}
 gwasFile <- tempfile(pattern = "file")
-gwasURL <- "http://www.mcgill.ca/genepi/files/genepi/adipogen.discovery.eur_.meta_.public.release.part1_.txt"
+gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/chr6.txt"
 if( file.exists(gwasFile) ){ 
   message("File exists: ",gwasFile)
 }else{
   utils::download.file(gwasURL, destfile=gwasFile)
 }
 # If your dataset provides the standard error, simply square it to get the variance.
-gwasDF_raw <- data.table::fread(gwasFile, sep="\t", header=TRUE)
-gwasDF_raw <- na.omit(gwasDF_raw)
-gwasDF_raw$varbeta <- gwasDF_raw$se^2
-gwasDF <- gwasDF_raw[,.(marker, pvalue, beta, varbeta, maf)]
-names(gwasDF) <- c("snpId","pValue","beta", "varbeta", "maf")
-gwasDF
+gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+
 ```
 
 ```{r}
-traitGene="ABCB9"
-tissueSiteDetail="Whole Blood"
-geneAsso<- suppressMessages( GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail) )
+traitGene="RP11-385F7.1"
+tissueSiteDetail="Lung"
+geneAsso<-  GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
 geneAsso <- geneAsso[,c("snpId", "pValue", "maf")]
 geneAsso
 ```
@@ -48,8 +45,11 @@ geneAsso
 ```
 
 ```{r}
-gwas_eqtl <- merge(gwasDF, geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".etql"))
-
+gwas_eqtl <- merge(gwasDF[,.(snpId=rsid, pValue=P, maf=maf, position)], geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".eqtl"))
+# sentinal snps:
+centerSnp <- gwas_eqtl[which.min(gwas_eqtl$pValue.gwas),]
+colocRange=1e6
+gwas_eqtl <- gwas_eqtl[position>=(centerSnp$position-(colocRange)/2) & position<=(centerSnp$position+(colocRange)/2),]
 gwas_eqtl
 ```
 
@@ -57,14 +57,20 @@ gwas_eqtl
 library(coloc)
 colocResult <- coloc.abf(
   dataset1=list(
-    pvalues=gwas_eqtl$pValue.gwas, beta=gwas_eqtl$beta.gwas, type="cc", varbeta=gwas_eqtl$varbeta, s=0.4,MAF=gwas_eqtl$maf.gwas),
+    pvalues=gwas_eqtl$pValue.gwas, type="quant", N=50000, MAF=gwas_eqtl$maf.gwas),
  dataset2=list(
-   pvalues=gwas_eqtl$pValue.etql, type="quant", N=nrow(geneAsso),
+   pvalues=gwas_eqtl$pValue.eqtl, type="quant", N=600,
    MAF=gwas_eqtl$maf.gwas))
-gwas_eqtl[which(colocResult$results$SNP.PP.H4 > 0.75)]
+colocResult
 ```
 
 ```{r}
-eqtlAsso2 <-  GTExvisual_eqtlTrait(traitGene,highlightSnp = gwas_eqtl[which(colocResult$results$SNP.PP.H4 > 0.75)]$snpId, tissueSiteDetail=tissueSiteDetail) 
+library(locuscomparer)
+suppressWarnings(locuscompare( gwas_eqtl[,.(rsid=snpId, pval=pValue.gwas)], gwas_eqtl[,.(rsid=snpId, pval=pValue.eqtl)] ))
+
+```
+
+```{r}
+eqtlAsso2 <-  GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail) 
 
 ```

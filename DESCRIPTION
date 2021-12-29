@@ -11,7 +11,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Depends: 
-    R (>= 2.10)
+    R (>= 4.00)
 Imports: 
     curl (>= 4.3.2),
     jsonlite (>= 1.7.2),
@@ -28,9 +28,10 @@ Imports:
     tidyr (>= 1.1.4),
     ggrepel (>= 0.9.1),
     crayon (>= 1.4.1),
-    httr (>= 1.4.2)
+    httr (>= 1.4.2),
+    RMySQL (>= 0.10.22),
+    usethis (>= 2.0.1),
+    rlang (>= 0.4.11),
+    DBI (>= 1.1.1)
 Suggests: 
-    rmarkdown,
-    knitr,
     coloc (>= 5.1.0)
-VignetteBuilder: knitr

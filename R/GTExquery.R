@@ -692,7 +692,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }
 
-  var_tmp <- data.table(ID=1:length(pos), chrom=chrom, pos=pos)
+  var_tmp <- data.table::data.table(ID=1:length(pos), chrom=chrom, pos=pos)
   cutNum <- recordPerChunk
   ############### query with GTExquery_varPos: START
   # var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
@@ -1106,11 +1106,11 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
     stop("Parameter \"track\" should be chosen from \"snp151Common\", \"snp150Common\" and \"snp147Common\".")
   }
 
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    # message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
+  # bestFetchMethod <- apiAdmin_ping()
+  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+  #   # message("Note: API server is busy or your network has latency, please try again later.")
+  #   return(NULL)
+  # }
 
   # construct url:
   url1 <- paste0("https://api.genome.ucsc.edu/getData/track?",
@@ -1122,8 +1122,8 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
 
   url1 <- utils::URLencode(url1)
   message("  Downloading...")
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-  outInfo <- as.data.table(url1GetText2Json[track][[track]])
+  url1GetText2Json <- fetchContent(url1, method = "curl", downloadMethod = bestFetchMethod[2])
+  outInfo <- data.table::as.data.table(url1GetText2Json[track][[track]])
   message("  Done")
   return(outInfo)
 }
