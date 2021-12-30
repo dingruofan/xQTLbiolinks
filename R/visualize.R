@@ -248,15 +248,13 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'
 #' @examples
 #' \donttest{
+#'
 #' gwasFile <- tempfile(pattern = "file")
 #' gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/chr6.txt"
-#' if( file.exists(gwasFile) ){
-#'    message("File exists: ",gwasFile)
-#' }else{
-#'    utils::download.file(gwasURL, destfile=gwasFile)
-#' }
-#'  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
-#'  GTExvisual_eqtlGWAS(gwasDF[,c("rsid","P")], traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
+#' utils::download.file(gwasURL, destfile=gwasFile)
+#' gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+#' gwasDF <- gwasDF[,c("rsid","P")]
+#' GTExvisual_eqtlGWAS(gwasDF, traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
 #'
 #' }
 GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol", tissueSiteDetail="", study_id="gtex_v8", highlightSnp="", population="EUR",  recordPerChunk=300){
@@ -281,6 +279,8 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
   population1000G <- c('AFR', 'AMR', 'EAS', 'EUR', 'SAS')
   # rename:
   names(gwasDF) <- c("snpId", "pValue")
+  gwasDF <- gwasDF[order(snpId, pValue)][!duplicated(snpId),]
+  setindex(gwasDF, snpId)
 
   # parameter check: snpId
   message("==Checking parameter!")
@@ -336,7 +336,9 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
   }
 
   ######## Fetch all associations:
-  eqtlAsso <- GTExdownload_assoAll(gene=geneInfo$gencodeId, geneType = "gencodeId", tissueSiteDetail = tissueSiteDetail )
+  eqtlAsso <- GTExdownload_assoAll(gene=geneInfo$gencodeId, geneType = "gencodeId", tissueSiteDetail = tissueSiteDetail, recordPerChunk=recordPerChunk )
+  eqtlAsso <- cbind(eqtlAsso, rbindlist(lapply(eqtlAsso$variantId, function(x){ x=stringr::str_split(x, stringr::fixed("_"))[[1]];return(data.table(chrom=x[1],pos=x[2])) })))
+  eqtlAsso$pos <- as.integer(eqtlAsso$pos)
   # if no eqtl got:
   if( nrow(eqtlAsso)==0 || !exists("eqtlAsso")){
     stop("No eqtl associations were found for ",traitGeneType,": [",traitGene,"].")
@@ -344,14 +346,16 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 
   # merge and obtain info：
   gwas_eqtl <- merge(gwasDF, eqtlAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".eqtl"))
-  P_chrom <- stringr::str_replace_all(stringr::str_split(gwas_eqtl[1,]$variantId, stringr::fixed("_"))[[1]][1], stringr::fixed("chr"),"")
   if( nrow(gwas_eqtl)==0 || !exists("gwas_eqtl") ){
     message("No intersection of GWAS and eQTL dataset!")
     return(data.table::data.table())
   }
+  gwas_eqtl$logP.gwas <- ifelse(gwas_eqtl$pValue.gwas==0,0, (-1*log(gwas_eqtl$pValue.gwas, 10)))
+  gwas_eqtl$logP.eqtl <- ifelse(gwas_eqtl$pValue.eqtl==0,0, (-1*log(gwas_eqtl$pValue.eqtl, 10)))
+  gwas_eqtl[,"distance_0" :=.(sqrt(logP.gwas^2+logP.eqtl^2))]
 
-  ######################
-  # Get LD:
+  ######## Get LD:
+  P_chrom <- stringr::str_replace_all( unique(gwas_eqtl$chrom), stringr::fixed("chr"),"")
   snpLD <- data.table::data.table()
   if( exists("highlightSnp") && highlightSnp!="" && length(highlightSnp)==1 && !is.na(highlightSnp) && highlightSnp %in% gwas_eqtl$snpId ){
     # Get LD info of all population:
@@ -382,12 +386,12 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
       return(NULL)
     }
   }else{
-    highlightSnp <- gwas_eqtl[which.min(pValue.gwas)]$snpId
+    highlightSnp <- gwas_eqtl[which.max(distance_0)]$snpId
     # Get LD info of all population:
     if( length(population)==1 && population=="ALL" ){
       for(i in 1:length(population1000G)){
         message("  Retrieving LD information of ",i,"/",length(population1000G)," : ",population1000G[i])
-        ldTmp <- retrieveLD(stringr::str_replace_all(unique(eqtlAsso$chrom), stringr::fixed("chr"),""), highlightSnp, population1000G[i])
+        ldTmp <- retrieveLD( P_chrom, highlightSnp, population1000G[i])
         if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
           next()
         }else{
@@ -398,7 +402,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
     }else if( all( population %in% population1000G) ){
       for(i in 1:length(population)){
         message("  Retrieving LD information of ",i,"/",length(population)," : ",population[i])
-        ldTmp <- retrieveLD(stringr::str_replace_all(unique(eqtlAsso$chrom), stringr::fixed("chr"),""), highlightSnp, population1000G[i])
+        ldTmp <- retrieveLD( P_chrom, highlightSnp, population[i])
         if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
           next()
         }else{
@@ -413,7 +417,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
   }
 
   # Set LD SNP color:
-  if(nrow(snpLD)>0){
+  if( nrow(snpLD)>0 ){
     # 由于多个人种存在重复LD，所以取均值：
     snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
     # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
@@ -425,47 +429,52 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
   }
 
   # set color:
-  eqtlAsso <- merge(eqtlAsso, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
-  eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0-0.2]"
-  eqtlAsso[snpId==highlightSnp,"r2Cut"]<- "(0.8-1]"
-  # set size:
-  eqtlAsso$sizeP <- "small"
-  eqtlAsso[logP<max(eqtlAsso$logP), "sizeP"] <- "small"
-  eqtlAsso[logP>=2 & logP< max(eqtlAsso$logP), "sizeP"] <- "middle"
-  eqtlAsso[logP == max(eqtlAsso$logP), "sizeP"] <- "large"
-  eqtlAsso[snpId == highlightSnp, "sizeP"] <- "most"
-
+  gwas_eqtl <- merge(gwas_eqtl, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
+  gwas_eqtl[is.na(r2Cut),"r2Cut"]<- "(0-0.2]"
+  gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1]"
+  # set color:
+  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1]'), include.lowest=TRUE)),
+              pointColor= c("#2E2E2E", "#00b7a7", "#013ADF", "#721b3e", "#FF0040") )
+  colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut")
+  # gwas_eqtl <- merge( gwas_eqtl, colorDT, by="r2Cut")
+  # set shape:
+  gwas_eqtl$pointShape <- "normal"
+  gwas_eqtl[snpId==highlightSnp,"pointShape"] <- "highlight"
+  gwas_eqtl$pointShape <- as.factor(gwas_eqtl$pointShape)
+  gwas_eqtl <- gwas_eqtl[order(logP.eqtl, logP.gwas)]
+  gwas_eqtl <- rbind( gwas_eqtl[snpId!=highlightSnp ], gwas_eqtl[snpId==highlightSnp, ] )
 
   # title:
-  plotTitle <- paste0(gene, " (", ifelse(stringr::str_detect(unique(eqtlAsso$chrom), stringr::regex("^chr")),unique(eqtlAsso$chrom), paste0("chr", unique(eqtlAsso$chrom))),
+  plotTitle <- paste0(traitGene, " (", paste0("chr",P_chrom),
                       ":",
-                      paste0(range(eqtlAsso$pos), collapse = "-")
+                      paste0(range(gwas_eqtl$pos), collapse = "-")
                       ,")")
 
   # ylab and unit:
   posUnit <- "Bb"
-  if( any(range(eqtlAsso$pos)>10^6)){
-    eqtlAsso$pos <- eqtlAsso$pos/10^6
+  if( any(range(gwas_eqtl$pos)>10^6) ){
+    gwas_eqtl$pos <- gwas_eqtl$pos/10^6
     posUnit <- "Mb"
-  }else if( all(range(eqtlAsso$pos)<10^6) && all(range(eqtlAsso$pos)>10^3) ){
-    eqtlAsso$pos <- eqtlAsso$pos/10^3
+  }else if( all(range(gwas_eqtl$pos)<10^6) && all(range(gwas_eqtl$pos)>10^3) ){
+    gwas_eqtl$pos <- gwas_eqtl$pos/10^3
     posUnit <- "Kb"
   }else{
     posUnit <- "Bb"
   }
-  yLab <- expression(-log["10"]("Pvalue"))
+  yLab <- expression(-log["10"]("Pvalue (GWAS)"))
 
   # xlab:
-  xLab <- paste0(ifelse(stringr::str_detect(unique(eqtlAsso$chrom), stringr::regex("^chr")),unique(eqtlAsso$chrom), paste0("chr", unique(eqtlAsso$chrom)))," (",posUnit,")")
+  xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  eqtlAsso <- eqtlAsso[order(r2Cut,logP)]
   if( requireNamespace("ggplot2") ){
-    p <- ggplot(eqtlAsso)+
-      geom_point(aes(x=pos, y=logP, color=r2Cut, size=sizeP))+
-      scale_color_manual(expression("R"^2),breaks=c('(0.8-1]','(0.6-0.8]','(0.4-0.6]','(0.2-0.4]', '(0-0.2]'), labels = c('(0.8-1.0]','(0.6-0.8]', '(0.4-0.6]', '(0.2-0.4]', '(0.0-0.2]'), values = c("red", "purple", "blue","orange", "grey"))+
-      scale_size_manual(breaks = c('small', "middle", "large", "most"), values =  (c(1, 3, 3.5, 4)) )+
+    p <- ggplot(gwas_eqtl)+
+      geom_point(aes(x=logP.eqtl, y=logP.gwas, fill=r2Cut, color=r2Cut, shape=pointShape, size=pointShape))+
+      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor)+
+      scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor)+
+      scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(16,23) )+
+      scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(2,3) )+
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
-      geom_label_repel(data=eqtlAsso[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
+      geom_label_repel(data=gwas_eqtl[snpId==highlightSnp,], aes(x=logP.eqtl, y=logP.gwas, label=snpId) )+
       labs(title = plotTitle )+
       xlab( xLab )+
       ylab( yLab )+
@@ -477,17 +486,14 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
             legend.title = element_text(size=rel(1.3)),
             legend.text = element_text(size=rel(1.2))
       )
-    if(nrow(snpLD)==0){
-      p <- p+ guides( size="none", color = "none" )
+    if( nrow(snpLD)==0){
+      p <- p+ guides( fill="none", color = "none", shape="none", size="none" )
     }else{
-      p <- p+ guides( size="none", color = guide_legend(override.aes = list(size = 4)) )
+      p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
     }
-
     print(p)
   }
-
-  return(p)
-
+  return(list(gwas_eqtl=gwas_eqtl, plot=p))
 }
 
 

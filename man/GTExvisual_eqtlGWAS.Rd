@@ -9,7 +9,10 @@ GTExvisual_eqtlGWAS(
   traitGene = "",
   traitGeneType = "geneSymbol",
   tissueSiteDetail = "",
-  study_id = "gtex_v8"
+  study_id = "gtex_v8",
+  highlightSnp = "",
+  population = "EUR",
+  recordPerChunk = 300
 )
 }
 \arguments{
@@ -22,6 +25,8 @@ GTExvisual_eqtlGWAS(
 \item{tissueSiteDetail}{tissue}
 
 \item{study_id}{A character string. Default: "gtex_v8".}
+
+\item{recordPerChunk}{Number of records per fetch.}
 }
 \value{
 A plot.
@@ -32,6 +37,12 @@ significance analysis of GTEX and eQTL  NO.
 \examples{
 \donttest{
 
+gwasFile <- tempfile(pattern = "file")
+gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/chr6.txt"
+utils::download.file(gwasURL, destfile=gwasFile)
+gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+gwasDF <- gwasDF[,c("rsid","P")]
+GTExvisual_eqtlGWAS(gwasDF, traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
 
 }
 }

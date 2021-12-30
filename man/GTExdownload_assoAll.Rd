@@ -20,6 +20,8 @@ GTExdownload_assoAll(
 \item{tissueSiteDetail}{tissueSiteDetail}
 
 \item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
+
+\item{study}{"GTEx_V8"}
 }
 \value{
 a data.table

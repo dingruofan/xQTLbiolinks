@@ -93,9 +93,6 @@ Plot normalize expression among genotypes.
 }
 \examples{
 \donttest{
-
-
-
  # EQTL associatons of TP53:
  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")

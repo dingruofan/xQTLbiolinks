@@ -18,11 +18,13 @@ GTExvisual_eqtlTrait(
 
 \item{geneType}{"geneSymbol" or "gencodeId"}
 
+\item{highlightSnp}{highlighted SNP}
+
 \item{tissueSiteDetail}{gene name}
 
-\item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.}
+\item{study}{"gtex_v8"}
 
-\item{datasetId}{"gtex_v7" or "gtex_v8"}
+\item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.}
 }
 \value{
 A data.table
