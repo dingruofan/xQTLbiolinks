@@ -43,6 +43,7 @@ utils::download.file(gwasURL, destfile=gwasFile)
 gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 gwasDF <- gwasDF[,c("rsid","P")]
 GTExvisual_eqtlGWAS(gwasDF, traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
+b <- GTExvisual_eqtlGWAS(gwasDF, traitGene="LY6G5C", tissueSiteDetail="Lung")
 
 }
 }

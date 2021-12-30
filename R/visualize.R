@@ -254,7 +254,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' utils::download.file(gwasURL, destfile=gwasFile)
 #' gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 #' gwasDF <- gwasDF[,c("rsid","P")]
-#' GTExvisual_eqtlGWAS(gwasDF, traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
+#' gwasPlot <- GTExvisual_eqtlGWAS(gwasDF, traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
 #'
 #' }
 GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol", tissueSiteDetail="", study_id="gtex_v8", highlightSnp="", population="EUR",  recordPerChunk=300){
@@ -421,7 +421,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
     # 由于多个人种存在重复LD，所以取均值：
     snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
     # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
-    snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1]'), include.lowest=TRUE))
+    snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
     message("No LD information of [",highlightSnp,"].")
@@ -430,18 +430,19 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 
   # set color:
   gwas_eqtl <- merge(gwas_eqtl, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
-  gwas_eqtl[is.na(r2Cut),"r2Cut"]<- "(0-0.2]"
-  gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1]"
+  gwas_eqtl[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
+  gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1.0]"
   # set color:
-  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1]'), include.lowest=TRUE)),
-              pointColor= c("#2E2E2E", "#00b7a7", "#013ADF", "#721b3e", "#FF0040") )
-  colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut")
+  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
+              pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
+              pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"))
+  colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
   # gwas_eqtl <- merge( gwas_eqtl, colorDT, by="r2Cut")
   # set shape:
   gwas_eqtl$pointShape <- "normal"
   gwas_eqtl[snpId==highlightSnp,"pointShape"] <- "highlight"
   gwas_eqtl$pointShape <- as.factor(gwas_eqtl$pointShape)
-  gwas_eqtl <- gwas_eqtl[order(logP.eqtl, logP.gwas)]
+  gwas_eqtl <- gwas_eqtl[order(r2Cut, logP.gwas, logP.eqtl)]
   gwas_eqtl <- rbind( gwas_eqtl[snpId!=highlightSnp ], gwas_eqtl[snpId==highlightSnp, ] )
 
   # title:
@@ -450,26 +451,14 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
                       paste0(range(gwas_eqtl$pos), collapse = "-")
                       ,")")
 
-  # ylab and unit:
-  posUnit <- "Bb"
-  if( any(range(gwas_eqtl$pos)>10^6) ){
-    gwas_eqtl$pos <- gwas_eqtl$pos/10^6
-    posUnit <- "Mb"
-  }else if( all(range(gwas_eqtl$pos)<10^6) && all(range(gwas_eqtl$pos)>10^3) ){
-    gwas_eqtl$pos <- gwas_eqtl$pos/10^3
-    posUnit <- "Kb"
-  }else{
-    posUnit <- "Bb"
-  }
+  # Xlab and ylab:
+  xLab <- expression(-log["10"]("Pvalue (eQTL)"))
   yLab <- expression(-log["10"]("Pvalue (GWAS)"))
-
-  # xlab:
-  xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
   if( requireNamespace("ggplot2") ){
     p <- ggplot(gwas_eqtl)+
       geom_point(aes(x=logP.eqtl, y=logP.gwas, fill=r2Cut, color=r2Cut, shape=pointShape, size=pointShape))+
-      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor)+
+      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill)+
       scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor)+
       scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(16,23) )+
       scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(2,3) )+
@@ -493,7 +482,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
     }
     print(p)
   }
-  return(list(gwas_eqtl=gwas_eqtl, plot=p))
+  return(gwas_eqtl)
 }
 
 
@@ -514,18 +503,18 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 #'
 #' @examples
 #' \donttest{
-#'  GTExvisual_eqtlTrait("tp53", tissueSiteDetail = "Lung", population="ALL")
+#'  GTExvisual_eqtlTrait( gene="RP11-385F7.1", tissueSiteDetail = "Lung", population="EUR")
 #'  GTExvisual_eqtlTrait("ENSG00000103642", "gencodeId",
 #'    tissueSiteDetail = "Liver", study="gtex_v8", population=c("EAS","SAS","AMR"))
 #' }
-GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp="", tissueSiteDetail="", study ="gtex_v8", population="ALL"){
+GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp="", tissueSiteDetail="", study ="gtex_v8", population="EUR", recordPerChunk=300){
   .<-NULL
-  highlightSnp<- study<- r2Cut <- SNP_B <- R2 <- logP <- pos <- colorP <- sizeP <- snpId<-NULL
-  # gene = "ENSG00000076242"
-  # geneType = "gencodeId"
-  # tissueSiteDetail = "Liver"
+  r2Cut <- SNP_B <- R2 <- logP <- pos <- colorP <- sizeP <- snpId<-NULL
+  # gene = "RP11-385F7.1"
+  # geneType = "geneSymbol"
+  # tissueSiteDetail = "Lung"
   # study = "gtex_v8"
-  # population="AFR"
+  # population="EUR"
 
   population1000G <- c('AFR', 'AMR', 'EAS', 'EUR', 'SAS')
   gencodeVersion <- "v26"
@@ -559,7 +548,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   tissueSiteDetailId <- qtl_tissue[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
 
   message("== Querying eQTL associations from EBI API server:")
-  eqtlAsso <- GTExdownload_assoAll(gene = gene, geneType = geneType,tissueSiteDetail= tissueSiteDetail, study= study )
+  eqtlAsso <- GTExdownload_assoAll(gene = gene, geneType = geneType,tissueSiteDetail= tissueSiteDetail, study= study, recordPerChunk = recordPerChunk )
   eqtlAsso <- eqtlAsso[!is.na(snpId)]
   if( !exists("eqtlAsso") || is.null(eqtlAsso) || nrow(eqtlAsso)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] in [", tissueSiteDetail, "] in [", study,"].")
