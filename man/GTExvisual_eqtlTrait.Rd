@@ -10,7 +10,8 @@ GTExvisual_eqtlTrait(
   highlightSnp = "",
   tissueSiteDetail = "",
   study = "gtex_v8",
-  population = "ALL"
+  population = "EUR",
+  recordPerChunk = 300
 )
 }
 \arguments{
@@ -34,7 +35,7 @@ eql trait plot
 }
 \examples{
 \donttest{
- GTExvisual_eqtlTrait("tp53", tissueSiteDetail = "Lung", population="ALL")
+ GTExvisual_eqtlTrait( gene="RP11-385F7.1", tissueSiteDetail = "Lung", population="EUR")
  GTExvisual_eqtlTrait("ENSG00000103642", "gencodeId",
    tissueSiteDetail = "Liver", study="gtex_v8", population=c("EAS","SAS","AMR"))
 }

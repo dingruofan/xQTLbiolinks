@@ -512,9 +512,11 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   r2Cut <- SNP_B <- R2 <- logP <- pos <- colorP <- sizeP <- snpId<-NULL
   # gene = "RP11-385F7.1"
   # geneType = "geneSymbol"
+  # highlightSnp=""
   # tissueSiteDetail = "Lung"
   # study = "gtex_v8"
   # population="EUR"
+  # recordPerChunk=300
 
   population1000G <- c('AFR', 'AMR', 'EAS', 'EUR', 'SAS')
   gencodeVersion <- "v26"
@@ -563,9 +565,8 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   # split coordinate from variantId:
   eqtlAsso <- cbind(eqtlAsso, data.table::rbindlist( lapply(eqtlAsso$variantId, function(x){ splitOut =stringr::str_split(x, stringr::fixed("_"))[[1]]; data.table(chrom=splitOut[1], pos=splitOut[2]) } )  ))
   eqtlAsso$logP <- ifelse(eqtlAsso$pValue==0,0, (-1*log(eqtlAsso$pValue, 10)))
-  eqtlAsso$pos <- as.integer(eqtlAsso$pos)
-  # order by logP desc:
-  eqtlAsso <- eqtlAsso[order(-logP)]
+  eqtlAsso$pos <- as.integer( unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x, stringr::fixed("_"))[[1]][2] })) )
+  P_chrom <- stringr::str_remove_all( stringr::str_split(eqtlAsso[1,]$variantId, stringr::fixed("_"))[[1]][1], stringr::fixed("chr"))
 
   # Get LD:
   snpLD <- data.table()
@@ -574,7 +575,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
     if( length(population)==1 && population=="ALL" ){
       for(i in 1:length(population1000G)){
         message("  Retrieving LD information of ",i,"/",length(population1000G)," : ",population1000G[i])
-        ldTmp <- retrieveLD(stringr::str_replace_all(unique(eqtlAsso$chrom), stringr::fixed("chr"),""), highlightSnp, population1000G[i])
+        ldTmp <- retrieveLD( P_chrom, highlightSnp, population1000G[i])
         if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
           next()
         }else{
@@ -585,7 +586,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
     }else if( all( population %in% population1000G) ){
       for(i in 1:length(population)){
         message("  Retrieving LD information of ",i,"/",length(population)," : ",population[i])
-        ldTmp <- retrieveLD(stringr::str_replace_all(unique(eqtlAsso$chrom), stringr::fixed("chr"),""), highlightSnp, population[i])
+        ldTmp <- retrieveLD( P_chrom, highlightSnp, population[i])
         if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
           next()
         }else{
@@ -598,12 +599,12 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
       return(NULL)
     }
   }else{
-    highlightSnp <- eqtlAsso[1,]$snpId
+    highlightSnp <- eqtlAsso[which.max(logP)]$snpId
     # Get LD info of all population:
     if( length(population)==1 && population=="ALL" ){
       for(i in 1:length(population1000G)){
         message("  Retrieving LD information of ",i,"/",length(population1000G)," : ",population1000G[i])
-        ldTmp <- retrieveLD(stringr::str_replace_all(unique(eqtlAsso$chrom), stringr::fixed("chr"),""), highlightSnp, population1000G[i])
+        ldTmp <- retrieveLD( P_chrom, highlightSnp, population1000G[i])
         if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
           next()
         }else{
@@ -614,7 +615,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
     }else if( all( population %in% population1000G) ){
       for(i in 1:length(population)){
         message("  Retrieving LD information of ",i,"/",length(population)," : ",population[i])
-        ldTmp <- retrieveLD(stringr::str_replace_all(unique(eqtlAsso$chrom), stringr::fixed("chr"),""), highlightSnp, population[i])
+        ldTmp <- retrieveLD( P_chrom, highlightSnp, population[i])
         if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
           next()
         }else{
@@ -633,7 +634,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
     # 由于多个人种存在重复LD，所以取均值：
     snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
     # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
-    snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1]'), include.lowest=TRUE))
+    snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
     message("No LD information of [",highlightSnp,"].")
@@ -642,8 +643,8 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
 
   # set color:
   eqtlAsso <- merge(eqtlAsso, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
-  eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0-0.2]"
-  eqtlAsso[snpId==highlightSnp,"r2Cut"]<- "(0.8-1]"
+  eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
+  eqtlAsso[snpId==highlightSnp,"r2Cut"]<- "(0.8-1.0]"
   # set size:
   eqtlAsso$sizeP <- "small"
   eqtlAsso[logP<max(eqtlAsso$logP), "sizeP"] <- "small"
