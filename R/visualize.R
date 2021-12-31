@@ -506,9 +506,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 #'
 #' @examples
 #' \donttest{
-#'  GTExvisual_eqtlTrait( gene="RP11-385F7.1", tissueSiteDetail = "Lung", population="EUR")
-#'  GTExvisual_eqtlTrait("ENSG00000103642", "gencodeId",
-#'    tissueSiteDetail = "Liver", study="gtex_v8", population=c("EAS","SAS","AMR"))
+#'  geneAsso <- GTExvisual_eqtlTrait( gene="RP11-385F7.1", tissueSiteDetail = "Lung", population="EUR")
 #' }
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp="", tissueSiteDetail="", study ="gtex_v8", population="EUR", recordPerChunk=300){
   .<-NULL
