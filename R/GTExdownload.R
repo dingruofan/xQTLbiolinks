@@ -707,8 +707,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #'
 #' @examples
 #' \donttest{
-#'   GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
-#'   GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
+#'   geneAsso <- GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
 GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8"){
   .<-NULL

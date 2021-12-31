@@ -14,63 +14,62 @@ knitr::opts_chunk$set(
 )
 ```
 
+This vignette shows a complete workflow of colocalization analysis with your own GWAS data using GTExbiolinks. 
+
 ```{r setup}
-library(devtools)
-load_all()
+library(GTExbiolinks)
 ```
 
 ```{r}
+# Step 1: download GWAS example file.
 gwasFile <- tempfile(pattern = "file")
-gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/chr6.txt"
-if( file.exists(gwasFile) ){ 
-  message("File exists: ",gwasFile)
-}else{
-  utils::download.file(gwasURL, destfile=gwasFile)
-}
+gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
+utils::download.file(gwasURL, destfile=gwasFile)
 # If your dataset provides the standard error, simply square it to get the variance.
 gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
-
+gwasDF
 ```
 
 ```{r}
+# Step 2: fetch all regulatory associations of variants for interesting gene, like "RP11-385F7.1" in this example.
 traitGene="RP11-385F7.1"
 tissueSiteDetail="Lung"
-geneAsso<-  GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail)
-geneAsso <- geneAsso[,c("snpId", "pValue", "maf")]
+geneAsso<-  GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail)
+```
+
+```{r}
+geneAsso <- geneAsso[,.(snpId, pValue, maf)] 
 geneAsso
 ```
 
 ```{r}
-# eqtlAsso <- suppressMessages( GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail) )
-```
-
-```{r}
+# Step 3: merge gwas and eqtl datasets by SNP ID. Centered on the SNP with the lowest pValue, sentinel snps within one million bases are retained.
 gwas_eqtl <- merge(gwasDF[,.(snpId=rsid, pValue=P, maf=maf, position)], geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".eqtl"))
-# sentinal snps:
 centerSnp <- gwas_eqtl[which.min(gwas_eqtl$pValue.gwas),]
 colocRange=1e6
-gwas_eqtl <- gwas_eqtl[position>=(centerSnp$position-(colocRange)/2) & position<=(centerSnp$position+(colocRange)/2),]
-gwas_eqtl
+sentinelSnps <- gwas_eqtl[position>=(centerSnp$position-(colocRange)/2) & position<=(centerSnp$position+(colocRange)/2),]
+sentinelSnps
 ```
 
 ```{r}
+# Step 4: conduct colocalization analysis using coloc package.
 library(coloc)
 colocResult <- coloc.abf(
   dataset1=list(
-    pvalues=gwas_eqtl$pValue.gwas, type="quant", N=50000, MAF=gwas_eqtl$maf.gwas),
+    pvalues=sentinelSnps$pValue.gwas, type="quant", N=50000, MAF=sentinelSnps$maf.gwas),
  dataset2=list(
-   pvalues=gwas_eqtl$pValue.eqtl, type="quant", N=600,
-   MAF=gwas_eqtl$maf.gwas))
+   pvalues=sentinelSnps$pValue.eqtl, type="quant", N=600,
+   MAF=sentinelSnps$maf.gwas))
 colocResult
 ```
 
 ```{r}
-library(locuscomparer)
-suppressWarnings(locuscompare( gwas_eqtl[,.(rsid=snpId, pval=pValue.gwas)], gwas_eqtl[,.(rsid=snpId, pval=pValue.eqtl)] ))
-
+# Step 5: visualize GWAS-eQTL colocalization for selected gene. 
+eqtlAsso2 <-  GTExvisual_eqtlGWAS(sentinelSnps[,c("snpId","pValue.gwas")], traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
 ```
 
 ```{r}
-eqtlAsso2 <-  GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail) 
-
+# Or you can using locuscomparer package for visualization of GWAS-eQTL colocalization.
+library(locuscomparer)
+locuscompare( sentinelSnps[,.(rsid=snpId, pval=pValue.gwas)], sentinelSnps[,.(rsid=snpId, pval=pValue.eqtl)] )
 ```

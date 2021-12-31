@@ -26,6 +26,10 @@ GTExvisual_eqtlGWAS(
 
 \item{study_id}{A character string. Default: "gtex_v8".}
 
+\item{highlightSnp}{SNP of interst}
+
+\item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.}
+
 \item{recordPerChunk}{Number of records per fetch.}
 }
 \value{

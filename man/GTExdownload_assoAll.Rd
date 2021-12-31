@@ -31,7 +31,6 @@ GTExdownload_assoAll
 }
 \examples{
 \donttest{
-  GTExdownload_assoAll("tp53", tissueSiteDetail="Lung")
-  GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
+  geneAsso <- GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 }
 }

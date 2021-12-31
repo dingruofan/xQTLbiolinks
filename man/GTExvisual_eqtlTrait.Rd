@@ -26,6 +26,8 @@ GTExvisual_eqtlTrait(
 \item{study}{"gtex_v8"}
 
 \item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.}
+
+\item{recordPerChunk}{Number of records per fetch.}
 }
 \value{
 A data.table

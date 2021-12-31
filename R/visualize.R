@@ -236,6 +236,8 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @param traitGeneType eqtl type. If this parameter is not specified, it is the same as the "queryType".
 #' @param tissueSiteDetail tissue
 #' @param study_id A character string. Default: "gtex_v8".
+#' @param highlightSnp SNP of interst
+#' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.
 #' @param recordPerChunk Number of records per fetch.
 #' @import data.table
 #' @import curl
@@ -259,8 +261,8 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' }
 GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol", tissueSiteDetail="", study_id="gtex_v8", highlightSnp="", population="EUR",  recordPerChunk=300){
   .<-NULL
-  variant <- logP <- pos <- colorP <- sizeP <- snpId <- NULL
-  snpId_2 <- snpId_1 <- pValue.gwas <- pValue.etql <-NULL
+  pValue <-logP.gwas <-logP.eqtl <- variant <- logP <- pos <- colorP <- sizeP <- snpId <- NULL
+  pointShape<- r2Cut <- SNP_B <- R2 <- distance_0 <- snpId_2 <- snpId_1 <- pValue.gwas <- pValue.etql <-NULL
   # gwasDF <- data.table::fread("../GWAS_White-Blood-Cell-Traits_Tajuddin_2016.txt", sep="\t", header=TRUE)
   # gwasDF <- data.table::fread("../GWAS_Type-2-Diabetes_Wood_2016.txt.gz", sep="\t", header=TRUE)
   # gwasDF <- gwasDF[trait=="White-Blood-Cell-Counts",][,.(rsid, chr, POS)]
@@ -494,6 +496,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 #' @param highlightSnp highlighted SNP
 #' @param study "gtex_v8"
 #' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'. Default: 'ALL'.
+#' @param recordPerChunk Number of records per fetch.
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -509,7 +512,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 #' }
 GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp="", tissueSiteDetail="", study ="gtex_v8", population="EUR", recordPerChunk=300){
   .<-NULL
-  r2Cut <- SNP_B <- R2 <- logP <- pos <- colorP <- sizeP <- snpId<-NULL
+  pointShape <- r2Cut <- SNP_B <- R2 <- logP <- pos <- colorP <- sizeP <- snpId<-NULL
   # gene = "RP11-385F7.1"
   # geneType = "geneSymbol"
   # highlightSnp=""
@@ -563,10 +566,9 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   }
 
   # split coordinate from variantId:
-  eqtlAsso <- cbind(eqtlAsso, data.table::rbindlist( lapply(eqtlAsso$variantId, function(x){ splitOut =stringr::str_split(x, stringr::fixed("_"))[[1]]; data.table(chrom=splitOut[1], pos=splitOut[2]) } )  ))
+  eqtlAsso <- cbind(eqtlAsso, data.table::rbindlist( lapply(eqtlAsso$variantId, function(x){ splitOut =stringr::str_split(x, stringr::fixed("_"))[[1]]; data.table(chrom=splitOut[1], pos=as.integer(splitOut[2])) } )  ))
   eqtlAsso$logP <- ifelse(eqtlAsso$pValue==0,0, (-1*log(eqtlAsso$pValue, 10)))
-  eqtlAsso$pos <- as.integer( unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x, stringr::fixed("_"))[[1]][2] })) )
-  P_chrom <- stringr::str_remove_all( stringr::str_split(eqtlAsso[1,]$variantId, stringr::fixed("_"))[[1]][1], stringr::fixed("chr"))
+  P_chrom <- stringr::str_remove_all( eqtlAsso[1,]$chrom, stringr::fixed("chr"))
 
   # Get LD:
   snpLD <- data.table()
@@ -645,6 +647,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   eqtlAsso <- merge(eqtlAsso, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
   eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
   eqtlAsso[snpId==highlightSnp,"r2Cut"]<- "(0.8-1.0]"
+
   # set size:
   eqtlAsso$sizeP <- "small"
   eqtlAsso[logP<max(eqtlAsso$logP), "sizeP"] <- "small"
@@ -652,9 +655,21 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   eqtlAsso[logP == max(eqtlAsso$logP), "sizeP"] <- "large"
   eqtlAsso[snpId == highlightSnp, "sizeP"] <- "most"
 
+  # set color:
+  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
+                         pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
+                         pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"),
+                         pointSize = c(1,1,2,2,2.5))
+  colorDT <- merge(colorDT, unique(eqtlAsso[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
+  # set shape:
+  eqtlAsso$pointShape <- "normal"
+  eqtlAsso[snpId==highlightSnp,"pointShape"] <- "highlight"
+  eqtlAsso$pointShape <- as.factor(eqtlAsso$pointShape)
+  eqtlAsso <- eqtlAsso[order(r2Cut, logP)]
+  eqtlAsso <- rbind( eqtlAsso[snpId!=highlightSnp ], eqtlAsso[snpId==highlightSnp, ] )
 
   # title:
-  plotTitle <- paste0(gene, " (", ifelse(stringr::str_detect(unique(eqtlAsso$chrom), stringr::regex("^chr")),unique(eqtlAsso$chrom), paste0("chr", unique(eqtlAsso$chrom))),
+  plotTitle <- paste0(gene, " (", ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom)),
                       ":",
                       paste0(range(eqtlAsso$pos), collapse = "-")
                       ,")")
@@ -673,14 +688,15 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   yLab <- expression(-log["10"]("Pvalue"))
 
   # xlab:
-  xLab <- paste0(ifelse(stringr::str_detect(unique(eqtlAsso$chrom), stringr::regex("^chr")),unique(eqtlAsso$chrom), paste0("chr", unique(eqtlAsso$chrom)))," (",posUnit,")")
+  xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  eqtlAsso <- eqtlAsso[order(r2Cut,logP)]
   if( requireNamespace("ggplot2") ){
     p <- ggplot(eqtlAsso)+
-      geom_point(aes(x=pos, y=logP, color=r2Cut, size=sizeP))+
-      scale_color_manual(expression("R"^2),breaks=c('(0.8-1]','(0.6-0.8]','(0.4-0.6]','(0.2-0.4]', '(0-0.2]'), labels = c('(0.8-1.0]','(0.6-0.8]', '(0.4-0.6]', '(0.2-0.4]', '(0.0-0.2]'), values = c("red", "purple", "blue","orange", "grey"))+
-      scale_size_manual(breaks = c('small', "middle", "large", "most"), values =  (c(1, 3, 3.5, 4)) )+
+      geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
+      scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
+      scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(16,23) )+
+      scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
+      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
       geom_label_repel(data=eqtlAsso[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
       labs(title = plotTitle )+
@@ -695,16 +711,14 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
             legend.text = element_text(size=rel(1.2))
       )
     if(nrow(snpLD)==0){
-      p <- p+ guides( size="none", color = "none" )
+      p <- p+ guides( fill="none", color = "none", shape="none" )
     }else{
-      p <- p+ guides( size="none", color = guide_legend(override.aes = list(size = 4)) )
+      p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
     }
 
     print(p)
   }
-
-  return(eqtlAsso[,-c("r2Cut", "sizeP")])
-
+  return(eqtlAsso[,-c("r2Cut", "pointShape")])
 }
 
 

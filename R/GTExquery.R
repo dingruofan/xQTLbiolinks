@@ -1071,6 +1071,8 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
   # genomeBuild="GRCh38/hg38"
   # track="snp151Common"
 
+  bestFetchMethod <- NULL
+
   # Parameter check: chrom
   if(  is.null(chrom) || is.na(chrom) || length(chrom)!=1 ){
     stop("Parameter \"chrom\" can not be NULL or NA!")
