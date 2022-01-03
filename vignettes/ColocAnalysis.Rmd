@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette shows a complete workflow of colocalization analysis with your own GWAS data using GTExbiolinks. 
+This vignette shows a complete workflow of colocalization analysis with your own GWAS data using GTExbiolinks.
 
 ```{r setup}
 library(GTExbiolinks)
@@ -30,7 +30,7 @@ gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 gwasDF
 ```
 
-```{r}
+```{r fig.width=6.1, fig.height=4.7}
 # Step 2: fetch all regulatory associations of variants for interesting gene, like "RP11-385F7.1" in this example.
 traitGene="RP11-385F7.1"
 tissueSiteDetail="Lung"
@@ -63,12 +63,12 @@ colocResult <- coloc.abf(
 colocResult
 ```
 
-```{r}
+```{r fig.width=6.1, fig.height=4.7}
 # Step 5: visualize GWAS-eQTL colocalization for selected gene. 
 eqtlAsso2 <-  GTExvisual_eqtlGWAS(sentinelSnps[,c("snpId","pValue.gwas")], traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
 ```
 
-```{r}
+```{r fig.width=6.1, fig.height=4.7}
 # Or you can using locuscomparer package for visualization of GWAS-eQTL colocalization.
 library(locuscomparer)
 locuscompare( sentinelSnps[,.(rsid=snpId, pval=pValue.gwas)], sentinelSnps[,.(rsid=snpId, pval=pValue.eqtl)] )
