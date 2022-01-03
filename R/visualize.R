@@ -1,4 +1,4 @@
-#' @title Plot normalize expression among genotypes.
+#' @title Plot normalized expression among genotypes.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
@@ -77,9 +77,9 @@
 #' @examples
 #' \donttest{
 #'  # EQTL associatons of TP53:
-#'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
-#'  GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
-#'  GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5", tissueSiteDetail="Whole Blood")
+#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
+#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5", tissueSiteDetail="Whole Blood")
 #' }
 #'
 #'
@@ -220,7 +220,6 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 
   # gridExtra::grid.arrange()
 
-  print(p)
   return(list(eqtl=eqtlInfo, exp=genoLable))
 }
 
