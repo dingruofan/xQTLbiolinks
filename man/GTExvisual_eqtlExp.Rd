@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{GTExvisual_eqtlExp}
 \alias{GTExvisual_eqtlExp}
-\title{Plot normalize expression among genotypes.}
+\title{Plot normalized expression among genotypes.}
 \usage{
 GTExvisual_eqtlExp(
   variantName = "",
@@ -89,14 +89,17 @@ Whole Blood \tab √ \tab √\cr
 A plot
 }
 \description{
-Plot normalize expression among genotypes.
+Plot normalized expression among genotypes.
 }
 \examples{
 \donttest{
  # EQTL associatons of TP53:
- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
- GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5", tissueSiteDetail="Whole Blood")
+ expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
+                               tissueSiteDetail="Esophagus - Mucosa")
+ expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
+                               tissueSiteDetail="Lung")
+ expEqtl <- GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
+                               tissueSiteDetail="Whole Blood")
 }
 
 

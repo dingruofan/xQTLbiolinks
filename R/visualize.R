@@ -77,9 +77,12 @@
 #' @examples
 #' \donttest{
 #'  # EQTL associatons of TP53:
-#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Esophagus - Mucosa")
-#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
-#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5", tissueSiteDetail="Whole Blood")
+#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
+#'                                tissueSiteDetail="Esophagus - Mucosa")
+#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
+#'                                tissueSiteDetail="Lung")
+#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
+#'                                tissueSiteDetail="Whole Blood")
 #' }
 #'
 #'
@@ -251,7 +254,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' \donttest{
 #'
 #' gwasFile <- tempfile(pattern = "file")
-#' gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/chr6.txt"
+#' gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
 #' utils::download.file(gwasURL, destfile=gwasFile)
 #' gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 #' gwasDF <- gwasDF[,c("rsid","P")]
@@ -281,7 +284,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
   # rename:
   names(gwasDF) <- c("snpId", "pValue")
   gwasDF <- gwasDF[order(snpId, pValue)][!duplicated(snpId),]
-  setindex(gwasDF, snpId)
+  data.table::setindex(gwasDF, snpId)
 
   # parameter check: snpId
   message("==Checking parameter!")
@@ -338,7 +341,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
 
   ######## Fetch all associations:
   eqtlAsso <- GTExdownload_assoAll(gene=geneInfo$gencodeId, geneType = "gencodeId", tissueSiteDetail = tissueSiteDetail, recordPerChunk=recordPerChunk )
-  eqtlAsso <- cbind(eqtlAsso, rbindlist(lapply(eqtlAsso$variantId, function(x){ x=stringr::str_split(x, stringr::fixed("_"))[[1]];return(data.table(chrom=x[1],pos=x[2])) })))
+  eqtlAsso <- cbind(eqtlAsso, data.table::rbindlist(lapply(eqtlAsso$variantId, function(x){ x=stringr::str_split(x, stringr::fixed("_"))[[1]];return(data.table::data.table(chrom=x[1],pos=x[2])) })))
   eqtlAsso$pos <- as.integer(eqtlAsso$pos)
   # if no eqtl got:
   if( nrow(eqtlAsso)==0 || !exists("eqtlAsso")){
@@ -426,7 +429,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
     message("No LD information of [",highlightSnp,"].")
-    snpLD <- data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
+    snpLD <- data.table::data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
   }
 
   # set color:
@@ -434,7 +437,7 @@ GTExvisual_eqtlGWAS <- function(gwasDF, traitGene="", traitGeneType="geneSymbol"
   gwas_eqtl[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
   gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1.0]"
   # set color:
-  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
+  colorDT <- data.table::data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
               pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
               pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"))
   colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]

@@ -42,7 +42,7 @@ significance analysis of GTEX and eQTL  NO.
 \donttest{
 
 gwasFile <- tempfile(pattern = "file")
-gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/chr6.txt"
+gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
 utils::download.file(gwasURL, destfile=gwasFile)
 gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 gwasDF <- gwasDF[,c("rsid","P")]
