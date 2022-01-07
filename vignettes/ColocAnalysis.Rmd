@@ -19,6 +19,7 @@ This vignette shows a complete workflow of colocalization analysis with your own
 ```{r setup}
 library(GTExbiolinks)
 library(data.table)
+library(utils)
 ```
 
 Step 1: download example file of GWAS summary statistics data.
@@ -32,10 +33,10 @@ gwasDF
 ```
 
 Step 2: fetch all regulatory associations of variants for gene of interest, like "RP11-385F7.1" in this example.
-```{r fig.width=6.1, fig.height=4.7}
+```{r fig.width=6.1, fig.height=4.7, message=FALSE}
 traitGene="RP11-385F7.1"
-tissueSiteDetail="Lung"
-geneAsso <- suppressMessages(GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail))
+tissueSiteDetail="Brain - Cortex"
+geneAsso <- GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail)
 ```
 
 Keep three columns for following analyses:

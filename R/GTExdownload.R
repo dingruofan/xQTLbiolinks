@@ -1370,11 +1370,10 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #'
 #' @examples
 #' \donttest{
-#'  GTExdownload_egene("TP53")
-#'  a <- GTExdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#'  a <- GTExdownload_egene( recordPerChunk=2000)
-#'  GTExdownload_egene("ENSG00000141510.16", geneType="gencodeId")
-#'  GTExdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
+#'  eGeneInfo <- GTExdownload_egene("TP53")
+#'  eGeneInfo <- GTExdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
+#'  eGeneInfo <- GTExdownload_egene("ENSG00000141510.16", geneType="gencodeId")
+#'  eGeneInfo <- GTExdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
 #' }
 GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
   .<-NULL

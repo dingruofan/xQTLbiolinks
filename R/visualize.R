@@ -574,28 +574,8 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   snpLD <- data.table()
   if( exists("highlightSnp") && highlightSnp!="" && length(highlightSnp)==1 && !is.na(highlightSnp) && highlightSnp %in% eqtlAsso$snpId ){
     # Get LD info of all population:
-    if( length(population)==1 && population=="ALL" ){
-      for(i in 1:length(population1000G)){
-        message("  Retrieving LD information of ",i,"/",length(population1000G)," : ",population1000G[i])
-        ldTmp <- retrieveLD( P_chrom, highlightSnp, population1000G[i])
-        if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
-          next()
-        }else{
-          snpLD <- rbind(snpLD, ldTmp)
-        }
-        rm(ldTmp)
-      }
-    }else if( all( population %in% population1000G) ){
-      for(i in 1:length(population)){
-        message("  Retrieving LD information of ",i,"/",length(population)," : ",population[i])
-        ldTmp <- retrieveLD( P_chrom, highlightSnp, population[i])
-        if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
-          next()
-        }else{
-          snpLD <- rbind(snpLD, ldTmp)
-        }
-        rm(ldTmp)
-      }
+    if( length(population)==1 && ( population %in% population1000G) ){
+      snpLD <- retrieveLD( P_chrom, highlightSnp, population)
     }else{
       message("Parameter \"population\" should be chosen from \"AFR\", \"AMR\", \"EAS\", \"EUR\", or \"SAS\". ")
       return(NULL)
@@ -603,28 +583,8 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   }else{
     highlightSnp <- eqtlAsso[which.max(logP)]$snpId
     # Get LD info of all population:
-    if( length(population)==1 && population=="ALL" ){
-      for(i in 1:length(population1000G)){
-        message("  Retrieving LD information of ",i,"/",length(population1000G)," : ",population1000G[i])
-        ldTmp <- retrieveLD( P_chrom, highlightSnp, population1000G[i])
-        if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
-          next()
-        }else{
-          snpLD <- rbind(snpLD, ldTmp)
-        }
-        rm(ldTmp)
-      }
-    }else if( all( population %in% population1000G) ){
-      for(i in 1:length(population)){
-        message("  Retrieving LD information of ",i,"/",length(population)," : ",population[i])
-        ldTmp <- retrieveLD( P_chrom, highlightSnp, population[i])
-        if( !exists("ldTmp")||is.null(ldTmp)||nrow(ldTmp)==0 ){
-          next()
-        }else{
-          snpLD <- rbind(snpLD, ldTmp)
-        }
-        rm(ldTmp)
-      }
+    if( length(population)==1 && ( population %in% population1000G) ){
+      snpLD <- retrieveLD( P_chrom, highlightSnp, population)
     }else{
       message("Parameter \"population\" should be chosen from \"AFR\", \"AMR\", \"EAS\", \"EUR\", or \"SAS\". ")
       return(NULL)
@@ -639,7 +599,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
     snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
-    message("No LD information of [",highlightSnp,"].")
+    # message("No LD information of [",highlightSnp,"].")
     snpLD <- data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
   }
 
@@ -690,11 +650,11 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   # xlab:
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  if( requireNamespace("ggplot2") ){
+  if( require("ggplot2") && require(ggrepel) ){
     p <- ggplot(eqtlAsso)+
       geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
       scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
-      scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(16,23) )+
+      scale_shape_manual(breaks = c('normal', "highlight"), values =  c(16,23) )+
       scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
       scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
@@ -711,7 +671,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
             legend.text = element_text(size=rel(1.2))
       )
     if(nrow(snpLD)==0){
-      p <- p+ guides( fill="none", color = "none", shape="none" )
+      p <- p+ guides( fill="none", color = "none", shape="none", size="none")
     }else{
       p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
     }
@@ -723,6 +683,71 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
 
 
 
+#' @title LocusZoom plot
+#'
+#' @param dataFrame A data.frame or a data.table object. Two columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); P-value.
+#' @param highlightSnp Default is the snp that with lowest p-value.
+#' @param population
+#' @param range
+#' @param token
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  eqtlAsso <- GTExdownload_assoAll("KIF15", tissueSiteDetail = "Liver")
+#'  DF <- eqtlAsso[,.(snpId, pValue)]
+#' }
+GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range="", token="9246d2db7917"){
 
+
+
+
+  if( require(LDlinkR) ){
+    LDinfo <- LDmatrix(snps = gwasEqtlInfo$rsid,
+                       pop = "EUR", r2d = "r2",
+                       token = '9246d2db7917',
+                       file =FALSE)
+    LDmatrix(snps = "rs9381563", pop = "EUR", token = '9246d2db7917', file =FALSE)
+
+
+    rownames(LDinfo) <-LDinfo$RS_number
+    LDinfo$RS_number <- NULL
+    gwasEqtlInfo <- gwasEqtlInfo[rsid %in% colnames(LDinfo)]
+  }
+}
+
+#############
+# library(LDlinkR)
+# LDexpress(snps = c("rs345", "rs456"),
+#           pop = c("YRI", "CEU"),
+#           tissue = c("ADI_SUB", "ADI_VIS_OME"),
+#           r2d = "r2",
+#           r2d_threshold = "0.1",
+#           p_threshold = "0.1",
+#           win_size = "500000",
+#           token = '9246d2db7917'
+# )
+
+# a <- LDproxy("rs456", "EUR", "r2", token = "9246d2db7917")
+# a1 <- retrieve_LD("7",snp = "rs456", population = "EUR")
+#
+# LDpair(var1 = "rs3", var2 = "rs4", pop = "YRI", token = "9246d2db7917")
+# LDpop(var1 = "rs3", var2 = "rs4", pop = "YRI", r2d = "r2",  token = "9246d2db7917")
+#
+# a <- LDproxy("rs2285691", "EUR", "r2", token = "9246d2db7917")
+# a1 <- retrieve_LD("7",snp = "rs2285691", population = "EUR")
+#
+# SNPchip()
+# list_gtex_tissues()
+# list_chips()
+#
+# SNPclip(c("rs3", "rs4", "rs148890987"), "YRI", "0.1", "0.01", token = "9246d2db7917")
+#
+# system.time(b <- LDmatrix(snps = a$Coord[1:300],
+#                           pop = "EUR", r2d = "r2",
+#                           token = '9246d2db7917',
+#                           file =FALSE))
 
 
