@@ -171,7 +171,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
   message("== Fetching sample information from API server:")
   sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk )
   message("== Done.")
-  if( is.null(sampleInfo)||!exists("sampleInfo") ){
+  if( !exists("sampleInfo") ||is.null(sampleInfo) ){
     stop("Failed to fetch sample information.")
   }
 

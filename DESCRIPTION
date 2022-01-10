@@ -34,4 +34,7 @@ Imports:
     rlang (>= 0.4.11),
     DBI (>= 1.1.1)
 Suggests: 
-    coloc (>= 5.1.0)
+    knitr,
+    coloc (>= 5.1.0),
+    rmarkdown
+VignetteBuilder: knitr
