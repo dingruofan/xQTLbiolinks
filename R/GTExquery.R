@@ -861,6 +861,8 @@ apiEbi_ping <- function(){
   return(NULL)
 }
 
+
+
 #' @title Fetch data using url by three methods
 #'
 #' @param url1 A url string.
@@ -880,8 +882,10 @@ apiEbi_ping <- function(){
 #' \donttest{
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
+#'  url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917"
+#'  fetchContent(url1, method="download", isJson=FALSE)
 #' }
-fetchContent <- function(url1, method="curl", downloadMethod="auto"){
+fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
   # if( method == "GetWithHeader"){
   #   mycookie <- ''
   #   myheaders <- c('accept' ='ext/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
@@ -901,38 +905,54 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
   # }
 
   if(method == "rvest"){
-    url1GetText2Json <- jsonlite::fromJSON( rvest::html_text( rvest::read_html(url1) ) )
-    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
-      message("No data fetched, please check your input.")
-      return(NULL)
-    }
-    return(url1GetText2Json)
-  }else if( method == "fromJSON"){
-    url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
-    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
-      message("No data fetched, please check your input.")
-      return(NULL)
-    }
-    return(url1GetText2Json)
-  }else if( method=="download" ){
-    tmpFile <- tempfile(pattern = "file")
-    if( file.exists(tmpFile) ){ file.remove(tmpFile) }
-    utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
-    url1GetText2Json <-""
-    if( file.exists(tmpFile) ){
-      # url1GetText <- fread(tmpFile,sep="\n", header=FALSE)
-      url1GetText <- readLines(tmpFile)
-      # replace NAN with NULL:
-      url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
-      url1GetText2Json <- jsonlite::fromJSON(url1GetText)
+    if(isJson){
+      url1GetText2Json <- jsonlite::fromJSON( rvest::html_text( rvest::read_html(url1) ) )
       if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
         message("No data fetched, please check your input.")
         return(NULL)
       }
-      file.remove(tmpFile)
       return(url1GetText2Json)
     }else{
-      stop("File download error.")
+      url1GetText <- data.table::fread(rvest::html_text( rvest::read_html(url1) ),sep="\t", header = TRUE)
+    }
+
+  }else if( method == "fromJSON"){
+    if(isJson){
+      url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
+      if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
+        message("No data fetched, please check your input.")
+        return(NULL)
+      }
+      return(url1GetText2Json)
+    }else{
+      message("fromJSON method return NULL!")
+      return(NULL)
+    }
+
+  }else if( method=="download" ){
+    tmpFile <- tempfile(pattern = "file")
+    if( file.exists(tmpFile) ){ file.remove(tmpFile) }
+    utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
+    if(isJson){
+      url1GetText2Json <-""
+      if( file.exists(tmpFile) ){
+        # url1GetText <- fread(tmpFile,sep="\n", header=FALSE)
+        url1GetText <- readLines(tmpFile)
+        # replace NAN with NULL:
+        url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
+        url1GetText2Json <- jsonlite::fromJSON(url1GetText)
+        if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
+          message("No data fetched, please check your input.")
+          return(NULL)
+        }
+        file.remove(tmpFile)
+        return(url1GetText2Json)
+      }else{
+        stop("File download error.")
+      }
+    }else{
+      url1GetText <- data.table::fread(tmpFile, sep="\t", header = TRUE)
+      return(url1GetText)
     }
   }else if( method == "curl"){
     url1Get <- curl::curl_fetch_memory(url1)
@@ -940,28 +960,38 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto"){
     #   mesage("Http status code: ", url1Get$status_code)
     # }
     url1GetText <- rawToChar(url1Get$content)
-    # replace NAN with NULL:
-    url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
-    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
-      message("No data fetched, please check your input.")
-      return(NULL)
+    if(isJson){
+      # replace NAN with NULL:
+      url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
+      url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+      if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
+        message("No data fetched, please check your input.")
+        return(NULL)
+      }
+      return(url1GetText2Json)
+    }else{
+      url1GetText <- fread(url1GetText, sep="\t", header=TRUE)
+      return(url1GetText)
     }
-    return(url1GetText2Json)
   }else if( method == "GET" ){
     url1Get <- httr::GET(url1)
     # if( url1Get$status_code!=200){
     #   message("Http status code: ", url1Get$status_code)
     # }
     url1GetText <- rawToChar(url1Get$content)
-    # replace NAN with NULL:
-    url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
-    url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-    if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
-      message("No data fetched, please check your input.")
-      return(NULL)
+    if(isJson){
+      # replace NAN with NULL:
+      url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
+      url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
+      if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
+        message("No data fetched, please check your input.")
+        return(NULL)
+      }
+      return(url1GetText2Json)
+    }else{
+      url1GetText <- fread(url1GetText, sep="\t", header=TRUE)
+      return(url1GetText)
     }
-    return(url1GetText2Json)
   }else{
     stop("please choose the right download method.")
   }

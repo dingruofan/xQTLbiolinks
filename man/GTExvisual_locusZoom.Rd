@@ -27,7 +27,7 @@ LocusZoom plot
 }
 \examples{
 \donttest{
- eqtlAsso <- GTExdownload_assoAll("KIF15", tissueSiteDetail = "Liver")
+ eqtlAsso <- GTExdownload_assoAll("MLH1", tissueSiteDetail = "Liver")
  DF <- eqtlAsso[,.(snpId, pValue)]
 }
 }

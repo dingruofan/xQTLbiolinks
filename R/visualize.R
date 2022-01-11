@@ -696,30 +696,49 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
 #'
 #' @examples
 #' \donttest{
-#'  eqtlAsso <- GTExdownload_assoAll("KIF15", tissueSiteDetail = "Liver")
+#'  eqtlAsso <- GTExdownload_assoAll("MLH1", tissueSiteDetail = "Liver")
 #'  DF <- eqtlAsso[,.(snpId, pValue)]
 #' }
-GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range="", token="9246d2db7917"){
-
-
-
-
-  if( require(LDlinkR) ){
-    LDinfo <- LDmatrix(snps = gwasEqtlInfo$rsid,
-                       pop = "EUR", r2d = "r2",
-                       token = '9246d2db7917',
-                       file =FALSE)
-    LDmatrix(snps = "rs9381563", pop = "EUR", token = '9246d2db7917', file =FALSE)
-
-
-    rownames(LDinfo) <-LDinfo$RS_number
-    LDinfo$RS_number <- NULL
-    gwasEqtlInfo <- gwasEqtlInfo[rsid %in% colnames(LDinfo)]
+GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range="", token="9246d2db7917", windowSize=100000, genome="grch38"){
+  # get LD information:
+  setDT(DF)
+  if(highlightSnp ==""){
+    highlightSnp <- DF[which.min(pValue)]$snpId
   }
+
+  message("Ensure that the network connection is smooth.")
+  s_count<-1
+  while( !exists("highlightSnpLd") && s_count<=3 ){
+    message("========= Geting LD info for SNP: ",highlightSnp,"; try ",s_count,".")
+    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",highlightSnp,
+                   "&pop=",population,
+                   "&r2_d=","r2",
+                   "&window=",as.character(as.integer(windowSize)),
+                   "&genome_build=",genome,
+                   "&token=", token)
+
+    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
+    try( highlightSnpLd <- fetchContent(url1, method="download", isJson=FALSE) )
+
+    if(exists("highlightSnpLd") && nrow(highlightSnpLd)<=1 ){
+       rm(highlightSnpLd)
+    }
+    s_count <- s_count+1
+  }
+
+
 }
+
+fetchContent
 
 #############
 # library(LDlinkR)
+# LDinfo <- LDmatrix(snps = DF$rsid,
+#                    pop = "EUR", r2d = "r2",
+#                    token = '9246d2db7917',
+#                    file =FALSE)
+# LDmatrix(snps = "rs9381563", pop = "EUR", token = '9246d2db7917', file =FALSE)
+
 # LDexpress(snps = c("rs345", "rs456"),
 #           pop = c("YRI", "CEU"),
 #           tissue = c("ADI_SUB", "ADI_VIS_OME"),

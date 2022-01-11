@@ -4,7 +4,7 @@
 \alias{fetchContent}
 \title{Fetch data using url by three methods}
 \usage{
-fetchContent(url1, method = "curl", downloadMethod = "auto")
+fetchContent(url1, method = "curl", downloadMethod = "auto", isJson = TRUE)
 }
 \arguments{
 \item{url1}{A url string.}
@@ -23,5 +23,7 @@ Fetch data using url by three methods
 \donttest{
  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
  fetchContent(url1, method="download")
+ url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917"
+ fetchContent(url1, method="download", isJson=FALSE)
 }
 }
