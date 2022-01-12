@@ -539,7 +539,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   # import tissueSiteDetailGTEx according to datasetId
   qtl_groups <- EBIquery_allTerm("qtl_groups")
   qtl_tissue <- merge( tissueSiteDetailGTEx,qtl_groups, by.x="tissueSiteDetailId", by.y="qtl_group")
-  setDT(qtl_tissue)
+  data.table::setDT(qtl_tissue)
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) || tissueSiteDetail==""   ){
     stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
@@ -566,12 +566,12 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   }
 
   # split coordinate from variantId:
-  eqtlAsso <- cbind(eqtlAsso, data.table::rbindlist( lapply(eqtlAsso$variantId, function(x){ splitOut =stringr::str_split(x, stringr::fixed("_"))[[1]]; data.table(chrom=splitOut[1], pos=as.integer(splitOut[2])) } )  ))
+  eqtlAsso <- cbind(eqtlAsso, data.table::rbindlist( lapply(eqtlAsso$variantId, function(x){ splitOut =stringr::str_split(x, stringr::fixed("_"))[[1]]; data.table::data.table(chrom=splitOut[1], pos=as.integer(splitOut[2])) } )  ))
   eqtlAsso$logP <- ifelse(eqtlAsso$pValue==0,0, (-1*log(eqtlAsso$pValue, 10)))
   P_chrom <- stringr::str_remove_all( eqtlAsso[1,]$chrom, stringr::fixed("chr"))
 
   # Get LD:
-  snpLD <- data.table()
+  snpLD <- data.table::data.table()
   if( exists("highlightSnp") && highlightSnp!="" && length(highlightSnp)==1 && !is.na(highlightSnp) && highlightSnp %in% eqtlAsso$snpId ){
     # Get LD info of all population:
     if( length(population)==1 && ( population %in% population1000G) ){
@@ -590,7 +590,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
       return(NULL)
     }
   }
-
+  data.table::setDT(snpLD)
   # Set LD SNP color:
   if(nrow(snpLD)>0){
     # 由于多个人种存在重复LD，所以取均值：
@@ -616,7 +616,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   eqtlAsso[snpId == highlightSnp, "sizeP"] <- "most"
 
   # set color:
-  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
+  colorDT <- data.table::data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
                          pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
                          pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"),
                          pointSize = c(1,1,2,2,2.5))
@@ -650,7 +650,7 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
   # xlab:
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  if( require("ggplot2") && require(ggrepel) ){
+  if( requireNamespace("ggplot2") && requireNamespace("ggrepel") ){
     p <- ggplot(eqtlAsso)+
       geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
       scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
@@ -685,29 +685,75 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
 
 #' @title LocusZoom plot
 #'
-#' @param dataFrame A data.frame or a data.table object. Two columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); P-value.
+#' @param DF A data.frame or a data.table object. Four columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); chromosome, chr1-chr22; Genome position; P-value.
 #' @param highlightSnp Default is the snp that with lowest p-value.
-#' @param population
-#' @param range
-#' @param token
-#'
-#' @return
+#' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
+#' @param posRange visualized genome region of interest. Default is the region that covers all snps.
+#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
+#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
+#' @param genome "grch38"(default) or "grch37".
+#' @return A data.table object and plot.
 #' @export
 #'
 #' @examples
 #' \donttest{
+#'  # For GWAS:
+#'  gwasFile <- tempfile(pattern = "file")
+#'  gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
+#'  utils::download.file(gwasURL, destfile=gwasFile)
+#'  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+#'  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
+#'  GTExvisual_locusZoom(gwasDF)
+#'
+#'  # For eQTL:
 #'  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
-#'  DF <- eqtlAsso[,.(snpId, pValue)]
+#'  eqtlAsso$pos <- unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x,"_")[[1]][2] }))
+#'  eqtlAsso$chrom <- unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x,"_")[[1]][1] }))
+#'
+#'  eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
+#'  GTExvisual_locusZoom(eqtlAsso, population="EUR",
+#'                       posRange="chr6:46488310-48376712", genome="grch38" )
 #' }
-GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range="", token="9246d2db7917", windowSize=1000000, genome="grch38"){
-  # get LD information:
+GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genome="grch38"){
+  snpId <- pos <- pValue <- logP <- pointShape<- NULL
+  RS_Number <- R2 <- SNP_B <- r2Cut <- .<-NULL
+  # highlightSnp=""
+  # population="EUR"
+  # posRange="chr6:46488310-48376712"
+  # token="9246d2db7917"
+  # windowSize=1e6
+  # genome="grch38"
+
+  names(DF) <- c("snpId", "chrom", "pos", "pValue")
+  DF$pos <- as.integer(DF$pos)
+  # chrome check:
+  P_chrom <- unique(DF$chrom)
+  if( length(P_chrom) !=1 || !(P_chrom %in% paste0("chr",c(1:22,"x"))) ){
+    stop("SNPs must located in the same chromosome! [", paste(P_chrom, collapse = ","),"] are detected!")
+  }
+
   setDT(DF)
+  # remove snp without dbSNP ID:
+  DF <- DF[stringr::str_detect(snpId, stringr::regex("^rs")),]
+  # retain snps in range:
+  if(posRange!=""){
+    posRangeSplit <- stringr::str_split(posRange, stringr::regex(":|-"))[[1]]
+    DF <-DF[pos>min(as.integer(posRangeSplit[2:3])) & pos< max(as.integer(posRangeSplit[2:3]))]
+  }
+  if(nrow(DF)<2){
+    stop("Please enlarge the genome range!")
+  }
+
+  # highligth SNP:
   if(highlightSnp ==""){
     highlightSnp <- DF[which.min(pValue)]$snpId
   }
+
+  # get LD information:
   s_count<-1
-  while( !exists("snpLD") && s_count<=3 ){
-    message("========= Geting LD info for SNP: ",highlightSnp,"; try ",s_count,".")
+  max_count<- 3
+  while( !exists("snpLD") && s_count<=max_count ){
+    message("=== Geting LD info for SNP: ",highlightSnp,"; trying ",s_count,"/",max_count,".")
     url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",highlightSnp,
                    "&pop=",population,
                    "&r2_d=","r2",
@@ -719,12 +765,15 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range=
     try( snpLD <- fetchContent(url1, method="download", isJson=FALSE) )
     if( exists("snpLD") && ncol(snpLD)<=1 ){
        rm(snpLD)
+    }else{
+      message("=== Done!")
     }
     s_count <- s_count+1
   }
+  snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
   # Set LD SNP color:
-  if(nrow(snpLD)>0){
+  if( nrow(snpLD)>0 ){
     # 由于多个人种存在重复LD，所以取均值：
     snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
     # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
@@ -736,43 +785,41 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range=
   }
 
   # set color:
-  eqtlAsso <- merge(eqtlAsso, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
-  eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
-  eqtlAsso[snpId==highlightSnp,"r2Cut"]<- "(0.8-1.0]"
+  DF$logP <- (-log(DF$pValue, 10))
+  DF <- merge(DF, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
+  DF[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
+  DF[snpId==highlightSnp,"r2Cut"]<- "(0.8-1.0]"
 
   # set size:
-  eqtlAsso$sizeP <- "small"
-  eqtlAsso[logP<max(eqtlAsso$logP), "sizeP"] <- "small"
-  eqtlAsso[logP>=2 & logP< max(eqtlAsso$logP), "sizeP"] <- "middle"
-  eqtlAsso[logP == max(eqtlAsso$logP), "sizeP"] <- "large"
-  eqtlAsso[snpId == highlightSnp, "sizeP"] <- "most"
+  DF$sizeP <- "small"
+  DF[logP<max(DF$logP), "sizeP"] <- "small"
+  DF[logP>=2 & logP< max(DF$logP), "sizeP"] <- "middle"
+  DF[logP == max(DF$logP), "sizeP"] <- "large"
+  DF[snpId == highlightSnp, "sizeP"] <- "most"
 
   # set color:
   colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
                          pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
                          pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"),
                          pointSize = c(1,1,2,2,2.5))
-  colorDT <- merge(colorDT, unique(eqtlAsso[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
+  colorDT <- merge(colorDT, unique(DF[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
   # set shape:
-  eqtlAsso$pointShape <- "normal"
-  eqtlAsso[snpId==highlightSnp,"pointShape"] <- "highlight"
-  eqtlAsso$pointShape <- as.factor(eqtlAsso$pointShape)
-  eqtlAsso <- eqtlAsso[order(r2Cut, logP)]
-  eqtlAsso <- rbind( eqtlAsso[snpId!=highlightSnp ], eqtlAsso[snpId==highlightSnp, ] )
+  DF$pointShape <- "normal"
+  DF[snpId==highlightSnp,"pointShape"] <- "highlight"
+  DF$pointShape <- as.factor(DF$pointShape)
+  DF <- DF[order(r2Cut, logP)]
+  DF <- rbind( DF[snpId!=highlightSnp ], DF[snpId==highlightSnp, ] )
 
   # title:
-  plotTitle <- paste0(gene, " (", ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom)),
-                      ":",
-                      paste0(range(eqtlAsso$pos), collapse = "-")
-                      ,")")
+  plotTitle <- paste0( ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom)),  ":", paste0(range(DF$pos), collapse = "-") )
 
   # ylab and unit:
   posUnit <- "Bb"
-  if( any(range(eqtlAsso$pos)>10^6)){
-    eqtlAsso$pos <- eqtlAsso$pos/10^6
+  if( any(range(DF$pos)>10^6)){
+    DF$pos <- DF$pos/10^6
     posUnit <- "Mb"
-  }else if( all(range(eqtlAsso$pos)<10^6) && all(range(eqtlAsso$pos)>10^3) ){
-    eqtlAsso$pos <- eqtlAsso$pos/10^3
+  }else if( all(range(DF$pos)<10^6) && all(range(DF$pos)>10^3) ){
+    DF$pos <- DF$pos/10^3
     posUnit <- "Kb"
   }else{
     posUnit <- "Bb"
@@ -782,16 +829,16 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range=
   # xlab:
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  if( require("ggplot2") && require(ggrepel) ){
-    p <- ggplot(eqtlAsso)+
+  if( requireNamespace("ggplot2") && requireNamespace("ggrepel") ){
+    p <- ggplot(DF)+
       geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
       scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
       scale_shape_manual(breaks = c('normal', "highlight"), values =  c(16,23) )+
       scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
       scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
-      geom_label_repel(data=eqtlAsso[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
-      labs(title = plotTitle )+
+      geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
+      # labs(title = plotTitle )+
       xlab( xLab )+
       ylab( yLab )+
       theme_bw()+
@@ -807,51 +854,159 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range=
     }else{
       p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
     }
-
     print(p)
   }
-
-
+  return(NULL)
 }
 
+#' @title LocusCompare plot
+#'
+#' @param eqtlDF A data.frame or data.table with two columns: dbSNP id and p-value.
+#' @param gwasDF A data.frame or data.table with two columns: dbSNP id and p-value.
+#' @param highlightSnp Default is the snp that is farthest from the origin of the coordinates.
+#' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
+#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
+#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
+#' @param genome "grch38"(default) or "grch37".
+#'
+#' @return A plot
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   eqtlURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/eqtlFile/eqtlAsso.txt"
+#'   gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
+#'   eqtlDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(eqtlURL)$content), sep="\t", header = TRUE)
+#'   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t", header = TRUE)
+#'   eqtlDF <- eqtlDF[,.(snpId, pValue)]
+#'   gwasDF <- gwasDF[,.(rsid, P)]
+#'   GTExvisual_locusCompare( eqtlDF, gwasDF )
+#' }
+GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38" ){
+  pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
+  RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
+  eqtlDF <- eqtlDF[,1:2]
+  gwasDF <- gwasDF[,1:2]
 
+  setDT(eqtlDF)
+  setDT(gwasDF)
+  colnames(eqtlDF) <- c("snpId","pValue")
+  colnames(gwasDF) <- c("snpId","pValue")
+  # remove duplicates:
+  eqtlDF <- eqtlDF[order(pValue)][!duplicated(snpId)]
+  gwasDF <- gwasDF[order(pValue)][!duplicated(snpId)]
 
-#############
-# library(LDlinkR)
-# LDinfo <- LDmatrix(snps = DF$rsid,
-#                    pop = "EUR", r2d = "r2",
-#                    token = '9246d2db7917',
-#                    file =FALSE)
-# LDmatrix(snps = "rs9381563", pop = "EUR", token = '9246d2db7917', file =FALSE)
+  # remove snp without dbSNP ID:
+  eqtlDF <- eqtlDF[stringr::str_detect(snpId, stringr::regex("^rs")),]
+  gwasDF <- gwasDF[stringr::str_detect(snpId, stringr::regex("^rs")),]
 
-# LDexpress(snps = c("rs345", "rs456"),
-#           pop = c("YRI", "CEU"),
-#           tissue = c("ADI_SUB", "ADI_VIS_OME"),
-#           r2d = "r2",
-#           r2d_threshold = "0.1",
-#           p_threshold = "0.1",
-#           win_size = "500000",
-#           token = '9246d2db7917'
-# )
+  # mege:
+  DF <- merge(eqtlDF, gwasDF, by="snpId", suffixes = c(".eqtl", ".gwas"))
+  if(nrow(DF)<2){
+    stop("Please enlarge the genome range!")
+  }
 
-# a <- LDproxy("rs456", "EUR", "r2", token = "9246d2db7917")
-# a1 <- retrieve_LD("7",snp = "rs456", population = "EUR")
-#
-# LDpair(var1 = "rs3", var2 = "rs4", pop = "YRI", token = "9246d2db7917")
-# LDpop(var1 = "rs3", var2 = "rs4", pop = "YRI", r2d = "r2",  token = "9246d2db7917")
-#
-# a <- LDproxy("rs2285691", "EUR", "r2", token = "9246d2db7917")
-# a1 <- retrieve_LD("7",snp = "rs2285691", population = "EUR")
-#
-# SNPchip()
-# list_gtex_tissues()
-# list_chips()
-#
-# SNPclip(c("rs3", "rs4", "rs148890987"), "YRI", "0.1", "0.01", token = "9246d2db7917")
-#
-# system.time(b <- LDmatrix(snps = a$Coord[1:300],
-#                           pop = "EUR", r2d = "r2",
-#                           token = '9246d2db7917',
-#                           file =FALSE))
+  # log:
+  DF$logP.eqtl <- (-log(DF$pValue.eqtl, 10))
+  DF$logP.gwas <- (-log(DF$pValue.gwas, 10))
+  DF$distance <- sqrt(DF$logP.gwas^2+DF$logP.eqtl^2)
+
+  # highligth SNP:
+  if( highlightSnp =="" ){
+    highlightSnp <- DF[which.max(distance)]$snpId
+  }
+  # varInfo <-  GTExquery_varId(highlightSnp)
+
+  # get LD information:
+  s_count<-1
+  max_count<- 3
+  while( !exists("snpLD") && s_count<=max_count ){
+    message("=== Geting LD info for SNP: ",highlightSnp,"; trying ",s_count,"/",max_count,".")
+    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",highlightSnp,
+                   "&pop=",population,
+                   "&r2_d=","r2",
+                   "&window=",as.character(as.integer(windowSize)),
+                   "&genome_build=",genome,
+                   "&token=", token)
+
+    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
+    try( snpLD <- fetchContent(url1, method="download", isJson=FALSE) )
+    if( exists("snpLD") && ncol(snpLD)<=1 ){
+      rm(snpLD)
+    }else{
+      message("=== Done!")
+    }
+    s_count <- s_count+1
+    if(s_count > max_count){
+      stop("Please check your network!")
+    }
+  }
+
+  snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
+
+  # Set LD SNP color:
+  if( nrow(snpLD)>0 ){
+    # 由于多个人种存在重复LD，所以取均值：
+    snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
+    # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
+    snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
+    # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
+  }else{
+    message("No LD information of [",highlightSnp,"].")
+    snpLD <- data.table::data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
+  }
+
+  # set color:
+  gwas_eqtl <- merge(DF, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
+  gwas_eqtl[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
+  gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1.0]"
+  # set color:
+  colorDT <- data.table::data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
+                                     pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
+                                     pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"))
+  colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
+  # gwas_eqtl <- merge( gwas_eqtl, colorDT, by="r2Cut")
+  # set shape:
+  gwas_eqtl$pointShape <- "normal"
+  gwas_eqtl[snpId==highlightSnp,"pointShape"] <- "highlight"
+  gwas_eqtl$pointShape <- as.factor(gwas_eqtl$pointShape)
+  gwas_eqtl <- gwas_eqtl[order(r2Cut, logP.gwas, logP.eqtl)]
+  gwas_eqtl <- rbind( gwas_eqtl[snpId!=highlightSnp ], gwas_eqtl[snpId==highlightSnp, ] )
+
+  # title:
+  plotTitle <- paste0("LocusCompare plot (",nrow(gwas_eqtl)," snps)")
+
+  # Xlab and ylab:
+  xLab <- expression(-log["10"]("p-value") (eQTL))
+  yLab <- expression(-log["10"]("p-value") (GWAS))
+
+  if( requireNamespace("ggplot2") ){
+    p <- ggplot(gwas_eqtl)+
+      geom_point(aes(x=logP.eqtl, y=logP.gwas, fill=r2Cut, color=r2Cut, shape=pointShape, size=pointShape))+
+      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill)+
+      scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor)+
+      scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(16,23) )+
+      scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(2,3) )+
+      # geom_text(aes(x=pos, y=logP, label=snpId ))+
+      geom_label_repel(data=gwas_eqtl[snpId==highlightSnp,], aes(x=logP.eqtl, y=logP.gwas, label=snpId) )+
+      labs(title = plotTitle )+
+      xlab( xLab )+
+      ylab( yLab )+
+      theme_bw()+
+      theme(axis.text=element_text(size=rel(1.4)),
+            axis.title=element_text(size=rel(1.5)),
+            plot.title = element_text(hjust=0.5),
+            legend.title = element_text(size=rel(1.3)),
+            legend.text = element_text(size=rel(1.2))
+      )
+    if( nrow(snpLD)==0){
+      p <- p+ guides( fill="none", color = "none", shape="none", size="none" )
+    }else{
+      p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
+    }
+    print(p)
+  }
+  return(NULL)
+}
 
 

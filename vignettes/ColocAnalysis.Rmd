@@ -38,20 +38,16 @@ Step 2: fetch all regulatory associations of variants for gene of interest, like
 ```{r fig.width=6.1, fig.height=4.7, message=FALSE}
 traitGene="RP11-385F7.1"
 tissueSiteDetail="Brain - Cortex"
-geneAsso <- GTExvisual_eqtlTrait(traitGene, tissueSiteDetail=tissueSiteDetail)
-```
-
-Keep three columns for following analyses:
-
-```{r}
-geneAsso <- geneAsso[,.(snpId, pValue, maf)] 
-geneAsso
+eqtlAsso <- GTExdownload_assoAll(traitGene, tissueSiteDetail = tissueSiteDetail)
+# Keep three columns for following analyses:
+eqtlAsso <- eqtlAsso[,.(snpId, pValue, maf)] 
+eqtlAsso
 ```
 
 Step 3: merge gwas and eqtl datasets by SNP ID. Centered on the SNP with the lowest pValue, sentinel snps within one million bases are retained.
 
 ```{r}
-gwas_eqtl <- merge(gwasDF[,.(snpId=rsid, pValue=P, maf=maf, position)], geneAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".eqtl"))
+gwas_eqtl <- merge(gwasDF[,.(snpId=rsid, pValue=P, maf=maf, position)], eqtlAsso, by="snpId", sort=FALSE, suffixes = c(".gwas",".eqtl"))
 centerSnp <- gwas_eqtl[which.min(gwas_eqtl$pValue.gwas),]
 colocRange=1e6
 sentinelSnps <- gwas_eqtl[position>=(centerSnp$position-(colocRange)/2) & position<=(centerSnp$position+(colocRange)/2),]
@@ -60,7 +56,7 @@ sentinelSnps
 
 Step 4: conduct colocalization analysis using coloc package.
 
-```{r}
+```{r warning=FALSE}
 library(coloc)
 colocResult <- coloc.abf(
   dataset1=list(
@@ -74,15 +70,15 @@ colocResult
 Step 5: visualize GWAS-eQTL colocalization for selected gene.
 
 ```{r fig.width=6.1, fig.height=4.7, message=FALSE}
-eqtlAsso2 <-  GTExvisual_eqtlGWAS(sentinelSnps[,c("snpId","pValue.gwas")], traitGene="RP11-385F7.1", tissueSiteDetail="Lung")
+GTExvisual_locusCompare( sentinelSnps[,.(rsid=snpId, pval=pValue.eqtl)], sentinelSnps[,.(rsid=snpId, pval=pValue.gwas)] )
 ```
 
 Or you can use locuscomparer package for visualization of GWAS-eQTL colocalization.
 
 ```{r fig.width=6.1, fig.height=4.7, warning=FALSE}
-if(require(locuscomparer)){
-  locuscompare( sentinelSnps[,.(rsid=snpId, pval=pValue.gwas)], sentinelSnps[,.(rsid=snpId, pval=pValue.eqtl)], snp = "rs1931837" )
-}
+# if(requireNamespace(locuscomparer)){
+  # locuscompare( sentinelSnps[,.(rsid=snpId, pval=pValue.gwas)], sentinelSnps[,.(rsid=snpId, pval=pValue.eqtl)], snp = "rs1931837" )
+# }
 ```
 
 Step 5: effect of the variant "rs1931837" on expression of gene "RP11-385F7.1" in lung.

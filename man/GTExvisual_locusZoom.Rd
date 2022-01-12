@@ -8,26 +8,50 @@ GTExvisual_locusZoom(
   DF,
   highlightSnp = "",
   population = "EUR",
-  range = "",
-  token = "9246d2db7917"
+  posRange = "",
+  token = "9246d2db7917",
+  windowSize = 5e+05,
+  genome = "grch38"
 )
 }
 \arguments{
+\item{DF}{A data.frame or a data.table object. Four columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); chromosome, chr1-chr22; Genome position; P-value.}
+
 \item{highlightSnp}{Default is the snp that with lowest p-value.}
 
-\item{token}{}
+\item{population}{Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()}
 
-\item{dataFrame}{A data.frame or a data.table object. Two columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); P-value.}
+\item{posRange}{visualized genome region of interest. Default is the region that covers all snps.}
+
+\item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
+
+\item{windowSize}{Window around the highlighted snp for querying linkage disequilibrium information. Default:500000}
+
+\item{genome}{"grch38"(default) or "grch37".}
 }
 \value{
-
+A data.table object and plot.
 }
 \description{
 LocusZoom plot
 }
 \examples{
 \donttest{
- eqtlAsso <- GTExdownload_assoAll("MLH1", tissueSiteDetail = "Liver")
- DF <- eqtlAsso[,.(snpId, pValue)]
+ # For GWAS:
+ gwasFile <- tempfile(pattern = "file")
+ gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
+ utils::download.file(gwasURL, destfile=gwasFile)
+ gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+ gwasDF <- gwasDF[,.(rsid, chr, position,P)]
+ GTExvisual_locusZoom(gwasDF)
+
+ # For eQTL:
+ eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
+ eqtlAsso$pos <- unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x,"_")[[1]][2] }))
+ eqtlAsso$chrom <- unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x,"_")[[1]][1] }))
+
+ eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
+ GTExvisual_locusZoom(eqtlAsso, population="EUR",
+                      posRange="chr6:46488310-48376712", genome="grch38" )
 }
 }

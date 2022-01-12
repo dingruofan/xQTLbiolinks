@@ -32,6 +32,6 @@ retrieve snps from dbSNP using coordinate.
 \examples{
 \donttest{
  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-   endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+   endPos=10000000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 }
 }

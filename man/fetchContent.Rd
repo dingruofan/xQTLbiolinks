@@ -12,6 +12,8 @@ fetchContent(url1, method = "curl", downloadMethod = "auto", isJson = TRUE)
 \item{method}{Can be chosen from "download", "curl", "GetWithHeader", "rvest" or "GET".}
 
 \item{downloadMethod}{The same methods from utils::download.file function.}
+
+\item{isJson}{Fetched content is a json file or not. Defaulst: TRUE.}
 }
 \value{
 A json object.
@@ -23,7 +25,8 @@ Fetch data using url by three methods
 \donttest{
  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
  fetchContent(url1, method="download")
- url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917"
+ url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?",
+                "var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917")
  fetchContent(url1, method="download", isJson=FALSE)
 }
 }
