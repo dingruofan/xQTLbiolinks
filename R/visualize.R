@@ -696,19 +696,17 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
 #'
 #' @examples
 #' \donttest{
-#'  eqtlAsso <- GTExdownload_assoAll("MLH1", tissueSiteDetail = "Liver")
+#'  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
 #'  DF <- eqtlAsso[,.(snpId, pValue)]
 #' }
-GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range="", token="9246d2db7917", windowSize=100000, genome="grch38"){
+GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range="", token="9246d2db7917", windowSize=1000000, genome="grch38"){
   # get LD information:
   setDT(DF)
   if(highlightSnp ==""){
     highlightSnp <- DF[which.min(pValue)]$snpId
   }
-
-  message("Ensure that the network connection is smooth.")
   s_count<-1
-  while( !exists("highlightSnpLd") && s_count<=3 ){
+  while( !exists("snpLD") && s_count<=3 ){
     message("========= Geting LD info for SNP: ",highlightSnp,"; try ",s_count,".")
     url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",highlightSnp,
                    "&pop=",population,
@@ -718,18 +716,105 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", range=
                    "&token=", token)
 
     # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
-    try( highlightSnpLd <- fetchContent(url1, method="download", isJson=FALSE) )
-
-    if(exists("highlightSnpLd") && nrow(highlightSnpLd)<=1 ){
-       rm(highlightSnpLd)
+    try( snpLD <- fetchContent(url1, method="download", isJson=FALSE) )
+    if( exists("snpLD") && ncol(snpLD)<=1 ){
+       rm(snpLD)
     }
     s_count <- s_count+1
+  }
+
+  # Set LD SNP color:
+  if(nrow(snpLD)>0){
+    # 由于多个人种存在重复LD，所以取均值：
+    snpLD <- snpLD[,.(R2=mean(R2)),by=c("SNP_A","SNP_B")]
+    # snpLD$colorP = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('#636363','#7fcdbb','darkgreen','#feb24c','gold'), include.lowest=TRUE))
+    snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
+    # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
+  }else{
+    # message("No LD information of [",highlightSnp,"].")
+    snpLD <- data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
+  }
+
+  # set color:
+  eqtlAsso <- merge(eqtlAsso, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
+  eqtlAsso[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
+  eqtlAsso[snpId==highlightSnp,"r2Cut"]<- "(0.8-1.0]"
+
+  # set size:
+  eqtlAsso$sizeP <- "small"
+  eqtlAsso[logP<max(eqtlAsso$logP), "sizeP"] <- "small"
+  eqtlAsso[logP>=2 & logP< max(eqtlAsso$logP), "sizeP"] <- "middle"
+  eqtlAsso[logP == max(eqtlAsso$logP), "sizeP"] <- "large"
+  eqtlAsso[snpId == highlightSnp, "sizeP"] <- "most"
+
+  # set color:
+  colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
+                         pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
+                         pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"),
+                         pointSize = c(1,1,2,2,2.5))
+  colorDT <- merge(colorDT, unique(eqtlAsso[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
+  # set shape:
+  eqtlAsso$pointShape <- "normal"
+  eqtlAsso[snpId==highlightSnp,"pointShape"] <- "highlight"
+  eqtlAsso$pointShape <- as.factor(eqtlAsso$pointShape)
+  eqtlAsso <- eqtlAsso[order(r2Cut, logP)]
+  eqtlAsso <- rbind( eqtlAsso[snpId!=highlightSnp ], eqtlAsso[snpId==highlightSnp, ] )
+
+  # title:
+  plotTitle <- paste0(gene, " (", ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom)),
+                      ":",
+                      paste0(range(eqtlAsso$pos), collapse = "-")
+                      ,")")
+
+  # ylab and unit:
+  posUnit <- "Bb"
+  if( any(range(eqtlAsso$pos)>10^6)){
+    eqtlAsso$pos <- eqtlAsso$pos/10^6
+    posUnit <- "Mb"
+  }else if( all(range(eqtlAsso$pos)<10^6) && all(range(eqtlAsso$pos)>10^3) ){
+    eqtlAsso$pos <- eqtlAsso$pos/10^3
+    posUnit <- "Kb"
+  }else{
+    posUnit <- "Bb"
+  }
+  yLab <- expression(-log["10"]("Pvalue"))
+
+  # xlab:
+  xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
+
+  if( require("ggplot2") && require(ggrepel) ){
+    p <- ggplot(eqtlAsso)+
+      geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
+      scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
+      scale_shape_manual(breaks = c('normal', "highlight"), values =  c(16,23) )+
+      scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
+      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
+      # geom_text(aes(x=pos, y=logP, label=snpId ))+
+      geom_label_repel(data=eqtlAsso[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
+      labs(title = plotTitle )+
+      xlab( xLab )+
+      ylab( yLab )+
+      theme_bw()+
+      theme(axis.text.x=element_text(size=rel(1.3)),
+            axis.title.x=element_text(size=rel(1.3)),
+            axis.title.y=element_text(size=rel(1.3)),
+            plot.title = element_text(hjust=0.5),
+            legend.title = element_text(size=rel(1.3)),
+            legend.text = element_text(size=rel(1.2))
+      )
+    if(nrow(snpLD)==0){
+      p <- p+ guides( fill="none", color = "none", shape="none", size="none")
+    }else{
+      p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
+    }
+
+    print(p)
   }
 
 
 }
 
-fetchContent
+
 
 #############
 # library(LDlinkR)
