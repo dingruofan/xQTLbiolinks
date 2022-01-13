@@ -707,8 +707,10 @@ GTExvisual_eqtlTrait <- function(gene="", geneType="geneSymbol", highlightSnp=""
 #'
 #'  # For eQTL:
 #'  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
-#'  eqtlAsso$pos <- unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x,"_")[[1]][2] }))
-#'  eqtlAsso$chrom <- unlist(lapply(eqtlAsso$variantId, function(x){ stringr::str_split(x,"_")[[1]][1] }))
+#'  eqtlAsso$pos <- unlist(lapply(eqtlAsso$variantId, function(x){
+#'                                stringr::str_split(x,"_")[[1]][2] }))
+#'  eqtlAsso$chrom <- unlist(lapply(eqtlAsso$variantId, function(x){
+#'                                stringr::str_split(x,"_")[[1]][1] }))
 #'
 #'  eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
 #'  GTExvisual_locusZoom(eqtlAsso, population="EUR",
