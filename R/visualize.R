@@ -876,8 +876,8 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' \donttest{
 #'   eqtlURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/eqtlFile/eqtlAsso.txt"
 #'   gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
-#'   eqtlDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(eqtlURL)$content), sep="\t", header = TRUE)
-#'   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t", header = TRUE)
+#'   eqtlDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(eqtlURL)$content), sep="\t")
+#'   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t")
 #'   eqtlDF <- eqtlDF[,.(snpId, pValue)]
 #'   gwasDF <- gwasDF[,.(rsid, P)]
 #'   GTExvisual_locusCompare( eqtlDF, gwasDF )
@@ -1006,7 +1006,7 @@ GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
     }
     print(p)
   }
-  return(NULL)
+  return(p)
 }
 
 

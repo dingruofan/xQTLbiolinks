@@ -37,4 +37,7 @@ Imports:
 Suggests: 
     usethis (>= 2.0.1),
     coloc (>= 5.1.0),
-    rlang (>= 0.4.11)
+    rlang (>= 0.4.11),
+    knitr (>= 1.37)
+VignetteBuilder:
+    knitr

@@ -406,5 +406,5 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("coloc", min_version = "5.1.0", type="Suggests")
 # usethis::use_package("usethis", min_version = "2.0.1", type="Suggests")
 # usethis::use_package("rlang", min_version = "0.4.11", type="Suggests")
-
+# usethis::use_package("knitr", min_version = "1.37", type="Suggests")
 
