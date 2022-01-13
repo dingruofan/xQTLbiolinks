@@ -401,6 +401,7 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("PupillometryR", min_version = "0.0.4")
 # usethis::use_package("ggpubr", min_version = "0.4.0")
 # usethis::use_package("ggridges", min_version = "0.5.3")
+# usethis::use_package("viridis", min_version = "0.6.2")
 
 # suggest:
 # usethis::use_package("coloc", min_version = "5.1.0", type="Suggests")

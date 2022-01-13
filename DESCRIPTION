@@ -33,7 +33,8 @@ Imports:
     DBI (>= 1.1.1),
     PupillometryR (>= 0.0.4),
     ggpubr (>= 0.4.0),
-    ggridges (>= 0.5.3)
+    ggridges (>= 0.5.3),
+    viridis (>= 0.6.2)
 Suggests: 
     usethis (>= 2.0.1),
     coloc (>= 5.1.0),
