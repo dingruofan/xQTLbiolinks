@@ -386,26 +386,27 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 # usethis::use_package("stringr", min_version = "1.4.0")
 # usethis::use_package("utils", min_version = "4.0.3")
 # usethis::use_package("SummarizedExperiment", min_version = "1.18.2")
-# usethis::use_package("GenomicRanges", min_version = "1.40.0")
-# usethis::use_package("IRanges", min_version = "2.22.2")
-# usethis::use_package("GenomeInfoDb", min_version = "1.24.2")
 # usethis::use_package("ggplot2", min_version = "3.3.5")
-# usethis::use_package("rvest", min_version = "1.0.1")
-# usethis::use_package("gridExtra", min_version = "2.3")
-# usethis::use_package("tidyr", min_version = "1.1.4")
-# usethis::use_package("ggrepel", min_version = "0.9.1")
-# usethis::use_package("crayon", min_version = "1.4.1")
 # usethis::use_package("httr", min_version = "1.4.2")
 # usethis::use_package("RMySQL", min_version = "0.10.22")
-# usethis::use_package("DBI", min_version = "1.1.1")
+# usethis::use_package("DBI", min_version = "1.1.1") # in RMySQL
 # usethis::use_package("PupillometryR", min_version = "0.0.4")
 # usethis::use_package("ggpubr", min_version = "0.4.0")
 # usethis::use_package("ggridges", min_version = "0.5.3")
 # usethis::use_package("viridis", min_version = "0.6.2")
-
-# suggest:
-# usethis::use_package("coloc", min_version = "5.1.0", type="Suggests")
+# usethis::use_package("GenomeInfoDb", min_version = "1.24.2") # in GenomicRanges
+# usethis::use_package("IRanges", min_version = "2.22.2") # in GenomicRanges
+# usethis::use_package("ggrepel", min_version = "0.9.1") # in ggpubr
+# usethis::use_package("coloc", min_version = "5.1.0")
+# usethis::use_package("GenomicRanges", min_version = "1.40.0") # in SummarizedExperiment
+#
+# # suggest:
 # usethis::use_package("usethis", min_version = "2.0.1", type="Suggests")
-# usethis::use_package("rlang", min_version = "0.4.11", type="Suggests")
 # usethis::use_package("knitr", min_version = "1.37", type="Suggests")
+# usethis::use_package("tidyr", min_version = "1.1.4") # in ggpubr,
 
+
+
+# usethis::use_package("crayon", min_version = "1.4.1") # message 字体：
+# usethis::use_package("ggeextra", min_version = "1.4.1") # message 字体：
+# usethis::use_package("rlang", min_version = "0.4.11", type="Suggests") # in ggpubr

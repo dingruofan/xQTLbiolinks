@@ -88,12 +88,6 @@
 #'
 GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
-  # variantName="rs78378222"
-  # gene="TP53"
-  # tissueSiteDetail="Esophagus - Mucosa"
-  # datasetId="gtex_v8"
-  # variantType="snpId"
-  # geneType="geneSymbol"
 
   # library(crayon)
   # cat(green(
@@ -237,6 +231,11 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
 #' @param genome "grch38"(default) or "grch37".
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @import ggrepel
+#' @import utils
 #' @return A data.table object and plot.
 #' @export
 #'
@@ -376,33 +375,31 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   # xlab:
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  if( requireNamespace("ggplot2") && requireNamespace("ggrepel") ){
-    p <- ggplot(DF)+
-      geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
-      scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
-      scale_shape_manual(breaks = c('normal', "highlight"), values =  c(16,23) )+
-      scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
-      scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
-      # geom_text(aes(x=pos, y=logP, label=snpId ))+
-      geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
-      # labs(title = plotTitle )+
-      xlab( xLab )+
-      ylab( yLab )+
-      theme_bw()+
-      theme(axis.text.x=element_text(size=rel(1.3)),
-            axis.title.x=element_text(size=rel(1.3)),
-            axis.title.y=element_text(size=rel(1.3)),
-            plot.title = element_text(hjust=0.5),
-            legend.title = element_text(size=rel(1.3)),
-            legend.text = element_text(size=rel(1.2))
-      )
-    if(nrow(snpLD)==0){
-      p <- p+ guides( fill="none", color = "none", shape="none", size="none")
-    }else{
-      p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
-    }
-    print(p)
+  p <- ggplot(DF)+
+    geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
+    scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
+    scale_shape_manual(breaks = c('normal', "highlight"), values =  c(16,23) )+
+    scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
+    scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
+    # geom_text(aes(x=pos, y=logP, label=snpId ))+
+    geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
+    # labs(title = plotTitle )+
+    xlab( xLab )+
+    ylab( yLab )+
+    theme_bw()+
+    theme(axis.text.x=element_text(size=rel(1.3)),
+          axis.title.x=element_text(size=rel(1.3)),
+          axis.title.y=element_text(size=rel(1.3)),
+          plot.title = element_text(hjust=0.5),
+          legend.title = element_text(size=rel(1.3)),
+          legend.text = element_text(size=rel(1.2))
+    )
+  if(nrow(snpLD)==0){
+    p <- p+ guides( fill="none", color = "none", shape="none", size="none")
+  }else{
+    p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
   }
+  print(p)
   return(NULL)
 }
 
@@ -415,7 +412,10 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
 #' @param genome "grch38"(default) or "grch37".
-#'
+#' @import data.table
+#' @import ggplot2
+#' @import stringr
+#' @import ggrepel
 #' @return A plot
 #' @export
 #'

@@ -1609,12 +1609,13 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
 #' @param snp (string) SNP rsID.
 #' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @import RMySQL
-#' @examples
-#'  retrieveLD('6', 'rs9349379', 'AFR')
-#'
+#' @import DBI
 #' @export
+#' @examples
+#' \donttest{
+#'  retrieveLD('6', 'rs9349379', 'AFR')
+#'  }
 retrieveLD = function(chr,snp,population){
-
   # conn = RMySQL::dbConnect(RMySQL::MySQL(),"locuscompare",config$b,config$c,config$a)
   conn = RMySQL::dbConnect(RMySQL::MySQL(),"locuscompare", "locuscomparer" ,"12345678","locuscompare-us-west-2a.cvocub39nnri.us-west-2.rds.amazonaws.com")
   on.exit(RMySQL::dbDisconnect(conn))

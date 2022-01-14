@@ -18,6 +18,7 @@ SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
 For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.
 }
 \examples{
+\donttest{
  retrieveLD('6', 'rs9349379', 'AFR')
-
+ }
 }

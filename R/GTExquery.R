@@ -758,7 +758,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'  }
 apiAdmin_ping <- function(fetchMethod=""){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  methods_all <- c("download","curl",  "rvest", "GET",  "fromJSON")
+  methods_all <- c("download","curl", "GET", "fromJSON")
   if(fetchMethod==""){
     fetchMethod <- methods_all
   }else if( any(!fetchMethod %in% methods_all) ){
@@ -866,14 +866,13 @@ apiEbi_ping <- function(){
 #' @title Fetch data using url by three methods
 #'
 #' @param url1 A url string.
-#' @param method Can be chosen from "download", "curl", "GetWithHeader", "rvest" or "GET".
+#' @param method Can be chosen from "download", "curl", "GetWithHeader", or "GET".
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @param isJson Fetched content is a json file or not. Defaulst: TRUE.
 #' @import utils
 #' @import jsonlite
 #' @import stringr
 #' @import data.table
-#' @import rvest
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
@@ -906,19 +905,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
   #   return(url1GetText2Json)
   # }
 
-  if(method == "rvest"){
-    if(isJson){
-      url1GetText2Json <- jsonlite::fromJSON( rvest::html_text( rvest::read_html(url1) ) )
-      if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
-        message("No data fetched, please check your input.")
-        return(NULL)
-      }
-      return(url1GetText2Json)
-    }else{
-      url1GetText <- data.table::fread(rvest::html_text( rvest::read_html(url1) ),sep="\t", header = TRUE)
-    }
-
-  }else if( method == "fromJSON"){
+  if(method == "fromJSON"){
     if(isJson){
       url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
       if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
@@ -930,6 +917,18 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       message("fromJSON method return NULL!")
       return(NULL)
     }
+  }else if( method == "rvest"){
+    return(NULL)
+    # if(isJson){
+    #   url1GetText2Json <- jsonlite::fromJSON( rvest::html_text( rvest::read_html(url1) ) )
+    #   if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
+    #     message("No data fetched, please check your input.")
+    #     return(NULL)
+    #   }
+    #   return(url1GetText2Json)
+    # }else{
+    #   url1GetText <- data.table::fread(rvest::html_text( rvest::read_html(url1) ),sep="\t", header = TRUE)
+    # }
 
   }else if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
@@ -1008,7 +1007,6 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
 #' @import data.table
-#' @importFrom crayon magenta underline
 #' @return A data.frame
 #' @export
 #'
