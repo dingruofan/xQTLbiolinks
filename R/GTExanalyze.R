@@ -1,3 +1,14 @@
-GTExanalyze_traitDetect <- function(){
+#' @title Sentinel SNPs detection in GWAS data.
+#'
+#' @param gwasDF
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'
+#' }
+GTExanalyze_traitDetect <- function(gwasDF, ){
 
 }
