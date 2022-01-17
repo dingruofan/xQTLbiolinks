@@ -37,8 +37,8 @@ LocusCompare plot
 }
 \examples{
 \donttest{
-  eqtlURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/eqtlFile/eqtlAsso.txt"
-  gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
+  eqtlURL <- "https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso.txt"
+  gwasURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub1.txt"
   eqtlDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(eqtlURL)$content), sep="\t")
   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t")
   eqtlDF <- eqtlDF[,.(snpId, pValue)]

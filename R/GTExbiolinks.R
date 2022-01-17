@@ -37,5 +37,20 @@ NULL
 #' @source \url{https://gtexportal.org/home/}
 NULL
 
+#' @title samples used in GTEx eQTL analysis.
+#' @description
+#'  A dataset containing the 49 tissues' name and corresponding sample number.
+#' @docType data
+#' @keywords internal
+#' @name sampleNum
+#' @format A data frame with 49 rows and 2 variables:
+#' \describe{
+#'   \item{tissueSiteDetailId}{character string, tissue name}
+#'   \item{sampleNum}{integer}
+#' }
+#' @source \url{https://gtexportal.org/home/}
+NULL
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
+utils::globalVariables("sampleNum")

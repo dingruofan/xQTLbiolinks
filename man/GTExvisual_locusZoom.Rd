@@ -19,7 +19,7 @@ GTExvisual_locusZoom(
 
 \item{highlightSnp}{Default is the snp that with lowest p-value.}
 
-\item{population}{Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()}
+\item{population}{Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"}
 
 \item{posRange}{visualized genome region of interest. Default is the region that covers all snps.}
 
@@ -39,11 +39,13 @@ LocusZoom plot
 \donttest{
  # For GWAS:
  gwasFile <- tempfile(pattern = "file")
- gwasURL <- "http://bioinfo.szbl.ac.cn/finalColoc/tmp/gwasFile/gwasChr6Sub1.txt"
+ gwasURL <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasChr6Sub1.txt"
  utils::download.file(gwasURL, destfile=gwasFile)
  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
  GTExvisual_locusZoom(gwasDF)
+ GTExvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=200000)
+ GTExvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
 
  # For eQTL:
  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
