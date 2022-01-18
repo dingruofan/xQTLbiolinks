@@ -1225,3 +1225,38 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
   return(termInfo)
 }
 
+
+
+#' @title extract gene infor of specified genome from gencodeGeneInfoAllGranges
+#'
+#' @param gencodeGeneInfoAllGranges from internal data
+#' @param genomeVersion "V26" (default) or "V19"
+#' @import data.table
+#' @import stringr
+#' @return a data.table
+#'
+#' @examples
+#' \donttest{
+#'   gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
+#' }
+extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="V26"){
+  a <- data.table::copy(gencodeGeneInfoAllGranges)
+  if(genomeVersion == "V26"){
+    gencodeGeneInfo <- cbind(data.table::data.table(gencodeId=a$gencodeId, chromosome = as.character(seqnames(a)), strand=as.character(BiocGenerics::strand(a)) ), data.table::as.data.table(IRanges::ranges(a))[,.(start, end)])
+    gencodeGeneInfo <- gencodeGeneInfo[start>0]
+    # check:
+    # nrow(gencodeGeneInfoV26[chromosome !="chrM"])
+    # nrow(fintersect(gencodeGeneInfoV26[chromosome !="chrM",.(gencodeId=gencodeId_unversioned,chromosome, start,end, strand)], gencodeGeneInfo[,.(gencodeId, chromosome, start,end, strand)]))
+  }else if( genomeVersion=="V19" ){
+    gencodeGeneInfo <- cbind(data.table::data.table(gencodeId=a$gencodeId, chromosome = as.character(seqnames(a)), strand=as.character(BiocGenerics::strand(a)) ), data.table::as.data.table(IRanges::ranges(a$rangesV19))[,.(start, end)])
+    gencodeGeneInfo <- gencodeGeneInfo[start>0]
+    # check:
+    # nrow(gencodeGeneInfoV19[chromosome !="chrMT"])
+    # nrow(fintersect(gencodeGeneInfoV19[chromosome !="chrMT",.(gencodeId=gencodeId_unversioned,chromosome, start,end, strand)], gencodeGeneInfo[,.(gencodeId, chromosome, start,end, strand)]))
+  }
+  return(gencodeGeneInfo)
+}
+
+
+
+

@@ -8,6 +8,7 @@
 #' @importFrom data.table fread rbindlist setnames as.data.table data.table
 #' @importFrom stringr str_split
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
+
   type <- NULL
   gtfDir <- tempdir()
   dir.create(gtfDir, recursive = TRUE)
@@ -366,6 +367,30 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
   }
 }
 
+#' @title Create gene annotation data
+#' @import data.table
+#' @import stringr
+#' @return NULL
+createGencodeGeneInfoAll <- function(){
+  # # 生成 gencodeGeneInfoAllGranges
+  gencodeGeneInfoV26<- GTExquery_geneAll("v26")
+  gencodeGeneInfoV19<- GTExquery_geneAll("v19")
+  gencodeGeneInfoV26<- gencodeGeneInfoV26[,.(gencodeId, chromosome, start, end, strand, gencodeId_unversioned= unlist(lapply(gencodeId, function(x){str_split(x, fixed("."))[[1]][1]})))]
+  gencodeGeneInfoV19 <- gencodeGeneInfoV19[,.(gencodeId, chromosome=paste0("chr",chromosome), start, end, strand, gencodeId_unversioned =unlist(lapply(gencodeId, function(x){str_split(x, fixed("."))[[1]][1]})) )]
+
+  gencodeGeneInfoAll <- merge(gencodeGeneInfoV26[,.(gencodeId, gencodeId_unversioned, chromosome, strand, start, end)], gencodeGeneInfoV19[,.(gencodeId, gencodeId_unversioned, chromosome, strand, start, end)], by=c("gencodeId_unversioned", "chromosome", "strand"), all=TRUE, suffixes=c("V26","V19"))
+  gencodeGeneInfoAll <- gencodeGeneInfoAll[chromosome %in% paste0("chr",c(1:22,"X", "Y")),][order(chromosome, -startV26, -startV19)]
+
+  gencodeGeneInfoAllGranges <- GenomicRanges::GRanges(ifelse(is.na(gencodeGeneInfoAll$chromosome),"NA",gencodeGeneInfoAll$chromosome),
+                                                      IRanges::IRanges(ifelse(is.na(gencodeGeneInfoAll$startV26),-1,gencodeGeneInfoAll$startV26), ifelse(is.na(gencodeGeneInfoAll$endV26),-1,gencodeGeneInfoAll$endV26)),
+                                                      strand= ifelse(is.na(gencodeGeneInfoAll$strand),"*",gencodeGeneInfoAll$strand)
+  )
+  gencodeGeneInfoAllGranges$rangesV19 <- IRanges::IRanges(ifelse(is.na(gencodeGeneInfoAll$startV19),-1,gencodeGeneInfoAll$startV19), ifelse(is.na(gencodeGeneInfoAll$endV19),-1,gencodeGeneInfoAll$endV19))
+  gencodeGeneInfoAllGranges$gencodeId <- gencodeGeneInfoAll$gencodeId_unversioned
+  usethis::use_data(gencodeGeneInfoAllGranges, overwrite = TRUE)
+  # # usethis::use_data(gencodeGeneInfoAll, overwrite = TRUE)
+  return(NULL)
+}
 
 
 # httr::use_proxy(url="127.0.0.1", port=7890

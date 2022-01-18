@@ -51,6 +51,29 @@ NULL
 #' @source \url{https://gtexportal.org/home/}
 NULL
 
+#' @title Gene annotations (chr1-chr22).
+#' @description
+#'  A dataset containing the gene information.
+#' @docType data
+#' @keywords internal
+#' @name gencodeGeneInfoAllGranges
+#' @format A GRanges object
+#' \describe{
+#'   \item{seqnames}{character string, chromosome}
+#'   \item{ranges}{Iranges, gene location of v26}
+#'   \item{strand}{character string, strand}
+#'   \item{rangesV19}{Iranges, gene location of v19}
+#'   \item{gencodeId}{character, gencode id}
+#' }
+#' @source \url{https://gtexportal.org/home/}
+NULL
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")
+utils::globalVariables("gencodeGeneInfoAllGranges")
+
+
+
+
+

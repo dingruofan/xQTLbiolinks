@@ -29,12 +29,33 @@ GTExanalyze_traitDetect <- function(gwasDF, pValueThreshold=5e-8, colocRange=1e6
   gwasDF[,c("position", "P", "maf")] <- gwasDF[,.(position=as.numeric(position), P=as.numeric(P), maf=as.numeric(maf))]
 
   # MAF filter:
-  gwasDF <- gwasDF[maf>maf_threshold,]
+  gwasDF <- gwasDF[maf>maf_threshold & maf<1,]
   # 去重：
   gwasDF <- gwasDF[order(rsid, P)][!duplicated(rsid)]
-  gwasDFsub <- gwasDF[P<pValueThreshold, .(rsid, chr, position, P, maf)][order(position)]
   # retain SNPs with rs id:
-  gwasDFsub <- gwasDFsub[stringr::str_detect(rsid,stringr::regex("^rs")),]
+  gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
+
+  # sentinel snp:
+  gwasDFsub <- gwasDF[P<pValueThreshold, ][order(P, position)]
+
+
+  chrAll <- unique(gwasDFsub$chr)
+  sentinelSnps <- data.table()
+  message("Start the detection of sentinel SNPs: ")
+  for(i in 1:length(chrAll)){
+    gwasDFsubChrom <- gwasDFsub[chr==chrAll[i],]
+    tmp <- copy(gwasDFsubChrom)
+    sentinelSnps_count <- 0
+    while(nrow(tmp)>0){
+      sentinelSnps_count <- sentinelSnps_count+1
+      sentinelSnps <- rbind(sentinelSnps, tmp[1,])
+      startPos <- tmp[1,]$position-colocRange
+      endPos <- tmp[1,]$position+colocRange
+      tmp <- tmp[position<startPos | position>endPos][order(P, position)]
+    }
+    message("In ",chrAll[i], ", ",sentinelSnps_count, " sentinel SNPs detected. ")
+    rm(tmp, sentinelSnps_count, startPos, endPos)
+  }
 
 
 
