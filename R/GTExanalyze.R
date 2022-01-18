@@ -20,15 +20,23 @@
 #'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
 #'    traits <- GTExanalyze_traitDetect(gwasDF)
 #' }
-GTExanalyze_traitDetect <- function(gwasDF, pValueThreshold=5e-10, upDownStream=1e4, tissueSiteDetail="Brain - Cortex"){
+GTExanalyze_traitDetect <- function(gwasDF, pValueThreshold=5e-8, colocRange=1e6, tissueSiteDetail="Brain - Cortex", maf_threshold=0.01 ){
   # Detect gene with sentinal SNP:
   gwasDF <- gwasDF[,1:5]
   names(gwasDF) <- c("rsid", "chr", "position", "P", "maf")
   gwasDF <- na.omit(gwasDF)
+  # convert variable class:
+  gwasDF[,c("position", "P", "maf")] <- gwasDF[,.(position=as.numeric(position), P=as.numeric(P), maf=as.numeric(maf))]
+
+  # MAF filter:
+  gwasDF <- gwasDF[maf>maf_threshold,]
   # 去重：
   gwasDF <- gwasDF[order(rsid, P)][!duplicated(rsid)]
   gwasDFsub <- gwasDF[P<pValueThreshold, .(rsid, chr, position, P, maf)][order(position)]
+  # retain SNPs with rs id:
   gwasDFsub <- gwasDFsub[stringr::str_detect(rsid,stringr::regex("^rs")),]
+
+
 
   # 1. GTEx significant eQTL:
   # gwasSNPeqtl <- rbindlist(lapply(1:nrow(gwasDFsub), function(i){

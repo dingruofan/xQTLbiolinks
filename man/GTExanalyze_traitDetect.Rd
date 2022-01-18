@@ -6,9 +6,10 @@
 \usage{
 GTExanalyze_traitDetect(
   gwasDF,
-  pValueThreshold = 5e-10,
-  upDownStream = 10000,
-  tissueSiteDetail = "Brain - Cortex"
+  pValueThreshold = 5e-08,
+  colocRange = 1e+06,
+  tissueSiteDetail = "Brain - Cortex",
+  maf_threshold = 0.01
 )
 }
 \arguments{
