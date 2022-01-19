@@ -700,6 +700,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @param tissueSiteDetail tissueSiteDetail
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
 #' @param study "GTEx_V8"
+#' @param withdbSNPID Whether to return the dbSNP id and genome location(hg19) of variants. Default: TRUE.
 #' @import data.table
 #' @import stringr
 #' @return a data.table
@@ -709,7 +710,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'   geneAsso <- GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
 #' }
-GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8"){
+GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8", withdbSNPID=TRUE){
   .<-NULL
   variantId <- variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
@@ -795,13 +796,17 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
   gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
   gtexAsooDT$gencodeId_GTEX_v7 <- ifelse(nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
-  # add hg19 cordinate:
-  gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
-  gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
-  gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
-  gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
-  gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
-  return(gtexAsooDT)
+  if(withdbSNPID){
+    # add dbSNP id and  hg19 cordinate:
+    gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
+    gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+    gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
+    gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+    gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
+    return(gtexAsooDT)
+  }else{
+    return(gtexAsooDT)
+  }
 }
 
 

@@ -4,12 +4,12 @@
 \alias{extractGeneInfo}
 \title{extract gene infor of specified genome from gencodeGeneInfoAllGranges}
 \usage{
-extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "V26")
+extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "v26")
 }
 \arguments{
 \item{gencodeGeneInfoAllGranges}{from internal data}
 
-\item{genomeVersion}{"V26" (default) or "V19"}
+\item{genomeVersion}{"v26" (default) or "v19"}
 }
 \value{
 a data.table

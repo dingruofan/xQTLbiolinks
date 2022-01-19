@@ -7,17 +7,18 @@
 GTExanalyze_getSentinelSnp(
   gwasDF,
   pValueThreshold = 5e-08,
-  centerRange = 1e+06
+  centerRange = 1e+06,
+  mafThreshold = 0.01
 )
 }
 \arguments{
 \item{gwasDF}{GWAS data.frame}
 }
 \value{
-
+A data.table object.
 }
 \description{
-Sentinel SNPs detection in GWAS data.
+Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
 }
 \examples{
 \donttest{
@@ -26,10 +27,10 @@ Sentinel SNPs detection in GWAS data.
    utils::download.file(gwasURL, destfile=gwasFile)
    gwasDF <- data.table::fread(gwasFile, sep="\t")
    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
-   sentinelSnps <- GTExanalyze_getSentinelSnp(gwasDF)
+   sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF)
 
    gwasDF <- fread("D:\\\\R_project\\\\GLGC_CG0052_result.txt.gz", sep="\t")
    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-   sentinelSnps <- GTExanalyze_getSentinelSnp(gwasDF)
+   sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF)
 }
 }

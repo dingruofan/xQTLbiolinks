@@ -9,7 +9,8 @@ GTExdownload_assoAll(
   geneType = "geneSymbol",
   tissueSiteDetail = "",
   recordPerChunk = 250,
-  study = "GTEx_V8"
+  study = "GTEx_V8",
+  withdbSNPID = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ GTExdownload_assoAll(
 \item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
 
 \item{study}{"GTEx_V8"}
+
+\item{withdbSNPID}{Whether to return the dbSNP id and genome location(hg19) of variants. Default: TRUE.}
 }
 \value{
 a data.table

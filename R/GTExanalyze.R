@@ -1,5 +1,5 @@
 #' @title Sentinel SNPs detection in GWAS data.
-#'
+#' @description Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
 #' @param gwasDF GWAS data.frame
 #' @import data.table
 #' @import stringr
@@ -8,7 +8,7 @@
 #' @import GenomicFeatures
 #' @import org.Hs.eg.db
 #' @import GenomeInfoDb
-#' @return
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -18,40 +18,46 @@
 #'    utils::download.file(gwasURL, destfile=gwasFile)
 #'    gwasDF <- data.table::fread(gwasFile, sep="\t")
 #'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
-#'    sentinelSnps <- GTExanalyze_getSentinelSnp(gwasDF)
+#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF)
 #'
 #'    gwasDF <- fread("D:\\R_project\\GLGC_CG0052_result.txt.gz", sep="\t")
 #'    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-#'    sentinelSnps <- GTExanalyze_getSentinelSnp(gwasDF)
+#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF)
 #' }
-GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6 ){
+GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01){
   # Detect gene with sentinal SNP:
   gwasDF <- gwasDF[,1:5]
+  message("== Start the detection of sentinel SNPs: ")
   names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf")
   gwasDF <- na.omit(gwasDF)
+  # chromosome revise：
+  if( !str_detect(gwasDF[1,]$chr, regex("^chr")) ){
+    gwasDF$chr <- paste0("chr", gwasDF$chr)
+  }
+
   # convert variable class:
   gwasDF[,c("position", "pValue", "maf")] <- gwasDF[,.(position=as.numeric(position), pValue=as.numeric(pValue), maf=as.numeric(maf))]
 
   # MAF filter:
-  # gwasDF <- gwasDF[maf>maf_threshold & maf<1,]
+  gwasDF <- gwasDF[maf > mafThreshold & maf<1,]
   # 去重：
   # gwasDF <- gwasDF[order(rsid, pValue)][!duplicated(rsid)]
   # retain SNPs with rs id:
   # gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
 
   # sentinel snp:
-  gwasDFsub <- gwasDF[pValue<pValueThreshold, ][order(pValue, position)]
+  gwasDFsub <- gwasDF[pValue<pValueThreshold, ]
 
   chrAll <- unique(gwasDFsub$chr)
-  sentinelSnps <- data.table()
-  message("== Start the detection of sentinel SNPs: ")
+  chrAll <- chrAll[order(as.numeric(str_remove(chrAll,"chr")))]
+  sentinelSnpDF <- data.table()
   for(i in 1:length(chrAll)){
-    gwasDFsubChrom <- gwasDFsub[chr==chrAll[i],]
+    gwasDFsubChrom <- gwasDFsub[chr==chrAll[i],][order(pValue, position)]
     tmp <- copy(gwasDFsubChrom)
     sentinelSnps_count <- 0
     while(nrow(tmp)>0){
       sentinelSnps_count <- sentinelSnps_count+1
-      sentinelSnps <- rbind(sentinelSnps, tmp[1,])
+      sentinelSnpDF <- rbind(sentinelSnpDF, tmp[1,])
       startPos <- tmp[1,]$position-centerRange/2
       endPos <- tmp[1,]$position+centerRange/2
       tmp <- tmp[position<startPos | position>endPos][order(pValue, position)]
@@ -59,25 +65,71 @@ GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
     message("   In ",chrAll[i], ", ",sentinelSnps_count, " sentinel SNPs detected. ")
     rm(tmp, sentinelSnps_count, startPos, endPos)
   }
-  message("== Totally, ", nrow(sentinelSnps), " sentinel SNPs located in ",length(unique(sentinelSnps$chr))  ," chromosomes have been detected!")
-  return(sentinelSnps)
+  message("== Totally, [", nrow(sentinelSnpDF), "] sentinel SNPs located in [",length(unique(sentinelSnpDF$chr))  ,"] chromosomes have been detected!")
+  return(sentinelSnpDF)
 }
 
-GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genome="grch38"){
+#' @title Detect the genes around the sentinel SNPs
+#'
+#' @param sentinelSnpDF A data.table. Better be the results from the function "GTExanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
+#' @param colocRange A integer value. Window size centered on SNP. Default: 1e6 bp
+#' @param genomeVersion "grch38" or "grch19". Default: "grch38"
+#' @import data.table
+#' @import stringr
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   sentinelSnpsURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
+#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content), sep="\t")
+#'   traitsAll <- GTExanalyze_getTraits(sentinelSnpDF, colocRange=1e6, genomeVersion="grch37" )
+#' }
+GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genomeVersion="grch38"){
+
+  data.table::as.data.table(sentinelSnpDF)
   # tissueSiteDetail="Brain - Cortex", maf_threshold=0.01
-  if(genome == "grch38"){
-    geneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "V26")
+  if(tolower(genomeVersion) == "grch38"){
+    geneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "v26")
+    datasetId="gtex_v8"
   }else{
-    geneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "V19")
+    geneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "v19")
+    datasetId = "gtex_v7"
   }
 
-  message("== Start : ")
+
+  #########################
+  # 确保这些 SNPs 在 GTEx 里是有的， rsid 和 位置信息都一致才保留：
+  message("== start variant validation.")
   chrAll <- unique(sentinelSnpDF$chr)
+  chrAll <- chrAll[order(as.numeric(str_remove(chrAll,"chr")))]
+  sentinelSnpDFNew <- data.table()
+  for(i in 1:length(chrAll)){
+    sentinelSnpChromRaw <- sentinelSnpDF[chr==chrAll[i],]
+    snpTMP <- suppressMessages(GTExquery_varPos(chrom = ifelse(datasetId=="gtex_v8", chrAll[i], str_remove(chrAll[i], "chr")), pos = sentinelSnpChromRaw$position, datasetId = datasetId))
+    # 使用 位置进行merge:， 因为 rsid 有可能有版本差异：
+    sentinelSnpChrom <- merge(sentinelSnpChromRaw, unique(snpTMP[,.(position=pos,rsid = snpId)]), by=c("rsid", "position"))
+    if(nrow(sentinelSnpChrom)>0){
+      sentinelSnpDFNew <- rbind(sentinelSnpDFNew, sentinelSnpChrom)
+    }else{
+      next()
+    }
+    message("== ", chrAll[i], ", ", nrow(sentinelSnpChrom),"/", nrow(sentinelSnpChromRaw) ," retained in GTEx.")
+    rm(sentinelSnpChromRaw, sentinelSnpChrom, snpTMP)
+  }
+  if(nrow(sentinelSnpDFNew)==0){
+    stop("There is no shared variants found in your gwas dataset.")
+  }else{
+    message("== Totally, ",nrow(sentinelSnpDFNew), "/",nrow(sentinelSnpDF), " sentinel SNPs retained.")
+  }
+
+  ########################
+  message("== Start the trait gene detection of sentinel snps. ")
   traitsAll <- data.table()
   for(i in 1:length(chrAll)){
-    sentinelSnpChrom <- sentinelSnpDF[chr==chrAll[i],]
     geneInfoChrom <- geneInfo[chromosome == chrAll[i]]
-
+    sentinelSnpChrom <- sentinelSnpDFNew[chr==chrAll[i],]
     Traits <- rbindlist(lapply(1:nrow(sentinelSnpChrom), function(x){
       tmp<-sentinelSnpChrom[x,];
       startPos <- tmp$position - colocRange/2; endPos <- tmp$position + colocRange/2;
@@ -91,49 +143,16 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genome="grch38"
     message(i," - ", chrAll[i]," - ",nrow(Traits))
     rm(sentinelSnpChrom, geneInfoChrom, Traits)
   }
-  message("== End : ")
+  message("== Fetching gene information from the GTEx.")
+  gencodeVersion <- ifelse(tolower(genomeVersion) == "grch38", "v26", "v19")
+  geneAnnot <- GTExquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId", gencodeVersion = gencodeVersion)
+  traitsAll <- merge(geneAnnot[,.(genes, geneSymbol,gencodeId, geneType, description)],traitsAll, by.x="genes",by.y="gencodeId",  all.x=TRUE)[,-c("genes")]
+
+  message("== Totally, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
+  return(traitsAll)
 }
 
 
-# 1. GTEx significant eQTL:
-# gwasSNPeqtl <- rbindlist(lapply(1:nrow(gwasDFsub), function(i){
-#   message(i,"/",nrow(gwasDFsub)," | " ,gwasDFsub$rsid[i])
-#   tmp1 <- suppressMessages( GTExdownload_eqtlSig(variantName= gwasDFsub$rsid[i],  datasetId="gtex_v8", tissueSiteDetail="Brain - Cortex") )
-#   if( !is.null(tmp1) && nrow(tmp1)!=0 ){
-#     return(tmp1)
-#   }else{
-#     return(NULL)
-#   }
-# }))
-
-# #2. Gene range:
-# genes_txdb <- suppressMessages( GenomicFeatures::genes(TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene) )
-# genes_txdb <- cbind(data.table(chr=as.character(GenomeInfoDb::seqnames(genes_txdb))), as.data.table(IRanges::ranges(genes_txdb)))
-# genes_txdb <- genes_txdb[chr %in% paste0("chr",c(1:22,"X","Y"))]
-# genes_txdb$start <-genes_txdb$start - upDownStream
-# genes_txdb$end <-genes_txdb$end + upDownStream
-# # merge:
-# targetGene <- data.table()
-# for( c in unique(gwasDFsub$chr)){
-#   geneTmp <- genes_txdb[chr==c]
-#   gwasDFsubTmp <- gwasDFsub[chr==c]
-#   a <- data.table::rbindlist(lapply(1:nrow(gwasDFsubTmp), function(x){ pos1=as.integer(gwasDFsubTmp[x]$position); hited <- geneTmp[pos1 - start >=0 & pos1-end<=0 ]; if(nrow(hited)==0){return(NULL)}else{ hited <- cbind(hited, gwasDFsubTmp[x,c("rsid", "position")]);hited$id=x;return(hited) } }))
-#   targetGene <- rbind(targetGene, a)
-#   message( "chrom: ", c)
-# }
-# if(nrow(targetGene)==0){
-#   message("Please reset pValueThreshold a greater value.")
-#   return(NULL)
-# }
-# targetGeneUniq <- targetGene[,.( rsids=paste0(rsid, collapse = ", ")),by = c("chr", "start", "end", "width", "names")]
-# # gene annotation:
-# targetGeneAnno <- AnnotationDbi::select(org.Hs.eg.db, keys=targetGeneUniq$names, columns=c("SYMBOL", "ENSEMBL"), keytype="ENTREZID")
-# targetGeneUniqAnno <- merge( targetGeneAnno, targetGeneUniq, by.x="ENTREZID", by.y="names")
-# return(targetGeneUniqAnno)
-
-# 3. ldlink
-# tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-# a <- LDexpress(gwasDFsub$rsid[1:10],r2d_threshold=1, tissue = tissueSiteDetailId, pop = population, token = "9246d2db7917" )
 
 #' @title coloc analysis with deteched trait
 #'
@@ -149,60 +168,92 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genome="grch38"
 #'
 #' @examples
 #' \donttest{
-#'   traitGenes <- c("CR1")
+#'   traitsAllURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/traitsAll.txt"
+#'   traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
+#'   traitGene <- traitsAll[1,]$geneSymbol
+#'   sentinelSnp <- traitsAll[1,]$rsid
+#'
 #'   colocResult <- GTExanalyze_coloc(gwasDF, traitGenes)
 #'   colocResult$gwasEqtlInfo
 #'   # eQTL locuszoom:
-#'   GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")], population="EUR",genome="grch38" )
+#'   GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")], population="EUR",genomeVersion="grch38" )
 #'   # GWAS locuszoom:
-#'   GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genome="grch38" )
+#'   GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
 #'   # locuscompare:
 #'   GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
 #' }
-GTExanalyze_coloc <- function(gwasDF, traitGenes, tissueSiteDetail="Brain - Cortex", colocRange=1e6, numSnp = 3000, gwasSampleNum=50000, population="EUR", token= "9246d2db7917", method="coloc"){
+GTExanalyze_coloc <- function(gwasDF, traitGene, sentinelSnp, tissueSiteDetail="Brain - Cortex", colocRange=1e6, mafThreshold=0.01, numSnp = 3000, gwasSampleNum=50000, population="EUR", token= "9246d2db7917", method="coloc"){
   # tissueSiteDetail="Brain - Cortex"
   # colocRange=1e6
   # numSnp = 300
   # gwasSampleNum=50000
-  #
+
+  #####################
+  # eqtl dataset:
+  eqtlInfo <- GTExdownload_assoAll(traitGene, tissueSiteDetail=tissueSiteDetail, withdbSNPID = FALSE)
+  if(nrow(eqtlInfo)==0){
+    message(i," | gene", traitGene, "has no eqtl associations, next!")
+    stop(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
+  }
+  eqtlInfo[,"position":= .( lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}) )]
+  eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
+  # 去重：
+  eqtlInfo <- eqtlInfo[order(snpId, pValue)][!duplicated(snpId)]
+
+  # chromosome:
+  P_chrom <- str_split(eqtlInfo[1,]$variantId, fixed("_"))[[1]][1]
+
+  eqtlInfo <- na.omit( eqtlInfo[,.(rsid=snpId, maf, beta, se, pValue)] )
+  #####################
+
+
+
+  #####################
+  # gwas dataset:
   gwasDF <- gwasDF[,1:5]
+  data.table::setDT(gwasDF)
+  message("== Start the colocalization analysis of gene ", traitGene)
   names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf")
+  # gwas subset:
   gwasDF <- na.omit(gwasDF)
+  # chromosome revise：
+  if( !str_detect(gwasDF[1,]$chr, regex("^chr")) ){
+    gwasDF$chr <- paste0("chr", gwasDF$chr)
+  }
+  gwasDF <- gwasDF[chr==P_chrom,]
+  # convert variable class:
+  gwasDF[,c("position", "pValue", "maf")] <- gwasDF[,.(position=as.numeric(position), pValue=as.numeric(pValue), maf=as.numeric(maf))]
+  # MAF filter:
+  gwasDF <- gwasDF[maf > mafThreshold & maf<1,]
   # 去重：
   gwasDF <- gwasDF[order(rsid, pValue)][!duplicated(rsid)]
+  # retain SNPs with rs id:
+  gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
+  #####################
+
   #
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  coloc_Out_summaryAll <- data.table()
-  for( i in 1:length(traitGenes)){
-    eqtlInfo <- GTExdownload_assoAll(traitGenes[i], tissueSiteDetail=tissueSiteDetail)
-    if(nrow(eqtlInfo)==0){
-      message(i," | gene", traitGenes[i], "has no eqtl associations, next!")
-      next()
-    }
-    eqtlInfo<- eqtlInfo[maf>0,]
-    # 去重：
-    eqtlInfo <- eqtlInfo[!duplicated(snpId)]
-    gwasEqtldata <- merge(gwasDF, eqtlInfo[,.(rsid=snpId, maf, beta, se, pValue)], by="rsid", suffixes = c(".gwas",".eqtl"))
-    centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
-    if( colocRange==0 ){
-      gwasEqtlInfo <- gwasEqtldata[order(position)]
-    }else{
-      gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$position-(colocRange)/2) & position<=(centerSnp$position+(colocRange)/2),][order(position)]
-    }
-    # 只选择中心附近的 Num snp 进行分析：
-    minGwasPvalueVar <- which.min(gwasEqtlInfo$pValue.gwas)
-    gwasEqtlInfo <- gwasEqtlInfo[ifelse(minGwasPvalueVar>numSnp,minGwasPvalueVar-numSnp,1):ifelse( (nrow(gwasEqtlInfo)-minGwasPvalueVar)>numSnp, minGwasPvalueVar+numSnp, nrow(gwasEqtlInfo) ),]
-    # 防止 check_dataset中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
-    suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
-                                            dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
-    # coloc_Out_results <- as.data.table(coloc_Out$results)
-    # coloc_Out_results$gene <- traitGenes[i]
-    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
-    coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
-    coloc_Out_summary$gene <- traitGenes[i]
-    if(exists("coloc_Out_summary") && nrow(coloc_Out_summary)>0){
-      coloc_Out_summaryAll <- rbind(coloc_Out_summaryAll, coloc_Out_summary)
-    }
+  gwasEqtldata <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue)], by="rsid", suffixes = c(".gwas",".eqtl"))
+  # centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
+  centerSnp <- gwasDF[rsid == sentinelSnp,]
+  if( colocRange==0 ){
+    gwasEqtlInfo <- gwasEqtldata[order(position)]
+  }else{
+    gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$position-(colocRange)/2) & position<=(centerSnp$position+(colocRange)/2),][order(position)]
+  }
+  # 只选择中心附近的 Num snp 进行分析：
+  minGwasPvalueVar <- which.min(gwasEqtlInfo$pValue.gwas)
+  gwasEqtlInfo <- gwasEqtlInfo[ifelse(minGwasPvalueVar>numSnp,minGwasPvalueVar-numSnp,1):ifelse( (nrow(gwasEqtlInfo)-minGwasPvalueVar)>numSnp, minGwasPvalueVar+numSnp, nrow(gwasEqtlInfo) ),]
+  # 防止 check_dataset中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
+  suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
+                                                 dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+  # coloc_Out_results <- as.data.table(coloc_Out$results)
+  # coloc_Out_results$gene <- traitGenes[i]
+  coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+  coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
+  coloc_Out_summary$gene <- traitGenes[i]
+  if(exists("coloc_Out_summary") && nrow(coloc_Out_summary)>0){
+    coloc_Out_summaryAll <- rbind(coloc_Out_summaryAll, coloc_Out_summary)
   }
 
   if( !exists("eqtlInfo") ){

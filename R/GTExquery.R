@@ -710,7 +710,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
   outInfo <- data.table::data.table()
   for( ii in 1:nrow(var_tmpCut)){
     message("   Got varints: ",nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)),"/",nrow(var_tmp))
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
                    "datasetId=", datasetId,"&",
                    "chromosome=", chrom, "&",
                    "pos=",paste0(unlist(var_tmpCut[ii,]$posLis),collapse=",") )
@@ -1230,24 +1230,25 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
 #' @title extract gene infor of specified genome from gencodeGeneInfoAllGranges
 #'
 #' @param gencodeGeneInfoAllGranges from internal data
-#' @param genomeVersion "V26" (default) or "V19"
+#' @param genomeVersion "v26" (default) or "v19"
 #' @import data.table
 #' @import stringr
 #' @return a data.table
+#' @export
 #'
 #' @examples
 #' \donttest{
 #'   gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
 #' }
-extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="V26"){
+extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="v26"){
   a <- data.table::copy(gencodeGeneInfoAllGranges)
-  if(genomeVersion == "V26"){
+  if(genomeVersion == "v26"){
     gencodeGeneInfo <- cbind(data.table::data.table(gencodeId=a$gencodeId, chromosome = as.character(seqnames(a)), strand=as.character(BiocGenerics::strand(a)) ), data.table::as.data.table(IRanges::ranges(a))[,.(start, end)])
     gencodeGeneInfo <- gencodeGeneInfo[start>0]
     # check:
     # nrow(gencodeGeneInfoV26[chromosome !="chrM"])
     # nrow(fintersect(gencodeGeneInfoV26[chromosome !="chrM",.(gencodeId=gencodeId_unversioned,chromosome, start,end, strand)], gencodeGeneInfo[,.(gencodeId, chromosome, start,end, strand)]))
-  }else if( genomeVersion=="V19" ){
+  }else if( genomeVersion=="v19" ){
     gencodeGeneInfo <- cbind(data.table::data.table(gencodeId=a$gencodeId, chromosome = as.character(seqnames(a)), strand=as.character(BiocGenerics::strand(a)) ), data.table::as.data.table(IRanges::ranges(a$rangesV19))[,.(start, end)])
     gencodeGeneInfo <- gencodeGeneInfo[start>0]
     # check:

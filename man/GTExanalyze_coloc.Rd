@@ -6,9 +6,11 @@
 \usage{
 GTExanalyze_coloc(
   gwasDF,
-  traitGenes,
+  traitGene,
+  sentinelSnp,
   tissueSiteDetail = "Brain - Cortex",
   colocRange = 1e+06,
+  mafThreshold = 0.01,
   numSnp = 3000,
   gwasSampleNum = 50000,
   population = "EUR",
@@ -19,8 +21,6 @@ GTExanalyze_coloc(
 \arguments{
 \item{gwasDF}{1}
 
-\item{traitGenes}{1}
-
 \item{tissueSiteDetail}{1}
 
 \item{population}{1}
@@ -28,6 +28,8 @@ GTExanalyze_coloc(
 \item{token}{1}
 
 \item{method}{1}
+
+\item{traitGenes}{1}
 }
 \value{
 coloc resut
@@ -37,13 +39,17 @@ coloc analysis with deteched trait
 }
 \examples{
 \donttest{
-  traitGenes <- c("CR1")
+  traitsAllURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/traitsAll.txt"
+  traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
+  traitGene <- traitsAll[1,]$geneSymbol
+  sentinelSnp <- traitsAll[1,]$rsid
+
   colocResult <- GTExanalyze_coloc(gwasDF, traitGenes)
   colocResult$gwasEqtlInfo
   # eQTL locuszoom:
-  GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")], population="EUR",genome="grch38" )
+  GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")], population="EUR",genomeVersion="grch38" )
   # GWAS locuszoom:
-  GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genome="grch38" )
+  GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
   # locuscompare:
   GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
 }
