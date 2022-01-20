@@ -726,7 +726,7 @@ GTExdownload_eqtlAllPost <- function(genes, variants, tissueSiteDetail="", recor
     cutFTmp<- cutF[i]
     message("  - Downloading eQTL asso: ", paste0(round(i/length(cutF)*100,2), "%..."))
     queryBodyTmp <- queryBody[cutF==cutFTmp,][,c("gencodeId","variantId","tissueSiteDetailId")]
-    dataTmp <- httr::POST("https://gtexportal.org/rest/v1/association/dyneqtl", body=jsonlite::toJSON(queryBodyTmp), encode = "json")
+    dataTmp <- httr::POST("https://gtexportal.org/rest/v1/association/dyneqtl", body=jsonlite::toJSON(queryBodyTmp[12:12,]), encode = "json")
     dataTmp
     resultTmp <- data.table::as.data.table( fromJSON(rawToChar(dataTmp$content))$result )
     resultDT <- rbind(resultDT, resultTmp )

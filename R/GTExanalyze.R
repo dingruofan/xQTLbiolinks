@@ -22,7 +22,7 @@
 #'
 #'    gwasDF <- fread("D:\\R_project\\GLGC_CG0052_result.txt.gz", sep="\t")
 #'    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e4)
+#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e5)
 #' }
 GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01){
   # Detect gene with sentinal SNP:
@@ -98,10 +98,15 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genomeVersion="
     datasetId = "gtex_v7"
   }
 
+  # (未做) 由于下一步的 GTExdownload_eqtlAllPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
+  # 由于从 EBI category 里获得的是 hg38(v26) 的信息，所以如果这一步是 hg19 的1e6范围内，则在 hg38里就会未必，所以需要这一步，如果是hg19，则对突变的坐标进行变换：
+
+
+
 
   #########################
   # 确保这些 SNPs 在 GTEx 里是有的， rsid 和 位置信息都一致才保留：
-  message("== start variant validation.")
+  message("== start variant validation in GTEx.")
   chrAll <- unique(sentinelSnpDF$chr)
   chrAll <- chrAll[order(as.numeric(str_remove(chrAll,"chr")))]
   sentinelSnpDFNew <- data.table()
@@ -115,7 +120,7 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genomeVersion="
     }else{
       next()
     }
-    message("== ", chrAll[i], ", ", nrow(sentinelSnpChrom),"/", nrow(sentinelSnpChromRaw) ," retained in GTEx.")
+    message("== ", chrAll[i], ", ", nrow(sentinelSnpChrom),"/", nrow(sentinelSnpChromRaw) ," retained.")
     rm(sentinelSnpChromRaw, sentinelSnpChrom, snpTMP)
   }
   if(nrow(sentinelSnpDFNew)==0){
@@ -152,27 +157,16 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, colocRange=1e6, genomeVersion="
   return(traitsAll)
 }
 
-#' @title
-#'
-#' @param traitGenes
-#' @param sentinelSnps
-#' @param tissueSiteDetail
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' \donttest{
-#'   traitGenes <- traitsAll$gencodeId
-#'   sentinelSnps <- traitsAll$rsid
-#' }
-GTExanalyze_traitEqtlSig <- function(traitGenes, sentinelSnps, tissueSiteDetail=""){
-  if(length(traitGenes)!= length(sentinelSnps)){
-    stop("Number of traitgenes is not equal to that of sentinel SNPs!")
-  }
-  gtexEqtl <- GTExdownload_eqtlAllPost( genes= traitGenes, variants= sentinelSnps, tissueSiteDetail="Skin - Sun Exposed (Lower leg)", recordPerChunk = 100)
-  return(gtexEqtl)
-}
+# eQTL sentinel SNPs 过滤：
+# GTExanalyze_traitEqtlSig <- function(traitGenes, sentinelSnps, tissueSiteDetail=""){
+#   traitGenes <- traitsAll$gencodeId
+#   sentinelSnps <- traitsAll$rsid
+#   if(length(traitGenes)!= length(sentinelSnps)){
+#     stop("Number of traitgenes is not equal to that of sentinel SNPs!")
+#   }
+#   gtexEqtl <- GTExdownload_eqtlAllPost( genes= traitGenes, variants= sentinelSnps, tissueSiteDetail="Skin - Sun Exposed (Lower leg)", recordPerChunk = 100)
+#   return(gtexEqtl)
+# }
 
 
 #' @title Colocalization analysis with deteched trait
