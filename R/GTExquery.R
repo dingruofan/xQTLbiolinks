@@ -862,7 +862,6 @@ apiEbi_ping <- function(){
 }
 
 
-
 #' @title Fetch data using url by three methods
 #'
 #' @param url1 A url string.

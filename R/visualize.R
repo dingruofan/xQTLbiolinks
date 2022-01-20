@@ -260,9 +260,9 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'
 #'  eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
 #'  GTExvisual_locusZoom(eqtlAsso, population="EUR",
-#'                       posRange="chr6:46488310-48376712", genome="grch38" )
+#'                       posRange="chr6:46488310-48376712", genomeVersion="grch38" )
 #' }
-GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genome="grch38"){
+GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38"){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- .<-NULL
   # highlightSnp=""
@@ -270,7 +270,7 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   # posRange="chr6:46488310-48376712"
   # token="9246d2db7917"
   # windowSize=1e6
-  # genome="grch38"
+  # genomeVersion="grch38"
 
   names(DF) <- c("snpId", "chrom", "pos", "pValue")
   DF$pos <- as.integer(DF$pos)
@@ -289,7 +289,7 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     DF <-DF[pos>min(as.integer(posRangeSplit[2:3])) & pos< max(as.integer(posRangeSplit[2:3]))]
   }
   if(nrow(DF)<2){
-    stop("Please enlarge the genome range!")
+    stop("Please enlarge the genomeVersion range!")
   }
 
   # highligth SNP:
@@ -306,7 +306,7 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
                    "&pop=",population,
                    "&r2_d=","r2",
                    "&window=",as.character(as.integer(windowSize)),
-                   "&genome_build=",genome,
+                   "&genome_build=",genomeVersion,
                    "&token=", token)
 
     # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"

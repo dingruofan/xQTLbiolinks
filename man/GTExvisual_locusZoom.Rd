@@ -11,7 +11,7 @@ GTExvisual_locusZoom(
   posRange = "",
   token = "9246d2db7917",
   windowSize = 5e+05,
-  genome = "grch38"
+  genomeVersion = "grch38"
 )
 }
 \arguments{
@@ -56,6 +56,6 @@ LocusZoom plot
 
  eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
  GTExvisual_locusZoom(eqtlAsso, population="EUR",
-                      posRange="chr6:46488310-48376712", genome="grch38" )
+                      posRange="chr6:46488310-48376712", genomeVersion="grch38" )
 }
 }

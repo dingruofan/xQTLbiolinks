@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExanalyze.R
 \name{GTExanalyze_coloc}
 \alias{GTExanalyze_coloc}
-\title{coloc analysis with deteched trait}
+\title{Colocalization analysis with deteched trait}
 \usage{
 GTExanalyze_coloc(
   gwasDF,
@@ -11,7 +11,6 @@ GTExanalyze_coloc(
   tissueSiteDetail = "Brain - Cortex",
   colocRange = 1e+06,
   mafThreshold = 0.01,
-  numSnp = 3000,
   gwasSampleNum = 50000,
   population = "EUR",
   token = "9246d2db7917",
@@ -35,14 +34,14 @@ GTExanalyze_coloc(
 coloc resut
 }
 \description{
-coloc analysis with deteched trait
+Colocalization analysis with deteched trait
 }
 \examples{
 \donttest{
   traitsAllURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/traitsAll.txt"
   traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
-  traitGene <- traitsAll[1,]$geneSymbol
-  sentinelSnp <- traitsAll[1,]$rsid
+  traitGene <- traitsAll[3,]$geneSymbol
+  sentinelSnp <- traitsAll[3,]$rsid
 
   colocResult <- GTExanalyze_coloc(gwasDF, traitGenes)
   colocResult$gwasEqtlInfo

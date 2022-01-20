@@ -691,7 +691,51 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   return(outInfo)
 }
 
+#' @title This function return the gene-variant association for any given pair of gene and variant, which may or may not be significant
+#' @description Only GTEx V8 are supported.
+#' @param genes GENCODE ID (versioned or unversioned).
+#' @param variants GTEx variant ID or dbSNP ID. Note: if variant id are provided, genome version of hg38 are required.
+#' @param tissueSiteDetail  tissue site detail.
+#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 50).
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'    genes = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
+#'    variants = c("rs201327123","chr1_14677_G_A_b38", "chr11_66561248_T_C_b38")
+#'    GTExdownload_eqtlAllPost(genes, variants, tissueSiteDetail="Colon - Sigmoid")
+#' }
+GTExdownload_eqtlAllPost <- function(genes, variants, tissueSiteDetail="", recordPerChunk=50){
+  # tissue convert:
+  tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+  # gene split:
+  genes <- unlist(lapply(genes, function(x){stringr::str_split(x, fixed("."))[[1]][1]} ))
+  # construct query body:
+  queryBody <- data.frame(
+    gencodeId = genes,
+    variantId= variants,
+    tissueSiteDetailId=tissueSiteDetailId )
+  queryBody$cutF <- as.character(cut(1:nrow(queryBody), breaks=seq(0, nrow(queryBody)+recordPerChunk, recordPerChunk)))
+  data.table::setDT(queryBody)
+  # query:
+  cutF <- unique(queryBody$cutF)
+  resultDT <- data.table()
+  for( i in 1:length(cutF)){
+    cutFTmp<- cutF[i]
+    message("  - Downloading eQTL asso: ", paste0(round(i/length(cutF)*100,2), "%..."))
+    queryBodyTmp <- queryBody[cutF==cutFTmp,][,c("gencodeId","variantId","tissueSiteDetailId")]
+    dataTmp <- httr::POST("https://gtexportal.org/rest/v1/association/dyneqtl", body=jsonlite::toJSON(queryBodyTmp), encode = "json")
+    dataTmp
+    resultTmp <- data.table::as.data.table( fromJSON(rawToChar(dataTmp$content))$result )
+    resultDT <- rbind(resultDT, resultTmp )
+    rm( queryBodyTmp, dataTmp,resultTmp )
+    Sys.sleep(0.1)
+  }
 
+  return(resultDT)
+}
 
 #' @title  GTExdownload_assoAll
 #'
