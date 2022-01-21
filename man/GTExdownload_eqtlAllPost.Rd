@@ -5,20 +5,20 @@
 \title{This function return the gene-variant association for any given pair of gene and variant, which may or may not be significant}
 \usage{
 GTExdownload_eqtlAllPost(
-  genes,
-  variants,
+  geneList,
+  variantlist,
   tissueSiteDetail = "",
   recordPerChunk = 50
 )
 }
 \arguments{
-\item{genes}{GENCODE ID (versioned or unversioned).}
-
-\item{variants}{GTEx variant ID or dbSNP ID. Note: if variant id are provided, genome version of hg38 are required.}
-
 \item{tissueSiteDetail}{tissue site detail.}
 
 \item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 50).}
+
+\item{genes}{GENCODE ID (versioned or unversioned).}
+
+\item{variants}{GTEx variant ID or dbSNP ID. Note: if variant id are provided, genome version of hg38 are required.}
 }
 \value{
 A data.table object
@@ -28,8 +28,8 @@ Only GTEx V8 are supported.
 }
 \examples{
 \donttest{
-   genes = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
+   geneList = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
    variants = c("rs201327123","chr1_14677_G_A_b38", "chr11_66561248_T_C_b38")
-   GTExdownload_eqtlAllPost(genes, variants, tissueSiteDetail="Colon - Sigmoid")
+   GTExdownload_eqtlAllPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
 }
 }

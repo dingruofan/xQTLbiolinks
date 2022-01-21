@@ -1186,7 +1186,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #'  studies <- EBIquery_allTerm("studies")
 #'  tissues <- EBIquery_allTerm("tissues")
 #'  qtl_groups <- EBIquery_allTerm("qtl_groups")
-#'  # genes <- EBIquery_allTerm("genes")
+#'  # geneList <- EBIquery_allTerm("genes")
 #'  # chromosomes <- EBIquery_allTerm("chromosomes")
 #'
 #'  merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")

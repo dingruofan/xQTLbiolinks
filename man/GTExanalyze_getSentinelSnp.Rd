@@ -8,7 +8,9 @@ GTExanalyze_getSentinelSnp(
   gwasDF,
   pValueThreshold = 5e-08,
   centerRange = 1e+06,
-  mafThreshold = 0.01
+  mafThreshold = 0.01,
+  genomeVersion = "grch38",
+  grch37To38 = FALSE
 )
 }
 \arguments{
@@ -31,6 +33,7 @@ Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 
 
    gwasDF <- fread("D:\\\\R_project\\\\GLGC_CG0052_result.txt.gz", sep="\t")
    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-   sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e5)
+   sentinelSnpDF_hg38 <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e6, genomeVersion="grch37", grch37To38=TRUE)
+   sentinelSnpDF_hg19 <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e6, genomeVersion="grch37", grch37To38=FALSE)
 }
 }

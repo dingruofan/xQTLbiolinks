@@ -7,7 +7,8 @@
 GTExanalyze_getTraits(
   sentinelSnpDF,
   colocRange = 1e+06,
-  genomeVersion = "grch38"
+  genomeVersion = "grch38",
+  grch37To38 = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,7 @@ Detect the genes around the sentinel SNPs
 \donttest{
   sentinelSnpsURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content), sep="\t")
-  traitsAll <- GTExanalyze_getTraits(sentinelSnpDF, colocRange=1e6, genomeVersion="grch37" )
+  traitsAll_fromh19 <- GTExanalyze_getTraits(sentinelSnpDF_hg19, colocRange=1e6, genomeVersion="grch37", grch37To38=TRUE )
+  traitsAll <- GTExanalyze_getTraits(sentinelSnpDF_hg38, colocRange=1e6, genomeVersion="grch38", grch37To38=FALSE )
 }
 }
