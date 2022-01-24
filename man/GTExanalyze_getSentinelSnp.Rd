@@ -7,7 +7,7 @@
 GTExanalyze_getSentinelSnp(
   gwasDF,
   pValueThreshold = 5e-08,
-  centerRange = 1e+06,
+  centerRange = 10000,
   mafThreshold = 0.01,
   genomeVersion = "grch38",
   grch37To38 = FALSE
