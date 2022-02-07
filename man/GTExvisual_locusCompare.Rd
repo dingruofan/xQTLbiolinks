@@ -11,7 +11,8 @@ GTExvisual_locusCompare(
   population = "EUR",
   token = "9246d2db7917",
   windowSize = 5e+05,
-  genome = "grch38"
+  genome = "grch38",
+  snpLD = NA
 )
 }
 \arguments{

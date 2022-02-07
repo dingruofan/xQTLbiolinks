@@ -11,7 +11,8 @@ GTExvisual_locusZoom(
   posRange = "",
   token = "9246d2db7917",
   windowSize = 5e+05,
-  genomeVersion = "grch38"
+  genomeVersion = "grch38",
+  snpLD = NA
 )
 }
 \arguments{
@@ -48,14 +49,9 @@ LocusZoom plot
  GTExvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
 
  # For eQTL:
- eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
- eqtlAsso$pos <- unlist(lapply(eqtlAsso$variantId, function(x){
-                               stringr::str_split(x,"_")[[1]][2] }))
- eqtlAsso$chrom <- unlist(lapply(eqtlAsso$variantId, function(x){
-                               stringr::str_split(x,"_")[[1]][1] }))
-
- eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
- GTExvisual_locusZoom(eqtlAsso, population="EUR",
+ eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex", withdbSNPID=FALSE)
+ eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(eqtlAsso$variantId, function(x){ a=stringr::str_split(x,"_")[[1]];return(data.table(chrom=a[1], pos=a[2])) }))
+ GTExvisual_locusZoom( eqtlAsso[,.(snpId, chrom, pos, pValue)], population="EUR",
                       posRange="chr6:46488310-48376712", genomeVersion="grch38" )
 }
 }

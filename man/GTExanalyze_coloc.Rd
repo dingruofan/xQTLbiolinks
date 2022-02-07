@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExanalyze.R
 \name{GTExanalyze_coloc}
 \alias{GTExanalyze_coloc}
-\title{Sentinel SNPs detection for a pair of gene and SNP in GTEx .}
+\title{Colocalization analysis with deteched trait}
 \usage{
 GTExanalyze_coloc(
   gwasDF,
@@ -23,10 +23,6 @@ GTExanalyze_coloc(
 
 \item{method}{1}
 
-\item{sentinelSnps}{Variant id (hg38) or dbSNP rsid}
-
-\item{recordPerChunk}{A integer value (1-300). number of records fetched per request (default: 100).}
-
 \item{traitGenes}{1}
 
 \item{population}{1}
@@ -34,19 +30,12 @@ GTExanalyze_coloc(
 \item{token}{1}
 }
 \value{
-A data.table
-
 coloc resut
 }
 \description{
-Sentinel SNPs detection for a pair of gene and SNP in GTEx .
-
 Colocalization analysis with deteched trait
 }
 \examples{
-\donttest{
-  traitsAllEqtl <- GTExanalyze_traitEqtlSig(traitGenes = traitsAll$gencodeId, sentinelSnps = traitsAll$rsid, tissueSiteDetail="Breast - Mammary Tissue" )
-}
 \donttest{
 
   traitsAll <- merge(traitsAllEqtl[pValue !="N/A",.(gencodeId, rsid=snpId)], traitsAll, by = c("gencodeId", "rsid"))
@@ -56,7 +45,7 @@ Colocalization analysis with deteched trait
   traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
 
   colocResultAll <- list()
-  for(i in 1:nrow(traitsAll_19)){
+  for(i in 1:nrow(traitsAll)){
     message(i," - ", date())
     traitGene <- traitsAll[order(pValue)][i,]$geneSymbol
     colocResult <- GTExanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
@@ -64,7 +53,7 @@ Colocalization analysis with deteched trait
   }
   range( unlist(lapply(1:length(colocResultAll), function(x){colocResultAll[[x]]$coloc_Out_summary$PP.H4.abf})) )
 
-  traitGene = traitsAll_19[geneSymbol=="NUDT17"]$geneSymbol
+  traitGene = traitsAll[geneSymbol=="NUDT17"]$geneSymbol
   colocResult <- GTExanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
 
   colocResult$gwasEqtlInfo

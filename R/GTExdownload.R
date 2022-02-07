@@ -1650,7 +1650,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   return(outInfo)
 }
 
-#' @title Retrive SNP pairwise LD from database.
+#' @title Retrive SNP pairwise LD from locuscompare database.
 #' @description
 #'  SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
 #'  For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.
@@ -1695,4 +1695,58 @@ retrieveLD = function(chr,snp,population){
 
   res = rbind(res1,res2)
   return(res)
+}
+
+#' @title Retrive SNP pairwise LD from LDlink database
+#'
+#' @param targetSnp target SNP, support dbSNP IP.
+#' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
+#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
+#' @param method The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader", or "GET".
+#' @param genomeVersion "grch38"(default) or "grch37".
+#' @param max_count To prevent download failure due to network fluctuations, max number of connection attempts.
+#' @param token Ldlink token, default: "9246d2db7917"
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' donttest{
+#'   snpLD <- retrieveLD_ldlink("rs3", windowSize=50000)
+#' }
+retrieveLD_ldlink <- function(targetSnp="", population="EUR" , windowSize=500000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){
+  # targetSnp="rs3"
+  # population="EUR"
+  # windowSize=500000
+  # genomeVersion="grch38"
+  # max_count=3
+  # token="9246d2db7917"
+
+  # get LD information:
+  s_count<-1
+  max_count<- 3
+
+  while( !exists("snpLDtmp") && s_count<=max_count ){
+    message("=== Geting LD info for SNP: ",targetSnp,"; trying ",s_count,"/",max_count,".")
+    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",targetSnp,
+                   "&pop=",population,
+                   "&r2_d=","r2",
+                   "&window=",as.character(as.integer(windowSize)),
+                   "&genome_build=",genomeVersion,
+                   "&token=", token)
+
+    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
+    try( snpLDtmp <- fetchContent(url1, method="download", isJson=FALSE) )
+    if( exists("snpLDtmp") && ncol(snpLDtmp)<=1 ){
+      rm(snpLDtmp)
+    }else{
+      message("=== Done!")
+    }
+    s_count <- s_count+1
+  }
+  if(!exists("snpLDtmp") ){
+    return( NULL )
+  }else{
+    return(snpLDtmp)
+  }
 }

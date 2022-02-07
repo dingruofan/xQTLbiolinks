@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{retrieveLD}
 \alias{retrieveLD}
-\title{Retrive SNP pairwise LD from database.}
+\title{Retrive SNP pairwise LD from locuscompare database.}
 \usage{
 retrieveLD(chr, snp, population)
 }

@@ -252,17 +252,12 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'  GTExvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
 #'
 #'  # For eQTL:
-#'  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex")
-#'  eqtlAsso$pos <- unlist(lapply(eqtlAsso$variantId, function(x){
-#'                                stringr::str_split(x,"_")[[1]][2] }))
-#'  eqtlAsso$chrom <- unlist(lapply(eqtlAsso$variantId, function(x){
-#'                                stringr::str_split(x,"_")[[1]][1] }))
-#'
-#'  eqtlAsso <- eqtlAsso[,.(snpId, chrom, pos, pValue)]
-#'  GTExvisual_locusZoom(eqtlAsso, population="EUR",
+#'  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex", withdbSNPID=FALSE)
+#'  eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(eqtlAsso$variantId, function(x){ a=stringr::str_split(x,"_")[[1]];return(data.table(chrom=a[1], pos=a[2])) }))
+#'  GTExvisual_locusZoom( eqtlAsso[,.(snpId, chrom, pos, pValue)], population="EUR",
 #'                       posRange="chr6:46488310-48376712", genomeVersion="grch38" )
 #' }
-GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38"){
+GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- .<-NULL
   # highlightSnp=""
@@ -297,26 +292,9 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     highlightSnp <- DF[which.min(pValue)]$snpId
   }
 
-  # get LD information:
-  s_count<-1
-  max_count<- 3
-  while( !exists("snpLD") && s_count<=max_count ){
-    message("=== Geting LD info for SNP: ",highlightSnp,"; trying ",s_count,"/",max_count,".")
-    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",highlightSnp,
-                   "&pop=",population,
-                   "&r2_d=","r2",
-                   "&window=",as.character(as.integer(windowSize)),
-                   "&genome_build=",genomeVersion,
-                   "&token=", token)
-
-    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
-    try( snpLD <- fetchContent(url1, method="download", isJson=FALSE) )
-    if( exists("snpLD") && ncol(snpLD)<=1 ){
-       rm(snpLD)
-    }else{
-      message("=== Done!")
-    }
-    s_count <- s_count+1
+  # LD info:
+  if(is.na(snpLD)){
+    snpLD <- retrieveLD_ldlink(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token)
   }
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
@@ -431,7 +409,7 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'   gwasDF <- gwasDF[,.(rsid, P)]
 #'   GTExvisual_locusCompare( eqtlDF, gwasDF )
 #' }
-GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38" ){
+GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38",snpLD=NA ){
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
   eqtlDF <- eqtlDF[,1:2]
@@ -467,31 +445,12 @@ GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   # varInfo <-  GTExquery_varId(highlightSnp)
 
   # get LD information:
-  s_count<-1
-  max_count<- 3
-  while( !exists("snpLD") && s_count<=max_count ){
-    message("=== Geting LD info for SNP: ",highlightSnp,"; trying ",s_count,"/",max_count,".")
-    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",highlightSnp,
-                   "&pop=",population,
-                   "&r2_d=","r2",
-                   "&window=",as.character(as.integer(windowSize)),
-                   "&genome_build=",genome,
-                   "&token=", token)
-
-    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
-    try( snpLD <- fetchContent(url1, method="download", isJson=FALSE) )
-    if( exists("snpLD") && ncol(snpLD)<=1 ){
-      rm(snpLD)
-    }else{
-      message("=== Done!")
-    }
-    s_count <- s_count+1
-    if(s_count > max_count){
-      stop("Please check your network!")
-    }
+  if(is.na(snpLD)){
+    snpLD <- retrieveLD_ldlink(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genome, token = token)
   }
-
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
+
+
 
   # Set LD SNP color:
   if( nrow(snpLD)>0 ){
