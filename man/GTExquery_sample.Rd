@@ -8,7 +8,8 @@ GTExquery_sample(
   tissueSiteDetail = "Liver",
   dataType = "RNASEQ",
   datasetId = "gtex_v8",
-  recordPerChunk = 200
+  recordPerChunk = 200,
+  pathologyNotesCategories = FALSE
 )
 }
 \arguments{
@@ -77,6 +78,8 @@ Whole Blood \tab √ \tab √\cr
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
 
 \item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 200).}
+
+\item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }
 \value{
 returen sample information
@@ -86,10 +89,11 @@ Fetch information of samples used in analyses from all datasets.
 }
 \examples{
 \donttest{
-  GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ",
-                    datasetId="gtex_v8", recordPerChunk=200 )
+  a <- GTExquery_sample( tissueSiteDetail="Liver", datasetId="gtex_v8",
+                    pathologyNotesCategories=TRUE  )
   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
-                    datasetId="gtex_v8",recordPerChunk=2000 )
-  GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
+                    datasetId="gtex_v8",pathologyNotesCategories=TRUE )
+  GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ",
+                    "gtex_v8", 200 )
   }
 }

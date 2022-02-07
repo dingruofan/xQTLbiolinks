@@ -74,6 +74,7 @@
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param toSummarizedExperiment whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 150).
+#' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -93,6 +94,7 @@
 #'   # Download gene expression profiles with multiple genes:
 #'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v8",
+#'                                  pathologyNotesCategories=TRUE,
 #'                                  toSummarizedExperiment=TRUE)
 #'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
@@ -101,7 +103,7 @@
 #'   proT <- GTExquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
 #'   proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
 #'   }
-GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150  ){
+GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
   gencodeId <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
@@ -169,7 +171,7 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 
   ############ get sample info:
   message("== Fetching sample information from API server:")
-  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk )
+  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk,pathologyNotesCategories=pathologyNotesCategories )
   message("== Done.")
   if( !exists("sampleInfo") ||is.null(sampleInfo) ){
     stop("Failed to fetch sample information.")
@@ -1711,7 +1713,7 @@ retrieveLD = function(chr,snp,population){
 #' @export
 #'
 #' @examples
-#' donttest{
+#' \donttest{
 #'   snpLD <- retrieveLD_ldlink("rs3", windowSize=50000)
 #' }
 retrieveLD_ldlink <- function(targetSnp="", population="EUR" , windowSize=500000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){

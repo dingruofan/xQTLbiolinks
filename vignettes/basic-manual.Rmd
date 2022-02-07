@@ -50,6 +50,8 @@ ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), 
 ```{r}
 library(ggpubr)
 gene2 = c("AMOT", "HOXA4")
+expProfiles <- GTExdownload_exp(genes=gene2, geneType = "geneSymbol", tissueSiteDetail = "Lung", "gtex_v8", toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
+expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
 expData2 <- as.data.frame(t(expData[geneSymbol %in% gene2][,-c("geneSymbol")]))
 colnames(expData2) <- gene2
 

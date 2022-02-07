@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{GTExquery_geneAll}
 \alias{GTExquery_geneAll}
-\title{Title}
+\title{fetch all genes' info.}
 \usage{
 GTExquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 }
@@ -15,5 +15,5 @@ GTExquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 A data.table with all genes' information.
 }
 \description{
-Title
+fetch all genes' info.
 }

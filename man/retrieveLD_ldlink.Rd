@@ -36,7 +36,7 @@ retrieveLD_ldlink(
 Retrive SNP pairwise LD from LDlink database
 }
 \examples{
-donttest{
+\donttest{
   snpLD <- retrieveLD_ldlink("rs3", windowSize=50000)
 }
 }

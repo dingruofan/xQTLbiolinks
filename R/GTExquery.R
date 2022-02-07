@@ -352,6 +352,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 200).
+#' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #' @import data.table
 #' @import utils
 #' @import curl
@@ -360,13 +361,14 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #' @export
 #' @examples
 #' \donttest{
-#'   GTExquery_sample( tissueSiteDetail="Liver", dataType="RNASEQ",
-#'                     datasetId="gtex_v8", recordPerChunk=200 )
+#'   a <- GTExquery_sample( tissueSiteDetail="Liver", datasetId="gtex_v8",
+#'                     pathologyNotesCategories=TRUE  )
 #'   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
-#'                     datasetId="gtex_v8",recordPerChunk=2000 )
-#'   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ", "gtex_v8", 200 )
+#'                     datasetId="gtex_v8",pathologyNotesCategories=TRUE )
+#'   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ",
+#'                     "gtex_v8", 200 )
 #'   }
-GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200 ){
+GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
   .<-NULL
   page_tmp <- 0
@@ -484,12 +486,17 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
     message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
     page_tmp <- page_tmp+1
   }
-  return(outInfo[,.(sampleId, sex, ageBracket,datasetId, tissueSiteDetail, tissueSiteDetailId, pathologyNotes, hardyScale,  dataType )])
-  # note: pathologyNotes info is ignored.
+  if(pathologyNotesCategories){
+    return(
+      cbind(outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE], outInfo[,names(outInfo)[str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE])
+    )
+  }else{
+    return( outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE] )
+  }
 }
 
 # Indepedently fetch geneInfo:
-#' Title
+#' @title fetch all genes' info.
 #'
 #' @param gencodeVersion A character string. "v26" or "v19".
 #' @param recordPerChunk A integer value. From 1 to 2000.

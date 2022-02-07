@@ -21,7 +21,7 @@
 #'
 #'    gwasDF <- fread("D:\\R_project\\GLGC_CG0052_result.txt.gz", sep="\t")
 #'    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e4, genomeVersion="grch37", grch37To38=FALSE)
+#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
 #' }
 GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e4, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   # Detect gene with sentinal SNP:
@@ -63,7 +63,7 @@ GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
     message("== ",length(gwasRanges_hg38),"/",nrow(gwasDF)," left.")
     rm(gwasRanges, gwasRanges_hg38)
   }else if(genomeVersion =="grch37" & !grch37To38){
-    stop("Because the genome version of eqtl associations only support GRCH38, so sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
+    stop("Please set \"grch37To38=TRUE\". Because the genome version of eqtl associations only support GRCH38, so sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
   }else if(genomeVersion =="grch38" & grch37To38){
     stop("Only grch37 genome version can be converted to grch38!")
   }else if(!genomeVersion %in% c("grch38", "grch37")){

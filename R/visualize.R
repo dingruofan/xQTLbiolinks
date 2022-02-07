@@ -518,3 +518,93 @@ GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 }
 
 
+#' @title Density distribution of specified genes' expression profiles in a specified tissue.
+#'
+#' @param genes Following gene types are supported:
+#' \itemize{
+#'   \item \strong{Gene symbol}.
+#'
+#'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
+#'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
+#' }
+#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
+#' @param tissueSiteDetail Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @import ggpubr
+#' @return A plot.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
+#'   GTExvisual_genesExp(genes, tissueSiteDetail="Lung")
+#'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13","ENSG00000197576.13","ENSG00000100987.14")
+#'   GTExvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
+#' }
+GTExvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail = "", datasetId="gtex_v8"){
+  expProfiles <- GTExdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE)
+  expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), SummarizedExperiment::assay(expProfiles) ))
+  expData1 <- melt(expData, id.vars="geneSymbol", variable.name = "sampleId", value.name="exp")
+  ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
+    ggridges::geom_density_ridges_gradient( gradient_lwd = 1, scale = 1.4, rel_min_height = 0.05, size = 0.3) +
+    # scale_fill_gradientn( colours = colorRampPalette(c("white", "blue", "red"))(27) )+
+    viridis::scale_fill_viridis(name = "WCAE per SOC", option = "C")+
+    xlab("Gene expression (log(TPM+1))")+
+    ylab("Gene symbol")+
+    theme_bw()+
+    theme( legend.title = element_blank())
+}
+
+
+#' @title The correlation plot of two genes’ expression
+#'
+#' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
+#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
+#' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
+#' @param tissueSiteDetail Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#'
+#' @return A plot
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  gene2 = c("AMOT", "HOXA4")
+#'  GTExvisual_geneCorr( gene2, tissueSiteDetail="Liver" )
+#'  GTExvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion", tissueSiteDetail="Lung" )
+#' }
+GTExvisual_geneCorr <- function(gene2="", geneType="geneSymbol",tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
+  #
+  expProfiles <- GTExdownload_exp(genes=gene2, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
+  expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
+  expData2 <- as.data.frame(t(expData[geneSymbol %in% gene2][,-c("geneSymbol")]))
+  colnames(expData2) <- gene2
+
+  sampleInfo <- as.data.table(colData(expProfiles))
+  expData2 <- cbind(sampleInfo[rownames(expData2), on="sampleId"][,c("sampleId", groupBy),with=FALSE], expData2)
+  expData2 <- na.omit(expData2)
+
+  ggscatterhist(expData2, x=gene2[1], y=gene2[2],
+                shape = 21, color = groupBy, fill=groupBy,
+                margin.plot="density",
+                margin.params = list(fill=groupBy, color="black", size=0.2),
+                legend = c(0.9,0.15),
+                ggtheme = theme_minimal())
+}
+# GTExvisual_eqtl(gene, tissueSiteDetail, datasetId)
+# GTExvisual_eqtl <- function(x){
+#   gene="KIF15"
+#   geneEqtl <- GTExdownload_eqtlSig(gene=gene, datasetId="gtex_v8")
+#   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
+#   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
+#   setDF(geneEqtlSub)
+#   ggplot(geneEqtlSub, aes(x=reorder(tissueSiteDetail, -logP, median),y=logP))+
+#     geom_flat_violin(data=geneEqtlSub, mapping=aes(fill=tissueSiteDetail), position=position_nudge(x=0.25), color="black", scale = "width")+
+#     geom_jitter(aes(color=tissueSiteDetail), width = 0.1)+
+#     geom_boxplot(width=0.15, position = position_nudge(x=0.25), fill="white", size=0.1)+
+#     coord_flip()+
+#     ylab("log(Pvalue) of eQTL")+
+#     xlab("")+
+#     theme_bw()+
+#     guides(fill="none", color="none")
+# }

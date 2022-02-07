@@ -10,7 +10,8 @@ GTExdownload_exp(
   tissueSiteDetail = "Liver",
   datasetId = "gtex_v8",
   toSummarizedExperiment = TRUE,
-  recordPerChunk = 150
+  recordPerChunk = 150,
+  pathologyNotesCategories = FALSE
 )
 }
 \arguments{
@@ -89,6 +90,8 @@ Whole Blood \tab √ \tab √\cr
 \item{toSummarizedExperiment}{whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.}
 
 \item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 150).}
+
+\item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }
 \value{
 return a SummarizedExperiment or data.frame object harbing gene expression profiles.
@@ -104,6 +107,7 @@ This function fetch queried genes' expression profiles in a tissue at the sample
   # Download gene expression profiles with multiple genes:
   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
                                  "geneSymbol", "Artery - Coronary", "gtex_v8",
+                                 pathologyNotesCategories=TRUE,
                                  toSummarizedExperiment=TRUE)
   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
