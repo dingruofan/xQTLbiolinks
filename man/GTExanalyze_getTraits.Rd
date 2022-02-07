@@ -6,7 +6,7 @@
 \usage{
 GTExanalyze_getTraits(
   sentinelSnpDF,
-  colocRange = 1e+06,
+  detectRange = 10000,
   genomeVersion = "grch38",
   grch37To38 = FALSE
 )
@@ -14,7 +14,7 @@ GTExanalyze_getTraits(
 \arguments{
 \item{sentinelSnpDF}{A data.table. Better be the results from the function "GTExanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".}
 
-\item{colocRange}{A integer value. Window size centered on SNP. Default: 1e6 bp}
+\item{detectRange}{A integer value. Window size centered on SNP. Default: 1e6 bp}
 
 \item{genomeVersion}{"grch38" or "grch19". Default: "grch38"}
 }
@@ -28,7 +28,12 @@ Detect the genes around the sentinel SNPs
 \donttest{
   sentinelSnpsURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content), sep="\t")
-  traitsAll_fromh19 <- GTExanalyze_getTraits(sentinelSnpDF_hg19, colocRange=1e6, genomeVersion="grch37", grch37To38=TRUE )
-  traitsAll <- GTExanalyze_getTraits(sentinelSnpDF_hg38, colocRange=1e6, genomeVersion="grch38", grch37To38=FALSE )
+  traitsAll_19 <- GTExanalyze_getTraits(sentinelSnpDF_hg19, detectRange=1e4, genomeVersion="grch37", grch37To38=FALSE )
+  traitsAll_19to38 <- GTExanalyze_getTraits(sentinelSnpDF_hg19, detectRange=1e4, genomeVersion="grch37", grch37To38=TRUE )
+  traitsAll_from38 <- GTExanalyze_getTraits(sentinelSnpDF_hg38, detectRange=1e4, genomeVersion="grch38", grch37To38=FALSE )
+  message(length(unique(traitsAll_19$geneSymbol)), " - ",length(unique(traitsAll_19to38$geneSymbol)), " - ",length(unique(traitsAll_from38$geneSymbol)))
+  length(intersect(traitsAll_19$geneSymbol, traitsAll_19to38$geneSymbol))
+  length(intersect(traitsAll_19$geneSymbol, traitsAll_from38$geneSymbol))
+  length(intersect(traitsAll_19to38$geneSymbol, traitsAll_from38$geneSymbol))
 }
 }

@@ -402,7 +402,7 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
   }
   print(p)
-  return(NULL)
+  return(p)
 }
 
 #' @title LocusCompare plot

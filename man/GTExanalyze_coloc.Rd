@@ -2,20 +2,17 @@
 % Please edit documentation in R/GTExanalyze.R
 \name{GTExanalyze_coloc}
 \alias{GTExanalyze_coloc}
-\title{Colocalization analysis with deteched trait}
+\title{Sentinel SNPs detection for a pair of gene and SNP in GTEx .}
 \usage{
 GTExanalyze_coloc(
   gwasDF,
   traitGene,
   geneType = "geneSymbol",
-  sentinelSnp,
-  variantType = "snpId",
+  genomeVersion = "grch38",
   tissueSiteDetail = "",
-  colocRange = 1e+06,
+  colocRange = 0,
   mafThreshold = 0.01,
   gwasSampleNum = 50000,
-  population = "EUR",
-  token = "9246d2db7917",
   method = "coloc"
 )
 }
@@ -24,21 +21,32 @@ GTExanalyze_coloc(
 
 \item{tissueSiteDetail}{1}
 
+\item{method}{1}
+
+\item{sentinelSnps}{Variant id (hg38) or dbSNP rsid}
+
+\item{recordPerChunk}{A integer value (1-300). number of records fetched per request (default: 100).}
+
+\item{traitGenes}{1}
+
 \item{population}{1}
 
 \item{token}{1}
-
-\item{method}{1}
-
-\item{traitGenes}{1}
 }
 \value{
+A data.table
+
 coloc resut
 }
 \description{
+Sentinel SNPs detection for a pair of gene and SNP in GTEx .
+
 Colocalization analysis with deteched trait
 }
 \examples{
+\donttest{
+  traitsAllEqtl <- GTExanalyze_traitEqtlSig(traitGenes = traitsAll$gencodeId, sentinelSnps = traitsAll$rsid, tissueSiteDetail="Breast - Mammary Tissue" )
+}
 \donttest{
 
   traitsAll <- merge(traitsAllEqtl[pValue !="N/A",.(gencodeId, rsid=snpId)], traitsAll, by = c("gencodeId", "rsid"))
@@ -48,26 +56,23 @@ Colocalization analysis with deteched trait
   traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
 
   colocResultAll <- list()
-  for(i in 154:nrow(traitsAll)){
+  for(i in 1:nrow(traitsAll_19)){
     message(i," - ", date())
     traitGene <- traitsAll[order(pValue)][i,]$geneSymbol
-    sentinelSnp <- traitsAll[order(pValue)][i,]$rsid
-    colocResult <- GTExanalyze_coloc(gwasDF, traitGene=traitGene, sentinelSnp= sentinelSnp, tissueSiteDetail="Breast - Mammary Tissue")
+    colocResult <- GTExanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
     colocResultAll[[i]] <- colocResult
   }
   range( unlist(lapply(1:length(colocResultAll), function(x){colocResultAll[[x]]$coloc_Out_summary$PP.H4.abf})) )
 
-  17
-  # 为啥全为 NA：
-  a <- GTExdownload_eqtlAll(gene="ENSG00000152670.18", tissueSiteDetail = tissueSiteDetail)
-  a1 <- GTExdownload_eqtlSig(gene="ENSG00000152670.18", tissueSiteDetail = tissueSiteDetail)
+  traitGene = traitsAll_19[geneSymbol=="NUDT17"]$geneSymbol
+  colocResult <- GTExanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
 
   colocResult$gwasEqtlInfo
   # eQTL locuszoom:
-  GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")], population="EUR",genomeVersion="grch38" )
+  gwas_locusRoom <- GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")],population="EUR",genomeVersion="grch38" )
   # GWAS locuszoom:
-  GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
+  eQTL_locusRoom <- GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
   # locuscompare:
-  GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
+  locuscompareP <- GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
 }
 }
