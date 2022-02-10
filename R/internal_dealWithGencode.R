@@ -170,6 +170,23 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
   #   tissueSiteDetailGTExv7 <- unique(tissueSiteDetailGTExv7[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
   #   usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
   # }
+
+  #
+  # url1 <- "https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json&datasetId=gtex_v8"
+  # url1 <- utils::URLencode(url1)
+  # url1GetText2Json <- fetchContent(url1, method = "curl", downloadMethod = bestFetchMethod[2])
+  # outInfo <- data.table::as.data.table(url1GetText2Json$tissueInfo)
+  # tissueSiteDetailGTExv8 <- outInfo[,.(tissueSiteDetail, tissueSiteDetailId, tissueSite)]
+  # usethis::use_data(tissueSiteDetailGTExv8, overwrite = TRUE)
+  #
+  # url1 <- "https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json&datasetId=gtex_v7"
+  # url1 <- utils::URLencode(url1)
+  # url1GetText2Json <- fetchContent(url1, method = "curl", downloadMethod = bestFetchMethod[2])
+  # outInfo <- data.table::as.data.table(url1GetText2Json$tissueInfo)
+  # tissueSiteDetailGTExv7 <- outInfo[,.(tissueSiteDetail, tissueSiteDetailId, tissueSite)]
+  # usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
+
+
   return(NULL)
 }
 

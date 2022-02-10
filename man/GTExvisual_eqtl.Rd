@@ -14,7 +14,7 @@ GTExvisual_eqtl(gene, geneType = "geneSymbol", datasetId = "gtex_v8")
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-
+A plot
 }
 \description{
 eQTL significance visualization for a gene
@@ -22,5 +22,6 @@ eQTL significance visualization for a gene
 \examples{
 \donttest{
   GTExvisual_eqtl("KIF15")
+  GTExvisual_eqtl("MLH1")
 }
 }

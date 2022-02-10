@@ -624,12 +624,12 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 
   ############# if variantType is "snpId":
   if( variantType == "snpId" ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
                    "datasetId=", datasetId,"&",
                    "snpId=", variantName)
     ############# if variantType is "variantId":
   }else if( variantType == "variantId" ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant??format=json","&",
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
                    "datasetId=", datasetId,"&",
                    "variantId=", variantName)
   }
@@ -758,28 +758,33 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 }
 
 
-tissueName="Heart - Atrial Appendage"
+tissueName="Cervix Uteri"
 GTExquery_tissue <- function(tissueName, datasetId="gtex_v8"){
   if(datasetId == "gtex_v8"){
-    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetailId"])))
+    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetailId"], tissueSiteDetailGTExv8[tissueName,on="tissueSite"])))
     if(nrow(t1_tmp)==0){
       stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
     }else{
-      tissueName = t1_tmp$tissueSiteDetail
-      tissueId = t1_tmp$tissueSiteDetailId
+      tissueSite = unique(t1_tmp$tissueSite)
       rm(t1_tmp)
     }
   }else if(datasetId == "gtex_v7"){
-    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetailId"])))
+    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetailId"],  tissueSiteDetailGTExv7[tissueName,on="tissueSite"])))
     if(nrow(t1_tmp)==0){
       stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
     }else{
-      tissueName = t1_tmp$tissueSiteDetail
-      tissueId=t1_tmp$tissueSiteDetailId
+      tissueSite = unique(t1_tmp$tissueSite)
       rm(t1_tmp)
     }
   }
-  url1 <- "https://gtexportal.org/rest/v1/dataset/tissueInfo?datasetId=gtex_v8&tissueSite=Adipose%20Tissue&format=json"
+  url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
+                 "datasetId=", datasetId,"&",
+                 "tissueSite=", tissueSite)
+  url1 <- utils::URLencode(url1)
+
+
+
+  url1 <- "https://gtexportal.org/rest/v1/dataset/tissueInfo?datasetId=gtex_v8&format=json"
 
 }
 
