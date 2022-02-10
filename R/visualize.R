@@ -594,20 +594,46 @@ GTExvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetai
 
 
 
-# GTExvisual_eqtl(gene, tissueSiteDetail, datasetId)
-GTExvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId="gtex_v8" ){
+#' @title eQTL significance visualization for a gene
+#'
+#' @param gene A gene symbol or a gencode id (versioned).
+#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @import PupillometryR
+#' @return A plot
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   GTExvisual_eqtl("KIF15")
+#'   GTExvisual_eqtl("MLH1")
+#' }
+GTExvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" ){
   # gene="KIF15"
-  geneEqtl <- GTExdownload_eqtlSig(gene=gene, datasetId=datasetId)
+  if( datasetId=="gtex_v8" ){
+    gencodeVersion="v26"
+  }else{
+    gencodeVersion="v19"
+  }
+
+  geneInfo <- GTExquery_gene(gene, geneType = geneType, gencodeVersion = gencodeVersion )
+  geneEqtl <- GTExdownload_eqtlSig(gene=geneInfo$geneSymbol, datasetId=datasetId)
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)
   ggplot(geneEqtlSub, aes(x=reorder(tissueSiteDetail, -logP, median),y=logP))+
-    geom_flat_violin(data=geneEqtlSub, mapping=aes(fill=tissueSiteDetail), position=position_nudge(x=0.25), color="black", scale = "width")+
+    PupillometryR::geom_flat_violin(data=geneEqtlSub, mapping=aes(fill=tissueSiteDetail), position=position_nudge(x=0.25), color="black", scale = "width")+
     geom_jitter(aes(color=tissueSiteDetail), width = 0.1)+
     geom_boxplot(width=0.15, position = position_nudge(x=0.25), fill="white", size=0.1)+
-    coord_flip()+
-    ylab("log(Pvalue) of eQTL")+
-    xlab("")+
-    theme_bw()+
+    coord_flip() +
+    ylab(expression(-log["10"]("Pvalue")))+
+    xlab("") +
+    theme_bw() +
     guides(fill="none", color="none")
 }
+
+
+

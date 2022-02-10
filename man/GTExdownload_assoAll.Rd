@@ -10,7 +10,7 @@ GTExdownload_assoAll(
   tissueSiteDetail = "",
   recordPerChunk = 250,
   study = "GTEx_V8",
-  withdbSNPID = TRUE
+  withB37VariantId = TRUE
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ GTExdownload_assoAll(
 
 \item{study}{"GTEx_V8"}
 
-\item{withdbSNPID}{Whether to return the dbSNP id and genome location(hg19) of variants. Default: TRUE.}
+\item{withB37VariantId}{Whether to return the genome location(GTEx v7) of variants. Default: TRUE.}
 }
 \value{
 a data.table
@@ -34,6 +34,6 @@ GTExdownload_assoAll
 }
 \examples{
 \donttest{
-  geneAsso <- GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal")
+  geneAsso <- GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
 }
 }

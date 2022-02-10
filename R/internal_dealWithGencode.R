@@ -424,6 +424,8 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("ggrepel", min_version = "0.9.1") # in ggpubr
 # usethis::use_package("coloc", min_version = "5.1.0")
 # usethis::use_package("GenomicRanges", min_version = "1.40.0") # in SummarizedExperiment
+# usethis::use_package("PupillometryR")
+
 #
 # # suggest:
 # usethis::use_package("usethis", min_version = "2.0.1", type="Suggests")

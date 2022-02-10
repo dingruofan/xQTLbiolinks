@@ -495,6 +495,12 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   }
 }
 
+
+
+
+
+
+
 # Indepedently fetch geneInfo:
 #' @title fetch all genes' info.
 #'
