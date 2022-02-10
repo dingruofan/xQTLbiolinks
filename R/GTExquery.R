@@ -758,6 +758,31 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 }
 
 
+tissueName="Heart - Atrial Appendage"
+GTExquery_tissue <- function(tissueName, datasetId="gtex_v8"){
+  if(datasetId == "gtex_v8"){
+    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetailId"])))
+    if(nrow(t1_tmp)==0){
+      stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
+    }else{
+      tissueName = t1_tmp$tissueSiteDetail
+      tissueId = t1_tmp$tissueSiteDetailId
+      rm(t1_tmp)
+    }
+  }else if(datasetId == "gtex_v7"){
+    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetailId"])))
+    if(nrow(t1_tmp)==0){
+      stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
+    }else{
+      tissueName = t1_tmp$tissueSiteDetail
+      tissueId=t1_tmp$tissueSiteDetailId
+      rm(t1_tmp)
+    }
+  }
+  url1 <- "https://gtexportal.org/rest/v1/dataset/tissueInfo?datasetId=gtex_v8&tissueSite=Adipose%20Tissue&format=json"
+
+}
+
 
 #' @title Heartbeat to check GTEx API server connectivity.
 #' @description
