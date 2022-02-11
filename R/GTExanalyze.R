@@ -382,7 +382,7 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 }
 
 
-
+# tissue-specific expression analysis.
 
 
 

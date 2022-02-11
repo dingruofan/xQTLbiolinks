@@ -758,34 +758,70 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 }
 
 
-tissueName="Cervix Uteri"
-GTExquery_tissue <- function(tissueName, datasetId="gtex_v8"){
-  if(datasetId == "gtex_v8"){
-    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetailId"], tissueSiteDetailGTExv8[tissueName,on="tissueSite"])))
-    if(nrow(t1_tmp)==0){
-      stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
-    }else{
-      tissueSite = unique(t1_tmp$tissueSite)
-      rm(t1_tmp)
-    }
-  }else if(datasetId == "gtex_v7"){
-    t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetailId"],  tissueSiteDetailGTExv7[tissueName,on="tissueSite"])))
-    if(nrow(t1_tmp)==0){
-      stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
-    }else{
-      tissueSite = unique(t1_tmp$tissueSite)
-      rm(t1_tmp)
-    }
+#' @title Fetch all tissue information for a dataset.
+#' @description Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
+#' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param datasetId gtex_v8 or gtex_v7. Default: gtex_v8
+#'
+#' @return A data.table
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   tissueAll <- GTExquery_tissue(datasetId="gtex_v8")
+#'   BrainInfo <- GTExquery_tissue("Brain", datasetId="gtex_v8")
+#' }
+GTExquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
+  if(datasetId != "gtex_v8" && datasetId != "gtex_v7"){
+    stop("\"datasetId\" must be choosen from \"gtex_v8\" or \"gtex_v7\"")
   }
-  url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
-                 "datasetId=", datasetId,"&",
-                 "tissueSite=", tissueSite)
-  url1 <- utils::URLencode(url1)
 
-
-
-  url1 <- "https://gtexportal.org/rest/v1/dataset/tissueInfo?datasetId=gtex_v8&format=json"
-
+  #  if tissue name is null:
+  if(tissueName==""){
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
+                   "datasetId=", datasetId)
+    url1 <- utils::URLencode(url1)
+    bestFetchMethod <- apiAdmin_ping()
+    if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+      message("Note: API server is busy or your network has latency, please try again later.")
+      return(NULL)
+    }
+    message("GTEx API successfully accessed!")
+    # url1Get <- httr::GET(url1, httr::progress())
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$tissueInfo)
+    return(url1GetText2Json2DT)
+  }else{
+    if(datasetId == "gtex_v8"){
+      t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv8[tissueName,on="tissueSiteDetailId"], tissueSiteDetailGTExv8[tissueName,on="tissueSite"])))
+      if(nrow(t1_tmp)==0){
+        stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
+      }else{
+        tissueSite = unique(t1_tmp$tissueSite)
+      }
+    }else if(datasetId == "gtex_v7"){
+      t1_tmp <- unique(na.omit(rbind(tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetail"], tissueSiteDetailGTExv7[tissueName,on="tissueSiteDetailId"],  tissueSiteDetailGTExv7[tissueName,on="tissueSite"])))
+      if(nrow(t1_tmp)==0){
+        stop("== [",tissueName, "] is not found in [",datasetId,"] please check your input.")
+      }else{
+        tissueSite = unique(t1_tmp$tissueSite)
+      }
+    }
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
+                   "datasetId=", datasetId,"&",
+                   "tissueSite=", tissueSite)
+    url1 <- utils::URLencode(url1)
+    bestFetchMethod <- apiAdmin_ping()
+    if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+      message("Note: API server is busy or your network has latency, please try again later.")
+      return(NULL)
+    }
+    message("GTEx API successfully accessed!")
+    # url1Get <- httr::GET(url1, httr::progress())
+    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$tissueInfo)
+    return(url1GetText2Json2DT)
+  }
 }
 
 
