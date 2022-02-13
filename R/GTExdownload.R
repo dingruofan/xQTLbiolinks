@@ -739,7 +739,7 @@ GTExdownload_eqtlAllPost <- function(geneList, variantlist, tissueSiteDetail="",
   return(resultDT)
 }
 
-#' @title  GTExdownload_assoAll
+#' @title Fetch all eQTL associations from EBI eQTL category.
 #'
 #' @param gene gene
 #' @param geneType geneType
@@ -855,22 +855,71 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   }
 }
 
-GTExdownload_aQTLAllAsso<- function(gene, geneType="geneSymbol", refSeq, tissueSiteDetail=""){
-
-  geneInfo <- GTExquery_gene(gene)
-
-  tissueSiteDetail <- "Adipose - Subcutaneous"
+#' @title Fetch all eQTL associations from EBI eQTL category.
+#'
+#' @param gene gene symbol or gencode ID.
+#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
+#' @param refSeq A character string.
+#' @param rsid dbSNP ID.
+#' @param variantId A character string. like "chr17_5294580_CT_C_b38".
+#' @param tissueSiteDetail
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   GTExdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-2)
+#'   GTExdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+#'   GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-4 )
+#'   GTExdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+#' }
+GTExdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="", pThreshold=1, variantId="", tissueSiteDetail=""){
+  # gene="RABEP1"
+  # geneType="geneSymbol"
+  # refSeq = "NM_001291581.2"
+  # tissueSiteDetail <- "Adipose - Visceral (Omentum)"
   tissueSiteDetailId  <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+  if(gene !=""){
+    geneInfo <- GTExquery_gene(gene, geneType = geneType)
+    # create sql:
+    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where geneSymbol = \'",geneInfo$geneSymbol,"\' AND `p-value`<",pThreshold )
+    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+    # # extract data:
+    message("== mysql connected, downloading... ")
+    aqltInfo <- dbGetQuery(con, sqlForQuery)
+    dbDisconnect(con)
+    message("== done.")
+    # message("== mysql closed || ", date(), " || [", nrow(snpLD), "] LD infor obtained!")
+    return(aqltInfo)
+  }else if(refSeq!=""){
+    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where refSeq = \'",refSeq,"\' AND `p-value`<",pThreshold )
+    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+    message("== mysql connected, downloading... ")
+    aqltInfo <- dbGetQuery(con, sqlForQuery)
+    dbDisconnect(con)
+    message("== done.")
+    return(aqltInfo)
+  }else if(rsid!=""){
+    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where rsid = \'",rsid,"\' AND `p-value`<",pThreshold )
+    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+    message("== mysql connected, downloading... ")
+    aqltInfo <- dbGetQuery(con, sqlForQuery)
+    dbDisconnect(con)
+    message("== done.")
+    return(aqltInfo)
+  }else if(variantId!=""){
+    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where SNP = \'",variantId,"\' AND `p-value`<",pThreshold )
+    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+    message("== mysql connected, downloading... ")
+    aqltInfo <- dbGetQuery(con, sqlForQuery)
+    dbDisconnect(con)
+    message("== done.")
+    return(aqltInfo)
+  }else{
+    stop("Please check your input!")
+  }
 
-  sqlForQuery<- "SELECT * FROM aQTL_Adipose_Subcutaneous WHERE geneSymbol = 'RABEP1';"
-
-  sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where snp1 in ('",paste0(rs_LD, collapse = '\',\''),"') and snp2 in ('",paste0(rs_LD, collapse = '\',\''),"')" )
-  con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "218.18.158.205", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-  # # extract data:
-  # message("== mysql connected || ", date())
-  # snpLD <- dbGetQuery(con, sqlForQuery)
-  # dbDisconnect(con)
-  # message("== mysql closed || ", date(), " || [", nrow(snpLD), "] LD infor obtained!")
 }
 
 

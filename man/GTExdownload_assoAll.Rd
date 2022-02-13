@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{GTExdownload_assoAll}
 \alias{GTExdownload_assoAll}
-\title{GTExdownload_assoAll}
+\title{Fetch all eQTL associations from EBI eQTL category.}
 \usage{
 GTExdownload_assoAll(
   gene = "",
@@ -30,7 +30,7 @@ GTExdownload_assoAll(
 a data.table
 }
 \description{
-GTExdownload_assoAll
+Fetch all eQTL associations from EBI eQTL category.
 }
 \examples{
 \donttest{
