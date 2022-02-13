@@ -855,6 +855,24 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   }
 }
 
+GTExdownload_aQTLAllAsso<- function(gene, geneType="geneSymbol", refSeq, tissueSiteDetail=""){
+
+  geneInfo <- GTExquery_gene(gene)
+
+  tissueSiteDetail <- "Adipose - Subcutaneous"
+  tissueSiteDetailId  <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+
+  sqlForQuery<- "SELECT * FROM aQTL_Adipose_Subcutaneous WHERE geneSymbol = 'RABEP1';"
+
+  sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where snp1 in ('",paste0(rs_LD, collapse = '\',\''),"') and snp2 in ('",paste0(rs_LD, collapse = '\',\''),"')" )
+  con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "218.18.158.205", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+  # # extract data:
+  # message("== mysql connected || ", date())
+  # snpLD <- dbGetQuery(con, sqlForQuery)
+  # dbDisconnect(con)
+  # message("== mysql closed || ", date(), " || [", nrow(snpLD), "] LD infor obtained!")
+}
+
 
 #' @title Download significant sQTL data.
 #' @description
