@@ -869,9 +869,9 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 #'
 #' @examples
 #' \donttest{
-#'   GTExdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-2)
+#'   GTExdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
 #'   GTExdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-#'   GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-4 )
+#'   GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
 #'   GTExdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
 #' }
 GTExdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="", pThreshold=1, variantId="", tissueSiteDetail=""){
