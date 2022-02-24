@@ -862,7 +862,8 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 #' @param refSeq A character string.
 #' @param rsid dbSNP ID.
 #' @param variantId A character string. like "chr17_5294580_CT_C_b38".
-#' @param tissueSiteDetail
+#' @param pThreshold Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.
+#' @param tissueSiteDetail tissue.
 #'
 #' @return
 #' @export
@@ -874,11 +875,14 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 #'   GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
 #'   GTExdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
 #' }
-GTExdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="", pThreshold=1, variantId="", tissueSiteDetail=""){
+GTExdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="",  variantId="", pThreshold=1, tissueSiteDetail=""){
   # gene="RABEP1"
   # geneType="geneSymbol"
   # refSeq = "NM_001291581.2"
   # tissueSiteDetail <- "Adipose - Visceral (Omentum)"
+  if(tissueSiteDetail == ""){
+    stop( "Tissue ",tissueSiteDetail, " not found!"  )
+  }
   tissueSiteDetailId  <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
   if(gene !=""){
     geneInfo <- GTExquery_gene(gene, geneType = geneType)
