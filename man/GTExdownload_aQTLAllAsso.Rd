@@ -9,8 +9,8 @@ GTExdownload_aQTLAllAsso(
   geneType = "geneSymbol",
   refSeq = "",
   rsid = "",
-  pThreshold = 1,
   variantId = "",
+  pThreshold = 1,
   tissueSiteDetail = ""
 )
 }
@@ -25,7 +25,9 @@ GTExdownload_aQTLAllAsso(
 
 \item{variantId}{A character string. like "chr17_5294580_CT_C_b38".}
 
-\item{tissueSiteDetail}{}
+\item{pThreshold}{Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.}
+
+\item{tissueSiteDetail}{tissue.}
 }
 \value{
 
@@ -35,9 +37,9 @@ Fetch all eQTL associations from EBI eQTL category.
 }
 \examples{
 \donttest{
-  GTExdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-2)
+  GTExdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
   GTExdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-  GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-4 )
+  GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
   GTExdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
 }
 }

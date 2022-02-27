@@ -382,8 +382,60 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 }
 
 
-# tissue-specific expression analysis.
-
+#' @title tissue-specific expression analysis
+#'
+#' @param genes gene symbol or gencode ID.
+#' @param geneType "geneSymbol" or "gencodeId".
+#' @param datasetId "gtex_v8" or "gtex_v7".
+#'
+#' @return A data.table
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
+#'  TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:200] , geneType = "gencodeId", datasetId="gtex_v8")
+#'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[300:310]
+#'  TSgene <- GTExanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
+#' }
+GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", datasetId="gtex_v8"){
+  if(datasetId == "gtex_v8"){
+    genomeVersion="v26"
+    tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
+  }else if(datassetId == "gtex_v7"){
+    genomeVersion="v19"
+    tissueSiteDetail <- copy(tissueSiteDetailGTExv7)
+  }
+  geneExp <- GTExdownload_geneMedExp(genes=genes,  geneType=geneType, datasetId = datasetId)
+  geneExpCast <- dcast(geneExp[,.(gencodeId, geneSymbol,geneType, median, tissueSiteDetail)], gencodeId+geneSymbol+geneType~tissueSiteDetail, value.var = "median")
+  geneExpCastMat <- geneExpCast[, -c("gencodeId", "geneSymbol", "geneType")]
+  DPMlist <- lapply( 1:nrow(geneExpCastMat), function(x){
+    x <- unlist(geneExpCastMat[x,])
+    x<- as.numeric(x)
+    if(all(x==0)){
+      return(list(SPM=x, DPM=NA ))
+    }else{
+      SPMi <- unlist(lapply(1:length(x), function(xx){
+        xi <- rep(0, length(x))
+        xi[xx] <- x[xx]
+        if(all(xi==0)){
+          cosX = 0
+        }else{
+          # cosX <- xi%*%x/( length(xi)*length(x) )
+          cosX <- crossprod(x, xi)/sqrt(crossprod(x) * crossprod(xi))
+        }
+        return(cosX)
+      }))
+      return(list(SPM=SPMi, DPM=sd(SPMi)*sqrt(length(x)) ))
+    }
+    })
+  SPMmat <- as.data.table(t(as.data.table( lapply(DPMlist, function(x){ x[[1]] }))))
+  names(SPMmat) <- names(geneExpCastMat)
+  DPM <- unlist(lapply(DPMlist, function(x){ x[[2]] }))
+  SPMmat$DPM <- DPM
+  SPMmat <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], SPMmat)
+  return(SPMmat)
+}
 
 
 
