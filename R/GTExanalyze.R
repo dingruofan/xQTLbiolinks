@@ -394,7 +394,7 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #' @examples
 #' \donttest{
 #'  protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
-#'  TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:200] , geneType = "gencodeId", datasetId="gtex_v8")
+#'  TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
 #'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[300:310]
 #'  TSgene <- GTExanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
 #' }
@@ -434,6 +434,12 @@ GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", datasetId="gtex_v8")
   DPM <- unlist(lapply(DPMlist, function(x){ x[[2]] }))
   SPMmat$DPM <- DPM
   SPMmat <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], SPMmat)
+
+  # PLOT:
+
+
+
+
   return(SPMmat)
 }
 

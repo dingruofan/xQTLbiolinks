@@ -365,7 +365,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #'                     pathologyNotesCategories=TRUE  )
 #'   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
 #'                     datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-#'   GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ",
+#'   GTExquery_sample( "Brain - Amygdala", "RNASEQ",
 #'                     "gtex_v8", 200 )
 #'   }
 GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
@@ -455,8 +455,16 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   }
   # message("GTEx API successfully accessed!")
   url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-  tmp <- data.table::as.data.table(url1GetText2Json$sample)
-  outInfo <- rbind(outInfo, tmp)
+  if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
+    pathologyNotesCategories <- FALSE
+    message(" == No pathologyNotesCategories information found in tissue [", tissueSiteDetail, "] samples!" )
+    tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
+    outInfo <- rbind(outInfo, tmp)
+  }else{
+    tmp <- data.table::as.data.table( url1GetText2Json$sample )
+    outInfo <- rbind(outInfo, tmp)
+  }
+
   message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
   page_tmp<-page_tmp+1
   while( page_tmp <= (url1GetText2Json$numPages-1)){
@@ -481,8 +489,14 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
     }
     url1 <- utils::URLencode(url1)
     url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-    tmp <- data.table::as.data.table(url1GetText2Json$sample)
-    outInfo <- rbind(outInfo, tmp)
+    if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
+      tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
+      outInfo <- rbind(outInfo, tmp)
+    }else{
+      tmp <- data.table::as.data.table( url1GetText2Json$sample )
+      outInfo <- rbind(outInfo, tmp)
+    }
+
     message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
     page_tmp <- page_tmp+1
   }
