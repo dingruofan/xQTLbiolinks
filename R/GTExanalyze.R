@@ -386,6 +386,7 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #'
 #' @param genes gene symbol or gencode ID.
 #' @param geneType "geneSymbol" or "gencodeId".
+#' @param method "SPM" or "entropy"
 #' @param datasetId "gtex_v8" or "gtex_v7".
 #'
 #' @return A data.table
@@ -395,10 +396,11 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #' \donttest{
 #'  protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
 #'  TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
-#'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[300:310]
+#'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
 #'  TSgene <- GTExanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
+#'  GTExvisual_geneExpviolin( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
-GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", datasetId="gtex_v8"){
+GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", method="SPM", datasetId="gtex_v8"){
   if(datasetId == "gtex_v8"){
     genomeVersion="v26"
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
@@ -409,38 +411,52 @@ GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", datasetId="gtex_v8")
   geneExp <- GTExdownload_geneMedExp(genes=genes,  geneType=geneType, datasetId = datasetId)
   geneExpCast <- dcast(geneExp[,.(gencodeId, geneSymbol,geneType, median, tissueSiteDetail)], gencodeId+geneSymbol+geneType~tissueSiteDetail, value.var = "median")
   geneExpCastMat <- geneExpCast[, -c("gencodeId", "geneSymbol", "geneType")]
-  DPMlist <- lapply( 1:nrow(geneExpCastMat), function(x){
-    x <- unlist(geneExpCastMat[x,])
-    x<- as.numeric(x)
-    if(all(x==0)){
-      return(list(SPM=x, DPM=NA ))
-    }else{
-      SPMi <- unlist(lapply(1:length(x), function(xx){
-        xi <- rep(0, length(x))
-        xi[xx] <- x[xx]
-        if(all(xi==0)){
-          cosX = 0
-        }else{
-          # cosX <- xi%*%x/( length(xi)*length(x) )
-          cosX <- crossprod(x, xi)/sqrt(crossprod(x) * crossprod(xi))
-        }
-        return(cosX)
-      }))
-      return(list(SPM=SPMi, DPM=sd(SPMi)*sqrt(length(x)) ))
-    }
+
+  if( method=="SPM"){
+    DPMlist <- lapply( 1:nrow(geneExpCastMat), function(x){
+      x <- unlist(geneExpCastMat[x,])
+      x<- as.numeric(x)
+      if(all(x==0)){
+        return(list(SPM=x, DPM=NA ))
+      }else{
+        SPMi <- unlist(lapply(1:length(x), function(xx){
+          xi <- rep(0, length(x))
+          xi[xx] <- x[xx]
+          if(all(xi==0)){
+            cosX = 0
+          }else{
+            # cosX <- xi%*%x/( length(xi)*length(x) )
+            cosX <- crossprod(x, xi)/sqrt(crossprod(x) * crossprod(xi))
+          }
+          return(cosX)
+        }))
+        return(list(SPM=SPMi, DPM=sd(SPMi)*sqrt(length(x)) ))
+      }
     })
-  SPMmat <- as.data.table(t(as.data.table( lapply(DPMlist, function(x){ x[[1]] }))))
-  names(SPMmat) <- names(geneExpCastMat)
-  DPM <- unlist(lapply(DPMlist, function(x){ x[[2]] }))
-  SPMmat$DPM <- DPM
-  SPMmat <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], SPMmat)
+    SPMmat <- as.data.table(t(as.data.table( lapply(DPMlist, function(x){ x[[1]] }))))
+    names(SPMmat) <- names(geneExpCastMat)
+    DPM <- unlist(lapply(DPMlist, function(x){ x[[2]] }))
+    SPMmat$DPM <- DPM
+    SPMmat <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], SPMmat)
 
-  # PLOT:
+    return(SPMmat)
+  }else if(method== "entropy"){
+    TSI <- copy(geneExpCastMat)
+    TSI$TSI <- apply(geneExpCastMat, 1, function(x){
+      x <- as.numeric(x)
+      if( all(x==0)){
+        pi <- rep(0, length(x))
+      }else{
+        pi <- x/sum(x)
+      }
+      sum(na.omit(-pi*log(pi,2)))
+    })
+    TSI <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], TSI)
+    return(TSI)
+  }else{
+    stop("Please choose the right method.")
+  }
 
-
-
-
-  return(SPMmat)
 }
 
 

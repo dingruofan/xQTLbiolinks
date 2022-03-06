@@ -650,8 +650,9 @@ GTExvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
 #' \donttest{
 #'   gene = c("ENSG00000069812.11", "ENSG00000141510.16")
 #'   gene="TP53"
+#'   gene="HES3"
 #'   geneType="gencodeId"
-#'   GTExvisual_geneExpviolin("ENSG00000069812.11")
+#'   a <- GTExvisual_geneExpviolin("HES2",toTissueSite=TRUE)
 #' }
 GTExvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
   if(datasetId == "gtex_v8"){
@@ -664,26 +665,26 @@ GTExvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="
 
   expProfiles <- data.table()
   tissues <- tissueSiteDetail$tissueSiteDetail
-  message("== Start fetching gene expression...")
+  message("== Start fetching gene expression from all tissues...")
   for(t in 1:length(tissues)){
-    suppressMessages( expTmp <- GTExdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissues[t], datasetId="gtex_v8", toSummarizedExperiment = FALSE) )
+    suppressMessages( expTmp <- GTExdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissues[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
     expTmpGencodeId <- expTmp$gencodeId
     expTmp <- as.data.frame(t(expTmp))
-    expTmp <- expTmp[ str_detect(rownames(expTmp), stringr::regex("^GTEX-")), drop=FALSE]
+    expTmp <- expTmp[ str_detect(rownames(expTmp), stringr::regex("^GTEX-")),, drop=FALSE]
     colnames(expTmp) <- expTmpGencodeId
     expTmp <- as.data.table(cbind(data.table(tissueSiteDetail= tissues[t], sampleId = rownames(expTmp)), expTmp))
     expProfiles <- rbind(expProfiles,expTmp)
     message("== Fetching expression ... ",t, " - ", tissues[t], " - ", nrow(expTmp)," samples." )
     rm(expTmp)
   }
-  expProfilesMelt <- melt(expProfiles[,-c("sampleId")][,c(1,3)], id.vars = c("tissueSiteDetail"), variable.name = "geneName", value.name = "expTPM")
+  expProfilesMelt <- melt( expProfiles[,-c("sampleId")], id.vars = c("tissueSiteDetail"), variable.name = "geneName", value.name = "expTPM")
   expProfilesMelt$geneName <- as.character(expProfilesMelt$geneName)
   expProfilesMelt$expTPM <- as.numeric(expProfilesMelt$expTPM)
   expProfilesMelt <- merge(expProfilesMelt, tissueSiteDetail, by="tissueSiteDetail")
 
   if(toTissueSite){
     p1 <- ggplot(expProfilesMelt)+
-      geom_boxplot(aes(x=tissueSite, y=(expTPM+1), fill=geneName), outlier.size = 0.3)+theme_bw()+	#分组绘制
+      geom_boxplot(aes(x=tissueSite, y=(expTPM), fill=geneName), outlier.size = 0.3)+theme_bw()+	#分组绘制
       ylab("Expression (TPM)")+
       # scale_y_log10()+
       theme(axis.text.x=element_text(size=rel(1.1), angle = 60, hjust = 1, vjust=1),
@@ -698,7 +699,7 @@ GTExvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="
       )
   }else{
     p1 <- ggplot(expProfilesMelt)+
-      geom_boxplot(aes(x=tissueSiteDetail, y=(expTPM+1), fill=geneName), outlier.size = 0.3)+theme_bw()+	#分组绘制
+      geom_boxplot(aes(x=tissueSiteDetail, y=(expTPM), fill=geneName), outlier.size = 0.3)+theme_bw()+	#分组绘制
       ylab("Expression (TPM)")+
       # scale_y_log10()+
       theme(axis.text.x=element_text(size=rel(1.1), angle = 60, hjust = 1, vjust=1),

@@ -93,7 +93,7 @@ Fetch information of samples used in analyses from all datasets.
                     pathologyNotesCategories=TRUE  )
   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
                     datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-  GTExquery_sample( "Adipose - Visceral (Omentum)", "RNASEQ",
+  GTExquery_sample( "Brain - Amygdala", "RNASEQ",
                     "gtex_v8", 200 )
   }
 }

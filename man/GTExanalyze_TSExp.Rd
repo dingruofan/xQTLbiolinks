@@ -4,12 +4,19 @@
 \alias{GTExanalyze_TSExp}
 \title{tissue-specific expression analysis}
 \usage{
-GTExanalyze_TSExp(genes, geneType = "geneSymbol", datasetId = "gtex_v8")
+GTExanalyze_TSExp(
+  genes,
+  geneType = "geneSymbol",
+  method = "SPM",
+  datasetId = "gtex_v8"
+)
 }
 \arguments{
 \item{genes}{gene symbol or gencode ID.}
 
 \item{geneType}{"geneSymbol" or "gencodeId".}
+
+\item{method}{"SPM" or "entropy"}
 
 \item{datasetId}{"gtex_v8" or "gtex_v7".}
 }
@@ -22,8 +29,9 @@ tissue-specific expression analysis
 \examples{
 \donttest{
  protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
- TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:200] , geneType = "gencodeId", datasetId="gtex_v8")
- genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[300:310]
+ TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
+ genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
  TSgene <- GTExanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
+ GTExvisual_geneExpviolin( TSgene[order(-DPM)][1,]$geneSymbol )
 }
 }
