@@ -152,7 +152,7 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 }
 
 
-#' @title create .rds file with GTExquery_sample function
+#' @title create .rds file with xQTLquery_sample function
 #'
 #' @param datasetId "gtex_v8" or "gtex_v7"
 #'
@@ -162,11 +162,11 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
   # .<-NULL
   # # obtain all tissueSiteDetail info:
   # if( datasetId == "gtex_v8" ){
-  #   tissueSiteDetailGTExv8 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",recordPerChunk =2000 )
+  #   tissueSiteDetailGTExv8 <- xQTLquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v8",recordPerChunk =2000 )
   #   tissueSiteDetailGTExv8 <- unique(tissueSiteDetailGTExv8[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
   #   usethis::use_data(tissueSiteDetailGTExv8, overwrite = TRUE)
   # }else if(datasetId == "gtex_v7" ){
-  #   tissueSiteDetailGTExv7 <- GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",recordPerChunk =2000 )
+  #   tissueSiteDetailGTExv7 <- xQTLquery_sample( tissueSiteDetail="All", dataType="RNASEQ", datasetId="gtex_v7",recordPerChunk =2000 )
   #   tissueSiteDetailGTExv7 <- unique(tissueSiteDetailGTExv7[,.(tissueSiteDetail,tissueSiteDetailId)][order(tissueSiteDetail)])
   #   usethis::use_data(tissueSiteDetailGTExv7, overwrite = TRUE)
   # }
@@ -305,11 +305,11 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
   } else if(gencodeVersion=="v26" & genomeBuild=="GRCh38/hg38"){
     # data(gencodeGeneInfoV26)
     # gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV26)
-    gencodeGeneInfo <- GTExquery_geneAll("v26")
+    gencodeGeneInfo <- xQTLquery_geneAll("v26")
   }else if(gencodeVersion=="v19" & genomeBuild=="GRCh37/hg19"){
     # data(gencodeGeneInfoV19)
     # gencodeGeneInfo <- data.table::copy(gencodeGeneInfoV19)
-    gencodeGeneInfo <- GTExquery_geneAll("v19")
+    gencodeGeneInfo <- xQTLquery_geneAll("v19")
   }else{
     stop("gencodeVersion must be matched with genomeBuild.\n eg. v26(GRCh38/hg38), v19(GRCh37/hg19)")
   }
@@ -390,8 +390,8 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 #' @return NULL
 createGencodeGeneInfoAll <- function(){
   # # 生成 gencodeGeneInfoAllGranges
-  gencodeGeneInfoV26<- GTExquery_geneAll("v26")
-  gencodeGeneInfoV19<- GTExquery_geneAll("v19")
+  gencodeGeneInfoV26<- xQTLquery_geneAll("v26")
+  gencodeGeneInfoV19<- xQTLquery_geneAll("v19")
   gencodeGeneInfoV26<- gencodeGeneInfoV26[,.(gencodeId, chromosome, start, end, strand, gencodeId_unversioned= unlist(lapply(gencodeId, function(x){str_split(x, fixed("."))[[1]][1]})))]
   gencodeGeneInfoV19 <- gencodeGeneInfoV19[,.(gencodeId, chromosome=paste0("chr",chromosome), start, end, strand, gencodeId_unversioned =unlist(lapply(gencodeId, function(x){str_split(x, fixed("."))[[1]][1]})) )]
 
@@ -442,6 +442,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("coloc", min_version = "5.1.0")
 # usethis::use_package("GenomicRanges", min_version = "1.40.0") # in SummarizedExperiment
 # usethis::use_package("PupillometryR")
+# usethis::use_package("rtracklayer")
 
 #
 # # suggest:

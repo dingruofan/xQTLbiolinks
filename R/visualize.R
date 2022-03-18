@@ -77,16 +77,16 @@
 #' @examples
 #' \donttest{
 #'  # EQTL associatons of TP53:
-#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
+#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 #'                                tissueSiteDetail="Esophagus - Mucosa")
-#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
+#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 #'                                tissueSiteDetail="Lung")
-#'  expEqtl <- GTExvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
+#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
 #'                                tissueSiteDetail="Whole Blood")
 #' }
 #'
 #'
-GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
+xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
 
   # library(crayon)
@@ -142,7 +142,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   }
 
   message("== Querying significant eQTL associations from API server:")
-  suppressMessages(eqtlInfo <- GTExdownload_eqtlAll(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
+  suppressMessages(eqtlInfo <- xQTLdownload_eqtlAll(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
@@ -151,7 +151,7 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   }
 
   message("== Querying expression from API server:")
-  suppressMessages(eqtlExp <- GTExdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol, tissueSiteDetail = tissueSiteDetail))
+  suppressMessages(eqtlExp <- xQTLdownload_eqtlExp(variantName = eqtlInfo$snpId, gene = eqtlInfo$geneSymbol, tissueSiteDetail = tissueSiteDetail))
   if( !exists("eqtlExp") || is.null(eqtlExp) || nrow(eqtlExp)==0 ){
     stop("No expression profiles were found for gene [", gene, "] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
@@ -247,17 +247,17 @@ GTExvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #'  utils::download.file(gwasURL, destfile=gwasFile)
 #'  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 #'  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
-#'  GTExvisual_locusZoom(gwasDF)
-#'  GTExvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=200000)
-#'  GTExvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
+#'  xQTLvisual_locusZoom(gwasDF)
+#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=200000)
+#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
 #'
 #'  # For eQTL:
-#'  eqtlAsso <- GTExdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
+#'  eqtlAsso <- xQTLdownload_assoAll("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
 #'  eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(eqtlAsso$variantId, function(x){ a=stringr::str_split(x,"_")[[1]];return(data.table(chrom=a[1], pos=a[2])) }))
-#'  GTExvisual_locusZoom( eqtlAsso[,.(snpId, chrom, pos, pValue)], population="EUR",
+#'  xQTLvisual_locusZoom( eqtlAsso[,.(snpId, chrom, pos, pValue)], population="EUR",
 #'                       posRange="chr6:46488310-48376712", genomeVersion="grch38" )
 #' }
-GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
+xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- .<-NULL
   # highlightSnp=""
@@ -407,9 +407,9 @@ GTExvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t")
 #'   eqtlDF <- eqtlDF[,.(snpId, pValue)]
 #'   gwasDF <- gwasDF[,.(rsid, P)]
-#'   GTExvisual_locusCompare( eqtlDF, gwasDF )
+#'   xQTLvisual_locusCompare( eqtlDF, gwasDF )
 #' }
-GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38",snpLD=NA ){
+xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38",snpLD=NA ){
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
   eqtlDF <- eqtlDF[,1:2]
@@ -442,7 +442,7 @@ GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   if( highlightSnp =="" ){
     highlightSnp <- DF[which.max(distance)]$snpId
   }
-  # varInfo <-  GTExquery_varId(highlightSnp)
+  # varInfo <-  xQTLquery_varId(highlightSnp)
 
   # get LD information:
   if(is.na(snpLD)){
@@ -537,12 +537,12 @@ GTExvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @examples
 #' \donttest{
 #'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
-#'   GTExvisual_genesExp(genes, tissueSiteDetail="Lung")
+#'   xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
 #'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13","ENSG00000197576.13","ENSG00000100987.14")
-#'   GTExvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
+#'   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 #' }
-GTExvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail = "", datasetId="gtex_v8"){
-  expProfiles <- GTExdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE)
+xQTLvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail = "", datasetId="gtex_v8"){
+  expProfiles <- xQTLdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), SummarizedExperiment::assay(expProfiles) ))
   expData1 <- melt(expData, id.vars="geneSymbol", variable.name = "sampleId", value.name="exp")
   ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
@@ -570,12 +570,12 @@ GTExvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail =
 #' @examples
 #' \donttest{
 #'  gene2 = c("AMOT", "HOXA4")
-#'  GTExvisual_geneCorr( gene2, tissueSiteDetail="Liver" )
-#'  GTExvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion", tissueSiteDetail="Lung" )
+#'  xQTLvisual_geneCorr( gene2, tissueSiteDetail="Liver" )
+#'  xQTLvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion", tissueSiteDetail="Lung" )
 #' }
-GTExvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
+xQTLvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
   #
-  expProfiles <- GTExdownload_exp(genes=gene2, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
+  expProfiles <- xQTLdownload_exp(genes=gene2, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
   expData2 <- as.data.frame(t(expData[geneSymbol %in% gene2][,-c("geneSymbol")]))
   colnames(expData2) <- gene2
@@ -608,10 +608,10 @@ GTExvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetai
 #'
 #' @examples
 #' \donttest{
-#'   GTExvisual_eqtl("KIF15")
-#'   GTExvisual_eqtl("MLH1")
+#'   xQTLvisual_eqtl("KIF15")
+#'   xQTLvisual_eqtl("MLH1")
 #' }
-GTExvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" ){
+xQTLvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" ){
   # gene="KIF15"
   if( datasetId=="gtex_v8" ){
     gencodeVersion="v26"
@@ -619,8 +619,8 @@ GTExvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
     gencodeVersion="v19"
   }
 
-  geneInfo <- GTExquery_gene(gene, geneType = geneType, gencodeVersion = gencodeVersion )
-  geneEqtl <- GTExdownload_eqtlSig(gene=geneInfo$geneSymbol, datasetId=datasetId)
+  geneInfo <- xQTLquery_gene(gene, geneType = geneType, gencodeVersion = gencodeVersion )
+  geneEqtl <- xQTLdownload_eqtlSig(gene=geneInfo$geneSymbol, datasetId=datasetId)
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)
@@ -652,9 +652,9 @@ GTExvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
 #'   gene="TP53"
 #'   gene="HES3"
 #'   geneType="gencodeId"
-#'   a <- GTExvisual_geneExpviolin("HES2",toTissueSite=TRUE)
+#'   a <- xQTLvisual_geneExpviolin("HES2",toTissueSite=TRUE)
 #' }
-GTExvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
+xQTLvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
   if(datasetId == "gtex_v8"){
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
   }else if(datasetId == "gtex_v7"){
@@ -667,7 +667,7 @@ GTExvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="
   tissues <- tissueSiteDetail$tissueSiteDetail
   message("== Start fetching gene expression from all tissues...")
   for(t in 1:length(tissues)){
-    suppressMessages( expTmp <- GTExdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissues[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
+    suppressMessages( expTmp <- xQTLdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissues[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
     expTmpGencodeId <- expTmp$gencodeId
     expTmp <- as.data.frame(t(expTmp))
     expTmp <- expTmp[ str_detect(rownames(expTmp), stringr::regex("^GTEX-")),, drop=FALSE]

@@ -93,20 +93,20 @@
 #' @examples
 #' \donttest{
 #'  # get all protein coding genes and description:
-#'  protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
+#'  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
 #'  # get all miRNA and description:
-#'  miRNA <- GTExquery_gene(genes="miRNA", geneType="geneCategory", "v19")
+#'  miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 #'
 #'  # hg38 test:
-#'  geneInfo <- GTExquery_gene("TP53", "geneSymbol", "v26")
-#'  geneInfo <- GTExquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26")
-#'  geneInfo <- GTExquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
+#'  geneInfo <- xQTLquery_gene("TP53", "geneSymbol", "v26")
+#'  geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
 #'                               geneType="gencodeId", "v26")
 #'  # hg19 test:
-#'  geneInfo <- GTExquery_gene(c("TP53","naDK"), "geneSymbol", "v19")
-#'  geneInfo <- GTExquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), "gencodeId", "v19")
+#'  geneInfo <- xQTLquery_gene(c("TP53","naDK"), "geneSymbol", "v19")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), "gencodeId", "v19")
 #'  }
-GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", recordPerChunk=150){
+xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", recordPerChunk=150){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
   page_tmp <- 0
@@ -144,7 +144,7 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
   ######################### if geneType is "geneCategory":
   if( geneType == "geneCategory" ){
     # Fetch all genes' info:
-    gencodeGeneInfo <- GTExquery_geneAll("v26")
+    gencodeGeneInfo <- xQTLquery_geneAll("v26")
     geneCategory = unique(gencodeGeneInfo$geneType)
     if( length(genes)!=1 || any(!(genes %in% geneCategory)) ){
       message(paste0(1:length(geneCategory),". ",unique(rev(gencodeGeneInfo$geneType)), collapse = "\n"))
@@ -361,14 +361,14 @@ GTExquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
 #' @export
 #' @examples
 #' \donttest{
-#'   a <- GTExquery_sample( tissueSiteDetail="Liver", datasetId="gtex_v8",
+#'   a <- xQTLquery_sample( tissueSiteDetail="Liver", datasetId="gtex_v8",
 #'                     pathologyNotesCategories=TRUE  )
-#'   GTExquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
+#'   xQTLquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
 #'                     datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-#'   GTExquery_sample( "Brain - Amygdala", "RNASEQ",
+#'   xQTLquery_sample( "Brain - Amygdala", "RNASEQ",
 #'                     "gtex_v8", 200 )
 #'   }
-GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
+xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
   .<-NULL
   page_tmp <- 0
@@ -524,7 +524,7 @@ GTExquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #' @return A data.table with all genes' information.
 #' @import utils
 #' @import data.table
-GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
+xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
   page_tmp <- 0
@@ -605,12 +605,12 @@ GTExquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #'
 #' @examples
 #'  \donttest{
-#'   GTExquery_varId("rs12596338")
-#'   GTExquery_varId("rs12596338", datasetId="gtex_v7")
-#'   GTExquery_varId("chr11_66561248_T_C_b38", variantType="variantId", datasetId="gtex_v8")
-#'   GTExquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
+#'   xQTLquery_varId("rs12596338")
+#'   xQTLquery_varId("rs12596338", datasetId="gtex_v7")
+#'   xQTLquery_varId("chr11_66561248_T_C_b38", variantType="variantId", datasetId="gtex_v8")
+#'   xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
 #'  }
-GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex_v8"){
+xQTLquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex_v8"){
   ########## parameter check: variantName
   if(is.null(variantName) ||  any(is.na(variantName)) ){
     stop("Parameter \"variantName\" can not be NULL or NA!")
@@ -688,11 +688,11 @@ GTExquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
 #'
 #' @examples
 #' \donttest{
-#'  GTExquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
-#'  GTExquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
-#'  GTExquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
+#'  xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
+#'  xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
+#'  xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 #' }
-GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=200){
+xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=200){
   .<-NULL
   ########## parameter check: variantName
   if(is.null(chrom) ||  any(is.na(chrom)) ){
@@ -721,7 +721,7 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 
   var_tmp <- data.table::data.table(ID=1:length(pos), chrom=chrom, pos=pos)
   cutNum <- recordPerChunk
-  ############### query with GTExquery_varPos: START
+  ############### query with xQTLquery_varPos: START
   # var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
   # query pos in batch per 100 terms.
   var_tmpCut <- cbind(var_tmp, data.table::data.table( ID=1:nrow(var_tmp), cutF = as.character(cut(1:nrow(var_tmp),breaks=seq(0,nrow(var_tmp)+cutNum,cutNum) )) ))
@@ -782,10 +782,10 @@ GTExquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'
 #' @examples
 #' \donttest{
-#'   tissueAll <- GTExquery_tissue(datasetId="gtex_v8")
-#'   BrainInfo <- GTExquery_tissue("Brain", datasetId="gtex_v8")
+#'   tissueAll <- xQTLquery_tissue(datasetId="gtex_v8")
+#'   BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v8")
 #' }
-GTExquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
+xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
   if(datasetId != "gtex_v8" && datasetId != "gtex_v7"){
     stop("\"datasetId\" must be choosen from \"gtex_v8\" or \"gtex_v7\"")
   }

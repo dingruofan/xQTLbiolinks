@@ -89,21 +89,21 @@
 #' @examples
 #' \donttest{
 #'   # Download gene expression with a genecode ID:
-#'   expProfiles <- GTExdownload_exp(c("ENSG00000210195.2"),
+#'   expProfiles <- xQTLdownload_exp(c("ENSG00000210195.2"),
 #'                                  "gencodeId", "Liver", "gtex_v8")
 #'   # Download gene expression profiles with multiple genes:
-#'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
+#'   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v8",
 #'                                  pathologyNotesCategories=TRUE,
 #'                                  toSummarizedExperiment=TRUE)
-#'   expProfiles <- GTExdownload_exp(c("tp53","naDK","SDF4"),
+#'   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
 #'                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
 #'
 #'   # Get proteing-coding genes' expression:
-#'   proT <- GTExquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
-#'   proTexp <- GTExdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
+#'   proT <- xQTLquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
+#'   proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
 #'   }
-GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
+xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
   gencodeId <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
@@ -160,18 +160,18 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
   # convert tissueSiteDetail to tissueSiteDetailId:
   tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
 
-  ############ convert genes. parameter check is unnecessary for this, because GTExquery_gene check it internally.
+  ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Querying gene info from API server:")
-  geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
+  geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("gene information is null.")
   }
   message("== Done.")
-  # geneInfo <-  GTExquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26", "GRCh38/hg38")
+  # geneInfo <-  xQTLquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26", "GRCh38/hg38")
 
   ############ get sample info:
   message("== Fetching sample information from API server:")
-  sampleInfo <- GTExquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk,pathologyNotesCategories=pathologyNotesCategories )
+  sampleInfo <- xQTLquery_sample(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk,pathologyNotesCategories=pathologyNotesCategories )
   message("== Done.")
   if( !exists("sampleInfo") ||is.null(sampleInfo) ){
     stop("Failed to fetch sample information.")
@@ -336,33 +336,33 @@ GTExdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #' @examples
 #' \donttest{
 #'  # Download eQTL info for a variant:
-#'  GTExdownload_eqtlSig(variantName="rs201327123", variantType="snpId")
-#'  GTExdownload_eqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
-#'  GTExdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
+#'  xQTLdownload_eqtlSig(variantName="rs201327123", variantType="snpId")
+#'  xQTLdownload_eqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
+#'  xQTLdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
 #'                    datasetId="gtex_v7")
-#'  GTExdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
+#'  xQTLdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
 #'                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #'
 #'  # Download eQTL association according to all tissues with genome location:
-#'  varInfo <-  GTExquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
-#'  GTExdownload_eqtlSig(variantName=varInfo$snpId, variantType="snpId")
+#'  varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+#'  xQTLdownload_eqtlSig(variantName=varInfo$snpId, variantType="snpId")
 #'
 #'  # Download eQTL info for a gene:
-#'  GTExdownload_eqtlSig(gene="ATAD3B")
-#'  GTExdownload_eqtlSig(gene="TP53",datasetId="gtex_v7")
-#'  GTExdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
-#'  GTExdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
+#'  xQTLdownload_eqtlSig(gene="ATAD3B")
+#'  xQTLdownload_eqtlSig(gene="TP53",datasetId="gtex_v7")
+#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
-#'  GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+#'  xQTLdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
-#'  GTExdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
-#'  GTExdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
-#'  GTExdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
+#'  xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
+#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
 #'                    gene="SLC35E2B", geneType="geneSymbol", tissueSiteDetail="Kidney - Cortex")
 #' }
-GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
   variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- NULL
   .<-NULL
   # variantName="chr1_14677_G_A_b38"
@@ -400,7 +400,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch varInfo
   if(variantName!=""){
     message("== Querying variant info from API server:")
-    varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       message("The variant [",variantName, "] is not incuded in [",datasetId,"].")
       return(NULL)
@@ -412,7 +412,7 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch geneInfo:
   if(gene !=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input.")
     }else{
@@ -542,32 +542,32 @@ GTExdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'
 #'  # Download eQTL info for a gene:
-#'  a <- GTExdownload_eqtlAll(gene="TP53")
-#'  GTExdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
+#'  a <- xQTLdownload_eqtlAll(gene="TP53")
+#'  xQTLdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
 #'
 #'  # Unversioned gencode ID in GTEx V7:
-#'  eqtl_v7 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
+#'  eqtl_v7 <- xQTLdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
 #'                                  datasetId="gtex_v7")
 #'  # Unversioned gencode ID in GTEx V8:
-#'  eqtl_v8 <- GTExdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
+#'  eqtl_v8 <- xQTLdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
 #'                                  datasetId="gtex_v8")
 #'
 #'  # In a specific tissue:
-#'  GTExdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+#'  xQTLdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                       datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
-#'  GTExdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
-#'  GTExdownload_eqtlAll(variantName="rs11657498",gene="TP53",
+#'  xQTLdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlAll(variantName="rs11657498",gene="TP53",
 #'                       datasetId="gtex_v7")
-#'  GTExdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
+#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
 #'                       gene="SLC35E2B", geneType="geneSymbol",
 #'                       tissueSiteDetail="Kidney - Cortex")
-#'  GTExdownload_eqtlAll(variantName="17_7492388_G_A_b37", variantType="variantId",
+#'  xQTLdownload_eqtlAll(variantName="17_7492388_G_A_b37", variantType="variantId",
 #'                       gene="TP53", geneType="geneSymbol",
 #'                       tissueSiteDetail="Uterus",  datasetId="gtex_v7")
 #' }
-GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
+xQTLdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
   pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- NULL
   .<-NULL
   querySnpId=TRUE
@@ -621,7 +621,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch geneInfo:
   if(gene !=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else{
@@ -633,7 +633,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch varInfo
   if(variantName!=""){
     message("== Querying variant info from API server:")
-    varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input, or leave \"variantName\" as null.")
     }else{
@@ -680,7 +680,7 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
     message("== Querying dbsnp ID from API server:")
     var_tmp <- data.table::data.table(variantId =unique(outInfo$variantId))
     var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
-    var_tmpGot <- GTExquery_varPos(unique(var_tmp$chrom), pos=as.integer(unlist(var_tmp$pos)), datasetId = datasetId, recordPerChunk=recordPerChunk)
+    var_tmpGot <- xQTLquery_varPos(unique(var_tmp$chrom), pos=as.integer(unlist(var_tmp$pos)), datasetId = datasetId, recordPerChunk=recordPerChunk)
     outInfo <- merge(outInfo, var_tmpGot, by="variantId")
     message("== Done.")
   }else{
@@ -707,9 +707,9 @@ GTExdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'    geneList = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
 #'    variants = c("rs201327123","chr1_14677_G_A_b38", "chr11_66561248_T_C_b38")
-#'    GTExdownload_eqtlAllPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
+#'    xQTLdownload_eqtlAllPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
 #' }
-GTExdownload_eqtlAllPost <- function(geneList, variantlist, tissueSiteDetail="", recordPerChunk=50){
+xQTLdownload_eqtlAllPost <- function(geneList, variantlist, tissueSiteDetail="", recordPerChunk=50){
   # tissue convert:
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
   # gene split:
@@ -754,9 +754,9 @@ GTExdownload_eqtlAllPost <- function(geneList, variantlist, tissueSiteDetail="",
 #'
 #' @examples
 #' \donttest{
-#'   geneAsso <- GTExdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
+#'   geneAsso <- xQTLdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
 #' }
-GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8", withB37VariantId=TRUE){
+xQTLdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8", withB37VariantId=TRUE){
   .<-NULL
   variantId <- variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
@@ -801,8 +801,8 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   ##################### fetch geneInfo:
   if(gene !=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion)
-    geneInfoV19 <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion)
+    geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else if( nrow(geneInfo)>1 || nrow(geneInfoV19)>1 ){
@@ -844,7 +844,7 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
   gtexAsooDT$gencodeId_GTEX_v7 <- ifelse(nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
   if(withB37VariantId){
     # add dbSNP id and  hg19 cordinate:
-    gtexAsooDTb37 <- GTExquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
+    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
     gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
     gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
     gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
@@ -870,59 +870,61 @@ GTExdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 #'
 #' @examples
 #' \donttest{
-#'   GTExdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-#'   GTExdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-#'   GTExdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
-#'   GTExdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+#'   xQTLdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+#'   xQTLdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+#'   xQTLdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
+#'   xQTLdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
 #' }
-GTExdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="",  variantId="", pThreshold=1, tissueSiteDetail=""){
+xQTLdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="",  variantId="", pThreshold=1, tissueSiteDetail=""){
   # gene="RABEP1"
   # geneType="geneSymbol"
   # refSeq = "NM_001291581.2"
   # tissueSiteDetail <- "Adipose - Visceral (Omentum)"
-  if(tissueSiteDetail == ""){
-    stop( "Tissue ",tissueSiteDetail, " not found!"  )
-  }
-  tissueSiteDetailId  <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  if(gene !=""){
-    geneInfo <- GTExquery_gene(gene, geneType = geneType)
-    # create sql:
-    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where geneSymbol = \'",geneInfo$geneSymbol,"\' AND `p-value`<",pThreshold )
-    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-    # # extract data:
-    message("== mysql connected, downloading... ")
-    aqltInfo <- dbGetQuery(con, sqlForQuery)
-    dbDisconnect(con)
-    message("== done.")
-    # message("== mysql closed || ", date(), " || [", nrow(snpLD), "] LD infor obtained!")
-    return(aqltInfo)
-  }else if(refSeq!=""){
-    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where refSeq = \'",refSeq,"\' AND `p-value`<",pThreshold )
-    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-    message("== mysql connected, downloading... ")
-    aqltInfo <- dbGetQuery(con, sqlForQuery)
-    dbDisconnect(con)
-    message("== done.")
-    return(aqltInfo)
-  }else if(rsid!=""){
-    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where rsid = \'",rsid,"\' AND `p-value`<",pThreshold )
-    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-    message("== mysql connected, downloading... ")
-    aqltInfo <- dbGetQuery(con, sqlForQuery)
-    dbDisconnect(con)
-    message("== done.")
-    return(aqltInfo)
-  }else if(variantId!=""){
-    sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where SNP = \'",variantId,"\' AND `p-value`<",pThreshold )
-    con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-    message("== mysql connected, downloading... ")
-    aqltInfo <- dbGetQuery(con, sqlForQuery)
-    dbDisconnect(con)
-    message("== done.")
-    return(aqltInfo)
-  }else{
-    stop("Please check your input!")
-  }
+
+
+  # if(tissueSiteDetail == ""){
+  #   stop( "Tissue ",tissueSiteDetail, " not found!"  )
+  # }
+  # tissueSiteDetailId  <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+  # if(gene !=""){
+  #   geneInfo <- xQTLquery_gene(gene, geneType = geneType)
+  #   # create sql:
+  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where geneSymbol = \'",geneInfo$geneSymbol,"\' AND `p-value`<",pThreshold )
+  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+  #   # # extract data:
+  #   message("== mysql connected, downloading... ")
+  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
+  #   dbDisconnect(con)
+  #   message("== done.")
+  #   # message("== mysql closed || ", date(), " || [", nrow(snpLD), "] LD infor obtained!")
+  #   return(aqltInfo)
+  # }else if(refSeq!=""){
+  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where refSeq = \'",refSeq,"\' AND `p-value`<",pThreshold )
+  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+  #   message("== mysql connected, downloading... ")
+  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
+  #   dbDisconnect(con)
+  #   message("== done.")
+  #   return(aqltInfo)
+  # }else if(rsid!=""){
+  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where rsid = \'",rsid,"\' AND `p-value`<",pThreshold )
+  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+  #   message("== mysql connected, downloading... ")
+  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
+  #   dbDisconnect(con)
+  #   message("== done.")
+  #   return(aqltInfo)
+  # }else if(variantId!=""){
+  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where SNP = \'",variantId,"\' AND `p-value`<",pThreshold )
+  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
+  #   message("== mysql connected, downloading... ")
+  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
+  #   dbDisconnect(con)
+  #   message("== done.")
+  #   return(aqltInfo)
+  # }else{
+  #   stop("Please check your input!")
+  # }
 
 }
 
@@ -1006,28 +1008,28 @@ GTExdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", r
 #' @examples
 #' \donttest{
 #'  # Download sQTL info for a variant:
-#'  GTExdownload_sqtlSig(variantName="rs201327123", variantType="snpId")
-#'  GTExdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
-#'  GTExdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId",
+#'  xQTLdownload_sqtlSig(variantName="rs201327123", variantType="snpId")
+#'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
+#'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId",
 #'                       tissueSiteDetail="Whole Blood")
 #'
 #'  # Download sQTL association according to all tissues with genome location:
-#'  varInfo <-  GTExquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
-#'  GTExdownload_sqtlSig(variantName=varInfo$snpId, variantType="snpId")
+#'  varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+#'  xQTLdownload_sqtlSig(variantName=varInfo$snpId, variantType="snpId")
 #'
 #'  # Download sQTL info for a gene:
-#'  GTExdownload_sqtlSig(gene="ATAD3B")
-#'  GTExdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId")
-#'  GTExdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId",
+#'  xQTLdownload_sqtlSig(gene="ATAD3B")
+#'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId")
+#'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId",
 #'                       tissueSiteDetail="Lung" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
-#'  GTExdownload_sqtlSig(variantName="rs546057177", gene="TP53")
-#'  GTExdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", variantType="variantId",
+#'  xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
+#'  xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", variantType="variantId",
 #'                       gene="TP53", geneType="geneSymbol",
 #'                       tissueSiteDetail="Lung")
 #' }
-GTExdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="" ){
+xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="" ){
   .<-NULL
   variantId <- snpId <- gencodeId <- geneSymbol <- phenotypeId <- pValue <- nes <- NULL
   # variantName="chr1_739465_TTTTG_T_b38"
@@ -1069,7 +1071,7 @@ GTExdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch varInfo
   if( variantName!=""){
     message("== Querying variant info from API server:")
-    varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
     }else{
@@ -1080,7 +1082,7 @@ GTExdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch geneInfo:
   if(gene !=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else{
@@ -1206,21 +1208,21 @@ GTExdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #' @examples
 #' \donttest{
 #'  # Download exp in different tissues:
-#'  GTExdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
-#'  GTExdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B",
+#'  xQTLdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
+#'  xQTLdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B",
 #'                       tissueSiteDetail="Lung", datasetId="gtex_v8")
 #'
 #'  # Download exp in gtex v7:
-#'  GTExdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B",
+#'  xQTLdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B",
 #'                       tissueSiteDetail="Adipose - Visceral (Omentum)",
 #'                       datasetId="gtex_v7")
 #'
 #'  # Dowload exp using variant ID and gencode ID.
-#'  GTExdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
+#'  xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
 #'                       variantType="variantId", geneType="gencodeId",
 #'                      tissueSiteDetail="Stomach")
 #' }
-GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
   # datasetId="gtex_v8"
@@ -1259,7 +1261,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch varInfo
   if(variantName!=""){
     message("== Querying variant info from API server:")
-    varInfo <- GTExquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
     }else{
@@ -1272,7 +1274,7 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
   ##################### fetch geneInfo:
   if(gene !=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0|| is.null(geneInfo) || !exists("geneInfo")){
       stop("Invalid gene name or type, please correct your input.")
     }else{
@@ -1339,12 +1341,12 @@ GTExdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #'
 #' @examples
 #' \donttest{
-#'  aa <- GTExdownload_ld("TP53" )
-#'  GTExdownload_ld(gene = "DDX11", datasetId="gtex_v7")
-#'  GTExdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
+#'  aa <- xQTLdownload_ld("TP53" )
+#'  xQTLdownload_ld(gene = "DDX11", datasetId="gtex_v7")
+#'  xQTLdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
 #'
 #' }
-GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=300){
+xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=300){
   .<-NULL
   variantId<-snpId <- snpId_1 <- variantId_1 <- snpId_2 <-variantId_2<- ldScore <- NULL
   # check genes
@@ -1375,7 +1377,7 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 
   # Fetch gene info:
   message("== Querying gene info from API server:")
-  geneInfo <- GTExquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+  geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("The gene [",gene,"] you entered could not be found!")
   }
@@ -1404,7 +1406,7 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
   # Fetch SNP ID:
   variantInfo <- data.table::data.table(variantId = union(ldInfo$variantId_1, ldInfo$variantId_2))
   variantInfo <- cbind(variantInfo, tidyr::separate(variantInfo, "variantId", into=c("chrom", "pos", "ref", "alt", "genome"), sep="_"))
-  variantInfo <- GTExquery_varPos(chrom = unique(variantInfo$chrom), pos = as.integer(variantInfo$pos), datasetId = datasetId, recordPerChunk=recordPerChunk)
+  variantInfo <- xQTLquery_varPos(chrom = unique(variantInfo$chrom), pos = as.integer(variantInfo$pos), datasetId = datasetId, recordPerChunk=recordPerChunk)
 
   # merge:
   ldInfo <- merge(ldInfo, variantInfo[,.(variantId, snpId)], by.x="variantId_1", by.y = "variantId", all.x = TRUE)
@@ -1492,12 +1494,12 @@ GTExdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #'
 #' @examples
 #' \donttest{
-#'  eGeneInfo <- GTExdownload_egene("TP53")
-#'  eGeneInfo <- GTExdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#'  eGeneInfo <- GTExdownload_egene("ENSG00000141510.16", geneType="gencodeId")
-#'  eGeneInfo <- GTExdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
+#'  eGeneInfo <- xQTLdownload_egene("TP53")
+#'  eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
+#'  eGeneInfo <- xQTLdownload_egene("ENSG00000141510.16", geneType="gencodeId")
+#'  eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
 #' }
-GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
+xQTLdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="DDX11"
@@ -1553,7 +1555,7 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
   # Fetch gene info:
   if(gene!=""){
     message("== Querying gene info from API server:")
-    geneInfo <- GTExquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
     }
@@ -1626,9 +1628,9 @@ GTExdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 #'
 #' @examples
 #' \donttest{
-#'  GTExdownload_geneMedExp(genes="TP53", "geneSymbol")
+#'  xQTLdownload_geneMedExp(genes="TP53", "geneSymbol")
 #' }
-GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
+xQTLdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss<-strand <- NULL
   # check genes
@@ -1674,7 +1676,7 @@ GTExdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   # Fetch gene info:
   if(genes!="" || length(genes)>1){
     message("== Querying gene info from API server:")
-    suppressMessages( geneInfo <- GTExquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
+    suppressMessages( geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",stringr::str_sub(paste(genes, collapse = ","),1,20),"....] you entered could not be found!")
     }

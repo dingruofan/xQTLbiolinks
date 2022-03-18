@@ -17,13 +17,13 @@
 #'    utils::download.file(gwasURL, destfile=gwasFile)
 #'    gwasDF <- data.table::fread(gwasFile, sep="\t")
 #'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
-#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF)
+#'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 #'
 #'    gwasDF <- fread("D:\\R_project\\GLGC_CG0052_result.txt.gz", sep="\t")
 #'    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-#'    sentinelSnpDF <- GTExanalyze_getSentinelSnp(gwasDF, centerRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
+#'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
 #' }
-GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e4, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
+xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e4, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   # Detect gene with sentinal SNP:
   gwasDF <- gwasDF[,1:5]
   message("== Preparing GWAS dataset... ")
@@ -97,7 +97,7 @@ GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 
 #' @title Detect the genes around the sentinel SNPs
 #'
-#' @param sentinelSnpDF A data.table. Better be the results from the function "GTExanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
+#' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
 #' @param genomeVersion "grch38" or "grch19". Default: "grch38"
 #' @import data.table
@@ -113,13 +113,13 @@ GTExanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' \donttest{
 #'   sentinelSnpsURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 #'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content), sep="\t")
-#'   traitsAll <- GTExanalyze_getTraits(sentinelSnpDF, detectRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
+#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
 #' }
-GTExanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion="grch38", grch37To38=FALSE){
+xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion="grch38", grch37To38=FALSE){
 
   data.table::as.data.table(sentinelSnpDF)
 
-  # (未做) 由于下一步的 GTExdownload_eqtlAllPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
+  # (未做) 由于下一步的 xQTLdownload_eqtlAllPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
   # 由于从 EBI category 里获得的是 hg38(v26) 的信息，所以如果这一步是 hg19 的1e6范围内，则在 hg38里就会未必，所以需要这一步，如果是hg19，则对突变的坐标进行变换：
   ####################### convert hg19 to hg38:
   if( genomeVersion =="grch37" & !grch37To38 ){
@@ -169,7 +169,7 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
   # sentinelSnpDFNew <- data.table()
   # for(i in 1:length(chrAll)){
   #   sentinelSnpChromRaw <- sentinelSnpDF[chr==chrAll[i],]
-  #   snpTMP <- suppressMessages(GTExquery_varPos(chrom = ifelse(datasetId=="gtex_v8", chrAll[i], str_remove(chrAll[i], "chr")), pos = sentinelSnpChromRaw$position, datasetId = datasetId))
+  #   snpTMP <- suppressMessages(xQTLquery_varPos(chrom = ifelse(datasetId=="gtex_v8", chrAll[i], str_remove(chrAll[i], "chr")), pos = sentinelSnpChromRaw$position, datasetId = datasetId))
   #   if( !exists("snpTMP") || is.null(snpTMP)  ){
   #     stop("== Fail to fecth variant information, please check your network.")
   #   }
@@ -209,7 +209,7 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
     rm(sentinelSnpChrom, geneInfoChrom, Traits)
   }
   message("== Fetching [", length(unique(traitsAll$gencodeId)),"] genes' information from the GTEx.")
-  geneAnnot <- GTExquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId", gencodeVersion = genecodeVersion)
+  geneAnnot <- xQTLquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId", gencodeVersion = genecodeVersion)
   if( datasetId=="gtex_v7" ){
     geneAnnot$chromosome <- paste0("chr",geneAnnot$chromosome)
   }
@@ -250,23 +250,23 @@ GTExanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'   for(i in 1:nrow(traitsAll)){
 #'     message(i," - ", date())
 #'     traitGene <- traitsAll[order(pValue)][i,]$geneSymbol
-#'     colocResult <- GTExanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
+#'     colocResult <- xQTLanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
 #'     colocResultAll[[i]] <- colocResult
 #'   }
 #'   range( unlist(lapply(1:length(colocResultAll), function(x){colocResultAll[[x]]$coloc_Out_summary$PP.H4.abf})) )
 #'
 #'   traitGene = traitsAll[geneSymbol=="NUDT17"]$geneSymbol
-#'   colocResult <- GTExanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
+#'   colocResult <- xQTLanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
 #'
 #'   colocResult$gwasEqtlInfo
 #'   # eQTL locuszoom:
-#'   gwas_locusRoom <- GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")],population="EUR",genomeVersion="grch38" )
+#'   gwas_locusRoom <- xQTLvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")],population="EUR",genomeVersion="grch38" )
 #'   # GWAS locuszoom:
-#'   eQTL_locusRoom <- GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
+#'   eQTL_locusRoom <- xQTLvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
 #'   # locuscompare:
-#'   locuscompareP <- GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
+#'   locuscompareP <- xQTLvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
 #' }
-GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch38", tissueSiteDetail="", colocRange=0, mafThreshold=0.01, gwasSampleNum=50000, method="coloc"){
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch38", tissueSiteDetail="", colocRange=0, mafThreshold=0.01, gwasSampleNum=50000, method="coloc"){
   # tissueSiteDetail="Brain - Cortex"
   # geneType="geneSymbol"
   # genomeVersion="grch37"
@@ -276,16 +276,16 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   ###################### eqtl dataset:
   if( genomeVersion=="grch37"){
     gencodeVersion <- "v19"
-    geneInfo <- GTExquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
-    eqtlInfo <- GTExdownload_assoAll(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
+    geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
+    eqtlInfo <- xQTLdownload_assoAll(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
     # eqtlInfo <- eqtlInfo[b37VariantId!=""]
     eqtlInfo[,"position":= .( as.integer(unlist(lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}))) )]
     # chromosome:
     P_chrom <- paste0("chr",geneInfo$chromosome)
   }else if(genomeVersion=="grch38"){
     gencodeVersion <- "v26"
-    geneInfo <- GTExquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
-    eqtlInfo <- GTExdownload_assoAll(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
+    geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
+    eqtlInfo <- xQTLdownload_assoAll(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
     eqtlInfo[,"position":= .( lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}) )]
     # chromosome:
     P_chrom <- geneInfo$chromosome
@@ -348,7 +348,7 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
   gwasEqtldata <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
   # centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
-  # centerSnp <- GTExquery_varId(sentinelSnp, variantType = variantType)
+  # centerSnp <- xQTLquery_varId(sentinelSnp, variantType = variantType)
   # if(nrow(centerSnp)==0 ){
   #   centerSnp <- gwasDF[which.min(gwasDF$pValue),]
   #   gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$pos-(colocRange)) & position<=(centerSnp$pos+(colocRange)),][order(position)]
@@ -394,13 +394,13 @@ GTExanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #'
 #' @examples
 #' \donttest{
-#'  protein_coding <- GTExquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
-#'  TSgene <- GTExanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
+#'  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
+#'  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
 #'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
-#'  TSgene <- GTExanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
-#'  GTExvisual_geneExpviolin( TSgene[order(-DPM)][1,]$geneSymbol )
+#'  TSgene <- xQTLanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
+#'  xQTLvisual_geneExpviolin( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
-GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", method="SPM", datasetId="gtex_v8"){
+xQTLanalyze_TSExp <- function(genes, geneType="geneSymbol", method="SPM", datasetId="gtex_v8"){
   if(datasetId == "gtex_v8"){
     genomeVersion="v26"
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
@@ -408,7 +408,7 @@ GTExanalyze_TSExp <- function(genes, geneType="geneSymbol", method="SPM", datase
     genomeVersion="v19"
     tissueSiteDetail <- copy(tissueSiteDetailGTExv7)
   }
-  geneExp <- GTExdownload_geneMedExp(genes=genes,  geneType=geneType, datasetId = datasetId)
+  geneExp <- xQTLdownload_geneMedExp(genes=genes,  geneType=geneType, datasetId = datasetId)
   geneExpCast <- dcast(geneExp[,.(gencodeId, geneSymbol,geneType, median, tissueSiteDetail)], gencodeId+geneSymbol+geneType~tissueSiteDetail, value.var = "median")
   geneExpCastMat <- geneExpCast[, -c("gencodeId", "geneSymbol", "geneType")]
 

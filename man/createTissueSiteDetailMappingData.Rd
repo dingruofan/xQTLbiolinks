@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_dealWithGencode.R
 \name{createTissueSiteDetailMappingData}
 \alias{createTissueSiteDetailMappingData}
-\title{create .rds file with GTExquery_sample function}
+\title{create .rds file with xQTLquery_sample function}
 \usage{
 createTissueSiteDetailMappingData(datasetId = "gtex_v8")
 }
@@ -13,5 +13,5 @@ createTissueSiteDetailMappingData(datasetId = "gtex_v8")
 none
 }
 \description{
-create .rds file with GTExquery_sample function
+create .rds file with xQTLquery_sample function
 }
