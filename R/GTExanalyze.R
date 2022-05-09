@@ -291,7 +291,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   if( genomeVersion=="grch37"){
     gencodeVersion <- "v19"
     geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
-    eqtlInfo <- xQTLdownload_assoAll(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
+    eqtlInfo <- xQTLdownload_eQTLAllAsso(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
     # eqtlInfo <- eqtlInfo[b37VariantId!=""]
     eqtlInfo[,"position":= .( as.integer(unlist(lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}))) )]
     # chromosome:
@@ -299,7 +299,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   }else if(genomeVersion=="grch38"){
     gencodeVersion <- "v26"
     geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
-    eqtlInfo <- xQTLdownload_assoAll(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
+    eqtlInfo <- xQTLdownload_eQTLAllAsso(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
     eqtlInfo[,"position":= .( lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}) )]
     # chromosome:
     P_chrom <- geneInfo$chromosome
