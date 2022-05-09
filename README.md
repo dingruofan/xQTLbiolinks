@@ -9,4 +9,6 @@ if(!require("remotes")){install.packages("remote")}
 remotes::install_github("stronghoney/GTExbiolinks", 
                          host="api.gitee.com", 
                          auth_token="713472a1e408b426bc8da79acd5f7b12")
+remotes::install_github("dingruofan/GTExbiolinks", 
+                         auth_token="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")
 ```
