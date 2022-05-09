@@ -1,8 +1,8 @@
-Package: GTExbiolinks
+Package: xQTLbiolinks
 Title: xQTLbiolinks: a R package aims to query, download, visual and integrate integrative analysis of GTEx data
 Version: 0.0.0.9000
 Authors@R: 
-    c(person(given="Ruofan", family="Ding", email="dingruofan1@foxmailcom"))
+    c(person(given="Ruofan", family="Ding", email="dingruofan1@foxmailcom"),role  = c("aut", "cre", "cph"))
 Description: 1.to facilitate querying of basic information of gene, variant and samples in the process of GTEx data analysis. 2.to allow the user to download a specific version of the data, including expression profile, multiple molecular QTL data. 3.to display data with vivid plots. 4.to provide standard analyses and advanced integrative analyses, like tissue specific expression analysis and colocalization analysis.
 License: GPL (>= 3)
 Encoding: UTF-8
