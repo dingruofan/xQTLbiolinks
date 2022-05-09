@@ -441,15 +441,34 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("ggrepel", min_version = "0.9.1") # in ggpubr
 # usethis::use_package("coloc", min_version = "5.1.0")
 # usethis::use_package("GenomicRanges", min_version = "1.40.0") # in SummarizedExperiment
+
+# no version info:
+# usethis::use_package("data.table",min_version ="1.14.2")
+# usethis::use_package("curl", min_version = "4.3.2")
+# usethis::use_package("jsonlite", min_version = "1.7.2")
+# usethis::use_package("stringr", min_version = "1.4.0")
+# usethis::use_package("utils", min_version = "4.0.3")
+# usethis::use_package("SummarizedExperiment")
+# usethis::use_package("ggplot2")
+# usethis::use_package("httr")
+# usethis::use_package("RMySQL")
+# usethis::use_package("DBI") # in RMySQL
 # usethis::use_package("PupillometryR")
-# usethis::use_package("rtracklayer")
+# usethis::use_package("ggpubr")
+# usethis::use_package("ggridges")
+# usethis::use_package("viridis")
+# usethis::use_package("GenomeInfoDb") # in GenomicRanges
+# usethis::use_package("IRanges") # in GenomicRanges
+# usethis::use_package("ggrepel") # in ggpubr
+# usethis::use_package("coloc")
+# usethis::use_package("GenomicRanges") # in SummarizedExperiment
 
 #
 # # suggest:
-# usethis::use_package("usethis", min_version = "2.0.1", type="Suggests")
-# usethis::use_package("knitr", min_version = "1.37", type="Suggests")
-# usethis::use_package("tidyr", min_version = "1.1.4") # in ggpubr,
-# usethis::use_package("rtracklayer",  type="Suggests") # in ggpubr,
+# usethis::use_package("usethis", type="Suggests")
+# usethis::use_package("knitr",  type="Suggests")
+# usethis::use_package("tidyr", type="Suggests") # in ggpubr,
+# usethis::use_package("rtracklayer",type="Suggests")
 
 
 # usethis::use_package("crayon", min_version = "1.4.1") # message 字体：

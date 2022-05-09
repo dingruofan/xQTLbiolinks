@@ -865,7 +865,6 @@ xQTLdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 #' @param tissueSiteDetail tissue.
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' \donttest{
@@ -874,7 +873,7 @@ xQTLdownload_assoAll <- function(gene="", geneType="geneSymbol", tissueSiteDetai
 #'   xQTLdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
 #'   xQTLdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
 #' }
-xQTLdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="",  variantId="", pThreshold=1, tissueSiteDetail=""){
+# xQTLdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="",  variantId="", pThreshold=1, tissueSiteDetail=""){
   # gene="RABEP1"
   # geneType="geneSymbol"
   # refSeq = "NM_001291581.2"
@@ -925,7 +924,7 @@ xQTLdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", r
   #   stop("Please check your input!")
   # }
 
-}
+# }
 
 
 #' @title Download significant sQTL data.
