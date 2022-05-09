@@ -17,3 +17,8 @@ A data.table with all genes' information.
 \description{
 fetch all genes' info.
 }
+\examples{
+\donttest{
+  allGenes <- xQTLquery_geneAll()
+  }
+}

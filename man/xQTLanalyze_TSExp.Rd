@@ -32,6 +32,6 @@ tissue-specific expression analysis
  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
  TSgene <- xQTLanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
- xQTLvisual_geneExpviolin( TSgene[order(-DPM)][1,]$geneSymbol )
+ xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 }
 }

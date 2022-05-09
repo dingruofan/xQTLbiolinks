@@ -5,7 +5,6 @@
 #' @import stringr
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges ranges
-#' @importFrom  rtracklayer import.chain liftOver
 #' @importFrom GenomeInfoDb seqnames
 #' @return A data.table object.
 #' @export
@@ -47,6 +46,14 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
   ####################### convert hg19 to hg38:
   if(genomeVersion =="grch37" & grch37To38){
     message("== Converting SNPs' coordinate to GRCH38... ")
+
+    if(suppressMessages(!require(rtracklayer))){
+      message("Package [rtracklayer] is not installed! please install [rtracklayer] with following: ")
+      message("---------")
+      message('\"if (!require("BiocManager", quietly = TRUE)); BiocManager::install("rtracklayer")\"')
+      message("---------")
+    }
+
     path = system.file(package="GTExbiolinks", "extdata", "hg19ToHg38.over.chain")
     ch = rtracklayer::import.chain(path)
     gwasRanges <- GenomicRanges::GRanges(gwasDF$chr,
@@ -104,7 +111,6 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @import stringr
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges ranges
-#' @importFrom  rtracklayer import.chain liftOver
 #' @importFrom GenomeInfoDb seqnames
 #' @return A data.table object
 #' @export
@@ -119,7 +125,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 
   data.table::as.data.table(sentinelSnpDF)
 
-  # (未做) 由于下一步的 xQTLdownload_eqtlAllPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
+  # (未做) 由于下一步的 xQTLdownload_eqtlPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
   # 由于从 EBI category 里获得的是 hg38(v26) 的信息，所以如果这一步是 hg19 的1e6范围内，则在 hg38里就会未必，所以需要这一步，如果是hg19，则对突变的坐标进行变换：
   ####################### convert hg19 to hg38:
   if( genomeVersion =="grch37" & !grch37To38 ){
@@ -131,6 +137,14 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
     datasetId="gtex_v8"
 
     message("== Converting SNPs' coordinate to GRCH38... ")
+
+    if(suppressMessages(!require(rtracklayer))){
+      message("Package [rtracklayer] is not installed! please install [rtracklayer] with following: ")
+      message("---------")
+      message('\"if (!require("BiocManager", quietly = TRUE)); BiocManager::install("rtracklayer")\"')
+      message("---------")
+    }
+
     path = system.file(package="GTExbiolinks", "extdata", "hg19ToHg38.over.chain")
     ch = rtracklayer::import.chain(path)
     dataRanges <- GenomicRanges::GRanges(sentinelSnpDF$chr,
@@ -326,6 +340,14 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   ##### convert to grch38:
   if(genomeVersion == "grch37"){
     message("== Converting GWAS coordinate to GRCH38... ")
+
+    if(suppressMessages(!require(rtracklayer))){
+      message("Package [rtracklayer] is not installed! please install [rtracklayer] with following: ")
+      message("---------")
+      message('\"if (!require("BiocManager", quietly = TRUE)); BiocManager::install("rtracklayer")\"')
+      message("---------")
+    }
+
     path = system.file(package="GTExbiolinks", "extdata", "hg19ToHg38.over.chain")
     ch = rtracklayer::import.chain(path)
     dataRanges <- GenomicRanges::GRanges(gwasDF$chr,
@@ -398,7 +420,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #'  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
 #'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
 #'  TSgene <- xQTLanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
-#'  xQTLvisual_geneExpviolin( TSgene[order(-DPM)][1,]$geneSymbol )
+#'  xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
 xQTLanalyze_TSExp <- function(genes, geneType="geneSymbol", method="SPM", datasetId="gtex_v8"){
   if(datasetId == "gtex_v8"){

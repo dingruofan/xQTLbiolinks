@@ -111,7 +111,7 @@ Fetch significant eQTL associations with a variant or a gene or a variant-gene p
  xQTLdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
  xQTLdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
- xQTLdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+ xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 
  # Download eQTL info for a variant-gene pair:

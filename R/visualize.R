@@ -84,8 +84,6 @@
 #'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
 #'                                tissueSiteDetail="Whole Blood")
 #' }
-#'
-#'
 xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
 
@@ -142,7 +140,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   }
 
   message("== Querying significant eQTL associations from API server:")
-  suppressMessages(eqtlInfo <- xQTLdownload_eqtlAll(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
+  suppressMessages(eqtlInfo <- xQTLdownload_eqtl(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
@@ -531,6 +529,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @param tissueSiteDetail Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import ggpubr
+#' @importFrom SummarizedExperiment assay colData
 #' @return A plot.
 #' @export
 #'
@@ -652,9 +651,9 @@ xQTLvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
 #'   gene="TP53"
 #'   gene="HES3"
 #'   geneType="gencodeId"
-#'   a <- xQTLvisual_geneExpviolin("HES2",toTissueSite=TRUE)
+#'   a <- xQTLvisual_geneExpTissues("HES2",toTissueSite=TRUE)
 #' }
-xQTLvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
+xQTLvisual_geneExpTissues <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
   if(datasetId == "gtex_v8"){
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
   }else if(datasetId == "gtex_v7"){
@@ -684,14 +683,14 @@ xQTLvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="
 
   if(toTissueSite){
     p1 <- ggplot(expProfilesMelt)+
-      geom_boxplot(aes(x=tissueSite, y=(expTPM), fill=geneName), outlier.size = 0.3)+theme_bw()+	#分组绘制
+      geom_boxplot(aes(x=reorder(tissueSite, expTPM, median), y=(expTPM), fill=tissueSite), outlier.size = 0.3)+theme_bw()+	#分组绘制
       ylab("Expression (TPM)")+
       # scale_y_log10()+
       theme(axis.text.x=element_text(size=rel(1.1), angle = 60, hjust = 1, vjust=1),
             axis.text.y = element_text(size=rel(1.1)),
             axis.title.x = element_blank(),
             axis.title.y = element_text(size=rel(1.2)),
-            legend.position = "top",
+            legend.position = "none",
             legend.background = element_rect(fill="white", size=0.5, linetype="solid",  colour ="white"),
             legend.margin = margin(0,0,0,0,unit="cm"),
             legend.title = element_blank(),
@@ -699,14 +698,14 @@ xQTLvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="
       )
   }else{
     p1 <- ggplot(expProfilesMelt)+
-      geom_boxplot(aes(x=tissueSiteDetail, y=(expTPM), fill=geneName), outlier.size = 0.3)+theme_bw()+	#分组绘制
+      geom_boxplot(aes(x=reorder(tissueSiteDetail, expTPM, median), y=(expTPM), fill=tissueSiteDetail), outlier.size = 0.3)+theme_bw()+	#分组绘制
       ylab("Expression (TPM)")+
       # scale_y_log10()+
       theme(axis.text.x=element_text(size=rel(1.1), angle = 60, hjust = 1, vjust=1),
             axis.text.y = element_text(size=rel(1.1)),
             axis.title.x = element_blank(),
             axis.title.y = element_text(size=rel(1.2)),
-            legend.position = "top",
+            legend.position = "none",
             legend.background = element_rect(fill="white", size=0.5, linetype="solid",  colour ="white"),
             legend.margin = margin(0,0,0,0,unit="cm"),
             legend.title = element_blank(),
@@ -714,5 +713,5 @@ xQTLvisual_geneExpviolin <- function(gene="", geneType="geneSymbol", datasetId="
       )
   }
   print(p1)
-  return(p1)
+  return(list(expProfiles=expProfiles, plot=p1))
 }

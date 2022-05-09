@@ -353,7 +353,7 @@ xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'  xQTLdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
 #'  xQTLdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
-#'  xQTLdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+#'  xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
@@ -542,32 +542,32 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'
 #'  # Download eQTL info for a gene:
-#'  a <- xQTLdownload_eqtlAll(gene="TP53")
-#'  xQTLdownload_eqtlAll(gene="ATAD3B", datasetId="gtex_v7")
+#'  a <- xQTLdownload_eqtl(gene="TP53")
+#'  xQTLdownload_eqtl(gene="ATAD3B", datasetId="gtex_v7")
 #'
 #'  # Unversioned gencode ID in GTEx V7:
-#'  eqtl_v7 <- xQTLdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
+#'  eqtl_v7 <- xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",
 #'                                  datasetId="gtex_v7")
 #'  # Unversioned gencode ID in GTEx V8:
-#'  eqtl_v8 <- xQTLdownload_eqtlAll(gene="ENSG00000141510", geneType="gencodeId",
+#'  eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",
 #'                                  datasetId="gtex_v8")
 #'
 #'  # In a specific tissue:
-#'  xQTLdownload_eqtlAll(gene="ENSG00000141510.11", geneType="gencodeId",
+#'  xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
 #'                       datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
-#'  xQTLdownload_eqtlAll(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
-#'  xQTLdownload_eqtlAll(variantName="rs11657498",gene="TP53",
+#'  xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+#'  xQTLdownload_eqtl(variantName="rs11657498",gene="TP53",
 #'                       datasetId="gtex_v7")
 #'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
 #'                       gene="SLC35E2B", geneType="geneSymbol",
 #'                       tissueSiteDetail="Kidney - Cortex")
-#'  xQTLdownload_eqtlAll(variantName="17_7492388_G_A_b37", variantType="variantId",
+#'  xQTLdownload_eqtl(variantName="17_7492388_G_A_b37", variantType="variantId",
 #'                       gene="TP53", geneType="geneSymbol",
 #'                       tissueSiteDetail="Uterus",  datasetId="gtex_v7")
 #' }
-xQTLdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
+xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
   pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- NULL
   .<-NULL
   querySnpId=TRUE
@@ -686,7 +686,7 @@ xQTLdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
   }else{
     outInfo$snpId <- ""
   }
-  outInfo <- outInfo[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes, se, datasetId)]
+  outInfo <- outInfo[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes, se, mValue ,datasetId)]
 
   message("=================================")
   message("In total of ", nrow(outInfo) ," eQTL associations were found for ", ifelse(gene=="","",paste0("Gene [", gene,"]")), ifelse(variantName=="","",paste0(" - Variant [",variantName,"]")), ifelse(tissueSiteDetail=="", paste0(" in ",length(unique(outInfo$tissueSiteDetail)),ifelse(length(unique(outInfo$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
@@ -701,43 +701,42 @@ xQTLdownload_eqtlAll <- function(variantName="", gene="", variantType="snpId", g
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 50).
 #'
 #' @return A data.table object
-#' @export
 #'
 #' @examples
 #' \donttest{
 #'    geneList = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
 #'    variants = c("rs201327123","chr1_14677_G_A_b38", "chr11_66561248_T_C_b38")
-#'    xQTLdownload_eqtlAllPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
+#'    xQTLdownload_eqtlPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
 #' }
-xQTLdownload_eqtlAllPost <- function(geneList, variantlist, tissueSiteDetail="", recordPerChunk=50){
-  # tissue convert:
-  tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  # gene split:
-  geneList <- unlist(lapply(geneList, function(x){stringr::str_split(x, fixed("."))[[1]][1]} ))
-  # construct query body:
-  queryBody <- data.frame(
-    gencodeId = geneList,
-    variantId= variantlist,
-    tissueSiteDetailId=tissueSiteDetailId )
-  queryBody$cutF <- as.character(cut(1:nrow(queryBody), breaks=seq(0, nrow(queryBody)+recordPerChunk, recordPerChunk)))
-  data.table::setDT(queryBody)
-  # query:
-  cutF <- unique(queryBody$cutF)
-  resultDT <- data.table()
-  for( i in 1:length(cutF)){
-    cutFTmp<- cutF[i]
-    message("  - Downloading eQTL asso: ", paste0(round(i/length(cutF)*100,2), "%..."))
-    queryBodyTmp <- queryBody[cutF==cutFTmp,][,c("gencodeId","variantId","tissueSiteDetailId")]
-    dataTmp <- httr::POST("https://gtexportal.org/rest/v1/association/dyneqtl", body=jsonlite::toJSON(queryBodyTmp), encode = "json")
-    dataTmp
-    resultTmp <- data.table::as.data.table( fromJSON(rawToChar(dataTmp$content))$result )
-    resultDT <- rbind(resultDT, resultTmp )
-    rm( queryBodyTmp, dataTmp,resultTmp )
-    Sys.sleep(0.1)
-  }
-
-  return(resultDT)
-}
+# xQTLdownload_eqtlPost <- function(geneList, variantlist, tissueSiteDetail="", recordPerChunk=50){
+#   # tissue convert:
+#   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+#   # gene split:
+#   geneList <- unlist(lapply(geneList, function(x){stringr::str_split(x, fixed("."))[[1]][1]} ))
+#   # construct query body:
+#   queryBody <- data.frame(
+#     gencodeId = geneList,
+#     variantId= variantlist,
+#     tissueSiteDetailId=tissueSiteDetailId )
+#   queryBody$cutF <- as.character(cut(1:nrow(queryBody), breaks=seq(0, nrow(queryBody)+recordPerChunk, recordPerChunk)))
+#   data.table::setDT(queryBody)
+#   # query:
+#   cutF <- unique(queryBody$cutF)
+#   resultDT <- data.table()
+#   for( i in 1:length(cutF)){
+#     cutFTmp<- cutF[i]
+#     message("  - Downloading eQTL asso: ", paste0(round(i/length(cutF)*100,2), "%..."))
+#     queryBodyTmp <- queryBody[cutF==cutFTmp,][,c("gencodeId","variantId","tissueSiteDetailId")]
+#     dataTmp <- httr::POST("https://gtexportal.org/rest/v1/association/dyneqtl", body=jsonlite::toJSON(queryBodyTmp), encode = "json")
+#     dataTmp
+#     resultTmp <- data.table::as.data.table( fromJSON(rawToChar(dataTmp$content))$result )
+#     resultDT <- rbind(resultDT, resultTmp )
+#     rm( queryBodyTmp, dataTmp,resultTmp )
+#     Sys.sleep(0.1)
+#   }
+#
+#   return(resultDT)
+# }
 
 #' @title Fetch all eQTL associations from EBI eQTL category.
 #'

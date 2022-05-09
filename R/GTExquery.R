@@ -524,6 +524,12 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #' @return A data.table with all genes' information.
 #' @import utils
 #' @import data.table
+#' @export
+#' @examples
+#' \donttest{
+#'   # don't run:
+#'   # allGenes <- xQTLquery_geneAll()
+#'   }
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
@@ -968,8 +974,6 @@ apiEbi_ping <- function(){
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
-#' @export
-#'
 #' @examples
 #' \donttest{
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
@@ -1025,7 +1029,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
   }else if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
     if( file.exists(tmpFile) ){ file.remove(tmpFile) }
-    utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )
+    suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE ))
     if(isJson){
       url1GetText2Json <-""
       if( file.exists(tmpFile) ){
@@ -1100,7 +1104,6 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param termStart Start position per request.
 #' @import data.table
 #' @return A data.frame
-#' @export
 #'
 #' @examples
 #' \donttest{
@@ -1184,7 +1187,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #' @examples
 #' \donttest{
 #'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-#'    endPos=10000000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+#'    endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 #' }
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
   # chrom="chr1"
@@ -1253,11 +1256,10 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
 }
 
 
-#' @title determine is a whole number:
+#' @title determine whether is a whole number:
 #'
 #' @param x A number
 #' @param tol Don't change
-#' @export
 #' @return TRUE or FALSE
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
   abs(x - round(x)) < tol
@@ -1269,8 +1271,6 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
 #' @param termSize Number of fetched term.
 #' @return a data.table
-#' @export
-#'
 #' @examples
 #' \donttest{
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_assoAll}
 \alias{xQTLdownload_assoAll}
-\title{Fetch all eQTL associations from EBI eQTL category.}
+\title{This function return the gene-variant association for any given pair of gene and variant, which may or may not be significant}
 \usage{
 xQTLdownload_assoAll(
   gene = "",
@@ -25,14 +25,25 @@ xQTLdownload_assoAll(
 \item{study}{"GTEx_V8"}
 
 \item{withB37VariantId}{Whether to return the genome location(GTEx v7) of variants. Default: TRUE.}
+
+\item{genes}{GENCODE ID (versioned or unversioned).}
+
+\item{variants}{GTEx variant ID or dbSNP ID. Note: if variant id are provided, genome version of hg38 are required.}
 }
 \value{
+A data.table object
+
 a data.table
 }
 \description{
-Fetch all eQTL associations from EBI eQTL category.
+Only GTEx V8 are supported.
 }
 \examples{
+\donttest{
+   geneList = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
+   variants = c("rs201327123","chr1_14677_G_A_b38", "chr11_66561248_T_C_b38")
+   xQTLdownload_eqtlPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
+}
 \donttest{
   geneAsso <- xQTLdownload_assoAll("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
 }

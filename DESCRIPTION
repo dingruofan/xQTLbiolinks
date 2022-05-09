@@ -1,10 +1,16 @@
 Package: GTExbiolinks
-Title: What the Package Does (One Line, Title Case)
+Title: xQTLbiolinks: a R package aims to query, download, visual and integrate integrative analysis of GTEx data
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    c(person(given="Ruofan", family="Ding", email="dingruofan1@foxmailcom"),
+    persion(given="Xudong", famil="Zou"),
+    persion(given="Lei", famil="Li")
+    )
+Description: 
+(i) to facilitate querying of basic information of gene, variant and samples in the process of GTEx data analysis. 
+(ii) to allow the user to download a specific version of the data, including expression profile, multiple molecular QTL data. 
+(iii) to display data with vivid plots.
+(iv) to provide standard analyses and advanced integrative analyses, like tissue specific expression analysis and colocalization analysis.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -15,27 +21,26 @@ Depends:
 VignetteBuilder:
     knitr
 Imports: 
-    curl (>= 4.3.2),
-    jsonlite (>= 1.7.2),
-    data.table (>= 1.14.2),
-    stringr (>= 1.4.0),
-    utils (>= 4.0.3),
-    SummarizedExperiment (>= 1.18.2),
-    ggplot2 (>= 3.3.5),
-    httr (>= 1.4.2),
-    RMySQL (>= 0.10.22),
-    DBI (>= 1.1.1),
-    PupillometryR (>= 0.0.4),
-    ggpubr (>= 0.4.0),
-    ggridges (>= 0.5.3),
-    viridis (>= 0.6.2),
-    GenomeInfoDb (>= 1.24.2),
-    IRanges (>= 2.22.2),
-    ggrepel (>= 0.9.1),
     coloc (>= 5.1.0),
+    curl (>= 4.3.2),
+    data.table (>= 1.14.2),
+    DBI (>= 1.1.1),
+    GenomeInfoDb (>= 1.24.2),
     GenomicRanges (>= 1.40.0),
+    ggplot2 (>= 3.3.5),
+    ggpubr (>= 0.4.0),
+    ggrepel (>= 0.9.1),
+    ggridges (>= 0.5.3),
+    httr (>= 1.4.2),
+    IRanges (>= 2.22.2),
+    jsonlite (>= 1.7.2),
+    PupillometryR (>= 0.0.4),
+    RMySQL (>= 0.10.22),
+    stringr (>= 1.4.0),
+    SummarizedExperiment (>= 1.18.2),
     tidyr (>= 1.1.4),
-    rtracklayer
+    utils (>= 4.0.3),
+    viridis (>= 0.6.2)
 Suggests: 
     knitr (>= 1.37),
     usethis (>= 2.0.1)

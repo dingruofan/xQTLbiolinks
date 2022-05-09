@@ -449,7 +449,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("usethis", min_version = "2.0.1", type="Suggests")
 # usethis::use_package("knitr", min_version = "1.37", type="Suggests")
 # usethis::use_package("tidyr", min_version = "1.1.4") # in ggpubr,
-
+# usethis::use_package("rtracklayer",  type="Suggests") # in ggpubr,
 
 
 # usethis::use_package("crayon", min_version = "1.4.1") # message 字体：
