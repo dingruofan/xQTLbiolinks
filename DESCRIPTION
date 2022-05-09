@@ -33,7 +33,7 @@ Imports:
     PupillometryR,
     RMySQL,
     stringr (>= 1.4.0),
-    SummarizedExperiment,
+    SummarizedExperiment (>= 1.18.2),
     utils (>= 4.0.3),
     viridis
 Suggests: 

@@ -448,7 +448,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("jsonlite", min_version = "1.7.2")
 # usethis::use_package("stringr", min_version = "1.4.0")
 # usethis::use_package("utils", min_version = "4.0.3")
-# usethis::use_package("SummarizedExperiment")
+# usethis::use_package("SummarizedExperiment", min_version = "1.18.2")
 # usethis::use_package("ggplot2")
 # usethis::use_package("httr")
 # usethis::use_package("RMySQL")
