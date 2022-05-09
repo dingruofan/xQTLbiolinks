@@ -101,6 +101,4 @@ Plot normalized expression among genotypes.
  expEqtl <- xQTLvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
                                tissueSiteDetail="Whole Blood")
 }
-
-
 }

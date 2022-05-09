@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_sqtlSig}
 \alias{xQTLdownload_sqtlSig}
-\title{Download significant sQTL data.}
+\title{Fetch all eQTL associations from EBI eQTL category.}
 \usage{
 xQTLdownload_sqtlSig(
   variantName = "",
@@ -81,8 +81,18 @@ Uterus \tab √ \cr
 Vagina \tab √ \cr
 Whole Blood \tab √ \cr
 }}
+
+\item{refSeq}{A character string.}
+
+\item{rsid}{dbSNP ID.}
+
+\item{variantId}{A character string. like "chr17_5294580_CT_C_b38".}
+
+\item{pThreshold}{Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.}
 }
 \value{
+
+
 A data.table
 }
 \description{
@@ -90,6 +100,12 @@ Fetch significant sQTL associations with a variant or a gene or a variant-gene p
 Only GTEx v8 is supported.
 }
 \examples{
+\donttest{
+  xQTLdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+  xQTLdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+  xQTLdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
+  xQTLdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
+}
 \donttest{
  # Download sQTL info for a variant:
  xQTLdownload_sqtlSig(variantName="rs201327123", variantType="snpId")

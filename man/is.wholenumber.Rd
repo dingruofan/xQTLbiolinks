@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{is.wholenumber}
 \alias{is.wholenumber}
-\title{determine is a whole number:}
+\title{determine whether is a whole number:}
 \usage{
 is.wholenumber(x, tol = .Machine$double.eps^0.5)
 }
@@ -15,5 +15,5 @@ is.wholenumber(x, tol = .Machine$double.eps^0.5)
 TRUE or FALSE
 }
 \description{
-determine is a whole number:
+determine whether is a whole number:
 }
