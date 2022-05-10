@@ -1,11 +1,11 @@
-#' @title GTExbiolinks package
+#' @title xQTLbiolinks package
 #' @description
-#' The functions you're likely to need from \pkg{GTExbiolinks} is
+#' The functions you're likely to need from \pkg{xQTLbiolinks} is
 #' Otherwise refer to the vignettes to see
 #' how to format the documentation.
 #'
 #' @docType package
-#' @name GTExbiolinks
+#' @name xQTLbiolinks
 NULL
 
 #' @title  Tissue name and tissue id mapping of GTEx V8.

@@ -54,7 +54,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
       message("---------")
     }
 
-    path = system.file(package="GTExbiolinks", "extdata", "hg19ToHg38.over.chain")
+    path = system.file(package="xQTLbiolinks", "extdata", "hg19ToHg38.over.chain")
     ch = rtracklayer::import.chain(path)
     gwasRanges <- GenomicRanges::GRanges(gwasDF$chr,
                                          IRanges::IRanges(gwasDF$position, gwasDF$position),
@@ -145,7 +145,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
       message("---------")
     }
 
-    path = system.file(package="GTExbiolinks", "extdata", "hg19ToHg38.over.chain")
+    path = system.file(package="xQTLbiolinks", "extdata", "hg19ToHg38.over.chain")
     ch = rtracklayer::import.chain(path)
     dataRanges <- GenomicRanges::GRanges(sentinelSnpDF$chr,
                                          IRanges::IRanges(sentinelSnpDF$position, sentinelSnpDF$position),
@@ -348,7 +348,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
       message("---------")
     }
 
-    path = system.file(package="GTExbiolinks", "extdata", "hg19ToHg38.over.chain")
+    path = system.file(package="xQTLbiolinks", "extdata", "hg19ToHg38.over.chain")
     ch = rtracklayer::import.chain(path)
     dataRanges <- GenomicRanges::GRanges(gwasDF$chr,
                                          IRanges::IRanges(gwasDF$position, gwasDF$position),
