@@ -4,15 +4,16 @@
 
 ### xQTLbiolinks assist in:
 
-1.  fast querying variants’ effect on gene expression in the process of disease studies;
-2.  to uncover tissue-specific expressed genes; and to detect disease associated genes by conduct colocalization analyses of GWAS and eQTL signals;
-3.  to perform data visualization (e.g. correlation plots of expression, boxplots of eQTL expression; and locuszom plots).
+1. to fast query variants’ effect on gene expression in the process of disease studies;
+2. to uncover tissue-specific expressed genes; 
+3. to detect disease associated genes by conduct colocalization analyses of GWAS and eQTL signals;
+3. to perform data visualization (e.g. correlation plots of expression, boxplots of eQTL expression; and locuszom plots).
 
 ### Installation from GitHub
 
 ``` r
 if(!require("remotes")){install.packages("remote")}
-install_git("https://gitee.com/stronghoney/GTExbiolinks.git")
+remotes::install_git("https://gitee.com/stronghoney/GTExbiolinks.git")
 
 remotes::install_github("dingruofan/xQTLbiolinks", 
                          auth_token="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")

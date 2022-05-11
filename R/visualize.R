@@ -1,4 +1,4 @@
-#' @title Plot normalized expression among genotypes.
+#' @title Plot normalized expression among genotypes for eQTL.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
@@ -216,6 +216,198 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   # gridExtra::grid.arrange()
 
   return(list(eqtl=eqtlInfo, exp=genoLable))
+}
+
+#' @title Plot normalized expression among genotypes for sQTL.
+#'
+#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#' @param gene A gene symbol or a gencode id (versioned).
+#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
+#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
+#' @param tissueSiteDetail A character string. Can not be null.
+#'  Tissue must be chosen from the following tissue names:
+#' \tabular{rrrrr}{
+#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
+#'    Adipose - Subcutaneous \tab √ \tab √\cr
+#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
+#'    Adrenal Gland \tab √ \tab √\cr
+#'    Artery - Aorta \tab √ \tab √\cr
+#'    Artery - Coronary \tab √ \tab √\cr
+#'    Artery - Tibial \tab √ \tab √\cr
+#'    Bladder \tab √ \tab √\cr
+#'    Brain - Amygdala \tab √ \tab √\cr
+#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
+#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
+#'    Brain - Cerebellum \tab √ \tab √\cr
+#'    Brain - Cortex \tab √ \tab √\cr
+#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
+#'    Brain - Hippocampus \tab √ \tab √\cr
+#'    Brain - Hypothalamus \tab √ \tab √\cr
+#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
+#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
+#'    Brain - Substantia nigra \tab √ \tab √\cr
+#'    Breast - Mammary Tissue \tab √ \tab √\cr
+#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
+#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
+#'    Cells - Transformed fibroblasts \tab x \tab √\cr
+#'    Cervix - Ectocervix \tab √ \tab √\cr
+#'    Cervix - Endocervix \tab √ \tab √\cr
+#'    Colon - Sigmoid \tab √ \tab √\cr
+#'    Colon - Transverse \tab √ \tab √\cr
+#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
+#'    Esophagus - Mucosa \tab √ \tab √\cr
+#'    Esophagus - Muscularis \tab √ \tab √\cr
+#'    Fallopian Tube \tab √ \tab √\cr
+#'    Heart - Atrial Appendage \tab √ \tab √\cr
+#'    Heart - Left Ventricle \tab √ \tab √\cr
+#'    Kidney - Cortex \tab √ \tab √\cr
+#'    Kidney - Medulla \tab √ \tab x\cr
+#'    Liver \tab √ \tab √\cr
+#'    Lung \tab √ \tab √\cr
+#'    Minor Salivary Gland \tab √ \tab √\cr
+#'    Muscle - Skeletal \tab √ \tab √\cr
+#'    Nerve - Tibial \tab √ \tab √\cr
+#'    Ovary \tab √ \tab √\cr
+#'    Pancreas \tab √ \tab √\cr
+#'    Pituitary \tab √ \tab √\cr
+#'    Prostate \tab √ \tab √\cr
+#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
+#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
+#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
+#'    Spleen \tab √ \tab √\cr
+#'    Stomach \tab √ \tab √\cr
+#'    Testis \tab √ \tab √\cr
+#'    Thyroid \tab √ \tab √\cr
+#'    Uterus \tab √ \tab √\cr
+#'    Vagina \tab √ \tab √\cr
+#'    Whole Blood \tab √ \tab √\cr
+#' }
+#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @import ggrepel
+#' @import curl
+#' @import jsonlite
+#' @return Normalized expression and ggplot2 object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  # EQTL associatons of TP53:
+#'  expSqtl <- xQTLvisual_sqtlExp(variantName="rs1450891501",
+#'                                phenotypeId ="chr1:497299:498399:clu_54863:ENSG00000239906.1",
+#'                                tissueSiteDetail="Lung")
+#' }
+xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="snpId", tissueSiteDetail="", datasetId="gtex_v8" ){
+  genoLabels <- normExp <- labelNum <- p <- NULL
+
+  # library(crayon)
+  # cat(green(
+  #   'I am a green line ' %+%
+  #     blue$underline$bold('with a blue substring') %+%
+  #     yellow$italic(' that becomes yellow and italicised!\n')
+  # ))
+
+  gencodeVersion <- "v26"
+  if( datasetId == "gtex_v8" ){
+    gencodeVersion <- "v26"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
+  }else if( datasetId == "gtex_v7" ){
+    gencodeVersion <- "v19"
+    tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
+  }
+
+  # check: variantName
+  if(is.null(variantName) ||  any(is.na(variantName)) ){
+    stop("Parameter \"variantName\" can not be NULL or NA!")
+  }else if(length(variantName)!=1 ||variantName==""){
+    stop("Parameter \"variantName\" can not be NULL or NA!")
+  }
+
+  # 获得突变信息：
+  varInfo <- xQTLquery_varId(variantName=variantName, variantType=variantType,datasetId="gtex_v8" )
+
+
+  # check tissueSiteDetail:
+  if( is.null(tissueSiteDetail) || any(is.na(tissueSiteDetail)) || tissueSiteDetail=="" ){
+    stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
+  }else if(length(tissueSiteDetail)!=1){
+    stop("Parameter \"tissueSiteDetail\" should be a character string!")
+  }else if(  !(tissueSiteDetail %in% c( tissueSiteDetailGTEx$tissueSiteDetail)) ){
+    message("",paste0(c("", paste0(1:nrow(tissueSiteDetailGTEx),". ",tissueSiteDetailGTEx$tissueSiteDetail)), collapse = "\n"))
+    stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
+  }else if( tissueSiteDetail!="" ){
+    # convert tissueSiteDetail to tissueSiteDetailId:
+    tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+  }else{
+    message("Invalid parameter \"tissueSiteDetail\".")
+    return(data.table::data.table())
+  }
+
+  # message("== Querying significant sQTL associations from API server:")
+  # suppressMessages(sqtlInfo <- xQTLdownload_sqtlSig(variantName = variantName, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
+  # if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
+  #   stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
+  # }else{
+  #   message("   eQTL association was found in ", datasetId, " of gene [", gene,"] and variant [", variantName," in [", tissueSiteDetail,"].")
+  #   message("== Done")
+  # }
+
+  message("== Querying expression from API server:")
+  suppressMessages(sqtlExp <- xQTLdownload_sqtlExp(variantName = variantName, variantType = variantType, phenotypeId = phenotypeId, tissueSiteDetail = tissueSiteDetail))
+  if( !exists("sqtlExp") || is.null(sqtlExp) || nrow(sqtlExp)==0 ){
+    stop("No expression profiles were found for phenotypeId [", phenotypeId, "] in ", tissueSiteDetail, " in ", datasetId,".")
+  }else{
+    message("   Normalized expression of [",nrow(sqtlExp), "] samples were obtaioned in ", tissueSiteDetail, " in ", datasetId,".")
+    message("== Done")
+  }
+
+  varInfo <- cbind(varInfo, data.table::rbindlist(lapply(varInfo$variantId, function(x){var_tmp = stringr::str_split(x,stringr::fixed("_"))[[1]]; data.table::data.table(chrom=var_tmp[1], pos=var_tmp[2], ref=var_tmp[3], alt=var_tmp[4])  })))
+  # replace genotypes with ref and alt:
+  genoLable <- data.table::data.table(genotypes=0:2, genoLabels = c( ifelse(nchar(varInfo$ref)==1, paste0(rep(varInfo$ref,2),collapse = ""), "Ref"),
+                                                                     ifelse(nchar(varInfo$ref)==1, paste0(c(varInfo$ref, varInfo$alt),collapse = ""), "Het"),
+                                                                     ifelse(nchar(varInfo$ref)==1, paste0(rep(varInfo$alt,2),collapse = ""), "Hom")) )
+  genoLable$genoLabels <- factor(genoLable$genoLabels, levels = genoLable$genoLabels)
+  genoLable <- merge(sqtlExp, genoLable, by ="genotypes")
+
+  # x axis label:
+  genoLableX <- data.table::as.data.table(table(genoLable$genoLabels))
+  names(genoLableX) <- c("genoLabels", "Num")
+  genoLableX$label <- paste0(genoLableX$genoLabels, "(",genoLableX$Num,")")
+  genoLableX <- merge(data.table(genoLabels = levels(genoLable$genoLabels)),genoLableX, by="genoLabels", sort=FALSE)
+
+  # for Pie:
+  genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
+  names(genoLabelPie) <- c("genoLabels", "labelNum")
+  genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
+
+  if( requireNamespace("ggplot2") ){
+    p <- ggplot(genoLable)+
+      geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
+      geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
+      scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
+      # scale_fill_manual(values=c("green", "red"))+
+      # scale_fill_brewer(palette = "Dark2")+
+      theme_bw()+
+      labs(title = paste0(ifelse(varInfo$snpId==""|| is.na(varInfo$snpId), varInfo$variantId, varInfo$snpId), "- ", phenotypeId, " (",tissueSiteDetail,")") )+
+      xlab("Genotypes")+
+      ylab("Normalized expression")+
+      theme(axis.text.x=element_text(size=rel(1.3)),
+            axis.text.y = element_text(size=rel(1.3)),
+            axis.title = element_text(size=rel(1.3)),
+            legend.position = "none",
+            legend.background = element_rect(fill="white",
+                                             size=0.5, linetype="solid",
+                                             colour ="white"),
+            plot.title = element_text(hjust=0.5)
+      )
+    print(p)
+  }
+
+  return(list(varInfo=varInfo, exp=genoLable))
 }
 
 
