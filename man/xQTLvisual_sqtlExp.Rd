@@ -93,8 +93,8 @@ Plot normalized expression among genotypes for sQTL.
 \examples{
 \donttest{
  # EQTL associatons of TP53:
- expSqtl <- xQTLvisual_sqtlExp(variantName="rs1450891501",
-                               phenotypeId ="chr1:497299:498399:clu_54863:ENSG00000239906.1",
-                               tissueSiteDetail="Lung")
+ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="variantId",
+                               phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
+                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 }
 }
