@@ -1,7 +1,7 @@
 ## xQTLbiolinks: a R package aims to query, download, visual and integrate integrative analysis of GTEx data
 
 - By retrieving GTEx public-access data programmatically using the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/), the functions provided in this package enable users to access **molecular QTLs** (eQTLs and sQTLs) and **gene expressions** data filtered by tissue, gene, variant or dataset. 
-- xQTLbiolinks consists of functions that can be grouped into three main levels: **Query**, **Download**, **Analysis **and **Visualization**.
+- xQTLbiolinks consists of functions that can be grouped into three main levels: **Query**, **Download**, **Analysis**and **Visualization**.
 
 <img src="img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width=100% height=100% />
 <br/>
@@ -31,9 +31,7 @@ remotes::install_github("dingruofan/xQTLbiolinks",
 ```r
 xQTLvisual_eqtl("KIF15")
 ```
-<div style="text-align:center">
-<img src="img/7793e6ffaca063635afd2236918c6060.png" alt="eqtl" height=60% width=60%  />
-</div>
+<img src="img/7793e6ffaca063635afd2236918c6060.png" alt="eqtl" height=60% width=60% align="center" />
 
 ```r
  genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
