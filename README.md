@@ -31,7 +31,10 @@ remotes::install_github("dingruofan/xQTLbiolinks",
 ```r
 xQTLvisual_eqtl("KIF15")
 ```
-<img src="img/7793e6ffaca063635afd2236918c6060.png" alt="eqtl" height=60% width=60% align="center" />
+
+<p align="center">
+<img src="img/7793e6ffaca063635afd2236918c6060.png" alt="eqtl" height=60% width=60%  />
+</p>
 
 ```r
  genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
