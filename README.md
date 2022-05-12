@@ -3,8 +3,7 @@
 - By retrieving GTEx public-access data programmatically using the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/), the functions provided in this package enable users to access **molecular QTLs** (eQTLs and sQTLs) and **gene expressions** data filtered by tissue, gene, variant or dataset. 
 - xQTLbiolinks consists of functions that can be grouped into three main levels: **Query**, **Download**, **Analysis **and **Visualization**.
 
-![Overview.png](b1ba7eb80950d93d626cb12acf4c54f5.png)
-
+<img src="img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width=100% height=100% />
 <br/>
 
 ### xQTLbiolinks assist in:
@@ -32,8 +31,9 @@ remotes::install_github("dingruofan/xQTLbiolinks",
 ```r
 xQTLvisual_eqtl("KIF15")
 ```
-
-<img src="7793e6ffaca063635afd2236918c6060.png" alt="截图" style="zoom:50%;" />
+<div style="text-align:center">
+<img src="img/7793e6ffaca063635afd2236918c6060.png" alt="eqtl" height=60% width=60%  />
+</div>
 
 ```r
  genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
@@ -41,8 +41,9 @@ xQTLvisual_eqtl("KIF15")
 ```
 
 <br/>
-
-<img src="9c8c3aa9d5a42a371910caad89d3a50c.png" alt="截图" style="zoom:50%;" />
+<div style="text-align:center">
+<img src="img/9c8c3aa9d5a42a371910caad89d3a50c.png" alt="截图" height=60% width=60% />
+</div>
 
 <br/>
 
@@ -52,16 +53,18 @@ expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 ```
 
 <br/>
-
-<img src="22fcccaea960bc9409ecc076663bd95e.png" alt="截图" style="zoom:50%;" />
+<div style="text-align:center">
+<img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="截图" height=25% width=25% />
+</div>
 
 ```r
 expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="variantId",
                               phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 ```
-
-<img src="bd5301ffea17efb8a2ac7b82172d776a.png" alt="截图" style="zoom:50%;" />
+<div style="text-align:center">
+<img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="截图" height=25% width=35% />
+</div>
 
 > **An example of coloclization analysis.**
 
@@ -99,8 +102,9 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
    GTExvisual_eqtlExp(variantName="rs35687015", gene ="NUDT17", tissueSiteDetail="Brain - Cortex")
    ```
-   
-   ![截图](50d295dbed74ed5a1638779af0d1d2b7.png)
+   <div style="text-align:center">
+   <img src="img/50d295dbed74ed5a1638779af0d1d2b7.png" alt="截图" height=100% width=100% />
+   </div>
 
 <br/>
 
