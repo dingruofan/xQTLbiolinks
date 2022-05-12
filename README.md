@@ -55,7 +55,7 @@ expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 
 <br/>
 <p align="center">
-<img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="截图" height=25% width=25% />
+<img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="截图" height=15% width=15% />
 </p>
 
 ```r
@@ -64,7 +64,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 ```
 <p align="center">
-<img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="截图" height=25% width=35% />
+<img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="截图" height=15% width=15% />
 </p>
 
 > **An example of coloclization analysis.**
