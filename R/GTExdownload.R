@@ -753,9 +753,9 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
 #'
 #' @examples
 #' \donttest{
-#'   geneAsso <- xQTLdownload_eQTLAllAsso("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
+#'   geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
 #' }
-xQTLdownload_eQTLAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8", withB37VariantId=TRUE){
+xQTLdownload_eqtlAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8", withB37VariantId=TRUE){
   .<-NULL
   variantId <- variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
