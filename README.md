@@ -42,9 +42,9 @@ xQTLvisual_eqtl("KIF15")
 ```
 
 <br/>
-<div style="text-align:center">
+<p align="center">
 <img src="img/9c8c3aa9d5a42a371910caad89d3a50c.png" alt="截图" height=60% width=60% />
-</div>
+</p>
 
 <br/>
 
@@ -54,18 +54,18 @@ expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 ```
 
 <br/>
-<div style="text-align:center">
+<p align="center">
 <img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="截图" height=25% width=25% />
-</div>
+</p>
 
 ```r
 expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="variantId",
                               phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 ```
-<div style="text-align:center">
+<p align="center">
 <img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="截图" height=25% width=35% />
-</div>
+</p>
 
 > **An example of coloclization analysis.**
 
@@ -103,9 +103,9 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
    GTExvisual_eqtlExp(variantName="rs35687015", gene ="NUDT17", tissueSiteDetail="Brain - Cortex")
    ```
-   <div style="text-align:center">
+   <p align="center">
    <img src="img/50d295dbed74ed5a1638779af0d1d2b7.png" alt="截图" height=100% width=100% />
-   </div>
+   </p>
 
 <br/>
 
