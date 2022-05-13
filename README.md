@@ -47,9 +47,11 @@ xQTLvisual_eqtl("KIF15")
 </p>
 
 <br/>
+
 ```r
 geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 ```
+
 <br/>
 <p align="center">
 <img src="img/1652407865008.png" alt="plot" height=100% width=100% />
