@@ -24,7 +24,7 @@ remotes::install_github("dingruofan/xQTLbiolinks",
                          auth_token="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")
 ```
 
-### Example
+### Examples
 
 > Visualilzation of eQTL, sQTL, gene expression across tissues.
 
