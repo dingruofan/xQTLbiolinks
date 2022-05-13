@@ -858,7 +858,17 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
 #'  }
 apiAdmin_ping <- function(fetchMethod=""){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-  methods_all <- c("download","curl", "GET", "fromJSON")
+
+  # platform-depend methods ordr:
+  if( .Platform$OS.type =="unix"){
+    methods_all <- c("curl", "GET","download", "fromJSON")
+  }else if(.Platform$OS.type =="windows"){
+    methods_all <- c("download","curl", "GET", "fromJSON")
+  }else{
+    methods_all <- c("download","curl", "GET", "fromJSON")
+  }
+
+
   if(fetchMethod==""){
     fetchMethod <- methods_all
   }else if( any(!fetchMethod %in% methods_all) ){
