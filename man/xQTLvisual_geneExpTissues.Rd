@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_geneExpTissues}
 \alias{xQTLvisual_geneExpTissues}
-\title{Plot distribution of gene expression among multiple tissues.}
+\title{xQTLvisual_geneExpTissues}
 \usage{
 xQTLvisual_geneExpTissues(
   gene = "",
@@ -24,14 +24,10 @@ xQTLvisual_geneExpTissues(
 A data.table and a plot.
 }
 \description{
-Plot distribution of gene expression among multiple tissues.
+plot distribution of the gene expression among multiple tissues.
 }
 \examples{
 \donttest{
-  gene = c("ENSG00000069812.11", "ENSG00000141510.16")
-  gene="TP53"
-  gene="HES3"
-  geneType="gencodeId"
-  a <- xQTLvisual_geneExpTissues("HES2",toTissueSite=TRUE)
+  geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 }
 }

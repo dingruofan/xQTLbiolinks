@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{xQTLquery_tissue}
 \alias{xQTLquery_tissue}
-\title{Fetch all tissue information for a dataset.}
+\title{xQTLquery_tissue}
 \usage{
 xQTLquery_tissue(tissueName = "", datasetId = "gtex_v8")
 }
@@ -15,6 +15,7 @@ xQTLquery_tissue(tissueName = "", datasetId = "gtex_v8")
 A data.table
 }
 \description{
+Fetch all detail information of a specified tissue or all tissues.
 Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 }
 \examples{

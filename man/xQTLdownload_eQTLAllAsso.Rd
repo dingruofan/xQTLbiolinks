@@ -37,6 +37,9 @@ a data.table
 }
 \description{
 Only GTEx V8 are supported.
+
+download all tested variant-gene associations.
+source of all eQTL associations is EBI eQTL category.
 }
 \examples{
 \donttest{

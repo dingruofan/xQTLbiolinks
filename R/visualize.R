@@ -1,4 +1,5 @@
-#' @title Plot normalized expression among genotypes for eQTL.
+#' @title xQTLvisual_eqtlExp
+#' @description plot normalized expression among genotypes for eQTL.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
@@ -218,7 +219,8 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
   return(list(eqtl=eqtlInfo, exp=genoLable))
 }
 
-#' @title Plot normalized expression among genotypes for sQTL.
+#' @title xQTLvisual_sqtlExp
+#' @description plot normalized expression among genotypes for sQTL.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
@@ -412,7 +414,8 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="snpI
 
 
 
-#' @title LocusZoom plot
+#' @title xQTLvisual_locusZoom
+#' @description plot locuszoom for showing regional information of the association signal relative to genomic position
 #'
 #' @param DF A data.frame or a data.table object. Four columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); chromosome, chr1-chr22; Genome position; P-value.
 #' @param highlightSnp Default is the snp that with lowest p-value.
@@ -573,7 +576,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   return(p)
 }
 
-#' @title LocusCompare plot
+#' @title xQTLvisual_locusCompare
+#' @description visualize the colocalization of association summary statistics.
 #'
 #' @param eqtlDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param gwasDF A data.frame or data.table with two columns: dbSNP id and p-value.
@@ -708,7 +712,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 }
 
 
-#' @title Density distribution of specified genes' expression profiles in a specified tissue.
+#' @title xQTLvisual_genesExp
+#' @description density plot of specified genes' expression profiles in a specified tissue.
 #'
 #' @param genes Following gene types are supported:
 #' \itemize{
@@ -751,7 +756,8 @@ xQTLvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail =
 }
 
 
-#' @title The correlation plot of two genes’ expression
+#' @title xQTLvisual_geneCorr
+#' @description The correlation plot of two genes’ expression.
 #'
 #' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
 #' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
@@ -789,7 +795,8 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetai
 
 
 
-#' @title eQTL significance visualization for a gene
+#' @title xQTLvisual_eqtl
+#' @description plot significance of all eQTL associations for a gene across tissues.
 #'
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
@@ -839,7 +846,8 @@ xQTLvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
 }
 
 
-#' @title Plot distribution of gene expression among multiple tissues.
+#' @title xQTLvisual_geneExpTissues
+#' @description plot distribution of the gene expression among multiple tissues.
 #'
 #' @param genes A characer vector.
 #' @param geneType "geneSymbol" or "gencodeId".
@@ -851,11 +859,7 @@ xQTLvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
 #'
 #' @examples
 #' \donttest{
-#'   gene = c("ENSG00000069812.11", "ENSG00000141510.16")
-#'   gene="TP53"
-#'   gene="HES3"
-#'   geneType="gencodeId"
-#'   a <- xQTLvisual_geneExpTissues("HES2",toTissueSite=TRUE)
+#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 #' }
 xQTLvisual_geneExpTissues <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
   if(datasetId == "gtex_v8"){

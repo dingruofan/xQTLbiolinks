@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExanalyze.R
 \name{xQTLanalyze_coloc}
 \alias{xQTLanalyze_coloc}
-\title{Colocalization analysis with deteched trait}
+\title{xQTLanalyze_coloc}
 \usage{
 xQTLanalyze_coloc(
   gwasDF,
@@ -33,7 +33,7 @@ xQTLanalyze_coloc(
 coloc resut
 }
 \description{
-Colocalization analysis with deteched trait
+conduct colocalization analysis with detected gene.
 }
 \examples{
 \donttest{

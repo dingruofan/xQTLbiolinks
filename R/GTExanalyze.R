@@ -1,5 +1,6 @@
-#' @title Sentinel SNPs detection in GWAS data.
-#' @description Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
+#' @title xQTLanalyze_getSentinelSnp
+#' @description detect sentinel SNPs in a given GWAS dataset.
+#'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e4 bp.
 #' @param gwasDF GWAS data.frame
 #' @import data.table
 #' @import stringr
@@ -102,8 +103,8 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
   return(sentinelSnpDF)
 }
 
-#' @title Detect the genes around the sentinel SNPs
-#'
+#' @title xQTLanalyze_getTraits
+#' @description identify trait genes with sentinel SNPs:
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
 #' @param genomeVersion "grch38" or "grch19". Default: "grch38"
@@ -238,7 +239,8 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 }
 
 
-#' @title Colocalization analysis with deteched trait
+#' @title xQTLanalyze_coloc
+#' @description conduct colocalization analysis with detected gene.
 #'
 #' @param gwasDF 1
 #' @param traitGenes 1
@@ -404,7 +406,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 }
 
 
-#' @title tissue-specific expression analysis
+#' @title xQTLanalyze_TSExp
+#' @description perform tissue-specific expression analysis.
 #'
 #' @param genes gene symbol or gencode ID.
 #' @param geneType "geneSymbol" or "gencodeId".

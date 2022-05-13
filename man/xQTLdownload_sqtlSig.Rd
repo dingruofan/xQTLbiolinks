@@ -96,7 +96,7 @@ Whole Blood \tab √ \cr
 A data.table
 }
 \description{
-Fetch significant sQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.
+download significant sQTL associations of a tissue or across all tissues.
 Only GTEx v8 is supported.
 }
 \examples{

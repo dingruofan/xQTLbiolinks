@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExanalyze.R
 \name{xQTLanalyze_getTraits}
 \alias{xQTLanalyze_getTraits}
-\title{Detect the genes around the sentinel SNPs}
+\title{xQTLanalyze_getTraits}
 \usage{
 xQTLanalyze_getTraits(
   sentinelSnpDF,
@@ -22,7 +22,7 @@ xQTLanalyze_getTraits(
 A data.table object
 }
 \description{
-Detect the genes around the sentinel SNPs
+identify trait genes with sentinel SNPs:
 }
 \examples{
 \donttest{

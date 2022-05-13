@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{xQTLquery_geneAll}
 \alias{xQTLquery_geneAll}
-\title{fetch all genes' info.}
+\title{xQTLquery_geneAll}
 \usage{
 xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 }
@@ -15,7 +15,7 @@ xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 A data.table with all genes' information.
 }
 \description{
-fetch all genes' info.
+fetch basic information of all genes.
 }
 \examples{
 \donttest{

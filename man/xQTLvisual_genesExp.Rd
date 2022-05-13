@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_genesExp}
 \alias{xQTLvisual_genesExp}
-\title{Density distribution of specified genes' expression profiles in a specified tissue.}
+\title{xQTLvisual_genesExp}
 \usage{
 xQTLvisual_genesExp(
   genes,
@@ -30,7 +30,7 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 A plot.
 }
 \description{
-Density distribution of specified genes' expression profiles in a specified tissue.
+density plot of specified genes' expression profiles in a specified tissue.
 }
 \examples{
 \donttest{

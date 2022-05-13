@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_eqtl}
 \alias{xQTLvisual_eqtl}
-\title{eQTL significance visualization for a gene}
+\title{xQTLvisual_eqtl}
 \usage{
 xQTLvisual_eqtl(gene, geneType = "geneSymbol", datasetId = "gtex_v8")
 }
@@ -17,7 +17,7 @@ xQTLvisual_eqtl(gene, geneType = "geneSymbol", datasetId = "gtex_v8")
 A plot
 }
 \description{
-eQTL significance visualization for a gene
+plot significance of all eQTL associations for a gene across tissues.
 }
 \examples{
 \donttest{

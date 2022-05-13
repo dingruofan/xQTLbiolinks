@@ -1,7 +1,7 @@
 
-#' @title Fetch normalized gene expression.
+#' @title xQTLdownload_exp
 #' @description
-#'  This function fetch queried genes' expression profiles in a tissue at the sample level.
+#'  download normalized gene expression at the sample level in a specified tissue.
 #' @param genes Following gene types are supported:
 #' \itemize{
 #'   \item \strong{Gene symbol}.
@@ -257,9 +257,8 @@ xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 }
 
 
-#' @title Download significant eQTL data.
-#' @description
-#'  Fetch significant eQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.
+#' @title xQTLdownload_eqtlSig
+#' @description download significant eQTL associations of a tissue or across all tissues.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
@@ -461,9 +460,9 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 }
 
 
-#' @title Download significant or unsignificant eQTL data.
-#' @description
-#'  Fetch significant or unsignificant eQTL associations with a gene or a variant-gene pair in a tissue or across all tissues.
+#' @title xQTLdownload_eqtl
+#' @description download significant or unsignificant eQTL data of a tissue or across all tissues.
+#'  can be quried with a gene/variant-gene pair.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned). Can not be null.
@@ -738,7 +737,9 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
 #   return(resultDT)
 # }
 
-#' @title Fetch all eQTL associations from EBI eQTL category.
+#' @title xQTLdownload_eqtlAllAsso
+#' @description download all tested variant-gene associations.
+#'  source of all eQTL associations is EBI eQTL category.
 #'
 #' @param gene gene
 #' @param geneType geneType
@@ -927,9 +928,8 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteD
 # }
 
 
-#' @title Download significant sQTL data.
-#' @description
-#'  Fetch significant sQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.
+#' @title xQTLdownload_sqtlSig
+#' @description download significant sQTL associations of a tissue or across all tissues.
 #'  Only GTEx v8 is supported.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
@@ -1128,9 +1128,9 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
   return(outInfo)
 }
 
-#' @title Download expression data for eQTL.
-#' @description
-#'  This function fetch normalized gene expression data for a eQTL pair.
+#' @title xQTLdownload_eqtlExp
+#' @description download normalized expression of gene for a eQTL pair.
+#'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
@@ -1321,9 +1321,9 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 }
 
 
-#' @title Download expression data for sQTL.
+#' @title xQTLdownload_sqtlExp
 #' @description
-#'  This function fetch normalized gene expression data for a sQTL pair.
+#'  download normalized expression of intron for a sQTL pair.
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param phenotypeId Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
@@ -1509,9 +1509,9 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="sn
   return(expData)
 }
 
-#' @title Fetch linkage disequilibrium data
-#' @description
-#'   Fetch linkage disequilibrium data for the cis-eQTLs found associated with this gene in a specified dataset.
+#' @title xQTLdownload_ld
+#' @description download linkage disequilibrium data of the variants associated with this gene.
+#'
 #' @param gene A gene symbol, gencode id (versioned), or a charater string of gene type.
 #' @param geneType  A character string. "geneSymbol"(default), or "gencodeId".
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
@@ -1605,8 +1605,8 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 }
 
 
-#' @title Fetch eGenes (eQTL Genes) from the specified dataset.
-#' @description
+#' @title xQTLdownload_egene
+#' @description download eGenes (eQTL Genes).
 #'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
 #' @param gene  A charater string of gene symbol, gencode id (versioned).
 #' @param geneType A character string. "geneSymbol"(default) or"gencodeId".
@@ -1786,8 +1786,8 @@ xQTLdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 }
 
 
-#' @title Fetch sGenes (sQTL Genes) from the specified dataset.
-#' @description
+#' @title xQTLdownload_sgene
+#' @description download sGenes (sQTL Genes).
 #'  sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 #' @param gene  A charater string of gene symbol, gencode id (versioned). Can be null.
 #' @param geneType A character string. "geneSymbol"(default) or"gencodeId". Can be null.
@@ -1970,7 +1970,8 @@ xQTLdownload_sgene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 }
 
 
-#' @title fetch gene median expression
+#' @title xQTLdownload_geneMedExp
+#' @description download genes' median expression in a tissue or across all tissues.
 #'
 #' @param genes A character vector of gene symbol/gencode ID.
 #' @param geneType "geneSymbol" or "gencodeID".

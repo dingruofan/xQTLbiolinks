@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{xQTLquery_varId}
 \alias{xQTLquery_varId}
-\title{Query variant information by snpId or variant ID.}
+\title{xQTLquery_varId}
 \usage{
 xQTLquery_varId(variantName = "", variantType = "snpId", datasetId = "gtex_v8")
 }
@@ -17,7 +17,7 @@ xQTLquery_varId(variantName = "", variantType = "snpId", datasetId = "gtex_v8")
 A data.table.
 }
 \description{
-Query variant information by snpId or variant ID.
+query variant with variant ID or SNP ID.
 }
 \examples{
  \donttest{

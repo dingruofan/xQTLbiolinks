@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExanalyze.R
 \name{xQTLanalyze_TSExp}
 \alias{xQTLanalyze_TSExp}
-\title{tissue-specific expression analysis}
+\title{xQTLanalyze_TSExp}
 \usage{
 xQTLanalyze_TSExp(
   genes,
@@ -24,7 +24,7 @@ xQTLanalyze_TSExp(
 A data.table
 }
 \description{
-tissue-specific expression analysis
+perform tissue-specific expression analysis.
 }
 \examples{
 \donttest{

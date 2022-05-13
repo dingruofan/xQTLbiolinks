@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_exp}
 \alias{xQTLdownload_exp}
-\title{Fetch normalized gene expression.}
+\title{xQTLdownload_exp}
 \usage{
 xQTLdownload_exp(
   genes = "",
@@ -97,7 +97,7 @@ Whole Blood \tab √ \tab √\cr
 return a SummarizedExperiment or data.frame object harbing gene expression profiles.
 }
 \description{
-This function fetch queried genes' expression profiles in a tissue at the sample level.
+download normalized gene expression at the sample level in a specified tissue.
 }
 \examples{
 \donttest{

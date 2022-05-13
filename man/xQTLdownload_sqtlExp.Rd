@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_sqtlExp}
 \alias{xQTLdownload_sqtlExp}
-\title{Download expression data for sQTL.}
+\title{xQTLdownload_sqtlExp}
 \usage{
 xQTLdownload_sqtlExp(
   variantName = "",
@@ -27,7 +27,7 @@ xQTLdownload_sqtlExp(
 A data.table
 }
 \description{
-This function fetch normalized gene expression data for a sQTL pair.
+download normalized expression of intron for a sQTL pair.
 }
 \examples{
 \donttest{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_geneCorr}
 \alias{xQTLvisual_geneCorr}
-\title{The correlation plot of two genes’ expression}
+\title{xQTLvisual_geneCorr}
 \usage{
 xQTLvisual_geneCorr(
   gene2 = "",
@@ -27,7 +27,7 @@ xQTLvisual_geneCorr(
 A plot
 }
 \description{
-The correlation plot of two genes’ expression
+The correlation plot of two genes’ expression.
 }
 \examples{
 \donttest{

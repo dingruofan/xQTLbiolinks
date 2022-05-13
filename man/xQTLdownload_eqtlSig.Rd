@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_eqtlSig}
 \alias{xQTLdownload_eqtlSig}
-\title{Download significant eQTL data.}
+\title{xQTLdownload_eqtlSig}
 \usage{
 xQTLdownload_eqtlSig(
   variantName = "",
@@ -89,7 +89,7 @@ Whole Blood \tab √ \tab √\cr
 A data.table
 }
 \description{
-Fetch significant eQTL associations with a variant or a gene or a variant-gene pair in a tissue or across all tissues.
+download significant eQTL associations of a tissue or across all tissues.
 }
 \examples{
 \donttest{

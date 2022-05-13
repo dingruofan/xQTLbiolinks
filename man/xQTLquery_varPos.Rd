@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{xQTLquery_varPos}
 \alias{xQTLquery_varPos}
-\title{Query variant information by position.}
+\title{xQTLquery_varPos}
 \usage{
 xQTLquery_varPos(
   chrom = "",
@@ -24,7 +24,7 @@ xQTLquery_varPos(
 A data.table.
 }
 \description{
-Query variant information by position.
+query varints with genome postion.
 }
 \examples{
 \donttest{

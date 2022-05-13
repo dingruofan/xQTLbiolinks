@@ -1,7 +1,7 @@
 ## xQTLbiolinks: a R package aims to query, download, visual and integrate integrative analysis of GTEx data
 
 - By retrieving GTEx public-access data programmatically using the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/), the functions provided in this package enable users to access **molecular QTLs** (eQTLs and sQTLs) and **gene expressions** data filtered by tissue, gene, variant or dataset. 
-- xQTLbiolinks consists of functions that can be grouped into three main levels: **Query**, **Download**, **Analysis**and **Visualization**.
+- xQTLbiolinks consists of functions that can be grouped into four main levels: **Query**, **Download**, **Analyze** and **Visualize**.
 
 <img src="img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width=100% height=100% />
 <br/>
@@ -43,7 +43,16 @@ xQTLvisual_eqtl("KIF15")
 
 <br/>
 <p align="center">
-<img src="img/9c8c3aa9d5a42a371910caad89d3a50c.png" alt="截图" height=60% width=60% />
+<img src="img/9c8c3aa9d5a42a371910caad89d3a50c.png" alt="plot" height=60% width=60% />
+</p>
+
+<br/>
+```r
+geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
+```
+<br/>
+<p align="center">
+<img src="img/1652407865008.png" alt="plot" height=100% width=100% />
 </p>
 
 <br/>
@@ -55,7 +64,7 @@ expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 
 <br/>
 <p align="center">
-<img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="截图" height=15% width=15% />
+<img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="plot" height=15% width=15% />
 </p>
 
 ```r
@@ -64,7 +73,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 ```
 <p align="center">
-<img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="截图" height=15% width=15% />
+<img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="plot" height=18% width=18% />
 </p>
 
 > **An example of coloclization analysis.**
@@ -97,14 +106,14 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    ```
 
 5. Visualization with locuszoom and locuscompare plot.
-   ```
+   ```r
    GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")])
    GTExvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")])
    GTExvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
    GTExvisual_eqtlExp(variantName="rs35687015", gene ="NUDT17", tissueSiteDetail="Brain - Cortex")
    ```
    <p align="center">
-   <img src="img/50d295dbed74ed5a1638779af0d1d2b7.png" alt="截图" height=100% width=100% />
+   <img src="img/50d295dbed74ed5a1638779af0d1d2b7.png" alt="plot" height=100% width=100% />
    </p>
 
 <br/>
@@ -128,15 +137,15 @@ xQTLbiolinks current export the following functions:
 2. #### Download
    - **`xQTLdownload_eqtl`**: download significant or unsignificant eQTL data of a tissue or across all tissues.
    - **`xQTLdownload_eqtlSig`**: download significant eQTL associations of a tissue or across all tissues.
-   - **`xQTLdownload_eqtlExp`**: download normalized expression of gene for eQTL.
+   - **`xQTLdownload_eqtlExp`**: download normalized expression of gene for a eQTL pair.
    - **`xQTLdownload_eqtlAllAsso`**: download all tested variant-gene associations.
    - **`xQTLdownload_egene`**: download eGenes (eQTL Genes).
    - **`xQTLdownload_sqtlSig`**: download significant sQTL associations of a tissue or across all tissues.
-   - **`xQTLdownload_sqtlExp`**: download normalized expression of intron for sQTL.
+   - **`xQTLdownload_sqtlExp`**: download normalized expression of intron for a sQTL pair.
    - **`xQTLdownload_sgene`**: download sGenes (sQTL Genes).
-   - **`xQTLdownload_exp`**: download normalized gene expression of all samples in a specified tissue.
+   - **`xQTLdownload_exp`**: download normalized gene expression at the sample level in a specified tissue.
    - **`xQTLdownload_geneMedExp`**: download genes' median expression in a tissue or across all tissues.
-   - **`xQTLdownload_ld`**: download linkage disequilibrium data of the gene.
+   - **`xQTLdownload_ld`**: download linkage disequilibrium data of the variants associated with this gene.
 
 3. #### Ananlysis
    - **`xQTLanalyze_getSentinelSnp`**: detect sentinel SNPs in a given GWAS dataset.

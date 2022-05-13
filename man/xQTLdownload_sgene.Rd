@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_sgene}
 \alias{xQTLdownload_sgene}
-\title{Fetch sGenes (sQTL Genes) from the specified dataset.}
+\title{xQTLdownload_sgene}
 \usage{
 xQTLdownload_sgene(
   gene = "",
@@ -86,6 +86,7 @@ Whole Blood \tab √ \cr
 a data.table
 }
 \description{
+download sGenes (sQTL Genes).
 sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 }
 \examples{

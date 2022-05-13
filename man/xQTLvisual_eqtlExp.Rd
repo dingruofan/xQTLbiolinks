@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_eqtlExp}
 \alias{xQTLvisual_eqtlExp}
-\title{Plot normalized expression among genotypes for eQTL.}
+\title{xQTLvisual_eqtlExp}
 \usage{
 xQTLvisual_eqtlExp(
   variantName = "",
@@ -89,7 +89,7 @@ Whole Blood \tab √ \tab √\cr
 A plot
 }
 \description{
-Plot normalized expression among genotypes for eQTL.
+plot normalized expression among genotypes for eQTL.
 }
 \examples{
 \donttest{

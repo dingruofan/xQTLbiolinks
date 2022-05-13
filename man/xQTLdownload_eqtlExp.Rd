@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_eqtlExp}
 \alias{xQTLdownload_eqtlExp}
-\title{Download expression data for eQTL.}
+\title{xQTLdownload_eqtlExp}
 \usage{
 xQTLdownload_eqtlExp(
   variantName = "",
@@ -88,7 +88,7 @@ Whole Blood \tab √ \tab √\cr
 A data.table
 }
 \description{
-This function fetch normalized gene expression data for a eQTL pair.
+download normalized expression of gene for a eQTL pair.
 }
 \examples{
 \donttest{

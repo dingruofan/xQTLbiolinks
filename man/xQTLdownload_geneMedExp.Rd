@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_geneMedExp}
 \alias{xQTLdownload_geneMedExp}
-\title{fetch gene median expression}
+\title{xQTLdownload_geneMedExp}
 \usage{
 xQTLdownload_geneMedExp(
   genes = "",
@@ -27,7 +27,7 @@ xQTLdownload_geneMedExp(
 A data.frame
 }
 \description{
-fetch gene median expression
+download genes' median expression in a tissue or across all tissues.
 }
 \examples{
 \donttest{

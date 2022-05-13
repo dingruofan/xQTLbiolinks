@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{xQTLquery_gene}
 \alias{xQTLquery_gene}
-\title{Query gene information through API.}
+\title{xQTLquery_gene.}
 \usage{
 xQTLquery_gene(
   genes = "",
@@ -97,7 +97,7 @@ A data.table of queried gene information. including following columns:
 }
 }
 \description{
-users can use this function to search gene of interest
+users can use this function to query basic information (including gene name, symbol, position and description, etc ) of genes.
 }
 \examples{
 \donttest{

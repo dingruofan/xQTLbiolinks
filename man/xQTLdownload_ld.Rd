@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_ld}
 \alias{xQTLdownload_ld}
-\title{Fetch linkage disequilibrium data}
+\title{xQTLdownload_ld}
 \usage{
 xQTLdownload_ld(
   gene = "",
@@ -24,7 +24,7 @@ xQTLdownload_ld(
 A data.frame
 }
 \description{
-Fetch linkage disequilibrium data for the cis-eQTLs found associated with this gene in a specified dataset.
+download linkage disequilibrium data of the variants associated with this gene.
 }
 \examples{
 \donttest{

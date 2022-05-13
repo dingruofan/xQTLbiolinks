@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExdownload.R
 \name{xQTLdownload_egene}
 \alias{xQTLdownload_egene}
-\title{Fetch eGenes (eQTL Genes) from the specified dataset.}
+\title{xQTLdownload_egene}
 \usage{
 xQTLdownload_egene(
   gene = "",
@@ -86,6 +86,7 @@ Whole Blood \tab √ \cr
 a data.table
 }
 \description{
+download eGenes (eQTL Genes).
 eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
 }
 \examples{

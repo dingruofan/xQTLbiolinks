@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_locusCompare}
 \alias{xQTLvisual_locusCompare}
-\title{LocusCompare plot}
+\title{xQTLvisual_locusCompare}
 \usage{
 xQTLvisual_locusCompare(
   eqtlDF,
@@ -34,7 +34,7 @@ xQTLvisual_locusCompare(
 A plot
 }
 \description{
-LocusCompare plot
+visualize the colocalization of association summary statistics.
 }
 \examples{
 \donttest{

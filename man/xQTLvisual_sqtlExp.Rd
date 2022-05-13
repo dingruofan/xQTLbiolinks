@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_sqtlExp}
 \alias{xQTLvisual_sqtlExp}
-\title{Plot normalized expression among genotypes for sQTL.}
+\title{xQTLvisual_sqtlExp}
 \usage{
 xQTLvisual_sqtlExp(
   variantName = "",
@@ -88,7 +88,7 @@ Whole Blood \tab √ \tab √\cr
 Normalized expression and ggplot2 object
 }
 \description{
-Plot normalized expression among genotypes for sQTL.
+plot normalized expression among genotypes for sQTL.
 }
 \examples{
 \donttest{

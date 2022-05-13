@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_locusZoom}
 \alias{xQTLvisual_locusZoom}
-\title{LocusZoom plot}
+\title{xQTLvisual_locusZoom}
 \usage{
 xQTLvisual_locusZoom(
   DF,
@@ -34,7 +34,7 @@ xQTLvisual_locusZoom(
 A data.table object and plot.
 }
 \description{
-LocusZoom plot
+plot locuszoom for showing regional information of the association signal relative to genomic position
 }
 \examples{
 \donttest{

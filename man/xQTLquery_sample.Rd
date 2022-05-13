@@ -2,7 +2,7 @@
 % Please edit documentation in R/GTExquery.R
 \name{xQTLquery_sample}
 \alias{xQTLquery_sample}
-\title{Fetch information of samples used in analyses from all datasets.}
+\title{xQTLquery_sample}
 \usage{
 xQTLquery_sample(
   tissueSiteDetail = "Liver",
@@ -85,7 +85,7 @@ Whole Blood \tab √ \tab √\cr
 returen sample information
 }
 \description{
-Fetch information of samples used in analyses from all datasets.
+query sample's details with a specifc tissue name or sample ID.
 }
 \examples{
 \donttest{

@@ -1,6 +1,6 @@
-#' @title Query gene information through API.
+#' @title xQTLquery_gene.
 #' @description
-#'  users can use this function to search gene of interest
+#'  users can use this function to query basic information (including gene name, symbol, position and description, etc ) of genes.
 #' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
@@ -287,8 +287,8 @@ xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
   }
 }
 
-#' @title  Fetch information of samples used in analyses from all datasets.
-#'
+#' @title xQTLquery_sample
+#' @description  query sample's details with a specifc tissue name or sample ID.
 #' @param tissueSiteDetail
 #'  Tissue must be chosen from the following tissue names:
 #' \tabular{rrrrr}{
@@ -516,8 +516,8 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 
 
 # Indepedently fetch geneInfo:
-#' @title fetch all genes' info.
-#'
+#' @title xQTLquery_geneAll
+#' @description fetch basic information of all genes.
 #' @param gencodeVersion A character string. "v26" or "v19".
 #' @param recordPerChunk A integer value. From 1 to 2000.
 #'
@@ -596,8 +596,8 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 }
 
 
-#' @title Query variant information by snpId or variant ID.
-#'
+#' @title xQTLquery_varId
+#' @description query variant with variant ID or SNP ID.
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
@@ -677,8 +677,8 @@ xQTLquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
   return(outInfo)
 }
 
-#' @title Query variant information by position.
-#'
+#' @title xQTLquery_varPos
+#' @description query varints with genome postion.
 #' @param chrom A character string.
 #' @param pos An integer array.
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
@@ -778,8 +778,9 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 }
 
 
-#' @title Fetch all tissue information for a dataset.
-#' @description Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
+#' @title xQTLquery_tissue
+#' @description Fetch all detail information of a specified tissue or all tissues.
+#'  Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 #' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId gtex_v8 or gtex_v7. Default: gtex_v8
 #'
