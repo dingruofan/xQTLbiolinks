@@ -8,10 +8,10 @@
 
 ### xQTLbiolinks assist in:
 
-1. to fast query variants’ effect on gene expression in the process of disease studies.
-2. to perform data visualization (e.g. correlation plots of expression, boxplots of eQTL expression; and locuszom plots).
-3. to detect disease associated genes by conduct colocalization analyses of GWAS and eQTL signals.
-4. to uncover tissue-specific expressed genes.
+1. Fast query/download xQTLs and gene expression/splicing across 54 distinct cell types and tissues
+2. Visualization of xQTL and gene expression across tissues(e.g. ridgeline plots of gene expression, boxplots of xQTL expression; and locuszoom plots of xQTLs).
+3. Identify trait associated genes by perform colocalization analyses of GWAS and xQTL signals.
+4. Identify co-expressed and tissue-specific expressed genes.
 
 ### Citation
 Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data. (submitted)
