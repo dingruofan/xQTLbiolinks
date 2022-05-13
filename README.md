@@ -18,7 +18,7 @@
 ### Installation
 
 ```r
-if(!require("remotes")){install.packages("remote")}
+if(!require("remotes")){install.packages("remotes")}
 # remotes::install_git("https://gitee.com/stronghoney/GTExbiolinks.git")
 remotes::install_github("dingruofan/xQTLbiolinks", 
                          auth_token="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")
