@@ -873,16 +873,23 @@ apiAdmin_ping <- function(fetchMethod=""){
         message("== Test GTEx network: ",fetchMethod[i])
         # if download:
         if( fetchMethod[i]=="download" ){
-          if( !capabilities("libcurl")){
-            message(" \"libcurl\" can not be called, please install curl package  ")
-            return(NULL)}
+
           if( !is.null(.Platform$OS.type) ){
-            if( .Platform$OS.type =="windows"){ downloadMethod<-c("wininet", "libcurl" )}else{ downloadMethod<-  c("wget",  "libcurl"  )}
-            if( .Platform$OS.type =="unix"){ downloadMethod<-c("libcurl","wget")}
+            if( .Platform$OS.type =="windows"){ downloadMethod<-c("auto","wininet", "libcurl" )}else{ downloadMethod<-  c("wget",  "libcurl"  )}
+            if( .Platform$OS.type =="unix"){ downloadMethod<-c("auto","libcurl","wget")}
           }
           # start download:
             for(downM in 1:length(downloadMethod)){
               message( "    ==testing download method: ", downloadMethod[downM])
+              if( downloadMethod[downM]=="libcurl" && !capabilities("libcurl") ){
+                message(" Note: \"libcurl\" is not installed and can not be called ")
+                next()
+              }
+              if( downloadMethod[downM]=="wget" && !capabilities("wget") ){
+                message(" Note: \"wget\" is not installed and can not be called ")
+                next()
+              }
+
               tryCatch({
                 suppressWarnings(suppressMessages( outInfo <- fetchContent(url1, method = fetchMethod[i], downloadMethod = downloadMethod[downM]) ))
               },error=function(e){
