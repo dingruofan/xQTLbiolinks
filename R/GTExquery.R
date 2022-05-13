@@ -886,7 +886,7 @@ apiAdmin_ping <- function(fetchMethod=""){
 
           if( !is.null(.Platform$OS.type) ){
             if( .Platform$OS.type =="windows"){ downloadMethod<-c("wininet", "libcurl" )}else{ downloadMethod<-  c("wget",  "libcurl"  )}
-            if( .Platform$OS.type =="unix"){ downloadMethod<-c("libcurl","wget")}
+            if( .Platform$OS.type =="unix"){ downloadMethod<-c("wget", "libcurl")}
           }
           # start download:
             for(downM in 1:length(downloadMethod)){
@@ -896,7 +896,7 @@ apiAdmin_ping <- function(fetchMethod=""){
                 next()
               }
               if( downloadMethod[downM]=="wget" && !capabilities("wget") ){
-                message(" Note: \"wget\" is not installed and can not be called ")
+                stop(" Note: \"wget\" is not installed and can not be called, please install wget. ")
                 next()
               }
 
