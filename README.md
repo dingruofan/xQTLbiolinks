@@ -13,6 +13,10 @@
 3. to detect disease associated genes by conduct colocalization analyses of GWAS and eQTL signals.
 4. to uncover tissue-specific expressed genes.
 
+### Citation
+Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data. (submitted)
+Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518055, China
+
 ***
 
 ### Installation

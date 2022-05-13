@@ -861,7 +861,7 @@ apiAdmin_ping <- function(fetchMethod=""){
 
   # platform-depend methods ordr:
   if( .Platform$OS.type =="unix"){
-    methods_all <- c("curl", "GET","download", "fromJSON")
+    methods_all <- c("download","curl", "GET", "fromJSON")
   }else if(.Platform$OS.type =="windows"){
     methods_all <- c("download","curl", "GET", "fromJSON")
   }else{
