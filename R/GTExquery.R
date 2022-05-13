@@ -878,6 +878,7 @@ apiAdmin_ping <- function(fetchMethod=""){
             return(NULL)}
           if( !is.null(.Platform$OS.type) ){
             if( .Platform$OS.type =="windows"){ downloadMethod<-c("wininet", "libcurl" )}else{ downloadMethod<-  c("wget",  "libcurl"  )}
+            if( .Platform$OS.type =="unix"){ downloadMethod<-c("libcurl","wget")}
           }
           # start download:
             for(downM in 1:length(downloadMethod)){
