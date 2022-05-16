@@ -92,7 +92,6 @@ sGenes are genes that have at least one significant sQTL acting upon them. Resul
 \examples{
 \donttest{
  sGeneInfoAlltissue <- xQTLdownload_sgene()
- sGeneInfo <- xQTLdownload_sgene("TP53")
  sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
  sGeneInfo <- xQTLdownload_sgene("ENSG00000141510.16", geneType="gencodeId", tissueSiteDetail="Lung")
  sGeneInfo <- xQTLdownload_sgene("DDX11", tissueSiteDetail="Artery - Tibial" )

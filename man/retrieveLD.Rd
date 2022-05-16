@@ -19,6 +19,6 @@ For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the
 }
 \examples{
 \donttest{
- retrieveLD('6', 'rs9349379', 'AFR')
+ ld <- retrieveLD('6', 'rs9349379', 'AFR')
  }
 }

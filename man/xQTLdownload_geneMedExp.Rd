@@ -31,6 +31,6 @@ download genes' median expression in a tissue or across all tissues.
 }
 \examples{
 \donttest{
- xQTLdownload_geneMedExp(genes="TP53", "geneSymbol")
+ geneMedExp <- xQTLdownload_geneMedExp(genes="TP53", "geneSymbol")
 }
 }

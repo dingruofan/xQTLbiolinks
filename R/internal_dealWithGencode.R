@@ -460,7 +460,6 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("GenomeInfoDb") # in GenomicRanges
 # usethis::use_package("IRanges") # in GenomicRanges
 # usethis::use_package("ggrepel") # in ggpubr
-# usethis::use_package("coloc")
 # usethis::use_package("GenomicRanges") # in SummarizedExperiment
 
 #
@@ -469,6 +468,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("knitr",  type="Suggests")
 # usethis::use_package("tidyr", type="Suggests") # in ggpubr,
 # usethis::use_package("rtracklayer",type="Suggests")
+# usethis::use_package("coloc",type="Suggests")
 
 
 # usethis::use_package("crayon", min_version = "1.4.1") # message 字体：

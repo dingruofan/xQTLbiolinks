@@ -12,56 +12,10 @@
 
 #'   \item \strong{gene classification}.
 #'
-#'   "genes" must be chosen from following list when "geneType" is "geneCategory".
-#'   \itemize{
-#'   \item protein coding
-#'   \item antisense
-#'   \item lincRNA
-#'   \item unprocessed pseudogene
-#'   \item miRNA
-#'   \item transcribed unprocessed pseudogene
-#'   \item snRNA
-#'   \item processed pseudogene
-#'   \item processed transcript
-#'   \item TEC
-#'   \item transcribed unitary pseudogene
-#'   \item transcribed processed pseudogene
-#'   \item sense intronic
-#'   \item misc RNA
-#'   \item snoRNA
-#'   \item scaRNA
-#'   \item rRNA
-#'   \item unitary pseudogene
-#'   \item 3prime overlapping ncRNA
-#'   \item polymorphic pseudogene
-#'   \item bidirectional promoter lncRNA
-#'   \item sense overlapping
-#'   \item pseudogene
-#'   \item IG V pseudogene
-#'   \item scRNA
-#'   \item IG C gene
-#'   \item IG J gene
-#'   \item IG V gene
-#'   \item sRNA
-#'   \item ribozyme
-#'   \item vaultRNA
-#'   \item non coding
-#'   \item TR J gene
-#'   \item TR C gene
-#'   \item TR V gene
-#'   \item TR V pseudogene
-#'   \item TR D gene
-#'   \item IG C pseudogene
-#'   \item macro lncRNA
-#'   \item TR J pseudogene
-#'   \item IG D gene
-#'   \item IG J pseudogene
-#'   \item IG pseudogene
-#'   \item Mt tRNA
-#'   \item Mt rRNA
-#'   }
+#'   when "geneType" is "geneCategory", supported "genes" can be listed using function `gencodeGenetype$V26` or `gencodeGenetype$V19`
+#'
 #' }
-#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
+#' @param geneType A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".
 #'
 #' @param gencodeVersion "v26" or "v19"
 #' @param recordPerChunk A integer value. Defaulut: 150
@@ -98,15 +52,15 @@
 #'  miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 #'
 #'  # hg38 test:
-#'  geneInfo <- xQTLquery_gene("TP53", "geneSymbol", "v26")
-#'  geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26")
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
-#'                               geneType="gencodeId", "v26")
+#'  geneInfo <- xQTLquery_gene("TP53")
+#'  geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"), geneType="gencodeId")
+#'
 #'  # hg19 test:
-#'  geneInfo <- xQTLquery_gene(c("TP53","naDK"), "geneSymbol", "v19")
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), "gencodeId", "v19")
+#'  geneInfo <- xQTLquery_gene(c("TP53","naDK"), geneType="geneSymbol", gencodeVersion="v19")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), geneType="gencodeId", gencodeVersion="v19")
 #'  }
-xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", recordPerChunk=150){
+xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
   page_tmp <- 0
@@ -128,6 +82,20 @@ xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
   }
 
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else if( length(genes)==1 ){
+      if( genes %in% gencodeGenetype$V26 | genes %in% gencodeGenetype$V19 ){
+        geneType <- "geneCategory"
+      }
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+  message("geneType: ",geneType)
+
   # gencodeVersion
   if( is.null(gencodeVersion) ||  any(is.na(gencodeVersion)) || any(gencodeVersion=="") || length(gencodeVersion)!=1){
     stop("Parameter \"gencodeVersion\" should be choosen from \"v26\", \"v19\".")
@@ -140,6 +108,8 @@ xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
   }else if(gencodeVersion == "v19"){
     genomeBuild="GRCh37/hg19"
   }
+
+  message("Querying genes...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
 
   ######################### if geneType is "geneCategory":
   if( geneType == "geneCategory" ){
@@ -179,13 +149,18 @@ xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
       }
       url1 <- utils::URLencode(url1)
       outInfo <- data.table::data.table()
+
       # use internal function: apiAdmin_ping
-      bestFetchMethod <- apiAdmin_ping()
-      if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-        return(NULL)
-      }
+      # bestFetchMethod <- apiAdmin_ping()
+      # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+      #   return(NULL)
+      # }
       # message("GTEx API successfully accessed!")
-      url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+      # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+
+      # download with "download" method and retry 3 times.
+      url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
       if( nrow(url1GetText2Json2DT)==0 ){
         message( "0 record fatched!" )
@@ -207,11 +182,13 @@ xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
         stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")
       }
       outInfo <- data.table::data.table()
-      bestFetchMethod <- apiAdmin_ping()
-      if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-        # message("Note: API server is busy or your network has latency, please try again later.")
-        return(NULL)
-      }
+
+      # bestFetchMethod <- apiAdmin_ping()
+      # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+      #   # message("Note: API server is busy or your network has latency, please try again later.")
+      #   return(NULL)
+      # }
+
       # message("GTEx API successfully accessed!")
       for(i in 1: nrow(genesURL) ){
         tmp_all <- data.table()
@@ -225,7 +202,12 @@ xQTLquery_gene <- function(genes="", geneType="geneSymbol", gencodeVersion="v26"
                        "format=json"
         )
         url1 <- utils::URLencode(url1)
-        url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+
+        # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+        # download with "download" method and retry 3 times.
+        url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
+
         url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
         if( nrow(url1GetText2Json2DT)==0 ){
           message( "0 record fatched!" )
@@ -404,6 +386,7 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # convert tissueSiteDetail to tissueSiteDetailId:
   tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
 
+  message("Querying samples...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
 
   ########## parameter check: pageSize_tmp
   if(is.null(pageSize_tmp) ||  any(is.na(pageSize_tmp)) ){
@@ -448,13 +431,18 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetailId=Liver&dataType=RNASEQ&format=json&page=0&pageSize=2000&sortBy=sampleId&sortDirection=asc"
   # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetail=All&dataType=RNASEQ&format=json&page=0&pageSize=200&sortBy=sampleId&sortDirection=asc"
   outInfo <- data.table::data.table()
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    # message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
+
+  # bestFetchMethod <- apiAdmin_ping()
+  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+  #   # message("Note: API server is busy or your network has latency, please try again later.")
+  #   return(NULL)
+  # }
   # message("GTEx API successfully accessed!")
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+  # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+
+  # download with "download" method and retry 3 times.
+  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
   if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
     pathologyNotesCategories <- FALSE
     message(" == No pathologyNotesCategories information found in tissue [", tissueSiteDetail, "] samples!" )
@@ -488,7 +476,11 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
       )
     }
     url1 <- utils::URLencode(url1)
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+
+    # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    # download with "download" method and retry 3 times.
+    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
     if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
       tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
       outInfo <- rbind(outInfo, tmp)
@@ -528,7 +520,7 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 #' @examples
 #' \donttest{
 #'   # don't run:
-#'   # allGenes <- xQTLquery_geneAll()
+#'  allGenes <- xQTLquery_geneAll()
 #'   }
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
@@ -549,6 +541,8 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
     genomeBuild="GRCh37/hg19"
   }
 
+  message("Querying all genes...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+
   # construct url:
   url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
                  "geneId=", "[a-zA-Z0-9]","&",
@@ -560,14 +554,19 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   )
   url1 <- utils::URLencode(url1)
   outInfo <- data.table::data.table()
+
   # use internal function: apiAdmin_ping
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    # message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
-  # message("GTEx API successfully accessed!")
-  suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
+  # bestFetchMethod <- apiAdmin_ping()
+  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+  #   # message("Note: API server is busy or your network has latency, please try again later.")
+  #   return(NULL)
+  # }
+  # # message("GTEx API successfully accessed!")
+  # suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
+
+  # download with "download" method and retry 3 times.
+  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
   url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
   url1GetText2Json2DT$genomeBuild <- genomeBuild
   tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
@@ -584,7 +583,8 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
                    "format=json"
     )
     url1 <- utils::URLencode(url1)
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
     url1GetText2Json2DT$genomeBuild <- genomeBuild
     tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
@@ -653,17 +653,23 @@ xQTLquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
                    "datasetId=", datasetId,"&",
                    "variantId=", variantName)
   }
+
+  message("Querying variant...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+
+
   # url1 <- "https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&snpId=rs12596338"
   url1 <- utils::URLencode(url1)
   # test api server accessibility:
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    # message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
+  # bestFetchMethod <- apiAdmin_ping()
+  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+  #   # message("Note: API server is busy or your network has latency, please try again later.")
+  #   return(NULL)
+  # }
   # fetch data:
   # message("GTEx API successfully accessed!")
-  url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2] )
+  # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2] )
+  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
   tmp <- data.table::as.data.table(url1GetText2Json$variant)
   if(nrow(tmp)==0){
     message("No variant found, please check your input.")
@@ -725,6 +731,9 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }
 
+  message("Querying variant by position...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+
+
   var_tmp <- data.table::data.table(ID=1:length(pos), chrom=chrom, pos=pos)
   cutNum <- recordPerChunk
   ############### query with xQTLquery_varPos: START
@@ -734,11 +743,11 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
   var_tmpCut <- var_tmpCut[,.(posLis=list(pos)),by=c("chrom","cutF")]
 
   # check network:
-  bestFetchMethod <- apiAdmin_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
+  # bestFetchMethod <- apiAdmin_ping()
+  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+  #   message("Note: API server is busy or your network has latency, please try again later.")
+  #   return(NULL)
+  # }
   # out:
   outInfo <- data.table::data.table()
   for( ii in 1:nrow(var_tmpCut)){
@@ -752,7 +761,8 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
       stop("Too many positions were received, please reduce the number of positions or recordPerChunk.")
     }
     # fetch data:
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
     tmp <- data.table::as.data.table(url1GetText2Json$variant)
     if(nrow(tmp)<1){
       message("No variants were found at thses positions.")
@@ -802,14 +812,16 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
                    "datasetId=", datasetId)
     url1 <- utils::URLencode(url1)
-    bestFetchMethod <- apiAdmin_ping()
-    if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-      message("Note: API server is busy or your network has latency, please try again later.")
-      return(NULL)
-    }
-    message("GTEx API successfully accessed!")
+    # bestFetchMethod <- apiAdmin_ping()
+    # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    #   message("Note: API server is busy or your network has latency, please try again later.")
+    #   return(NULL)
+    # }
+    # message("GTEx API successfully accessed!")
     # url1Get <- httr::GET(url1, httr::progress())
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$tissueInfo)
     return(url1GetText2Json2DT)
   }else{
@@ -832,14 +844,15 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
                    "datasetId=", datasetId,"&",
                    "tissueSite=", tissueSite)
     url1 <- utils::URLencode(url1)
-    bestFetchMethod <- apiAdmin_ping()
-    if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-      message("Note: API server is busy or your network has latency, please try again later.")
-      return(NULL)
-    }
-    message("GTEx API successfully accessed!")
+    # bestFetchMethod <- apiAdmin_ping()
+    # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    #   message("Note: API server is busy or your network has latency, please try again later.")
+    #   return(NULL)
+    # }
+    # message("GTEx API successfully accessed!")
     # url1Get <- httr::GET(url1, httr::progress())
-    url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
     url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$tissueInfo)
     return(url1GetText2Json2DT)
   }
@@ -1000,8 +1013,9 @@ apiEbi_ping <- function(){
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
 #'  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=chr11_66561248_T_C_b38&tissueSiteDetailId=Liver&datasetId=gtex_v8"
-#'  dMethods <- c("auto", "curl")
-#'  for(d in 1:length())
+#'
+#'  a <- fetchContent(url1, method="download", isJson=TRUE)
+#'
 #'  url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?",
 #'                 "var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917")
 #'  fetchContent(url1, method="download", isJson=FALSE)
@@ -1053,7 +1067,13 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
   }else if( method=="download" ){
     tmpFile <- tempfile(pattern = "file")
     if( file.exists(tmpFile) ){ file.remove(tmpFile) }
-    suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE ))
+    # Retry for-loop R loop if error
+    for (downloadTime in 1:3){
+        if(downloadTime>1){message("download failed and try again.")}
+        df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+        if(!is(df, 'try-error')) break
+    }
+    # suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE ))
     if(isJson){
       url1GetText2Json <-""
       if( file.exists(tmpFile) ){
@@ -1210,6 +1230,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #'
 #' @examples
 #' \donttest{
+#' url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
 #'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
 #'    endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 #' }
@@ -1316,6 +1337,10 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
   }else{
     message("EBI API server connected.")
   }
+
+  message("Querying term...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+
+
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
   allTerms <- fetchContent(url1,method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   allTerms <- names(allTerms$`_links`)

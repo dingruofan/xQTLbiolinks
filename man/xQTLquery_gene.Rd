@@ -6,7 +6,7 @@
 \usage{
 xQTLquery_gene(
   genes = "",
-  geneType = "geneSymbol",
+  geneType = "auto",
   gencodeVersion = "v26",
   recordPerChunk = 150
 )
@@ -22,57 +22,11 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
 \item \strong{gene classification}.
 
-"genes" must be chosen from following list when "geneType" is "geneCategory".
-\itemize{
-\item protein coding
-\item antisense
-\item lincRNA
-\item unprocessed pseudogene
-\item miRNA
-\item transcribed unprocessed pseudogene
-\item snRNA
-\item processed pseudogene
-\item processed transcript
-\item TEC
-\item transcribed unitary pseudogene
-\item transcribed processed pseudogene
-\item sense intronic
-\item misc RNA
-\item snoRNA
-\item scaRNA
-\item rRNA
-\item unitary pseudogene
-\item 3prime overlapping ncRNA
-\item polymorphic pseudogene
-\item bidirectional promoter lncRNA
-\item sense overlapping
-\item pseudogene
-\item IG V pseudogene
-\item scRNA
-\item IG C gene
-\item IG J gene
-\item IG V gene
-\item sRNA
-\item ribozyme
-\item vaultRNA
-\item non coding
-\item TR J gene
-\item TR C gene
-\item TR V gene
-\item TR V pseudogene
-\item TR D gene
-\item IG C pseudogene
-\item macro lncRNA
-\item TR J pseudogene
-\item IG D gene
-\item IG J pseudogene
-\item IG pseudogene
-\item Mt tRNA
-\item Mt rRNA
-}
+when "geneType" is "geneCategory", supported "genes" can be listed using function \code{gencodeGenetype$V26} or \code{gencodeGenetype$V19}
+
 }}
 
-\item{geneType}{A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".}
+\item{geneType}{A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".}
 
 \item{gencodeVersion}{"v26" or "v19"}
 
@@ -107,12 +61,12 @@ users can use this function to query basic information (including gene name, sym
  miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 
  # hg38 test:
- geneInfo <- xQTLquery_gene("TP53", "geneSymbol", "v26")
- geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26")
- geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
-                              geneType="gencodeId", "v26")
+ geneInfo <- xQTLquery_gene("TP53")
+ geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
+ geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"), geneType="gencodeId")
+
  # hg19 test:
- geneInfo <- xQTLquery_gene(c("TP53","naDK"), "geneSymbol", "v19")
- geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), "gencodeId", "v19")
+ geneInfo <- xQTLquery_gene(c("TP53","naDK"), geneType="geneSymbol", gencodeVersion="v19")
+ geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), geneType="gencodeId", gencodeVersion="v19")
  }
 }

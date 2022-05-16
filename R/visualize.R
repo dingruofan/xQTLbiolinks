@@ -487,7 +487,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 
   # LD info:
   if(is.na(snpLD)){
-    snpLD <- retrieveLD_ldlink(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token)
+    snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token)
   }
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
@@ -640,7 +640,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 
   # get LD information:
   if(is.na(snpLD)){
-    snpLD <- retrieveLD_ldlink(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genome, token = token)
+    snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genome, token = token)
   }
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 

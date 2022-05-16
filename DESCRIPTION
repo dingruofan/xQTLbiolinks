@@ -17,7 +17,6 @@ Depends:
 VignetteBuilder:
     knitr
 Imports: 
-    coloc,
     curl (>= 4.3.2),
     data.table (>= 1.14.2),
     DBI,
@@ -37,6 +36,8 @@ Imports:
     utils (>= 4.0.3),
     viridis
 Suggests: 
+    coloc,
     knitr,
+    rtracklayer,
     tidyr,
     usethis

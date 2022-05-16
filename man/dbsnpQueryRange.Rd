@@ -31,6 +31,7 @@ retrieve snps from dbSNP using coordinate.
 }
 \examples{
 \donttest{
+url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
    endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
 }
