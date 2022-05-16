@@ -983,7 +983,7 @@ apiEbi_ping <- function(){
 #' @title Fetch data using url by three methods
 #'
 #' @param url1 A url string.
-#' @param method Can be chosen from "download", "curl", "GetWithHeader", or "GET".
+#' @param method Can be chosen from "download", "curl", "fromJSON", or "GET".
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @param isJson Fetched content is a json file or not. Defaulst: TRUE.
 #' @import utils
@@ -993,10 +993,15 @@ apiEbi_ping <- function(){
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
+#' @export
+#'
 #' @examples
 #' \donttest{
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
+#'  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=chr11_66561248_T_C_b38&tissueSiteDetailId=Liver&datasetId=gtex_v8"
+#'  dMethods <- c("auto", "curl")
+#'  for(d in 1:length())
 #'  url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?",
 #'                 "var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917")
 #'  fetchContent(url1, method="download", isJson=FALSE)
