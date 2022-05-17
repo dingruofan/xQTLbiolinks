@@ -78,8 +78,8 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
   # geneType
   if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
-  }else if( !(geneType %in% c("geneSymbol", "gencodeId", "geneCategory")) ){
-    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }else if( !(geneType %in% c("auto","geneSymbol", "gencodeId", "geneCategory")) ){
+    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\" or \"geneCategory\".")
   }
 
   # Automatically determine the type of variable:
@@ -89,12 +89,14 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
     }else if( length(genes)==1 ){
       if( genes %in% gencodeGenetype$V26 | genes %in% gencodeGenetype$V19 ){
         geneType <- "geneCategory"
+      }else{
+        geneType <- "geneSymbol"
       }
     }else{
       geneType <- "geneSymbol"
     }
   }
-  message("geneType: ",geneType)
+  # message("geneType: ",geneType)
 
   # gencodeVersion
   if( is.null(gencodeVersion) ||  any(is.na(gencodeVersion)) || any(gencodeVersion=="") || length(gencodeVersion)!=1){
@@ -269,8 +271,8 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
   }
 }
 
-#' @title xQTLquery_sample
-#' @description  query sample's details with a specifc tissue name or sample ID.
+#' @title xQTLquery_sampleByTissue
+#' @description  query sample's details with a specifc tissue name
 #' @param tissueSiteDetail
 #'  Tissue must be chosen from the following tissue names:
 #' \tabular{rrrrr}{
@@ -343,14 +345,14 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @export
 #' @examples
 #' \donttest{
-#'   a <- xQTLquery_sample( tissueSiteDetail="Liver", datasetId="gtex_v8",
+#'   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="Liver", datasetId="gtex_v8",
 #'                     pathologyNotesCategories=TRUE  )
-#'   xQTLquery_sample( tissueSiteDetail="All", dataType="RNASEQ",
+#'   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="All", dataType="RNASEQ",
 #'                     datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-#'   xQTLquery_sample( "Brain - Amygdala", "RNASEQ",
+#'   sampleInfo <- xQTLquery_sampleByTissue( "Brain - Amygdala", "RNASEQ",
 #'                     "gtex_v8", 200 )
 #'   }
-xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
+xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
   .<-NULL
   page_tmp <- 0
@@ -386,7 +388,7 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
   # convert tissueSiteDetail to tissueSiteDetailId:
   tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
 
-  message("Querying samples...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+  message("Querying samples by tissue...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
 
   ########## parameter check: pageSize_tmp
   if(is.null(pageSize_tmp) ||  any(is.na(pageSize_tmp)) ){
@@ -503,7 +505,110 @@ xQTLquery_sample <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datas
 
 
 
+#' @title xQTLquery_sampleBySampleId
+#' @description query sample's details with samples' IDs.
+#' @param sampleIds A character vector or a string of sample ID.
+#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 200).
+#' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
+#'                  "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
+#'   sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
+#'   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="Liver", datasetId="gtex_v8")
+#'   sampleInfo2 <- xQTLquery_sampleByTissue( tissueSiteDetail="Whole Blood", datasetId="gtex_v8")
+#'   sampleIds <- unique(c(sampleInfo$sampleId, sampleInfo2$sampleId))
+#' }
+xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNotesCategories=FALSE ){
+  sampleIds <- unique(sampleIds)
+  if(!all(str_detect(sampleIds, "^GTEX-"))){
+    stop("Samples ID should be start with \"GTEx-\", please check your input!")
+  }
 
+  page_tmp <- 0
+  pageSize_tmp <- as.integer(recordPerChunk)
+  cutNum <- as.integer(recordPerChunk)
+
+  # 分批下载防止样本量太大：
+  samplesCut <- data.table::data.table(sampleIds=sampleIds, ID=1:length(sampleIds), cutF = as.character(cut(1:length(sampleIds),breaks=seq(0,length(sampleIds)+cutNum,cutNum) )) )
+  samplesURL <- samplesCut[,.(samplesURL=paste0(sampleIds,collapse = ",")),by=c("cutF")]
+  if( any(unlist(lapply(samplesURL$samplesURL, nchar)) >3900) ){
+    stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input samples")
+  }
+
+
+  message("Querying samples by sampleId...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+
+  tmp_all <- data.table()
+  for(i in 1: nrow(samplesURL) ){
+
+    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+                   "sampleId=",samplesURL[i,]$samplesURL,"&",
+                   "page=",page_tmp,"&",
+                   "pageSize=", pageSize_tmp
+    )
+    url1 <- utils::URLencode(url1)
+    outInfo <- data.table::data.table()
+
+    # download with "download" method and retry 3 times.
+    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
+    if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
+      pathologyNotesCategories <- FALSE
+      message(" == No pathologyNotesCategories information found in your queried samples!" )
+      tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
+      outInfo <- rbind(outInfo, tmp)
+    }else{
+      tmp <- data.table::as.data.table( url1GetText2Json$sample )
+      outInfo <- rbind(outInfo, tmp)
+    }
+    message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+    page_tmp<-page_tmp+1
+
+    while( page_tmp <= (url1GetText2Json$numPages-1)){
+      url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+                     "sampleId=",samplesURL[i,]$samplesURL,
+                     "page=",page_tmp,"&",
+                     "pageSize=", pageSize_tmp
+      )
+      url1 <- utils::URLencode(url1)
+
+      # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+      # download with "download" method and retry 3 times.
+      url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+
+      if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
+        tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
+        outInfo <- rbind(outInfo, tmp)
+      }else{
+        tmp <- data.table::as.data.table( url1GetText2Json$sample )
+        outInfo <- rbind(outInfo, tmp)
+      }
+
+      message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+      page_tmp <- page_tmp+1
+    }
+    if(pathologyNotesCategories){
+      tmp_all <- rbind(tmp_all,cbind(outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE], outInfo[,names(outInfo)[str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE]))
+    }else{
+      tmp_all<- rbind(tmp_all, outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE])
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+}
 
 
 
