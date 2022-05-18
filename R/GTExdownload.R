@@ -264,8 +264,8 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
-#'  xQTLdownload_eqtlSig(variantName="rs1641513",genes="TP53", datasetId="gtex_v8")
-#'  xQTLdownload_eqtlSig(variantName="rs1641513",genes="TP53", datasetId="gtex_v7")
+#'  xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v7")
 #'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
 #'                    genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
 #' }
