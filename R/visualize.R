@@ -775,7 +775,7 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
   }
 
   geneInfo <- xQTLquery_gene(gene, geneType = geneType, gencodeVersion = gencodeVersion )
-  geneEqtl <- xQTLdownload_eqtlSig(gene=geneInfo$geneSymbol, datasetId=datasetId)
+  geneEqtl <- xQTLdownload_eqtlSig(genes=geneInfo$geneSymbol, datasetId=datasetId)
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)

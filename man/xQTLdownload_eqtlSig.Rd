@@ -6,7 +6,7 @@
 \usage{
 xQTLdownload_eqtlSig(
   variantName = "",
-  gene = "",
+  genes = "",
   variantType = "auto",
   geneType = "auto",
   tissueSiteDetail = "",
@@ -16,7 +16,7 @@ xQTLdownload_eqtlSig(
 \arguments{
 \item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
 
-\item{gene}{A gene symbol or a gencode id (versioned).}
+\item{genes}{A gene symbol or a gencode id (versioned).}
 
 \item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
 
@@ -45,19 +45,19 @@ download significant eQTL associations of a tissue or across all tissues.
  varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
  xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 
- # Download eQTL info for a gene:
- xQTLdownload_eqtlSig(gene="ATAD3B")
- xQTLdownload_eqtlSig(gene="TP53",datasetId="gtex_v7")
- xQTLdownload_eqtlSig(gene="ENSG00000141510.16", datasetId="gtex_v8")
- xQTLdownload_eqtlSig(gene="ENSG00000141510.11", datasetId="gtex_v7",
+ # Download eQTL info for gene:
+ xQTLdownload_eqtlSig(genes="ATAD3B")
+ xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
+ xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
+ xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
                       tissueSiteDetail="Thyroid" )
- xQTLdownload_eqtl(gene="ENSG00000141510.11",
+ xQTLdownload_eqtl(genes="ENSG00000141510.11",
                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 
  # Download eQTL info for a variant-gene pair:
- xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
- xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
+ xQTLdownload_eqtlSig(variantName="rs1641513",genes="TP53", datasetId="gtex_v8")
+ xQTLdownload_eqtlSig(variantName="rs1641513",genes="TP53", datasetId="gtex_v7")
  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
-                   gene="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
+                   genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
 }
 }

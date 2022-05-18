@@ -229,7 +229,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @description download significant eQTL associations of a tissue or across all tissues.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned).
+#' @param genes A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
@@ -254,22 +254,22 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #'  varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
 #'  xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 #'
-#'  # Download eQTL info for a gene:
-#'  xQTLdownload_eqtlSig(gene="ATAD3B")
-#'  xQTLdownload_eqtlSig(gene="TP53",datasetId="gtex_v7")
-#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.16", datasetId="gtex_v8")
-#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.11", datasetId="gtex_v7",
+#'  # Download eQTL info for gene:
+#'  xQTLdownload_eqtlSig(genes="ATAD3B")
+#'  xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
+#'  xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
 #'                       tissueSiteDetail="Thyroid" )
-#'  xQTLdownload_eqtl(gene="ENSG00000141510.11",
+#'  xQTLdownload_eqtl(genes="ENSG00000141510.11",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
-#'  xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
-#'  xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
+#'  xQTLdownload_eqtlSig(variantName="rs1641513",genes="TP53", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlSig(variantName="rs1641513",genes="TP53", datasetId="gtex_v7")
 #'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
-#'                    gene="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
+#'                    genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
 #' }
-xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
   variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- NULL
   .<-NULL
   # variantName="chr1_14677_G_A_b38"
@@ -287,10 +287,7 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", ge
     gencodeVersion <- "v19"
     tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv7)
   }
-  # check gene:
-  if( length(gene) >1 || !is.character(gene) ){
-    stop("Parameter \"gene\" must be a character string. ")
-  }
+
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) ){
     stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
@@ -330,25 +327,19 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", ge
   }
 
   ##################### fetch geneInfo:
-  if(gene !=""){
+  if( all(genes !="") ){
 
     # Automatically determine the type of variable:
     if(geneType=="auto"){
-      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      if( all(unlist(lapply(genes, function(g){ stringr::str_detect(g, "^ENSG") }))) ){
         geneType <- "gencodeId"
-      }else if( length(gene)==1 ){
-        if( gene %in% gencodeGenetype$V26 | gene %in% gencodeGenetype$V19 ){
-          geneType <- "geneCategory"
-        }else{
-          geneType <- "geneSymbol"
-        }
       }else{
         geneType <- "geneSymbol"
       }
     }
 
     message("== Validate gene:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input.")
     }else{
@@ -356,7 +347,7 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", ge
     }
   }
   # both are null: error!
-  if(variantName=="" && gene == ""){
+  if(variantName=="" && all(genes == "")){
     stop("Parameter \"variantName\" and \"gene\" can not be null at the same time. ")
   }
 
@@ -365,12 +356,12 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", ge
   # }else if ( both is not null && tissue is not null){
     # return unsig or sig with exp
   # }
-  message("== Download significant eQTL associations:")
+  message("== Start downloading significant eQTL associations:")
   ########## construct url for sig association
   url1 <- paste0("https://gtexportal.org/rest/v1/association/singleTissueEqtl?format=json",
                  "&datasetId=",datasetId,
                  ifelse(variantName=="","",paste0("&variantId=",varInfo$variantId)),
-                 ifelse(gene=="","",paste0("&gencodeId=",geneInfo$gencodeId)),
+                 ifelse(all(genes==""),"",paste0("&gencodeId=",paste0(geneInfo$gencodeId, collapse = ","))),
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
                  )
   url1 <- utils::URLencode(url1)
@@ -384,7 +375,7 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", ge
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
   tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
   if( !exists("tmp")||nrow(tmp)==0){
-    message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
+    message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & genes!="","-",""),ifelse(genes=="","",paste0(" gene [", genes,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
     return(data.table::data.table())
   }else{
     message("== Done.")
@@ -392,7 +383,7 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", ge
   tmp <- merge(tmp, tissueSiteDetailGTEx, by = "tissueSiteDetailId")
   outInfo <- tmp[,.(variantId, snpId, gencodeId, geneSymbol, tissueSiteDetail, pValue, nes,datasetId)]
   message("=================================")
-  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!=""," -",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
+  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & genes!=""," -",""),ifelse(all(genes==""),"",paste0(" gene: [",paste0(genes, collapse = ", "),"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
 
   return(outInfo)
 }
@@ -782,8 +773,6 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
 #' @param variantId A character string. like "chr17_5294580_CT_C_b38".
 #' @param pThreshold Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.
 #' @param tissueSiteDetail tissue.
-#'
-#' @return
 #'
 #' @examples
 #' \donttest{
