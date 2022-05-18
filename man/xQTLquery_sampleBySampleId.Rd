@@ -17,9 +17,6 @@ xQTLquery_sampleBySampleId(
 
 \item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }
-\value{
-
-}
 \description{
 query sample's details with samples' IDs.
 }
@@ -29,5 +26,7 @@ query sample's details with samples' IDs.
                  "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
   sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="Liver", datasetId="gtex_v8")
+  sampleInfo2 <- xQTLquery_sampleByTissue( tissueSiteDetail="Whole Blood", datasetId="gtex_v8")
+  sampleIds <- unique(c(sampleInfo$sampleId, sampleInfo2$sampleId))
 }
 }

@@ -29,9 +29,6 @@ retrieveLD_LDproxy(
 
 \item{token}{Ldlink token, default: "9246d2db7917"}
 }
-\value{
-
-}
 \description{
 Retrive SNP pairwise LD from LDlink database
 }

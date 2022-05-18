@@ -91,8 +91,6 @@ Whole Blood \tab √ \cr
 \item{pThreshold}{Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.}
 }
 \value{
-
-
 A data.table
 }
 \description{

@@ -2160,7 +2160,7 @@ retrieveLD = function(chr,snp,population){
 #' @param max_count To prevent download failure due to network fluctuations, max number of connection attempts.
 #' @param token Ldlink token, default: "9246d2db7917"
 #'
-#' @return
+#' @return a data.frame
 #' @export
 #'
 #' @examples
