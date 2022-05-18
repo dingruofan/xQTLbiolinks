@@ -31,7 +31,7 @@ perform tissue-specific expression analysis.
  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100])
  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
- TSgene <- xQTLanalyze_TSExp(genes, datasetId="gtex_v7")
+ TSgene <- xQTLanalyze_TSExp(genes, datasetId="gtex_v8")
  xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 }
 }

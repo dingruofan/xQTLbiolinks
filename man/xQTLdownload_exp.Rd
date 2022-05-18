@@ -62,6 +62,7 @@ download normalized gene expression at the sample level in a specified tissue.
 
   # Get proteing-coding genes' expression:
   proT <- xQTLquery_gene (genes="protein coding")
-  proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung", toSummarizedExperiment=FALSE)
+  proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung",
+                              toSummarizedExperiment=FALSE)
   }
 }

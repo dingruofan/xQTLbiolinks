@@ -49,7 +49,8 @@
 #'
 #'   # Get proteing-coding genes' expression:
 #'   proT <- xQTLquery_gene (genes="protein coding")
-#'   proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung", toSummarizedExperiment=FALSE)
+#'   proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung",
+#'                               toSummarizedExperiment=FALSE)
 #'   }
 xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
   gencodeId <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
