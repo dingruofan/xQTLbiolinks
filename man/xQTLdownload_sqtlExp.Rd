@@ -7,7 +7,7 @@
 xQTLdownload_sqtlExp(
   variantName = "",
   phenotypeId = "",
-  variantType = "snpId",
+  variantType = "auto",
   tissueSiteDetail = "",
   datasetId = "gtex_v8"
 )
@@ -15,13 +15,13 @@ xQTLdownload_sqtlExp(
 \arguments{
 \item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
 
-\item{phenotypeId}{Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"}
+\item{phenotypeId}{A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"}
 
-\item{variantType}{A character string. "snpId" or "variantId". Default: "snpId".}
+\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string.}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
-\item{datasetId}{A character string. Only GTEx v8 is supported, default: "gtex_v8".}
+\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
 A data.table
@@ -36,9 +36,8 @@ download normalized expression of intron for a sQTL pair.
                       phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1",
                       tissueSiteDetail="Lung")
 
- # Dowload exp using variant ID and gencode ID.
+ # Dowload exp using variant ID.
  xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
-                      variantType="variantId",
                       phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
                       tissueSiteDetail="Adipose - Subcutaneous")
 }

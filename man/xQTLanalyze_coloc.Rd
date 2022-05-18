@@ -17,17 +17,17 @@ xQTLanalyze_coloc(
 )
 }
 \arguments{
-\item{gwasDF}{1}
+\item{gwasDF}{A dataframe of gwas.}
 
-\item{tissueSiteDetail}{1}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
-\item{method}{1}
+\item{method}{Now only one "coloc". Package \code{coloc} is required.}
 
-\item{traitGenes}{1}
+\item{traitGenes}{A gene symbol or a gencode id (versioned).}
 
-\item{population}{1}
+\item{population}{Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"}
 
-\item{token}{1}
+\item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
 }
 \value{
 coloc resut

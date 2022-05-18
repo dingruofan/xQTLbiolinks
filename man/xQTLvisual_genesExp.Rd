@@ -6,7 +6,7 @@
 \usage{
 xQTLvisual_genesExp(
   genes,
-  geneType = "geneSymbol",
+  geneType = "auto",
   tissueSiteDetail = "",
   datasetId = "gtex_v8"
 )
@@ -20,23 +20,30 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 \item \strong{Gencode/ensemble id} (versioned or unversioned).
 }}
 
-\item{geneType}{A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-A plot.
+A ggplot object
 }
 \description{
 density plot of specified genes' expression profiles in a specified tissue.
 }
 \examples{
 \donttest{
-  genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
+  genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1",
+             "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13",
+             "HOXA4", "VSX1")
   xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
-  genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13","ENSG00000197576.13","ENSG00000100987.14")
+
+  genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12",
+             "ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5",
+             "ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9",
+             "ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
+             "ENSG00000197576.13","ENSG00000100987.14")
   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 }
 }

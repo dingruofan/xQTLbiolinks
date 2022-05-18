@@ -6,22 +6,22 @@
 \usage{
 xQTLvisual_geneExpTissues(
   gene = "",
-  geneType = "geneSymbol",
+  geneType = "auto",
   datasetId = "gtex_v8",
   toTissueSite = TRUE
 )
 }
 \arguments{
-\item{geneType}{"geneSymbol" or "gencodeId".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{"gtex_v8" or "gtex_v7".}
+\item{datasetId}{"gtex_v8" or "gtex_v7". Default:"gtex_v8".}
 
 \item{toTissueSite}{TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.}
 
 \item{genes}{A characer vector.}
 }
 \value{
-A data.table and a plot.
+A list containing expression profile and a ggplot object.
 }
 \description{
 plot distribution of the gene expression among multiple tissues.

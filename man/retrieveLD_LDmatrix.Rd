@@ -9,7 +9,7 @@ retrieveLD_LDmatrix(snps, pop = "CEU", r2d = "r2", token = NULL, file = FALSE)
 \arguments{
 \item{snps}{list of between 2 - 1,000 variants, using an rsID or chromosome coordinate (e.g. "chr7:24966446")}
 
-\item{pop}{a 1000 Genomes Project population, (e.g. YRI or CEU), multiple allowed, default = "CEU"}
+\item{pop}{a 1000 Genomes Project population, (e.g. YRI or CEU), multiple allowed, default = "CEU". All supported can be listed with LDlinkR::list_pop()}
 
 \item{r2d}{r2d, either "r2" for LD R2 or "d" for LD D', default = "r2"}
 

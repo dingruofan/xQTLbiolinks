@@ -14,7 +14,7 @@ xQTLdownload_ld(
 \arguments{
 \item{gene}{A gene symbol, gencode id (versioned), or a charater string of gene type.}
 
-\item{geneType}{A character string. "geneSymbol"(default), or "gencodeId".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
 
@@ -28,9 +28,8 @@ download linkage disequilibrium data of the variants associated with this gene.
 }
 \examples{
 \donttest{
- aa <- xQTLdownload_ld("TP53" )
- xQTLdownload_ld(gene = "DDX11", datasetId="gtex_v7")
- xQTLdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
-
+ xQTLdownload_ld("TP53" )
+ xQTLdownload_ld("TP53", datasetId="gtex_v7")
+ xQTLdownload_ld(gene="ENSG00000008128.22")
 }
 }

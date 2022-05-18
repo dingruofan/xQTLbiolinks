@@ -29,11 +29,14 @@ retrieveLD_LDproxy(
 
 \item{token}{Ldlink token, default: "9246d2db7917"}
 }
+\value{
+a data.frame
+}
 \description{
 Retrive SNP pairwise LD from LDlink database
 }
 \examples{
 \donttest{
-  snpLD <- retrieveLD_LDproxy("rs3", windowSize=50000)
+  snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
 }
 }

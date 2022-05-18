@@ -6,19 +6,19 @@
 \usage{
 xQTLanalyze_TSExp(
   genes,
-  geneType = "geneSymbol",
+  geneType = "auto",
   method = "SPM",
   datasetId = "gtex_v8"
 )
 }
 \arguments{
-\item{genes}{gene symbol or gencode ID.}
-
-\item{geneType}{"geneSymbol" or "gencodeId".}
+\item{geneType}{A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".}
 
 \item{method}{"SPM" or "entropy"}
 
 \item{datasetId}{"gtex_v8" or "gtex_v7".}
+
+\item{A}{charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.}
 }
 \value{
 A data.table
@@ -29,9 +29,9 @@ perform tissue-specific expression analysis.
 \examples{
 \donttest{
  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
- TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
+ TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100])
  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
- TSgene <- xQTLanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
+ TSgene <- xQTLanalyze_TSExp(genes, datasetId="gtex_v7")
  xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 }
 }

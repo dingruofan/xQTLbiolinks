@@ -15,6 +15,16 @@ xQTLanalyze_getSentinelSnp(
 }
 \arguments{
 \item{gwasDF}{GWAS data.frame}
+
+\item{pValueThreshold}{Cutoff of gwas p-value. Default: 5e-8}
+
+\item{centerRange}{SNP-to-SNP distance. Default:1e4}
+
+\item{mafThreshold}{Cutoff of maf to remove rare variants.}
+
+\item{genomeVersion}{Genome version of input file. "grch37" or "grch38" (default).}
+
+\item{grch37To38}{TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package \code{rtracklayer} is required.}
 }
 \value{
 A data.table object.

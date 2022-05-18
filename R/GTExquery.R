@@ -59,6 +59,8 @@
 #'  # hg19 test:
 #'  geneInfo <- xQTLquery_gene(c("TP53","naDK"), geneType="geneSymbol", gencodeVersion="v19")
 #'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), geneType="gencodeId", gencodeVersion="v19")
+#'
+#'  geneInfo <- xQTLquery_gene(unique(protein_coding$geneSymbol))
 #'  }
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
@@ -233,7 +235,8 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
                          "format=json"
           )
           url1 <- utils::URLencode(url1)
-          url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+          # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+          url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
           url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
           if( nrow(url1GetText2Json2DT)==0 ){
             message( "0 record fatched!" )
@@ -511,7 +514,7 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #'
-#' @return
+#' @return a data.frame.
 #' @export
 #'
 #' @examples
@@ -519,9 +522,6 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 #'   sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
 #'                  "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
 #'   sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
-#'   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="Liver", datasetId="gtex_v8")
-#'   sampleInfo2 <- xQTLquery_sampleByTissue( tissueSiteDetail="Whole Blood", datasetId="gtex_v8")
-#'   sampleIds <- unique(c(sampleInfo$sampleId, sampleInfo2$sampleId))
 #' }
 xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNotesCategories=FALSE ){
   sampleIds <- unique(sampleIds)
@@ -529,7 +529,6 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
     stop("Samples ID should be start with \"GTEx-\", please check your input!")
   }
 
-  page_tmp <- 0
   pageSize_tmp <- as.integer(recordPerChunk)
   cutNum <- as.integer(recordPerChunk)
 
@@ -545,6 +544,9 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 
   tmp_all <- data.table()
   for(i in 1: nrow(samplesURL) ){
+    # 每个批次都得初始化page
+    page_tmp <- 0
+    message("== Batch ",i)
 
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
                    "sampleId=",samplesURL[i,]$samplesURL,"&",
@@ -559,7 +561,7 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 
     if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
       pathologyNotesCategories <- FALSE
-      message(" == No pathologyNotesCategories information found in your queried samples!" )
+      message(" == No pathologyNotesCategories information found." )
       tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
       outInfo <- rbind(outInfo, tmp)
     }else{
@@ -593,21 +595,12 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
       page_tmp <- page_tmp+1
     }
     if(pathologyNotesCategories){
-      tmp_all <- rbind(tmp_all,cbind(outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE], outInfo[,names(outInfo)[str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE]))
+      tmp_all <- rbind(tmp_all,cbind(outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE], outInfo[,names(outInfo)[str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE]), fill=TRUE)
     }else{
       tmp_all<- rbind(tmp_all, outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE])
     }
-
   }
-
-
-
-
-
-
-
-
-
+  return(tmp_all)
 }
 
 
@@ -704,7 +697,7 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #' @title xQTLquery_varId
 #' @description query variant with variant ID or SNP ID.
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -718,10 +711,10 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #'  \donttest{
 #'   xQTLquery_varId("rs12596338")
 #'   xQTLquery_varId("rs12596338", datasetId="gtex_v7")
-#'   xQTLquery_varId("chr11_66561248_T_C_b38", variantType="variantId", datasetId="gtex_v8")
+#'   xQTLquery_varId("chr11_66561248_T_C_b38")
 #'   xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
 #'  }
-xQTLquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex_v8"){
+xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_v8"){
   ########## parameter check: variantName
   if(is.null(variantName) ||  any(is.na(variantName)) ){
     stop("Parameter \"variantName\" can not be NULL or NA!")
@@ -735,8 +728,8 @@ xQTLquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
     stop("Parameter \"variantType\" can not be NULL or NA!")
   }else if(length(variantType)!=1){
     stop("Parameter \"variantType\" can not be NULL or NA!")
-  }else if(  !(variantType %in% c("snpId", "variantId"))  ){
-    stop("Parameter \"variantType\" should be chosen from \"snpId\" or \"variantId\"!")
+  }else if(  !(variantType %in% c("auto","snpId", "variantId"))  ){
+    stop("Parameter \"variantType\" should be chosen from \"auto\", \"snpId\" and \"variantId\"!")
   }
   ########## parameter check: datasetId
   if(is.null(datasetId) ||  any(is.na(datasetId)) ){
@@ -745,6 +738,17 @@ xQTLquery_varId <- function(variantName="", variantType="snpId", datasetId="gtex
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
   }else if(  !(datasetId %in% c("gtex_v8", "gtex_v7"))  ){
     stop("Parameter \"datasetId\" should be chosen from \"gtex_v8\" or \"gtex_v7\"!")
+  }
+
+  # auto pick variantType
+  if(variantType=="auto"){
+    if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+      variantType <- "snpId"
+    }else if(stringr::str_count(variantName,"_")==4){
+      variantType <- "variantId"
+    }else{
+      stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+    }
   }
 
   ############# if variantType is "snpId":

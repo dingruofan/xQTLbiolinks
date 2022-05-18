@@ -7,8 +7,8 @@
 xQTLdownload_sqtlSig(
   variantName = "",
   gene = "",
-  variantType = "snpId",
-  geneType = "geneSymbol",
+  variantType = "auto",
+  geneType = "auto",
   tissueSiteDetail = ""
 )
 }
@@ -17,70 +17,11 @@ xQTLdownload_sqtlSig(
 
 \item{gene}{A gene symbol or a gencode id (versioned).}
 
-\item{variantType}{A character string. "snpId" or "variantId". Default: "snpId".}
+\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{geneType}{A character string. "geneSymbol"(default) or "gencodeId".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string.
-Tissue must be chosen from the following tissue names:
-\tabular{rrrrr}{
-\strong{tissue name} \tab \strong{GTEx V8} \cr
-Adipose - Subcutaneous \tab √ \cr
-Adipose - Visceral (Omentum) \tab √ \cr
-Adrenal Gland \tab √ \cr
-Artery - Aorta \tab √ \cr
-Artery - Coronary \tab √ \cr
-Artery - Tibial \tab √ \cr
-Bladder \tab √ \cr
-Brain - Amygdala \tab √ \cr
-Brain - Anterior cingulate cortex (BA24) \tab √ \cr
-Brain - Caudate (basal ganglia) \tab √ \cr
-Brain - Cerebellar Hemisphere \tab √ \cr
-Brain - Cerebellum \tab √ \cr
-Brain - Cortex \tab √ \cr
-Brain - Frontal Cortex (BA9) \tab √ \cr
-Brain - Hippocampus \tab √ \cr
-Brain - Hypothalamus \tab √ \cr
-Brain - Nucleus accumbens (basal ganglia) \tab √ \cr
-Brain - Putamen (basal ganglia) \tab √ \cr
-Brain - Spinal cord (cervical c-1) \tab √ \cr
-Brain - Substantia nigra \tab √ \cr
-Breast - Mammary Tissue \tab √ \cr
-Cells - Cultured fibroblasts \tab √ \cr
-Cells - EBV-transformed lymphocytes \tab √ \cr
-Cells - Transformed fibroblasts \tab x \cr
-Cervix - Ectocervix \tab √ \cr
-Cervix - Endocervix \tab √ \cr
-Colon - Sigmoid \tab √ \cr
-Colon - Transverse \tab √ \cr
-Esophagus - Gastroesophageal Junction \tab √ \cr
-Esophagus - Mucosa \tab √ \cr
-Esophagus - Muscularis \tab √ \cr
-Fallopian Tube \tab √ \cr
-Heart - Atrial Appendage \tab √ \cr
-Heart - Left Ventricle \tab √ \cr
-Kidney - Cortex \tab √ \cr
-Kidney - Medulla \tab √ \cr
-Liver \tab √ \cr
-Lung \tab √ \cr
-Minor Salivary Gland \tab √ \cr
-Muscle - Skeletal \tab √ \cr
-Nerve - Tibial \tab √ \cr
-Ovary \tab √ \cr
-Pancreas \tab √ \cr
-Pituitary \tab √ \cr
-Prostate \tab √ \cr
-Skin - Not Sun Exposed (Suprapubic) \tab √ \cr
-Skin - Sun Exposed (Lower leg) \tab √ \cr
-Small Intestine - Terminal Ileum \tab √ \cr
-Spleen \tab √ \cr
-Stomach \tab √ \cr
-Testis \tab √ \cr
-Thyroid \tab √ \cr
-Uterus \tab √ \cr
-Vagina \tab √ \cr
-Whole Blood \tab √ \cr
-}}
+\item{tissueSiteDetail}{A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{refSeq}{A character string.}
 
@@ -91,6 +32,8 @@ Whole Blood \tab √ \cr
 \item{pThreshold}{Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.}
 }
 \value{
+
+
 A data.table
 }
 \description{
@@ -106,25 +49,24 @@ Only GTEx v8 is supported.
 }
 \donttest{
  # Download sQTL info for a variant:
- xQTLdownload_sqtlSig(variantName="rs201327123", variantType="snpId")
- xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
- xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId",
+ xQTLdownload_sqtlSig(variantName="rs201327123")
+ xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
+ xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38",
                       tissueSiteDetail="Whole Blood")
 
  # Download sQTL association according to all tissues with genome location:
- varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+ xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
  xQTLdownload_sqtlSig(variantName=varInfo$snpId, variantType="snpId")
 
  # Download sQTL info for a gene:
  xQTLdownload_sqtlSig(gene="ATAD3B")
- xQTLdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId")
- xQTLdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId",
+ xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
+ xQTLdownload_sqtlSig(gene="ENSG00000141510.16",
                       tissueSiteDetail="Lung" )
 
  # Download eQTL info for a variant-gene pair:
  xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
- xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", variantType="variantId",
-                      gene="TP53", geneType="geneSymbol",
-                      tissueSiteDetail="Lung")
+ xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38",
+                      gene="TP53", tissueSiteDetail="Lung")
 }
 }

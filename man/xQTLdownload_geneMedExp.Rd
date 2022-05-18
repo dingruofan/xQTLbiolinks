@@ -6,7 +6,7 @@
 \usage{
 xQTLdownload_geneMedExp(
   genes = "",
-  geneType = "geneSymbol",
+  geneType = "auto",
   datasetId = "gtex_v8",
   tissueSiteDetail = "",
   recordPerChunk = 150
@@ -15,11 +15,11 @@ xQTLdownload_geneMedExp(
 \arguments{
 \item{genes}{A character vector of gene symbol/gencode ID.}
 
-\item{geneType}{"geneSymbol" or "gencodeID".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{"gtex_v7" or "gtex_v8"}
+\item{datasetId}{"gtex_v7" or "gtex_v8"(default)}
 
-\item{tissueSiteDetail}{tissue name.}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{recordPerChunk}{1-2000. Default: 150.}
 }
@@ -31,6 +31,7 @@ download genes' median expression in a tissue or across all tissues.
 }
 \examples{
 \donttest{
- geneMedExp <- xQTLdownload_geneMedExp(genes="TP53", "geneSymbol")
+ geneMedExp <- xQTLdownload_geneMedExp(genes="TP53")
+ geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
 }
 }

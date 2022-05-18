@@ -68,5 +68,7 @@ users can use this function to query basic information (including gene name, sym
  # hg19 test:
  geneInfo <- xQTLquery_gene(c("TP53","naDK"), geneType="geneSymbol", gencodeVersion="v19")
  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), geneType="gencodeId", gencodeVersion="v19")
+
+ geneInfo <- xQTLquery_gene(unique(protein_coding$geneSymbol))
  }
 }

@@ -4,17 +4,17 @@
 \alias{xQTLvisual_eqtl}
 \title{xQTLvisual_eqtl}
 \usage{
-xQTLvisual_eqtl(gene, geneType = "geneSymbol", datasetId = "gtex_v8")
+xQTLvisual_eqtl(gene, geneType = "auto", datasetId = "gtex_v8")
 }
 \arguments{
 \item{gene}{A gene symbol or a gencode id (versioned).}
 
-\item{geneType}{A character string. "geneSymbol"(default) or "gencodeId".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-A plot
+A ggplot object
 }
 \description{
 plot significance of all eQTL associations for a gene across tissues.

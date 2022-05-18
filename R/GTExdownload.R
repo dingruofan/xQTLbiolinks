@@ -10,67 +10,9 @@
 #'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
 #' }
 #'
-#' @param geneType A character string. Types of queried genes. Options: "geneSymbol" (default) and "gencodeId";
-#' @param tissueSiteDetail
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cells - Transformed fibroblasts \tab x \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
+#' @param geneType A character string. Types of queried genes. Options: "auto" (default), "geneSymbol" and "gencodeId";
+#' @param tissueSiteDetail All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#'
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param toSummarizedExperiment whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 150).
@@ -90,20 +32,26 @@
 #' \donttest{
 #'   # Download gene expression with a genecode ID:
 #'   expProfiles <- xQTLdownload_exp(c("ENSG00000210195.2"),
-#'                                  "gencodeId", "Liver", "gtex_v8")
-#'   # Download gene expression profiles with multiple genes:
+#'                                  tissueSiteDetail="Liver")
+#'   # extract expression profile from SummarizedExperiment object:
+#'   SummarizedExperiment::assay(expProfiles)
+#'   # extract samples' detail from SummarizedExperiment object:
+#'   SummarizedExperiment::colData(expProfiles)
+#'
+#'   # Download gene expression profiles of multiple genes:
 #'   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-#'                                  "geneSymbol", "Artery - Coronary", "gtex_v8",
+#'                                  tissueSiteDetail="Artery - Coronary",
 #'                                  pathologyNotesCategories=TRUE,
-#'                                  toSummarizedExperiment=TRUE)
+#'                                  toSummarizedExperiment=FALSE)
 #'   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-#'                                  "geneSymbol", "Artery - Coronary", "gtex_v7")
+#'                                  tissueSiteDetail="Artery - Coronary",
+#'                                  datasetId="gtex_v7")
 #'
 #'   # Get proteing-coding genes' expression:
-#'   proT <- xQTLquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
-#'   proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
+#'   proT <- xQTLquery_gene (genes="protein coding")
+#'   proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung", toSummarizedExperiment=FALSE)
 #'   }
-xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
+xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
   gencodeId <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
@@ -159,6 +107,23 @@ xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
   }
   # convert tissueSiteDetail to tissueSiteDetailId:
   tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
+
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else if( length(genes)==1 ){
+      if( genes %in% gencodeGenetype$V26 | genes %in% gencodeGenetype$V19 ){
+        geneType <- "geneCategory"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+
 
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Validate gene :")
@@ -264,68 +229,9 @@ xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
-#' @param tissueSiteDetail A character string.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cells - Transformed fibroblasts \tab x \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -337,33 +243,32 @@ xQTLdownload_exp <- function(genes="", geneType="geneSymbol", tissueSiteDetail="
 #' @examples
 #' \donttest{
 #'  # Download eQTL info for a variant:
-#'  xQTLdownload_eqtlSig(variantName="rs201327123", variantType="snpId")
-#'  xQTLdownload_eqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
-#'  xQTLdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
-#'                    datasetId="gtex_v7")
-#'  xQTLdownload_eqtlSig(variantName="11_66328719_T_C_b37", variantType="variantId",
-#'                    datasetId="gtex_v7", tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+#'  xQTLdownload_eqtlSig("rs201327123")
+#'  xQTLdownload_eqtlSig("chr1_14677_G_A_b38")
+#'  xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7")
+#'  xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7",
+#'                        tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #'
 #'  # Download eQTL association according to all tissues with genome location:
 #'  varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
-#'  xQTLdownload_eqtlSig(variantName=varInfo$snpId, variantType="snpId")
+#'  xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 #'
 #'  # Download eQTL info for a gene:
 #'  xQTLdownload_eqtlSig(gene="ATAD3B")
 #'  xQTLdownload_eqtlSig(gene="TP53",datasetId="gtex_v7")
-#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.16", geneType="gencodeId", datasetId="gtex_v8")
-#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.11", geneType="gencodeId",
-#'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
-#'  xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
+#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.16", datasetId="gtex_v8")
+#'  xQTLdownload_eqtlSig(gene="ENSG00000141510.11", datasetId="gtex_v7",
+#'                       tissueSiteDetail="Thyroid" )
+#'  xQTLdownload_eqtl(gene="ENSG00000141510.11",
 #'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
 #'  xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
 #'  xQTLdownload_eqtlSig(variantName="rs1641513",gene="TP53", datasetId="gtex_v7")
-#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
-#'                    gene="SLC35E2B", geneType="geneSymbol", tissueSiteDetail="Kidney - Cortex")
+#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
+#'                    gene="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
 #' }
-xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
   variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- NULL
   .<-NULL
   # variantName="chr1_14677_G_A_b38"
@@ -398,8 +303,21 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
     tissueSiteDetailId <- tissueSiteDetailGTEx[tissueSiteDetail, on ="tissueSiteDetail"]$tissueSiteDetailId
   }
 
+
   ##################### fetch varInfo
   if(variantName!=""){
+
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")==4){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+
     message("== Validate variant:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
@@ -412,6 +330,22 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 
   ##################### fetch geneInfo:
   if(gene !=""){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else if( length(gene)==1 ){
+        if( gene %in% gencodeGenetype$V26 | gene %in% gencodeGenetype$V19 ){
+          geneType <- "geneCategory"
+        }else{
+          geneType <- "geneSymbol"
+        }
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
@@ -469,69 +403,10 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned). Can not be null.
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
-#' @param tissueSiteDetail A character string.
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param recordPerChunk A integer value (1-500). number of records fetched per request (default: 100).
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cells - Transformed fibroblasts \tab x \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -544,15 +419,15 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #' \donttest{
 #'
 #'  # Download eQTL info for a gene:
-#'  a <- xQTLdownload_eqtl(gene="TP53")
+#'  eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
 #'  xQTLdownload_eqtl(gene="ATAD3B", datasetId="gtex_v7")
 #'
 #'  # Unversioned gencode ID in GTEx V7:
-#'  eqtl_v7 <- xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",
-#'                                  datasetId="gtex_v7")
+#'  eqtl_v7 <- xQTLdownload_eqtl(gene="ENSG00000141510",
+#'                               datasetId="gtex_v7")
 #'  # Unversioned gencode ID in GTEx V8:
-#'  eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",
-#'                                  datasetId="gtex_v8")
+#'  eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510",
+#'                               datasetId="gtex_v8")
 #'
 #'  # In a specific tissue:
 #'  xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
@@ -562,14 +437,12 @@ xQTLdownload_eqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'  xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
 #'  xQTLdownload_eqtl(variantName="rs11657498",gene="TP53",
 #'                       datasetId="gtex_v7")
-#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", variantType="variantId",
-#'                       gene="SLC35E2B", geneType="geneSymbol",
+#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
 #'                       tissueSiteDetail="Kidney - Cortex")
-#'  xQTLdownload_eqtl(variantName="17_7492388_G_A_b37", variantType="variantId",
-#'                       gene="TP53", geneType="geneSymbol",
+#'  xQTLdownload_eqtl(variantName="17_7492388_G_A_b37",gene="TP53",
 #'                       tissueSiteDetail="Uterus",  datasetId="gtex_v7")
 #' }
-xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
+xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
   pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- NULL
   .<-NULL
   querySnpId=TRUE
@@ -622,6 +495,22 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
 
   ##################### fetch geneInfo:
   if(gene !=""){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else if( length(gene)==1 ){
+        if( gene %in% gencodeGenetype$V26 | gene %in% gencodeGenetype$V19 ){
+          geneType <- "geneCategory"
+        }else{
+          geneType <- "geneSymbol"
+        }
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
@@ -634,6 +523,18 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
   }
   ##################### fetch varInfo
   if(variantName!=""){
+
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")==4){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+
     message("== Validate variant:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
@@ -746,11 +647,11 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
 #' @description download all tested variant-gene associations.
 #'  source of all eQTL associations is EBI eQTL category.
 #'
-#' @param gene gene
-#' @param geneType geneType
-#' @param tissueSiteDetail tissueSiteDetail
+#' @param gene gene A gene symbol or a gencode id (versioned).
+#' @param geneType geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
-#' @param study "GTEx_V8"
+#' @param study "gtex_v8" only GTEx v8 is supported.
 #' @param withB37VariantId Whether to return the genome location(GTEx v7) of variants. Default: TRUE.
 #' @import data.table
 #' @import stringr
@@ -761,14 +662,16 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="snpId", gene
 #' \donttest{
 #'   geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
 #' }
-xQTLdownload_eqtlAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteDetail="", recordPerChunk=250, study="GTEx_V8", withB37VariantId=TRUE){
+xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail="", recordPerChunk=250, study="gtex_v8", withB37VariantId=TRUE){
   .<-NULL
   variantId <- variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
 
-  study="GTEx_V8"
+  if(toupper(study)=="GTEX_V8"){
+    study="GTEx_V8"
+  }
 
   ########## check genes
   if( is.null(gene) ||  any(is.na(gene)) || any(gene=="") ||length(gene)==0 ){
@@ -780,8 +683,17 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteD
   ########## geneType
   if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
-  }else if( !(geneType %in% c("geneSymbol", "gencodeId", "geneCategory")) ){
-    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }else if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
+  }
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
   }
 
   ########## parameter check: tissueSiteDetail
@@ -939,68 +851,9 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteD
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
-#' @param tissueSiteDetail A character string.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \cr
-#'    Adipose - Subcutaneous \tab √ \cr
-#'    Adipose - Visceral (Omentum) \tab √ \cr
-#'    Adrenal Gland \tab √ \cr
-#'    Artery - Aorta \tab √ \cr
-#'    Artery - Coronary \tab √ \cr
-#'    Artery - Tibial \tab √ \cr
-#'    Bladder \tab √ \cr
-#'    Brain - Amygdala \tab √ \cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \cr
-#'    Brain - Caudate (basal ganglia) \tab √ \cr
-#'    Brain - Cerebellar Hemisphere \tab √ \cr
-#'    Brain - Cerebellum \tab √ \cr
-#'    Brain - Cortex \tab √ \cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \cr
-#'    Brain - Hippocampus \tab √ \cr
-#'    Brain - Hypothalamus \tab √ \cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \cr
-#'    Brain - Putamen (basal ganglia) \tab √ \cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \cr
-#'    Brain - Substantia nigra \tab √ \cr
-#'    Breast - Mammary Tissue \tab √ \cr
-#'    Cells - Cultured fibroblasts \tab √ \cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \cr
-#'    Cells - Transformed fibroblasts \tab x \cr
-#'    Cervix - Ectocervix \tab √ \cr
-#'    Cervix - Endocervix \tab √ \cr
-#'    Colon - Sigmoid \tab √ \cr
-#'    Colon - Transverse \tab √ \cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \cr
-#'    Esophagus - Mucosa \tab √ \cr
-#'    Esophagus - Muscularis \tab √ \cr
-#'    Fallopian Tube \tab √ \cr
-#'    Heart - Atrial Appendage \tab √ \cr
-#'    Heart - Left Ventricle \tab √ \cr
-#'    Kidney - Cortex \tab √ \cr
-#'    Kidney - Medulla \tab √ \cr
-#'    Liver \tab √ \cr
-#'    Lung \tab √ \cr
-#'    Minor Salivary Gland \tab √ \cr
-#'    Muscle - Skeletal \tab √ \cr
-#'    Nerve - Tibial \tab √ \cr
-#'    Ovary \tab √ \cr
-#'    Pancreas \tab √ \cr
-#'    Pituitary \tab √ \cr
-#'    Prostate \tab √ \cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \cr
-#'    Small Intestine - Terminal Ileum \tab √ \cr
-#'    Spleen \tab √ \cr
-#'    Stomach \tab √ \cr
-#'    Testis \tab √ \cr
-#'    Thyroid \tab √ \cr
-#'    Uterus \tab √ \cr
-#'    Vagina \tab √ \cr
-#'    Whole Blood \tab √ \cr
-#' }
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -1011,28 +864,27 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="geneSymbol", tissueSiteD
 #' @examples
 #' \donttest{
 #'  # Download sQTL info for a variant:
-#'  xQTLdownload_sqtlSig(variantName="rs201327123", variantType="snpId")
-#'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId")
-#'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", variantType="variantId",
+#'  xQTLdownload_sqtlSig(variantName="rs201327123")
+#'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
+#'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38",
 #'                       tissueSiteDetail="Whole Blood")
 #'
 #'  # Download sQTL association according to all tissues with genome location:
-#'  varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+#'  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
 #'  xQTLdownload_sqtlSig(variantName=varInfo$snpId, variantType="snpId")
 #'
 #'  # Download sQTL info for a gene:
 #'  xQTLdownload_sqtlSig(gene="ATAD3B")
-#'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId")
-#'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16", geneType="gencodeId",
+#'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
+#'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16",
 #'                       tissueSiteDetail="Lung" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
 #'  xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
-#'  xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", variantType="variantId",
-#'                       gene="TP53", geneType="geneSymbol",
-#'                       tissueSiteDetail="Lung")
+#'  xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38",
+#'                       gene="TP53", tissueSiteDetail="Lung")
 #' }
-xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="" ){
+xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="" ){
   .<-NULL
   variantId <- snpId <- gencodeId <- geneSymbol <- phenotypeId <- pValue <- nes <- NULL
   # variantName="chr1_739465_TTTTG_T_b38"
@@ -1073,6 +925,18 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
 
   ##################### fetch varInfo
   if( variantName!=""){
+
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")==4){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+
     message("== Validate variant:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
@@ -1084,6 +948,16 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
 
   ##################### fetch geneInfo:
   if(gene !=""){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
@@ -1139,67 +1013,9 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
-#' @param tissueSiteDetail A character string.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -1223,10 +1039,9 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="snpId", g
 #'
 #'  # Dowload exp using variant ID and gencode ID.
 #'  xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
-#'                       variantType="variantId", geneType="gencodeId",
 #'                      tissueSiteDetail="Stomach")
 #' }
-xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
   # datasetId="gtex_v8"
@@ -1264,6 +1079,18 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 
   ##################### fetch varInfo
   if(variantName!=""){
+
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")==4){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+
     message("== Validate variant:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
@@ -1277,6 +1104,16 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 
   ##################### fetch geneInfo:
   if(gene !=""){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0|| is.null(geneInfo) || !exists("geneInfo")){
@@ -1332,69 +1169,10 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #' @description
 #'  download normalized expression of intron for a sQTL pair.
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param phenotypeId Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param tissueSiteDetail A character string.
+#' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
-#' @param datasetId A character string. Only GTEx v8 is supported, default: "gtex_v8".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -1411,13 +1189,12 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="snpId", g
 #'                       phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1",
 #'                       tissueSiteDetail="Lung")
 #'
-#'  # Dowload exp using variant ID and gencode ID.
+#'  # Dowload exp using variant ID.
 #'  xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
-#'                       variantType="variantId",
 #'                       phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
 #'                       tissueSiteDetail="Adipose - Subcutaneous")
 #' }
-xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="snpId", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
   # variantName="chr1_739465_TTTTG_T_b38"
   # phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1"
   # variantType="variantId"
@@ -1454,6 +1231,18 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="sn
 
   ##################### fetch varInfo
   if(variantName!=""){
+
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")==4){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+
     message("== Validate variant:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
@@ -1521,7 +1310,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="sn
 #' @description download linkage disequilibrium data of the variants associated with this gene.
 #'
 #' @param gene A gene symbol, gencode id (versioned), or a charater string of gene type.
-#' @param geneType  A character string. "geneSymbol"(default), or "gencodeId".
+#' @param geneType  A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param recordPerChunk A integer value (1-500). number of records fetched per request (default: 100).
 #' @import data.table
@@ -1535,10 +1324,9 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="sn
 #'
 #' @examples
 #' \donttest{
-#'  aa <- xQTLdownload_ld("TP53" )
-#'  xQTLdownload_ld(gene = "DDX11", datasetId="gtex_v7")
-#'  xQTLdownload_ld(gene="ENSG00000008128.22", geneType="gencodeId")
-#'
+#'  xQTLdownload_ld("TP53" )
+#'  xQTLdownload_ld("TP53", datasetId="gtex_v7")
+#'  xQTLdownload_ld(gene="ENSG00000008128.22")
 #' }
 xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=300){
   .<-NULL
@@ -1555,6 +1343,15 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
   }else if( !(geneType %in% c("geneSymbol", "gencodeId")) ){
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
   }
 
   # parameter check: datasetId
@@ -1618,68 +1415,9 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #' @description download eGenes (eQTL Genes).
 #'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
 #' @param gene  A charater string of gene symbol, gencode id (versioned).
-#' @param geneType A character string. "geneSymbol"(default) or"gencodeId".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
-#' @param tissueSiteDetail A character string.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \cr
-#'    Adipose - Subcutaneous \tab √ \cr
-#'    Adipose - Visceral (Omentum) \tab √ \cr
-#'    Adrenal Gland \tab √ \cr
-#'    Artery - Aorta \tab √ \cr
-#'    Artery - Coronary \tab √ \cr
-#'    Artery - Tibial \tab √ \cr
-#'    Bladder \tab √ \cr
-#'    Brain - Amygdala \tab √ \cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \cr
-#'    Brain - Caudate (basal ganglia) \tab √ \cr
-#'    Brain - Cerebellar Hemisphere \tab √ \cr
-#'    Brain - Cerebellum \tab √ \cr
-#'    Brain - Cortex \tab √ \cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \cr
-#'    Brain - Hippocampus \tab √ \cr
-#'    Brain - Hypothalamus \tab √ \cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \cr
-#'    Brain - Putamen (basal ganglia) \tab √ \cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \cr
-#'    Brain - Substantia nigra \tab √ \cr
-#'    Breast - Mammary Tissue \tab √ \cr
-#'    Cells - Cultured fibroblasts \tab √ \cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \cr
-#'    Cells - Transformed fibroblasts \tab x \cr
-#'    Cervix - Ectocervix \tab √ \cr
-#'    Cervix - Endocervix \tab √ \cr
-#'    Colon - Sigmoid \tab √ \cr
-#'    Colon - Transverse \tab √ \cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \cr
-#'    Esophagus - Mucosa \tab √ \cr
-#'    Esophagus - Muscularis \tab √ \cr
-#'    Fallopian Tube \tab √ \cr
-#'    Heart - Atrial Appendage \tab √ \cr
-#'    Heart - Left Ventricle \tab √ \cr
-#'    Kidney - Cortex \tab √ \cr
-#'    Kidney - Medulla \tab √ \cr
-#'    Liver \tab √ \cr
-#'    Lung \tab √ \cr
-#'    Minor Salivary Gland \tab √ \cr
-#'    Muscle - Skeletal \tab √ \cr
-#'    Nerve - Tibial \tab √ \cr
-#'    Ovary \tab √ \cr
-#'    Pancreas \tab √ \cr
-#'    Pituitary \tab √ \cr
-#'    Prostate \tab √ \cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \cr
-#'    Small Intestine - Terminal Ileum \tab √ \cr
-#'    Spleen \tab √ \cr
-#'    Stomach \tab √ \cr
-#'    Testis \tab √ \cr
-#'    Thyroid \tab √ \cr
-#'    Uterus \tab √ \cr
-#'    Vagina \tab √ \cr
-#'    Whole Blood \tab √ \cr
-#' }
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
 #' @import data.table
 #' @import stringr
@@ -1692,10 +1430,10 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #'  eGeneInfoAlltissue <- xQTLdownload_egene()
 #'  eGeneInfo <- xQTLdownload_egene("TP53")
 #'  eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#'  eGeneInfo <- xQTLdownload_egene("ENSG00000141510.16", geneType="gencodeId")
+#'  eGeneInfo <- xQTLdownload_egene("ENSG00000141510.16")
 #'  eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
 #' }
-xQTLdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
+xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="DDX11"
@@ -1736,6 +1474,16 @@ xQTLdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 
   # Fetch gene info:
   if(gene!=""){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
@@ -1802,68 +1550,9 @@ xQTLdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 #' @description download sGenes (sQTL Genes).
 #'  sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 #' @param gene  A charater string of gene symbol, gencode id (versioned). Can be null.
-#' @param geneType A character string. "geneSymbol"(default) or"gencodeId". Can be null.
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId A character string. only support "gtex_v8". Default: "gtex_v8".
-#' @param tissueSiteDetail A character string.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \cr
-#'    Adipose - Subcutaneous \tab √ \cr
-#'    Adipose - Visceral (Omentum) \tab √ \cr
-#'    Adrenal Gland \tab √ \cr
-#'    Artery - Aorta \tab √ \cr
-#'    Artery - Coronary \tab √ \cr
-#'    Artery - Tibial \tab √ \cr
-#'    Bladder \tab √ \cr
-#'    Brain - Amygdala \tab √ \cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \cr
-#'    Brain - Caudate (basal ganglia) \tab √ \cr
-#'    Brain - Cerebellar Hemisphere \tab √ \cr
-#'    Brain - Cerebellum \tab √ \cr
-#'    Brain - Cortex \tab √ \cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \cr
-#'    Brain - Hippocampus \tab √ \cr
-#'    Brain - Hypothalamus \tab √ \cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \cr
-#'    Brain - Putamen (basal ganglia) \tab √ \cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \cr
-#'    Brain - Substantia nigra \tab √ \cr
-#'    Breast - Mammary Tissue \tab √ \cr
-#'    Cells - Cultured fibroblasts \tab √ \cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \cr
-#'    Cells - Transformed fibroblasts \tab x \cr
-#'    Cervix - Ectocervix \tab √ \cr
-#'    Cervix - Endocervix \tab √ \cr
-#'    Colon - Sigmoid \tab √ \cr
-#'    Colon - Transverse \tab √ \cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \cr
-#'    Esophagus - Mucosa \tab √ \cr
-#'    Esophagus - Muscularis \tab √ \cr
-#'    Fallopian Tube \tab √ \cr
-#'    Heart - Atrial Appendage \tab √ \cr
-#'    Heart - Left Ventricle \tab √ \cr
-#'    Kidney - Cortex \tab √ \cr
-#'    Kidney - Medulla \tab √ \cr
-#'    Liver \tab √ \cr
-#'    Lung \tab √ \cr
-#'    Minor Salivary Gland \tab √ \cr
-#'    Muscle - Skeletal \tab √ \cr
-#'    Nerve - Tibial \tab √ \cr
-#'    Ovary \tab √ \cr
-#'    Pancreas \tab √ \cr
-#'    Pituitary \tab √ \cr
-#'    Prostate \tab √ \cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \cr
-#'    Small Intestine - Terminal Ileum \tab √ \cr
-#'    Spleen \tab √ \cr
-#'    Stomach \tab √ \cr
-#'    Testis \tab √ \cr
-#'    Thyroid \tab √ \cr
-#'    Uterus \tab √ \cr
-#'    Vagina \tab √ \cr
-#'    Whole Blood \tab √ \cr
-#' }
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 2000).
 #' @import data.table
 #' @import stringr
@@ -1873,12 +1562,14 @@ xQTLdownload_egene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 #'
 #' @examples
 #' \donttest{
-#'  sGeneInfoAlltissue <- xQTLdownload_sgene()
+#'  # don't run:
+#'  #sGeneInfoAlltissue <- xQTLdownload_sgene()
+#'
 #'  sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#'  sGeneInfo <- xQTLdownload_sgene("ENSG00000141510.16", geneType="gencodeId", tissueSiteDetail="Lung")
+#'  sGeneInfo <- xQTLdownload_sgene("ENSG00000141510.16",  tissueSiteDetail="Lung")
 #'  sGeneInfo <- xQTLdownload_sgene("DDX11", tissueSiteDetail="Artery - Tibial" )
 #' }
-xQTLdownload_sgene <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
+xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="ENSG00000013573.16"
@@ -1920,6 +1611,16 @@ xQTLdownload_sgene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 
   # Fetch gene info:
   if(gene!=""){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
@@ -1940,7 +1641,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
                  ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
                  ifelse(gene=="","",paste0("&gencodeId=",geneInfo$gencodeId))
                  )
-  message(url1)
+  # message(url1)
   url1 <- utils::URLencode(url1)
   # bestFetchMethod <- apiAdmin_ping()
   # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
@@ -1990,9 +1691,9 @@ xQTLdownload_sgene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 #' @description download genes' median expression in a tissue or across all tissues.
 #'
 #' @param genes A character vector of gene symbol/gencode ID.
-#' @param geneType "geneSymbol" or "gencodeID".
-#' @param datasetId "gtex_v7" or "gtex_v8"
-#' @param tissueSiteDetail tissue name.
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId "gtex_v7" or "gtex_v8"(default)
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param recordPerChunk 1-2000. Default: 150.
 #' @import data.table
 #' @import utils
@@ -2002,9 +1703,10 @@ xQTLdownload_sgene <- function(gene = "", geneType="geneSymbol", datasetId = "gt
 #'
 #' @examples
 #' \donttest{
-#'  geneMedExp <- xQTLdownload_geneMedExp(genes="TP53", "geneSymbol")
+#'  geneMedExp <- xQTLdownload_geneMedExp(genes="TP53")
+#'  geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
 #' }
-xQTLdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
+xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss<-strand <- NULL
   # check genes
@@ -2015,8 +1717,8 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   # geneType
   if( is.null(geneType) ||  any(is.na(geneType)) || any(geneType=="") || length(geneType)!=1){
     stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
-  }else if( !(geneType %in% c("geneSymbol", "gencodeId")) ){
-    stop("Parameter \"geneType\" should be choosen from \"geneSymbol\", \"gencodeId\".")
+  }else if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\",\"geneSymbol\", \"gencodeId\".")
   }
 
 
@@ -2048,7 +1750,17 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="geneSymbol", datasetId="
   }
 
   # Fetch gene info:
-  if(genes!="" || length(genes)>1){
+  if(genes!="" || length(genes)>0){
+
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+
     message("== Validate gene:")
     suppressMessages( geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
@@ -2165,7 +1877,7 @@ retrieveLD = function(chr,snp,population){
 #'
 #' @examples
 #' \donttest{
-#'   snpLD <- retrieveLD_LDproxy("rs3", windowSize=50000)
+#'   snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
 #' }
 retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=500000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){
   # targetSnp="rs3"
@@ -2207,7 +1919,7 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 #' @title fetch matrix of pairwise linkage disequilibrium statistics.
 #' @description This fucntion is rebuilt from LDlink package.
 #' @param snps list of between 2 - 1,000 variants, using an rsID or chromosome coordinate (e.g. "chr7:24966446")
-#' @param pop a 1000 Genomes Project population, (e.g. YRI or CEU), multiple allowed, default = "CEU"
+#' @param pop a 1000 Genomes Project population, (e.g. YRI or CEU), multiple allowed, default = "CEU". All supported can be listed with LDlinkR::list_pop()
 #' @param r2d r2d, either "r2" for LD R2 or "d" for LD D', default = "r2"
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param file Optional character string naming a path and file for saving results. If file = FALSE, no file will be generated, default = FALSE.

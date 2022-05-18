@@ -7,8 +7,8 @@
 xQTLvisual_eqtlExp(
   variantName = "",
   gene = "",
-  variantType = "snpId",
-  geneType = "geneSymbol",
+  variantType = "auto",
+  geneType = "auto",
   tissueSiteDetail = "",
   datasetId = "gtex_v8"
 )
@@ -18,75 +18,16 @@ xQTLvisual_eqtlExp(
 
 \item{gene}{A gene symbol or a gencode id (versioned).}
 
-\item{variantType}{A character string. "snpId" or "variantId". Default: "snpId".}
+\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{geneType}{A character string. "geneSymbol"(default) or "gencodeId".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string. Can not be null.
-Tissue must be chosen from the following tissue names:
-\tabular{rrrrr}{
-\strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-Adipose - Subcutaneous \tab √ \tab √\cr
-Adipose - Visceral (Omentum) \tab √ \tab √\cr
-Adrenal Gland \tab √ \tab √\cr
-Artery - Aorta \tab √ \tab √\cr
-Artery - Coronary \tab √ \tab √\cr
-Artery - Tibial \tab √ \tab √\cr
-Bladder \tab √ \tab √\cr
-Brain - Amygdala \tab √ \tab √\cr
-Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-Brain - Cerebellum \tab √ \tab √\cr
-Brain - Cortex \tab √ \tab √\cr
-Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-Brain - Hippocampus \tab √ \tab √\cr
-Brain - Hypothalamus \tab √ \tab √\cr
-Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-Brain - Substantia nigra \tab √ \tab √\cr
-Breast - Mammary Tissue \tab √ \tab √\cr
-Cells - Cultured fibroblasts \tab √ \tab x\cr
-Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-Cells - Transformed fibroblasts \tab x \tab √\cr
-Cervix - Ectocervix \tab √ \tab √\cr
-Cervix - Endocervix \tab √ \tab √\cr
-Colon - Sigmoid \tab √ \tab √\cr
-Colon - Transverse \tab √ \tab √\cr
-Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-Esophagus - Mucosa \tab √ \tab √\cr
-Esophagus - Muscularis \tab √ \tab √\cr
-Fallopian Tube \tab √ \tab √\cr
-Heart - Atrial Appendage \tab √ \tab √\cr
-Heart - Left Ventricle \tab √ \tab √\cr
-Kidney - Cortex \tab √ \tab √\cr
-Kidney - Medulla \tab √ \tab x\cr
-Liver \tab √ \tab √\cr
-Lung \tab √ \tab √\cr
-Minor Salivary Gland \tab √ \tab √\cr
-Muscle - Skeletal \tab √ \tab √\cr
-Nerve - Tibial \tab √ \tab √\cr
-Ovary \tab √ \tab √\cr
-Pancreas \tab √ \tab √\cr
-Pituitary \tab √ \tab √\cr
-Prostate \tab √ \tab √\cr
-Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-Small Intestine - Terminal Ileum \tab √ \tab √\cr
-Spleen \tab √ \tab √\cr
-Stomach \tab √ \tab √\cr
-Testis \tab √ \tab √\cr
-Thyroid \tab √ \tab √\cr
-Uterus \tab √ \tab √\cr
-Vagina \tab √ \tab √\cr
-Whole Blood \tab √ \tab √\cr
-}}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-A plot
+A list containing expression profile and a ggplot object.
 }
 \description{
 plot normalized expression among genotypes for eQTL.

@@ -2,6 +2,11 @@
 #' @description detect sentinel SNPs in a given GWAS dataset.
 #'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e4 bp.
 #' @param gwasDF GWAS data.frame
+#' @param pValueThreshold Cutoff of gwas p-value. Default: 5e-8
+#' @param centerRange SNP-to-SNP distance. Default:1e4
+#' @param mafThreshold Cutoff of maf to remove rare variants.
+#' @param genomeVersion Genome version of input file. "grch37" or "grch38" (default).
+#' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
 #' @import data.table
 #' @import stringr
 #' @importFrom GenomicRanges GRanges
@@ -107,7 +112,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @description identify trait genes with sentinel SNPs:
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
-#' @param genomeVersion "grch38" or "grch19". Default: "grch38"
+#' @param genomeVersion "grch38" or "grch37". Default: "grch38"
 #' @import data.table
 #' @import stringr
 #' @importFrom GenomicRanges GRanges
@@ -242,12 +247,12 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #' @title xQTLanalyze_coloc
 #' @description conduct colocalization analysis with detected gene.
 #'
-#' @param gwasDF 1
-#' @param traitGenes 1
-#' @param tissueSiteDetail 1
-#' @param population 1
-#' @param token 1
-#' @param method 1
+#' @param gwasDF A dataframe of gwas.
+#' @param traitGenes A gene symbol or a gencode id (versioned).
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
+#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
+#' @param method Now only one "coloc". Package `coloc` is required.
 #'
 #' @return coloc resut
 #' @export
@@ -260,7 +265,6 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'
 #'   traitsAllURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/traitsAll.txt"
 #'   traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
-
 #'
 #'   colocResultAll <- list()
 #'   for(i in 1:nrow(traitsAll)){
@@ -288,6 +292,10 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   # genomeVersion="grch37"
   # gwasSampleNum=50000
   # mafThreshold=0.01
+
+  if(!require(coloc)){
+    stop("please install package \"coloc\" with install.packages(\"coloc\").")
+  }
 
   ###################### eqtl dataset:
   if( genomeVersion=="grch37"){
@@ -409,8 +417,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #' @title xQTLanalyze_TSExp
 #' @description perform tissue-specific expression analysis.
 #'
-#' @param genes gene symbol or gencode ID.
-#' @param geneType "geneSymbol" or "gencodeId".
+#' @param A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
+#' @param geneType A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".
 #' @param method "SPM" or "entropy"
 #' @param datasetId "gtex_v8" or "gtex_v7".
 #'
@@ -420,16 +428,16 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 #' @examples
 #' \donttest{
 #'  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
-#'  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100] , geneType = "gencodeId", datasetId="gtex_v8")
+#'  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100])
 #'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
-#'  TSgene <- xQTLanalyze_TSExp(genes, geneType = "gencodeId", datasetId="gtex_v8")
+#'  TSgene <- xQTLanalyze_TSExp(genes, datasetId="gtex_v8")
 #'  xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
-xQTLanalyze_TSExp <- function(genes, geneType="geneSymbol", method="SPM", datasetId="gtex_v8"){
+xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){
   if(datasetId == "gtex_v8"){
     genomeVersion="v26"
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
-  }else if(datassetId == "gtex_v7"){
+  }else if(datasetId == "gtex_v7"){
     genomeVersion="v19"
     tissueSiteDetail <- copy(tissueSiteDetailGTExv7)
   }

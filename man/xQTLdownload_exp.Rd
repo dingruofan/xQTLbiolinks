@@ -6,7 +6,7 @@
 \usage{
 xQTLdownload_exp(
   genes = "",
-  geneType = "geneSymbol",
+  geneType = "auto",
   tissueSiteDetail = "Liver",
   datasetId = "gtex_v8",
   toSummarizedExperiment = TRUE,
@@ -23,67 +23,9 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 \item \strong{Gencode/ensemble id} (versioned or unversioned).
 }}
 
-\item{geneType}{A character string. Types of queried genes. Options: "geneSymbol" (default) and "gencodeId";}
+\item{geneType}{A character string. Types of queried genes. Options: "auto" (default), "geneSymbol" and "gencodeId";}
 
-\item{tissueSiteDetail}{Tissue must be chosen from the following tissue names:
-\tabular{rrrrr}{
-\strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-Adipose - Subcutaneous \tab √ \tab √\cr
-Adipose - Visceral (Omentum) \tab √ \tab √\cr
-Adrenal Gland \tab √ \tab √\cr
-Artery - Aorta \tab √ \tab √\cr
-Artery - Coronary \tab √ \tab √\cr
-Artery - Tibial \tab √ \tab √\cr
-Bladder \tab √ \tab √\cr
-Brain - Amygdala \tab √ \tab √\cr
-Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-Brain - Cerebellum \tab √ \tab √\cr
-Brain - Cortex \tab √ \tab √\cr
-Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-Brain - Hippocampus \tab √ \tab √\cr
-Brain - Hypothalamus \tab √ \tab √\cr
-Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-Brain - Substantia nigra \tab √ \tab √\cr
-Breast - Mammary Tissue \tab √ \tab √\cr
-Cells - Cultured fibroblasts \tab √ \tab x\cr
-Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-Cells - Transformed fibroblasts \tab x \tab √\cr
-Cervix - Ectocervix \tab √ \tab √\cr
-Cervix - Endocervix \tab √ \tab √\cr
-Colon - Sigmoid \tab √ \tab √\cr
-Colon - Transverse \tab √ \tab √\cr
-Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-Esophagus - Mucosa \tab √ \tab √\cr
-Esophagus - Muscularis \tab √ \tab √\cr
-Fallopian Tube \tab √ \tab √\cr
-Heart - Atrial Appendage \tab √ \tab √\cr
-Heart - Left Ventricle \tab √ \tab √\cr
-Kidney - Cortex \tab √ \tab √\cr
-Kidney - Medulla \tab √ \tab x\cr
-Liver \tab √ \tab √\cr
-Lung \tab √ \tab √\cr
-Minor Salivary Gland \tab √ \tab √\cr
-Muscle - Skeletal \tab √ \tab √\cr
-Nerve - Tibial \tab √ \tab √\cr
-Ovary \tab √ \tab √\cr
-Pancreas \tab √ \tab √\cr
-Pituitary \tab √ \tab √\cr
-Prostate \tab √ \tab √\cr
-Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-Small Intestine - Terminal Ileum \tab √ \tab √\cr
-Spleen \tab √ \tab √\cr
-Stomach \tab √ \tab √\cr
-Testis \tab √ \tab √\cr
-Thyroid \tab √ \tab √\cr
-Uterus \tab √ \tab √\cr
-Vagina \tab √ \tab √\cr
-Whole Blood \tab √ \tab √\cr
-}}
+\item{tissueSiteDetail}{All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
 
@@ -103,17 +45,23 @@ download normalized gene expression at the sample level in a specified tissue.
 \donttest{
   # Download gene expression with a genecode ID:
   expProfiles <- xQTLdownload_exp(c("ENSG00000210195.2"),
-                                 "gencodeId", "Liver", "gtex_v8")
-  # Download gene expression profiles with multiple genes:
+                                 tissueSiteDetail="Liver")
+  # extract expression profile from SummarizedExperiment object:
+  SummarizedExperiment::assay(expProfiles)
+  # extract samples' detail from SummarizedExperiment object:
+  SummarizedExperiment::colData(expProfiles)
+
+  # Download gene expression profiles of multiple genes:
   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-                                 "geneSymbol", "Artery - Coronary", "gtex_v8",
+                                 tissueSiteDetail="Artery - Coronary",
                                  pathologyNotesCategories=TRUE,
-                                 toSummarizedExperiment=TRUE)
+                                 toSummarizedExperiment=FALSE)
   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-                                 "geneSymbol", "Artery - Coronary", "gtex_v7")
+                                 tissueSiteDetail="Artery - Coronary",
+                                 datasetId="gtex_v7")
 
   # Get proteing-coding genes' expression:
-  proT <- xQTLquery_gene (genes="protein coding", geneType="geneCategory", "v26" )
-  proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], geneType = "geneSymbol","Lung","gtex_v8")
+  proT <- xQTLquery_gene (genes="protein coding")
+  proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung", toSummarizedExperiment=FALSE)
   }
 }

@@ -16,7 +16,7 @@ xQTLanalyze_getTraits(
 
 \item{detectRange}{A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp}
 
-\item{genomeVersion}{"grch38" or "grch19". Default: "grch38"}
+\item{genomeVersion}{"grch38" or "grch37". Default: "grch38"}
 }
 \value{
 A data.table object

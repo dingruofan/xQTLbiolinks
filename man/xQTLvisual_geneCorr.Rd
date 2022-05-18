@@ -6,7 +6,7 @@
 \usage{
 xQTLvisual_geneCorr(
   gene2 = "",
-  geneType = "geneSymbol",
+  geneType = "auto",
   tissueSiteDetail = "",
   groupBy = "sex",
   datasetId = "gtex_v8"
@@ -15,16 +15,16 @@ xQTLvisual_geneCorr(
 \arguments{
 \item{gene2}{Gene symbol or gencode ID of two genes. Default: gene symbol.}
 
-\item{geneType}{A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".}
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{groupBy}{Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-A plot
+A ggplot object
 }
 \description{
 The correlation plot of two genes’ expression.

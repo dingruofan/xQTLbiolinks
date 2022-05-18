@@ -3,68 +3,9 @@
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
-#' @param tissueSiteDetail A character string. Can not be null.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cells - Transformed fibroblasts \tab x \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import stringr
@@ -72,7 +13,7 @@
 #' @import ggrepel
 #' @import curl
 #' @import jsonlite
-#' @return A plot
+#' @return A list containing expression profile and a ggplot object.
 #' @export
 #'
 #' @examples
@@ -85,7 +26,7 @@
 #'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
 #'                                tissueSiteDetail="Whole Blood")
 #' }
-xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", geneType="geneSymbol", tissueSiteDetail="", datasetId="gtex_v8" ){
+xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
 
   # library(crayon)
@@ -122,6 +63,26 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
     stop("Parameter \"variantName\" can not be NULL or NA!")
   }else if(length(variantName)!=1 ||variantName==""){
     stop("Parameter \"variantName\" can not be NULL or NA!")
+  }
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+
+  # auto pick variantType
+  if(variantType=="auto"){
+    if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+      variantType <- "snpId"
+    }else if(stringr::str_count(variantName,"_")==4){
+      variantType <- "variantId"
+    }else{
+      stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+    }
   }
 
   # check tissueSiteDetail:
@@ -223,69 +184,10 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @description plot normalized expression among genotypes for sQTL.
 #'
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "snpId" or "variantId". Default: "snpId".
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
-#' @param tissueSiteDetail A character string. Can not be null.
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cells - Transformed fibroblasts \tab x \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
+#' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import stringr
@@ -293,17 +195,17 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="snpId", gen
 #' @import ggrepel
 #' @import curl
 #' @import jsonlite
-#' @return Normalized expression and ggplot2 object
+#' @return A list of variant detail and expression profile.
 #' @export
 #'
 #' @examples
 #' \donttest{
-#'  # EQTL associatons of TP53:
-#'  expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="variantId",
+#'  # sQTL associatons of TP53:
+#'  expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
 #'                                phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
 #'                                tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #' }
-xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="snpId", tissueSiteDetail="", datasetId="gtex_v8" ){
+xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
 
   # library(crayon)
@@ -327,6 +229,17 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="snpI
     stop("Parameter \"variantName\" can not be NULL or NA!")
   }else if(length(variantName)!=1 ||variantName==""){
     stop("Parameter \"variantName\" can not be NULL or NA!")
+  }
+
+  # auto pick variantType
+  if(variantType=="auto"){
+    if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+      variantType <- "snpId"
+    }else if(stringr::str_count(variantName,"_")==4){
+      variantType <- "variantId"
+    }else{
+      stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+    }
   }
 
   # 获得突变信息：
@@ -722,26 +635,43 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
 #'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
 #' }
-#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
-#' @param tissueSiteDetail Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import ggpubr
 #' @importFrom SummarizedExperiment assay colData
-#' @return A plot.
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
 #' \donttest{
-#'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
+#'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1",
+#'              "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13",
+#'              "HOXA4", "VSX1")
 #'   xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
-#'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13","ENSG00000197576.13","ENSG00000100987.14")
+#'
+#'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12",
+#'              "ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5",
+#'              "ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9",
+#'              "ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
+#'              "ENSG00000197576.13","ENSG00000100987.14")
 #'   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 #' }
-xQTLvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail = "", datasetId="gtex_v8"){
+xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", datasetId="gtex_v8"){
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+
   expProfiles <- xQTLdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), SummarizedExperiment::assay(expProfiles) ))
   expData1 <- melt(expData, id.vars="geneSymbol", variable.name = "sampleId", value.name="exp")
-  ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
+  p <- ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
     ggridges::geom_density_ridges_gradient( gradient_lwd = 1, scale = 1.4, rel_min_height = 0.05, size = 0.3) +
     # scale_fill_gradientn( colours = colorRampPalette(c("white", "blue", "red"))(27) )+
     viridis::scale_fill_viridis(name = "WCAE per SOC", option = "C")+
@@ -753,6 +683,8 @@ xQTLvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail =
            axis.text.y = element_text(size=rel(1.1),face="bold"),
            axis.title.x = element_text(size=rel(1.1),face="bold"),
            axis.title.y = element_blank())
+  print(p)
+  return(p)
 }
 
 
@@ -760,12 +692,12 @@ xQTLvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail =
 #' @description The correlation plot of two genes’ expression.
 #'
 #' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
-#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
-#' @param tissueSiteDetail Tissue must be accessed by "tissueSiteDetailGTExv7" or "tissueSiteDetailGTExv7".
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #'
-#' @return A plot
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
@@ -774,7 +706,17 @@ xQTLvisual_genesExp <- function(genes, geneType="geneSymbol", tissueSiteDetail =
 #'  xQTLvisual_geneCorr( gene2, tissueSiteDetail="Liver" )
 #'  xQTLvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion", tissueSiteDetail="Lung" )
 #' }
-xQTLvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
+xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene2, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+
   #
   expProfiles <- xQTLdownload_exp(genes=gene2, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
@@ -785,12 +727,14 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetai
   expData2 <- cbind(sampleInfo[rownames(expData2), on="sampleId"][,c("sampleId", groupBy),with=FALSE], expData2)
   expData2 <- na.omit(expData2)
 
-  ggpubr::ggscatterhist(expData2, x=gene2[1], y=gene2[2],
+  p <- ggpubr::ggscatterhist(expData2, x=gene2[1], y=gene2[2],
                 shape = 21, color = groupBy, fill=groupBy,
                 margin.plot="density",
                 margin.params = list(fill=groupBy, color="black", size=0.2),
                 legend = c(0.9,0.15),
                 ggtheme = theme_minimal())
+  print(p)
+  return(p)
 }
 
 
@@ -799,13 +743,13 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetai
 #' @description plot significance of all eQTL associations for a gene across tissues.
 #'
 #' @param gene A gene symbol or a gencode id (versioned).
-#' @param geneType A character string. "geneSymbol"(default) or "gencodeId".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
 #' @import PupillometryR
-#' @return A plot
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
@@ -813,12 +757,21 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="geneSymbol", tissueSiteDetai
 #'   xQTLvisual_eqtl("KIF15")
 #'   xQTLvisual_eqtl("MLH1")
 #' }
-xQTLvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" ){
+xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
   # gene="KIF15"
   if( datasetId=="gtex_v8" ){
     gencodeVersion="v26"
   }else{
     gencodeVersion="v19"
+  }
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
   }
 
   geneInfo <- xQTLquery_gene(gene, geneType = geneType, gencodeVersion = gencodeVersion )
@@ -850,18 +803,18 @@ xQTLvisual_eqtl <- function(gene, geneType="geneSymbol", datasetId = "gtex_v8" )
 #' @description plot distribution of the gene expression among multiple tissues.
 #'
 #' @param genes A characer vector.
-#' @param geneType "geneSymbol" or "gencodeId".
-#' @param datasetId "gtex_v8" or "gtex_v7".
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId "gtex_v8" or "gtex_v7". Default:"gtex_v8".
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
 #'
-#' @return A data.table and a plot.
+#' @return A list containing expression profile and a ggplot object.
 #' @export
 #'
 #' @examples
 #' \donttest{
 #'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 #' }
-xQTLvisual_geneExpTissues <- function(gene="", geneType="geneSymbol", datasetId="gtex_v8", toTissueSite=TRUE){
+xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_v8", toTissueSite=TRUE){
   if(datasetId == "gtex_v8"){
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
   }else if(datasetId == "gtex_v7"){
@@ -870,9 +823,19 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="geneSymbol", datasetId=
     stop("Please choose the right datasetId!")
   }
 
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+
   expProfiles <- data.table()
   tissues <- tissueSiteDetail$tissueSiteDetail
-  message("== Start fetching gene expression from all tissues...")
+  message("== Start fetching expression profiles of gene [",gene,"] of all tissues...")
+  message("== This may take A few minutes...", format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
   for(t in 1:length(tissues)){
     suppressMessages( expTmp <- xQTLdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissues[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
     expTmpGencodeId <- expTmp$gencodeId
@@ -881,9 +844,10 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="geneSymbol", datasetId=
     colnames(expTmp) <- expTmpGencodeId
     expTmp <- as.data.table(cbind(data.table(tissueSiteDetail= tissues[t], sampleId = rownames(expTmp)), expTmp))
     expProfiles <- rbind(expProfiles,expTmp)
-    message("== Fetching expression ... ",t, " - ", tissues[t], " - ", nrow(expTmp)," samples." )
+    message("== Fetching expression...",t,"/",length(tissues), " - ", tissues[t], " - ", nrow(expTmp)," samples.", format(Sys.time(), " | %Y-%b-%d %H:%M:%S ") )
     rm(expTmp)
   }
+  message("== Done")
   expProfilesMelt <- melt( expProfiles[,-c("sampleId")], id.vars = c("tissueSiteDetail"), variable.name = "geneName", value.name = "expTPM")
   expProfilesMelt$geneName <- as.character(expProfilesMelt$geneName)
   expProfilesMelt$expTPM <- as.numeric(expProfilesMelt$expTPM)

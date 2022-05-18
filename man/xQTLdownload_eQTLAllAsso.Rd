@@ -6,23 +6,23 @@
 \usage{
 xQTLdownload_eqtlAllAsso(
   gene = "",
-  geneType = "geneSymbol",
+  geneType = "auto",
   tissueSiteDetail = "",
   recordPerChunk = 250,
-  study = "GTEx_V8",
+  study = "gtex_v8",
   withB37VariantId = TRUE
 )
 }
 \arguments{
-\item{gene}{gene}
+\item{gene}{gene A gene symbol or a gencode id (versioned).}
 
-\item{geneType}{geneType}
+\item{geneType}{geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{tissueSiteDetail}
+\item{tissueSiteDetail}{tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
 
-\item{study}{"GTEx_V8"}
+\item{study}{"gtex_v8" only GTEx v8 is supported.}
 
 \item{withB37VariantId}{Whether to return the genome location(GTEx v7) of variants. Default: TRUE.}
 
