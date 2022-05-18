@@ -7,10 +7,9 @@
 xQTLanalyze_coloc(
   gwasDF,
   traitGene,
-  geneType = "geneSymbol",
+  geneType = "auto",
   genomeVersion = "grch38",
   tissueSiteDetail = "",
-  colocRange = 0,
   mafThreshold = 0.01,
   gwasSampleNum = 50000,
   method = "coloc"
@@ -18,6 +17,8 @@ xQTLanalyze_coloc(
 }
 \arguments{
 \item{gwasDF}{A dataframe of gwas.}
+
+\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 

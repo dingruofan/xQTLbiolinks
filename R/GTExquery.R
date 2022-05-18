@@ -1150,7 +1150,14 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 
   if(method == "fromJSON"){
     if(isJson){
-      url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
+
+      for (downloadTime in 1:3){
+        if(downloadTime>1){message("download failed and try again.")}
+        df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
+        if(!is(df, 'try-error')) break
+      }
+
+      # url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
       if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
         message("No data fetched, please check your input.")
         return(NULL)

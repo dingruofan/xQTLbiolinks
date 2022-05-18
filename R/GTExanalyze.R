@@ -249,6 +249,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'
 #' @param gwasDF A dataframe of gwas.
 #' @param traitGenes A gene symbol or a gencode id (versioned).
+#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
@@ -286,7 +287,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'   # locuscompare:
 #'   locuscompareP <- xQTLvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
 #' }
-xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch38", tissueSiteDetail="", colocRange=0, mafThreshold=0.01, gwasSampleNum=50000, method="coloc"){
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, gwasSampleNum=50000, method="coloc"){
   # tissueSiteDetail="Brain - Cortex"
   # geneType="geneSymbol"
   # genomeVersion="grch37"
@@ -295,6 +296,15 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
 
   if(!require(coloc)){
     stop("please install package \"coloc\" with install.packages(\"coloc\").")
+  }
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(traitGene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
   }
 
   ###################### eqtl dataset:
@@ -310,22 +320,25 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
     gencodeVersion <- "v26"
     geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
     eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
-    eqtlInfo[,"position":= .( lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}) )]
+    eqtlInfo[,"position":= .( unlist(lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]})) )]
     # chromosome:
     P_chrom <- geneInfo$chromosome
   }
 
-  if( is.null(eqtlInfo) || nrow(eqtlInfo)==0){
+  if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0){
     message(i," | gene", traitGene, "has no eqtl associations, next!")
     message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
     return(NULL)
   }
 
+
   eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
   # 去重：
   eqtlInfo <- eqtlInfo[order(snpId, pValue)][!duplicated(snpId)]
   # subset:
-  eqtlInfo <- na.omit( eqtlInfo[,.(rsid=snpId, maf, beta, se, pValue, position)] )
+  eqtlInfo <- na.omit( eqtlInfo[,.(rsid=snpId, maf=as.numeric(maf), beta, se, pValue=as.numeric(pValue), position=as.numeric(position))] )
+
+  message("Data processing...")
 
   ##################### gwas dataset:
   gwasDF <- gwasDF[,1:5]
@@ -376,7 +389,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   }
 
 
-  #####################  2
+  #####################
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
   gwasEqtldata <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
   # centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
@@ -397,6 +410,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="geneSymbol", genomeVe
   gwasEqtlInfo <- copy(gwasEqtldata)
   rm(gwasEqtldata)
   if(nrow(gwasEqtlInfo)==0){
+    message("No shared variants between eQTL and GWAS, please check your input!.")
     return(NULL)
   }
   message("== Start the colocalization analysis of gene [", traitGene,"]")
