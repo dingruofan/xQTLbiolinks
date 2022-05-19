@@ -112,7 +112,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
   # Automatically determine the type of variable:
   if(geneType=="auto"){
-    if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
+    if( all(unlist(lapply(genes, function(g){ stringr::str_detect(g, "^ENSG") }))) ){
       geneType <- "gencodeId"
     }else if( length(genes)==1 ){
       if( genes %in% gencodeGenetype$V26 | genes %in% gencodeGenetype$V19 ){
@@ -129,8 +129,12 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Check the gene name :")
   geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
+
   # Only keep genes with non-na gencode ID
   geneInfo <- geneInfo[!is.na(gencodeId)]
+  # for gene of the same name but with different gencodeID, like SHOX, ENSG00000185960.13 the name is in X, ENSG00000185960.13_PAR_Y is the name in Y. retain the gencode In x.
+  geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
+  #
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("gene information is null.")
   }
@@ -146,8 +150,9 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   }
 
   ############### 分批下载：
-  geneInfo <- cbind(geneInfo, data.table(cutF = cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+cutNum,cutNum) ) ))
-  setDT(geneInfo)
+  message("== Get the gene expression:")
+  geneInfo <- cbind(geneInfo, data.table::data.table(cutF = cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+cutNum,cutNum) ) ))
+  data.table::setDT(geneInfo)
   geneInfo$genesUpper <- toupper(geneInfo$genes)
   genesURL <- geneInfo[,.(genesURL=paste0(gencodeId[!is.na(gencodeId)],collapse = "%2C")),by=c("cutF")]
   if( any(unlist(lapply(genesURL$genesURL, nchar)) >3900) ){
@@ -180,7 +185,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
     }
     tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
     # keep raw genes:
-    tmp <- merge(geneInfo[cutF==genesURL[i,]$cutF,.(genes, genesUpper)], tmp, by="genesUpper",all.x=TRUE, sort = FALSE)[,-c("genesUpper")]
+    tmp <- merge(geneInfo[cutF==genesURL[i,]$cutF,.(genes, genesUpper, gencodeId, geneSymbol, datasetId)], tmp[,-c("gencodeId", "geneSymbol", "datasetId")], by="genesUpper",all.x=TRUE, sort = FALSE)[,-c("genesUpper")]
     outInfo <- rbind(outInfo, tmp)
     message("Downloaded part ", i, "/",nrow(genesURL),"; ", nrow(outInfo), " records.")
     rm(url1, url1GetText2Json, tmp)
@@ -193,7 +198,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   expDT <- data.table::as.data.table(t(data.table::as.data.table(tmpExp)))
   data.table::setDF(expDT)
   colnames(expDT) <- sampleInfo$sampleId
-  rownames(expDT) <- geneInfo$genes
+  rownames(expDT) <- outInfo$genes
   rm(tmpExp)
   geneInfo$genesUpper <- NULL
   geneInfo$cutF <- NULL

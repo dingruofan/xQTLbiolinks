@@ -73,7 +73,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
   # check genes
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
-  }else if( any(duplicated(genes)) ){
+  }else if( any(duplicated(toupper(genes))) ){
     stop("Please remove duplicated genes.")
   }
 
