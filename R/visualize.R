@@ -206,7 +206,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #'                                tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #' }
 xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
-  genoLabels <- normExp <- labelNum <- p <- NULL
+  genoLabels <- normExp <-geneType<- labelNum <- p <- NULL
 
   # library(crayon)
   # cat(green(
@@ -349,23 +349,32 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' \donttest{
 #'  # For GWAS:
 #'  gwasFile <- tempfile(pattern = "file")
-#'  gwasURL <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasChr6Sub1.txt"
+#'  gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
+#'                    "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
 #'  utils::download.file(gwasURL, destfile=gwasFile)
 #'  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
 #'  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
 #'  xQTLvisual_locusZoom(gwasDF)
-#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=200000)
-#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
+#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7",
+#'                       population ="AFR", windowSize=200000)
+#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR",
+#'                       windowSize=500000, highlightSnp="rs9271165")
 #'
 #'  # For eQTL:
-#'  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
-#'  eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(eqtlAsso$variantId, function(x){ a=stringr::str_split(x,"_")[[1]];return(data.table(chrom=a[1], pos=a[2])) }))
-#'  xQTLvisual_locusZoom( eqtlAsso[,.(snpId, chrom, pos, pValue)], population="EUR",
-#'                       posRange="chr6:46488310-48376712", genomeVersion="grch38" )
+#'  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
+#'                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
+#'  eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(
+#'                              eqtlAsso$variantId, function(x){
+#'                              a=stringr::str_split(x,"_")[[1]];
+#'                              return(data.table(chrom=a[1], pos=a[2])) }))
+#'  xQTLvisual_locusZoom(eqtlAsso[,.(snpId, chrom, pos, pValue)],
+#'                       population="EUR",
+#'                       posRange="chr6:46488310-48376712",
+#'                       genomeVersion="grch38" )
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
-  snpId <- pos <- pValue <- logP <- pointShape<- NULL
-  RS_Number <- R2 <- SNP_B <- r2Cut <- .<-NULL
+  snpId <- pos <- snpLD<- pValue <- logP <- pointShape<- NULL
+  RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- genomeVersion<- .<-NULL
   # highlightSnp=""
   # population="EUR"
   # posRange="chr6:46488310-48376712"
@@ -526,6 +535,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'   xQTLvisual_locusCompare( eqtlDF, gwasDF )
 #' }
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38",snpLD=NA ){
+  genomeVersion <- snpLD<- NULL
+
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
   eqtlDF <- eqtlDF[,1:2]
@@ -675,6 +686,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #'   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 #' }
 xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", datasetId="gtex_v8"){
+  geneSymbol <- NULL
 
   # Automatically determine the type of variable:
   if(geneType=="auto"){
@@ -721,9 +733,11 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' \donttest{
 #'  gene2 = c("AMOT", "HOXA4")
 #'  xQTLvisual_geneCorr( gene2, tissueSiteDetail="Liver" )
-#'  xQTLvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion", tissueSiteDetail="Lung" )
+#'  xQTLvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion",
+#'  tissueSiteDetail="Lung" )
 #' }
 xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
+  geneSymbol <- NULL
 
   # Automatically determine the type of variable:
   if(geneType=="auto"){
@@ -779,6 +793,8 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
 #'   xQTLvisual_eqtl("MLH1")
 #' }
 xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
+  variantId <- tissueSiteDetail <- pValue <- logP <- NULL
+  . <- NULL
   # gene="KIF15"
   if( datasetId=="gtex_v8" ){
     gencodeVersion="v26"
@@ -823,7 +839,7 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #' @title xQTLvisual_geneExpTissues
 #' @description plot distribution of the gene expression among multiple tissues.
 #'
-#' @param genes A characer vector.
+#' @param gene A characer vector. Gene symbol or gencode Id.
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId "gtex_v8" or "gtex_v7". Default:"gtex_v8".
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
@@ -836,6 +852,8 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 #' }
 xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_v8", toTissueSite=TRUE){
+  tissueSite <- expTPM <- NULL
+
   if(datasetId == "gtex_v8"){
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
   }else if(datasetId == "gtex_v7"){

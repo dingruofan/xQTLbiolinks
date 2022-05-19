@@ -18,7 +18,8 @@
 #' @examples
 #' \donttest{
 #'    gwasFile <- tempfile(pattern = "file")
-#'    gwasURL <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/GLGC_AD_chr1_6_Sub3.txt"
+#'    gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
+#'                      "exampleData/master/gwas/AD/GLGC_AD_chr1_6_Sub3.txt")
 #'    utils::download.file(gwasURL, destfile=gwasFile)
 #'    gwasDF <- data.table::fread(gwasFile, sep="\t")
 #'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
@@ -26,9 +27,13 @@
 #'
 #'    gwasDF <- fread("D:\\R_project\\GLGC_CG0052_result.txt.gz", sep="\t")
 #'    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-#'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
+#'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e4,
+#'                                                genomeVersion="grch37",
+#'                                                grch37To38=TRUE)
 #' }
 xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e4, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
+  position <- pValue <- maf <- rsid <- chr <- NULL
+  .<-NULL
   # Detect gene with sentinal SNP:
   gwasDF <- gwasDF[,1:5]
   message("== Preparing GWAS dataset... ")
@@ -53,7 +58,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
   if(genomeVersion =="grch37" & grch37To38){
     message("== Converting SNPs' coordinate to GRCH38... ")
 
-    if(suppressMessages(!require(rtracklayer))){
+    if(suppressMessages(!requireNamespace("rtracklayer"))){
       message("Package [rtracklayer] is not installed! please install [rtracklayer] with following: ")
       message("---------")
       message('\"if (!require("BiocManager", quietly = TRUE)); BiocManager::install("rtracklayer")\"')
@@ -113,6 +118,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
+#' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
 #' @import data.table
 #' @import stringr
 #' @importFrom GenomicRanges GRanges
@@ -123,11 +129,19 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #'
 #' @examples
 #' \donttest{
-#'   sentinelSnpsURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
-#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content), sep="\t")
-#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4, genomeVersion="grch37", grch37To38=TRUE)
+#'   sentinelSnpsURL <- paste0("https://gitee.com/stronghoney/exampleData/raw/",
+#'                            "master/gwas/GLGC_CG0052/sentinelSnpDF.txt")
+#'
+#'   sentinelSnpDF <- data.table::fread(
+#'                                rawToChar(curl::curl_fetch_memory(
+#'                                sentinelSnpsURL)$content), sep="\t")
+#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,
+#'                                      detectRange=1e4,
+#'                                      genomeVersion="grch37", grch37To38=TRUE)
 #' }
 xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion="grch38", grch37To38=FALSE){
+  rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
+  . <-genes <- geneSymbol <- gencodeId <- geneType <- description<- NULL
 
   data.table::as.data.table(sentinelSnpDF)
 
@@ -144,7 +158,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 
     message("== Converting SNPs' coordinate to GRCH38... ")
 
-    if(suppressMessages(!require(rtracklayer))){
+    if(suppressMessages(!requireNamespace("rtracklayer"))){
       message("Package [rtracklayer] is not installed! please install [rtracklayer] with following: ")
       message("---------")
       message('\"if (!require("BiocManager", quietly = TRUE)); BiocManager::install("rtracklayer")\"')
@@ -248,10 +262,13 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #' @description conduct colocalization analysis with detected gene.
 #'
 #' @param gwasDF A dataframe of gwas.
-#' @param traitGenes A gene symbol or a gencode id (versioned).
+#' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param genomeVersion "v26" (default) or "v19"
 #' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
+#' @param gwasSampleNum Sample number of GWAS dataset. Default:50000.
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param method Now only one "coloc". Package `coloc` is required.
 #'
@@ -260,41 +277,21 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'
 #' @examples
 #' \donttest{
-#'
-#'   traitsAll <- merge(traitsAllEqtl[pValue !="N/A",.(gencodeId, rsid=snpId)], traitsAll, by = c("gencodeId", "rsid"))
-#'   traitsAll <- traitsAll[order(pValue)]
-#'
-#'   traitsAllURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/traitsAll.txt"
-#'   traitsAll <- data.table::fread(rawToChar(curl::curl_fetch_memory(traitsAllURL)$content), sep="\t")
-#'
-#'   colocResultAll <- list()
-#'   for(i in 1:nrow(traitsAll)){
-#'     message(i," - ", date())
-#'     traitGene <- traitsAll[order(pValue)][i,]$geneSymbol
-#'     colocResult <- xQTLanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
-#'     colocResultAll[[i]] <- colocResult
-#'   }
-#'   range( unlist(lapply(1:length(colocResultAll), function(x){colocResultAll[[x]]$coloc_Out_summary$PP.H4.abf})) )
-#'
-#'   traitGene = traitsAll[geneSymbol=="NUDT17"]$geneSymbol
-#'   colocResult <- xQTLanalyze_coloc(gwasDF, traitGene, geneType="geneSymbol", genomeVersion="grch37", tissueSiteDetail="Brain - Cortex")
-#'
-#'   colocResult$gwasEqtlInfo
-#'   # eQTL locuszoom:
-#'   gwas_locusRoom <- xQTLvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.eqtl")],population="EUR",genomeVersion="grch38" )
-#'   # GWAS locuszoom:
-#'   eQTL_locusRoom <- xQTLvisual_locusZoom( colocResult$gwasEqtlInfo[,c("rsid","chr","position","pValue.gwas")], population="EUR",genomeVersion="grch38" )
-#'   # locuscompare:
-#'   locuscompareP <- xQTLvisual_locusCompare( colocResult$gwasEqtlInfo[,c("rsid","pValue.eqtl")], colocResult$gwasEqtlInfo[,c("rsid","pValue.gwas")] )
+#'   # xQTLanalyze_coloc
 #' }
-xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, gwasSampleNum=50000, method="coloc"){
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="CEU", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
+  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL
+  . <- NULL
+
   # tissueSiteDetail="Brain - Cortex"
   # geneType="geneSymbol"
   # genomeVersion="grch37"
   # gwasSampleNum=50000
   # mafThreshold=0.01
+  population <- ""
+  token <- ""
 
-  if(!require(coloc)){
+  if(!requireNamespace("coloc")){
     stop("please install package \"coloc\" with install.packages(\"coloc\").")
   }
 
@@ -364,7 +361,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   if(genomeVersion == "grch37"){
     message("== Converting GWAS coordinate to GRCH38... ")
 
-    if(suppressMessages(!require(rtracklayer))){
+    if(suppressMessages(!requireNamespace("rtracklayer"))){
       message("Package [rtracklayer] is not installed! please install [rtracklayer] with following: ")
       message("---------")
       message('\"if (!require("BiocManager", quietly = TRUE)); BiocManager::install("rtracklayer")\"')
@@ -431,7 +428,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #' @title xQTLanalyze_TSExp
 #' @description perform tissue-specific expression analysis.
 #'
-#' @param A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
+#' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
 #' @param geneType A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".
 #' @param method "SPM" or "entropy"
 #' @param datasetId "gtex_v8" or "gtex_v7".
@@ -448,6 +445,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #'  xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
 xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){
+  gencodeId <- geneSymbol <-.<-NULL
   if(datasetId == "gtex_v8"){
     genomeVersion="v26"
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)

@@ -40,18 +40,27 @@ plot locuszoom for showing regional information of the association signal relati
 \donttest{
  # For GWAS:
  gwasFile <- tempfile(pattern = "file")
- gwasURL <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasChr6Sub1.txt"
+ gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
+                   "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
  utils::download.file(gwasURL, destfile=gwasFile)
  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
  xQTLvisual_locusZoom(gwasDF)
- xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=200000)
- xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR", windowSize=500000, highlightSnp="rs9271165")
+ xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7",
+                      population ="AFR", windowSize=200000)
+ xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR",
+                      windowSize=500000, highlightSnp="rs9271165")
 
  # For eQTL:
- eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
- eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(eqtlAsso$variantId, function(x){ a=stringr::str_split(x,"_")[[1]];return(data.table(chrom=a[1], pos=a[2])) }))
- xQTLvisual_locusZoom( eqtlAsso[,.(snpId, chrom, pos, pValue)], population="EUR",
-                      posRange="chr6:46488310-48376712", genomeVersion="grch38" )
+ eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
+                tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
+ eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(
+                             eqtlAsso$variantId, function(x){
+                             a=stringr::str_split(x,"_")[[1]];
+                             return(data.table(chrom=a[1], pos=a[2])) }))
+ xQTLvisual_locusZoom(eqtlAsso[,.(snpId, chrom, pos, pValue)],
+                      population="EUR",
+                      posRange="chr6:46488310-48376712",
+                      genomeVersion="grch38" )
 }
 }

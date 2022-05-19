@@ -16,6 +16,7 @@ NULL
 #' \describe{
 #'   \item{tissueSiteDetail}{character string, tissue name}
 #'   \item{tissueSiteDetailId}{character string, tissue id removding special character}
+#'   \item{tissueSite}{character string, whole tissue name}
 #' }
 #'  Compared with GTEx v7
 #' \tabular{rrrrr}{
@@ -90,6 +91,7 @@ NULL
 #' \describe{
 #'   \item{tissueSiteDetail}{character string, tissue name}
 #'   \item{tissueSiteDetailId}{character string, tissue id removding special character}
+#'   \item{tissueSite}{character string, whole tissue name}
 #' }
 #'  Compared with GTEx v8
 #' \tabular{rrrrr}{
@@ -184,10 +186,25 @@ NULL
 #' @source \url{https://gtexportal.org/home/}
 NULL
 
+#' @title Gene types in GTEx V8 and V7
+#' @description
+#'  A dataset containing the classification of genes
+#' @docType data
+#' @keywords internal
+#' @name gencodeGenetype
+#' @format A list
+#' \describe{
+#'   \item{V26}{A character vector}
+#'   \item{V19}{A character vector}
+#' }
+#' @source \url{https://gtexportal.org/home/}
+NULL
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")
 utils::globalVariables("gencodeGeneInfoAllGranges")
+utils::globalVariables("gencodeGenetype")
 
 
 

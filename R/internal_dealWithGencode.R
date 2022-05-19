@@ -389,6 +389,8 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
 #' @import stringr
 #' @return NULL
 createGencodeGeneInfoAll <- function(){
+  gencodeId <- chromosome <- strand <- gencodeId_unversioned <- startV26 <- startV19 <- NULL
+  .<-NULL
   # # 生成 gencodeGeneInfoAllGranges
   gencodeGeneInfoV26<- xQTLquery_geneAll("v26")
   gencodeGeneInfoV19<- xQTLquery_geneAll("v19")
@@ -461,12 +463,14 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("IRanges") # in GenomicRanges
 # usethis::use_package("ggrepel") # in ggpubr
 # usethis::use_package("GenomicRanges") # in SummarizedExperiment
+# usethis::use_package("tidyr")
+# usethis::use_package("BiocGenerics")
+# usethis::use_package("methods")
 
 #
 # # suggest:
 # usethis::use_package("usethis", type="Suggests")
 # usethis::use_package("knitr",  type="Suggests")
-# usethis::use_package("tidyr", type="Suggests") # in ggpubr,
 # usethis::use_package("rtracklayer",type="Suggests")
 # usethis::use_package("coloc",type="Suggests")
 

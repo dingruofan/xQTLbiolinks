@@ -54,16 +54,18 @@
 #'  # hg38 test:
 #'  geneInfo <- xQTLquery_gene("TP53")
 #'  geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"), geneType="gencodeId")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
+#'                                geneType="gencodeId")
 #'
 #'  # hg19 test:
-#'  geneInfo <- xQTLquery_gene(c("TP53","naDK"), geneType="geneSymbol", gencodeVersion="v19")
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), geneType="gencodeId", gencodeVersion="v19")
+#'  geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"),
+#'                             geneType="gencodeId", gencodeVersion="v19")
 #'
 #'  geneInfo <- xQTLquery_gene(unique(protein_coding$geneSymbol))
 #'  }
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
-  geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
+  gencodeGenetype <- geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
   page_tmp <- 0
   pageSize_tmp <- recordPerChunk
@@ -524,6 +526,8 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 #'   sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
 #' }
 xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNotesCategories=FALSE ){
+  . <- NULL
+
   sampleIds <- unique(sampleIds)
   if(!all(str_detect(sampleIds, "^GTEX-"))){
     stop("Samples ID should be start with \"GTEx-\", please check your input!")
@@ -1112,6 +1116,7 @@ apiEbi_ping <- function(){
 #' @import jsonlite
 #' @import stringr
 #' @import data.table
+#' @importFrom methods is
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
@@ -1121,12 +1126,10 @@ apiEbi_ping <- function(){
 #' \donttest{
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
-#'  url1 <- "https://gtexportal.org/rest/v1/association/dyneqtl?gencodeId=ENSG00000065613.13&variantId=chr11_66561248_T_C_b38&tissueSiteDetailId=Liver&datasetId=gtex_v8"
-#'
-#'  a <- fetchContent(url1, method="download", isJson=TRUE)
 #'
 #'  url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?",
-#'                 "var=rs3&pop=MXL&r2_d=r2&window=500000&genome_build=grch38&token=9246d2db7917")
+#'                 "var=rs3&pop=MXL&r2_d=r2&",
+#'                 "window=500000&genome_build=grch38&token=9246d2db7917")
 #'  fetchContent(url1, method="download", isJson=FALSE)
 #' }
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
@@ -1154,7 +1157,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       for (downloadTime in 1:3){
         if(downloadTime>1){message("download failed and try again.")}
         df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
-        if(!is(df, 'try-error')) break
+        if(!methods::is(df, 'try-error')) break
       }
 
       # url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
@@ -1263,11 +1266,13 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
 #' @import data.table
+#' @export
 #' @return A data.frame
 #'
 #' @examples
 #' \donttest{
-#'  url1 <- "https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
+#'  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/"
+#'                 ,"associations?gene_id=ENSG00000141510")
 #'  gtexAsoo <- fetchContentEbi(url1)
 #' }
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
@@ -1346,11 +1351,13 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #'
 #' @examples
 #' \donttest{
-#' url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
+#'
 #'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-#'    endPos=100000, genomeBuild="GRCh38/hg38", track="snp151Common" )
+#'                             endPos=100000, genomeBuild="GRCh38/hg38",
+#'                             track="snp151Common" )
 #' }
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
+  # url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
   # chrom="chr1"
   # startPos=1
   # endPos=1000000
@@ -1432,6 +1439,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
 #' @param termSize Number of fetched term.
 #' @return a data.table
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -1443,7 +1451,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #'  # geneList <- EBIquery_allTerm("genes")
 #'  # chromosomes <- EBIquery_allTerm("chromosomes")
 #'
-#'  merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
+#'  # merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 #' }
 EBIquery_allTerm <- function( term="genes",termSize=5000){
   bestFetchMethod <- apiEbi_ping()
@@ -1490,6 +1498,7 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
 #' @param genomeVersion "v26" (default) or "v19"
 #' @import data.table
 #' @import stringr
+#' @importFrom BiocGenerics strand
 #' @return a data.table
 #' @export
 #'
@@ -1498,6 +1507,7 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
 #'   gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
 #' }
 extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="v26"){
+  .<-NULL
   a <- data.table::copy(gencodeGeneInfoAllGranges)
   if(genomeVersion == "v26"){
     gencodeGeneInfo <- cbind(data.table::data.table(gencodeId=a$gencodeId, chromosome = as.character(seqnames(a)), strand=as.character(BiocGenerics::strand(a)) ), data.table::as.data.table(IRanges::ranges(a))[,.(start, end)])

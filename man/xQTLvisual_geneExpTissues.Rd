@@ -12,13 +12,13 @@ xQTLvisual_geneExpTissues(
 )
 }
 \arguments{
+\item{gene}{A characer vector. Gene symbol or gencode Id.}
+
 \item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{datasetId}{"gtex_v8" or "gtex_v7". Default:"gtex_v8".}
 
 \item{toTissueSite}{TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.}
-
-\item{genes}{A characer vector.}
 }
 \value{
 A list containing expression profile and a ggplot object.

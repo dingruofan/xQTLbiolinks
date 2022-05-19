@@ -53,7 +53,7 @@
 #'                               toSummarizedExperiment=FALSE)
 #'   }
 xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
-  gencodeId <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
+  gencodeId <- chromosome <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
   # genes=c("ENSG00000210195.2","ENSG00000078808")
@@ -443,7 +443,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #'                       tissueSiteDetail="Uterus",  datasetId="gtex_v7")
 #' }
 xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
-  pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- NULL
+  pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- mValue <- NULL
   .<-NULL
   querySnpId=TRUE
   # variantName="chr1_14677_G_A_b38"
@@ -598,50 +598,6 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
   return(outInfo)
 }
 
-#' @title This function return the gene-variant association for any given pair of gene and variant, which may or may not be significant
-#' @description Only GTEx V8 are supported.
-#' @param genes GENCODE ID (versioned or unversioned).
-#' @param variants GTEx variant ID or dbSNP ID. Note: if variant id are provided, genome version of hg38 are required.
-#' @param tissueSiteDetail  tissue site detail.
-#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 50).
-#'
-#' @return A data.table object
-#'
-#' @examples
-#' \donttest{
-#'    geneList = c("ENSG00000228463","ENSG00000228463.9", "ENSG00000065613.13")
-#'    variants = c("rs201327123","chr1_14677_G_A_b38", "chr11_66561248_T_C_b38")
-#'    xQTLdownload_eqtlPost(geneList, variants, tissueSiteDetail="Colon - Sigmoid")
-#' }
-# xQTLdownload_eqtlPost <- function(geneList, variantlist, tissueSiteDetail="", recordPerChunk=50){
-#   # tissue convert:
-#   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-#   # gene split:
-#   geneList <- unlist(lapply(geneList, function(x){stringr::str_split(x, fixed("."))[[1]][1]} ))
-#   # construct query body:
-#   queryBody <- data.frame(
-#     gencodeId = geneList,
-#     variantId= variantlist,
-#     tissueSiteDetailId=tissueSiteDetailId )
-#   queryBody$cutF <- as.character(cut(1:nrow(queryBody), breaks=seq(0, nrow(queryBody)+recordPerChunk, recordPerChunk)))
-#   data.table::setDT(queryBody)
-#   # query:
-#   cutF <- unique(queryBody$cutF)
-#   resultDT <- data.table()
-#   for( i in 1:length(cutF)){
-#     cutFTmp<- cutF[i]
-#     message("  - Downloading eQTL asso: ", paste0(round(i/length(cutF)*100,2), "%..."))
-#     queryBodyTmp <- queryBody[cutF==cutFTmp,][,c("gencodeId","variantId","tissueSiteDetailId")]
-#     dataTmp <- httr::POST("https://gtexportal.org/rest/v1/association/dyneqtl", body=jsonlite::toJSON(queryBodyTmp), encode = "json")
-#     dataTmp
-#     resultTmp <- data.table::as.data.table( fromJSON(rawToChar(dataTmp$content))$result )
-#     resultDT <- rbind(resultDT, resultTmp )
-#     rm( queryBodyTmp, dataTmp,resultTmp )
-#     Sys.sleep(0.1)
-#   }
-#
-#   return(resultDT)
-# }
 
 #' @title xQTLdownload_eqtlAllAsso
 #' @description download all tested variant-gene associations.
@@ -660,10 +616,12 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #'
 #' @examples
 #' \donttest{
-#'   geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueSiteDetail="Muscle - Skeletal", withB37VariantId=FALSE)
+#'   geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B",
+#'                                        tissueSiteDetail="Muscle - Skeletal",
+#'                                        withB37VariantId=FALSE)
 #' }
 xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail="", recordPerChunk=250, study="gtex_v8", withB37VariantId=TRUE){
-  .<-NULL
+  . <- geneInfoV19<-NULL
   variantId <- variant <- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
@@ -776,75 +734,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   }
 }
 
-#' @title Fetch all eQTL associations from EBI eQTL category.
-#'
-#' @param gene gene symbol or gencode ID.
-#' @param geneType A character string. "geneSymbol"(default), "gencodeId" or "geneCategory".
-#' @param refSeq A character string.
-#' @param rsid dbSNP ID.
-#' @param variantId A character string. like "chr17_5294580_CT_C_b38".
-#' @param pThreshold Float. set a threshold for p-value to filter the result. Default: 1, aQTL associations that have a p-value<1 will be returned.
-#' @param tissueSiteDetail tissue.
-#'
-#' @examples
-#' \donttest{
-#'   xQTLdownload_aQTLAllAsso( gene="TP53", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-#'   xQTLdownload_aQTLAllAsso( refSeq = "NM_001291581.2", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-#'   xQTLdownload_aQTLAllAsso( rsid = "rs3026133", tissueSiteDetail = "Adipose - Visceral (Omentum)", pThreshold=1e-1 )
-#'   xQTLdownload_aQTLAllAsso( variantId = "chr17_5289661_A_G_b38", tissueSiteDetail = "Adipose - Visceral (Omentum)" )
-#' }
-# xQTLdownload_aQTLAllAsso<- function(gene="", geneType="geneSymbol", refSeq="", rsid="",  variantId="", pThreshold=1, tissueSiteDetail=""){
-  # gene="RABEP1"
-  # geneType="geneSymbol"
-  # refSeq = "NM_001291581.2"
-  # tissueSiteDetail <- "Adipose - Visceral (Omentum)"
 
-
-  # if(tissueSiteDetail == ""){
-  #   stop( "Tissue ",tissueSiteDetail, " not found!"  )
-  # }
-  # tissueSiteDetailId  <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  # if(gene !=""){
-  #   geneInfo <- xQTLquery_gene(gene, geneType = geneType)
-  #   # create sql:
-  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where geneSymbol = \'",geneInfo$geneSymbol,"\' AND `p-value`<",pThreshold )
-  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-  #   # # extract data:
-  #   message("== mysql connected, downloading... ")
-  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
-  #   dbDisconnect(con)
-  #   message("== done.")
-  #   # message("== mysql closed || ", date(), " || [", nrow(snpLD), "] LD infor obtained!")
-  #   return(aqltInfo)
-  # }else if(refSeq!=""){
-  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where refSeq = \'",refSeq,"\' AND `p-value`<",pThreshold )
-  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-  #   message("== mysql connected, downloading... ")
-  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
-  #   dbDisconnect(con)
-  #   message("== done.")
-  #   return(aqltInfo)
-  # }else if(rsid!=""){
-  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where rsid = \'",rsid,"\' AND `p-value`<",pThreshold )
-  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-  #   message("== mysql connected, downloading... ")
-  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
-  #   dbDisconnect(con)
-  #   message("== done.")
-  #   return(aqltInfo)
-  # }else if(variantId!=""){
-  #   sqlForQuery <- paste0("select * from ", paste0("aQTL_",tissueSiteDetailId), " where SNP = \'",variantId,"\' AND `p-value`<",pThreshold )
-  #   con <- DBI::dbConnect(RMySQL::MySQL(), dbname = 'GTExDB', host = "172.18.200.246", port = 3306, user = "GTExAnonymous", password = "GTEx_Anonymous123")
-  #   message("== mysql connected, downloading... ")
-  #   aqltInfo <- dbGetQuery(con, sqlForQuery)
-  #   dbDisconnect(con)
-  #   message("== done.")
-  #   return(aqltInfo)
-  # }else{
-  #   stop("Please check your input!")
-  # }
-
-# }
 
 
 #' @title xQTLdownload_sqtlSig
@@ -1044,6 +934,9 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
 #'                      tissueSiteDetail="Stomach")
 #' }
 xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
+  gencodeGenetype <- chromosome  <-NULL
+  .<-NULL
+
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
   # datasetId="gtex_v8"
@@ -1572,7 +1465,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #'  sGeneInfo <- xQTLdownload_sgene("DDX11", tissueSiteDetail="Artery - Tibial" )
 #' }
 xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
-  .<-NULL
+  phenotypeId <- nPhenotypes <- .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="ENSG00000013573.16"
   # geneType="gencodeId"
@@ -1932,7 +1825,8 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 #'
 #' @examples
 #' \donttest{
-#'   ldMat <- retrieveLD_LDmatrix(c("rs12202891", "rs10807323","rs9381401", "rs2026458", "rs150503442"),
+#'   ldMat <- retrieveLD_LDmatrix(c("rs12202891", "rs10807323",
+#'                      "rs9381401", "rs2026458", "rs150503442"),
 #'                       pop="CEU", token="9246d2db7917")
 #' }
 retrieveLD_LDmatrix <- function(snps, pop = "CEU", r2d = "r2", token = NULL,  file = FALSE) {
