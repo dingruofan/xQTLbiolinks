@@ -129,6 +129,8 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Validate gene :")
   geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
+  # Only keep genes with non-na gencode ID
+  geneInfo <- geneInfo[!is.na(gencodeId)]
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("gene information is null.")
   }
@@ -340,6 +342,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input.")
     }else{
@@ -1757,6 +1760,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v
 
     message("== Validate gene:")
     suppressMessages( geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",stringr::str_sub(paste(genes, collapse = ","),1,20),"....] you entered could not be found!")
     }
