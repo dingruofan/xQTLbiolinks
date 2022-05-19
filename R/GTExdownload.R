@@ -127,7 +127,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
 
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
-  message("== Validate gene :")
+  message("== Check the gene name :")
   geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
   # Only keep genes with non-na gencode ID
   geneInfo <- geneInfo[!is.na(gencodeId)]
@@ -138,7 +138,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   # geneInfo <-  xQTLquery_gene(c("tp53","naDK","SDF4"), "geneSymbol", "v26", "GRCh38/hg38")
 
   ############ get sample info:
-  message("== Validate sample:")
+  message("== Get the samples' detail:")
   sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk,pathologyNotesCategories=pathologyNotesCategories )
   message("== Done.")
   if( !exists("sampleInfo") ||is.null(sampleInfo) ){
@@ -318,7 +318,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
       }
     }
 
-    message("== Validate variant:")
+    message("== Check the variant name:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       message("The variant [",variantName, "] is not incuded in [",datasetId,"].")
@@ -340,7 +340,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
@@ -506,7 +506,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
@@ -530,7 +530,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
       }
     }
 
-    message("== Validate variant:")
+    message("== Check the variant name:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input, or leave \"variantName\" as null.")
@@ -712,7 +712,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
 
   ##################### fetch geneInfo:
   if(gene !=""){
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion)
     geneInfo <- na.omit(geneInfo)
     # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
@@ -934,7 +934,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
       }
     }
 
-    message("== Validate variant:")
+    message("== Check the variant name:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
@@ -955,7 +955,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
@@ -1088,7 +1088,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
       }
     }
 
-    message("== Validate variant:")
+    message("== Check the variant name:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
@@ -1111,7 +1111,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     if(nrow(geneInfo)==0|| is.null(geneInfo) || !exists("geneInfo")){
       stop("Invalid gene name or type, please correct your input.")
@@ -1240,7 +1240,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
       }
     }
 
-    message("== Validate variant:")
+    message("== Check the variant name:")
     varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
@@ -1364,7 +1364,7 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
   }
 
   # Fetch gene info:
-  message("== Validate gene:")
+  message("== Check the gene name:")
   geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("The gene [",gene,"] you entered could not be found!")
@@ -1481,7 +1481,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
@@ -1618,7 +1618,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
@@ -1758,7 +1758,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v
       }
     }
 
-    message("== Validate gene:")
+    message("== Check the gene name:")
     suppressMessages( geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
