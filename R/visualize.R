@@ -393,14 +393,23 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     stop("Please enlarge the genomeVersion range!")
   }
 
+  hSnpCount <- 1
   # highligth SNP:
   if(highlightSnp ==""){
-    highlightSnp <- DF[which.min(pValue)]$snpId
+    highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
   }
 
   # LD info:
   if(is.na(snpLD)){
-    snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token)
+    try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
+    # 如果 L1000未有该突变则会报错，所以再选择第二个。
+    while( is.null(snpLD) ){
+      message("==========")
+      hSnpCount <- hSnpCount+1
+      highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
+      message("Highlighted Snp [", highlightSnp, "] dosen't exist in L1000, choose next!-",hSnpCount,"-",highlightSnp)
+      try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
+    }
   }
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
@@ -468,7 +477,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
     scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
-    geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
+    ggrepel::geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
     # labs(title = plotTitle )+
     xlab( xLab )+
     ylab( yLab )+
@@ -545,15 +554,23 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   DF$logP.gwas <- (-log(DF$pValue.gwas, 10))
   DF$distance <- sqrt(DF$logP.gwas^2+DF$logP.eqtl^2)
 
+  hSnpCount <- 1
   # highligth SNP:
-  if( highlightSnp =="" ){
-    highlightSnp <- DF[which.max(distance)]$snpId
+  if(highlightSnp ==""){
+    highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
   }
-  # varInfo <-  xQTLquery_varId(highlightSnp)
 
-  # get LD information:
+  # LD info:
   if(is.na(snpLD)){
-    snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genome, token = token)
+    try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
+    # 如果 L1000未有该突变则会报错，所以再选择第二个。
+    while( is.null(snpLD) ){
+      message("==========")
+      hSnpCount <- hSnpCount+1
+      highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
+      message("Highlighted Snp [", highlightSnp, "] dosen't exist in L1000, choose next!-",hSnpCount,"-",highlightSnp)
+      try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
+    }
   }
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
@@ -722,6 +739,10 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
   expData2 <- as.data.frame(t(expData[geneSymbol %in% gene2][,-c("geneSymbol")]))
   colnames(expData2) <- gene2
+
+
+  corP <- cor.test(unlist(expData2[,1]), unlist(expData2[,2]))
+  message("pearson correlation coefficient: ", corP$estimate," Pvalue: ",corP$p.value)
 
   sampleInfo <- as.data.table(colData(expProfiles))
   expData2 <- cbind(sampleInfo[rownames(expData2), on="sampleId"][,c("sampleId", groupBy),with=FALSE], expData2)

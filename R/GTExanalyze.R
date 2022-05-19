@@ -300,7 +300,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 
   # Automatically determine the type of variable:
   if(geneType=="auto"){
-    if( all(unlist(lapply(traitGene, function(g){ str_detect(g, "^ENSG") }))) ){
+    if( all(unlist(lapply(traitGene, function(g){ stringr::str_detect(g, "^ENSG") }))) ){
       geneType <- "gencodeId"
     }else{
       geneType <- "geneSymbol"

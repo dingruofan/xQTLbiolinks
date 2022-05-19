@@ -711,14 +711,18 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   if(gene !=""){
     message("== Validate gene:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion)
-    geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
+    geneInfo <- na.omit(geneInfo)
+    # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
-      stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
-    }else if( nrow(geneInfo)>1 || nrow(geneInfoV19)>1 ){
-      stop("Totally, ",nrow(geneInfo), " gencode ID of queried gene [", gene,"] were detected, please enter the gencode ID (versioned or unversioned) for querying!")
+      stop("Invalid gene name or type, please correct your input, or set gene with gencodeId.")
     }else{
       message("== Done.")
     }
+
+    # else if( nrow(geneInfo)>1 || nrow(geneInfoV19)>1 ){
+    #   stop("Totally, ",nrow(geneInfo), " gencode ID of queried gene [", gene,"] were detected, please enter the gencode ID (versioned or unversioned) for querying!")
+    # }
+
   }else{
     stop("Parameter \"gene\" can not be null! ")
   }
