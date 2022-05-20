@@ -51,8 +51,6 @@ download significant eQTL associations of a tissue or across all tissues.
  xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
  xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
                       tissueSiteDetail="Thyroid" )
- xQTLdownload_eqtl(genes="ENSG00000141510.11",
-                   datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 
  # Download eQTL info for a variant-gene pair:
  xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")

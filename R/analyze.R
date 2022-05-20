@@ -271,7 +271,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'
 #' @examples
 #' \donttest{
-#'   # see vignette.
+#'   # please see see vignette.
 #' }
 xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="CEU", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL

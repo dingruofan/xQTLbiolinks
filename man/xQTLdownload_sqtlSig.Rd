@@ -32,23 +32,19 @@ Only GTEx v8 is supported.
 }
 \examples{
 \donttest{
- # Download sQTL info for a variant:
+ # Download sQTL detail for a variant:
  xQTLdownload_sqtlSig(variantName="rs201327123")
  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38",
                       tissueSiteDetail="Whole Blood")
 
- # Download sQTL association according to all tissues with genome location:
- xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
- xQTLdownload_sqtlSig(variantName=varInfo$snpId, variantType="snpId")
-
- # Download sQTL info for a gene:
+ # Download sQTL detail for a gene:
  xQTLdownload_sqtlSig(gene="ATAD3B")
  xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
  xQTLdownload_sqtlSig(gene="ENSG00000141510.16",
                       tissueSiteDetail="Lung" )
 
- # Download eQTL info for a variant-gene pair:
+ # Download eQTL detail for a variant-gene pair:
  xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
  xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38",
                       gene="TP53", tissueSiteDetail="Lung")

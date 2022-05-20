@@ -13,7 +13,7 @@
 #' @import ggrepel
 #' @import curl
 #' @import jsonlite
-#' @return A list containing expression profile and a ggplot object.
+#' @return A list containing eQTL detail, expression profile and a ggplot object.
 #' @export
 #'
 #' @examples
@@ -106,7 +106,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
-    message("   eQTL association was found in ", datasetId, " of gene [", gene,"] and variant [", variantName," in [", tissueSiteDetail,"].")
+    message("   A record of eQTL association was found in ", datasetId, " of gene [", gene,"] and variant [", variantName," in [", tissueSiteDetail,"].")
     message("== Done")
   }
 
@@ -115,7 +115,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
   if( !exists("eqtlExp") || is.null(eqtlExp) || nrow(eqtlExp)==0 ){
     stop("No expression profiles were found for gene [", gene, "] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
-    message("   Normalized expression of [",nrow(eqtlExp), "] samples were obtaioned in ", tissueSiteDetail, " in ", datasetId,".")
+    message("   Normalized expression of [",nrow(eqtlExp), "] samples for gene [",gene,"] were obtaioned in ", tissueSiteDetail, " in ", datasetId,".")
     message("== Done")
   }
 
@@ -138,27 +138,45 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
   names(genoLabelPie) <- c("genoLabels", "labelNum")
   genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
+
   if( requireNamespace("ggplot2") ){
-    p <- ggplot(genoLable)+
-      geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
-      geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
+    p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+      geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
+      geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
+      scale_fill_brewer(palette="Dark2") + theme_light()+
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
-      # scale_fill_manual(values=c("green", "red"))+
-      # scale_fill_brewer(palette = "Dark2")+
-      theme_bw()+
-      labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol, " (",tissueSiteDetail,")") )+
+      # labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol) )+
       xlab("Genotypes")+
       ylab("Normalized expression")+
-      theme(axis.text.x=element_text(size=rel(1.3)),
-            axis.text.y = element_text(size=rel(1.3)),
-            axis.title = element_text(size=rel(1.3)),
-            legend.position = "none",
-            legend.background = element_rect(fill="white",
-                                             size=0.5, linetype="solid",
-                                             colour ="white"),
-            plot.title = element_text(hjust=0.5)
-      )
+      theme(
+        axis.text.x=element_text(size=rel(1.3)),
+        axis.text.y = element_text(size=rel(1.3)),
+        axis.title = element_text(size=rel(1.3)),
+        legend.position = "none",
+        plot.title = element_text(hjust=0.5)
+      )+
+      geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
     print(p)
+    # p <- ggplot(genoLable)+
+    #   geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
+    #   geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
+    #   scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
+    #   # scale_fill_manual(values=c("green", "red"))+
+    #   # scale_fill_brewer(palette = "Dark2")+
+    #   theme_bw()+
+    #   labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol, " (",tissueSiteDetail,")") )+
+    #   xlab("Genotypes")+
+    #   ylab("Normalized expression")+
+    #   theme(axis.text.x=element_text(size=rel(1.3)),
+    #         axis.text.y = element_text(size=rel(1.3)),
+    #         axis.title = element_text(size=rel(1.3)),
+    #         legend.position = "none",
+    #         legend.background = element_rect(fill="white",
+    #                                          size=0.5, linetype="solid",
+    #                                          colour ="white"),
+    #         plot.title = element_text(hjust=0.5)
+    #   )
+
   }
 
   # ggplot(genoLabelPie) +
@@ -177,7 +195,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 
   # gridExtra::grid.arrange()
 
-  return(list(eqtl=eqtlInfo, exp=genoLable))
+  return(list(eqtl=eqtlInfo, exp=genoLable, p=p))
 }
 
 #' @title xQTLvisual_sqtlExp
@@ -298,26 +316,35 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
   names(genoLabelPie) <- c("genoLabels", "labelNum")
   genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
+  # retrieve sQTL detail:
+  P_geneName <- stringr::str_split(phenotypeId, ":")[[1]][5]
+  try(suppressMessages(sqtlInfo <- xQTLdownload_sqtlSig(variantName = varInfo$variantId, gene = P_geneName, tissueSiteDetail=tissueSiteDetail)), silent = TRUE)
+  sqtlInfo <- sqtlInfo[phenotypeId==phenotypeId]
+  if(exists("sqtlInfo") & !is.null(sqtlInfo) & nrow(sqtlInfo)==1 ){
+    message("Significant sQTL association found!")
+    labelPvalue <- paste0("P-value: ",signif(sqtlInfo$pValue, 3))
+  }else{
+    labelPvalue <- ""
+  }
+
+
   if( requireNamespace("ggplot2") ){
-    p <- ggplot(genoLable)+
-      geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
-      geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
+    p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+      geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
+      geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
+      scale_fill_brewer(palette="Dark2") + theme_light()+
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
-      # scale_fill_manual(values=c("green", "red"))+
-      # scale_fill_brewer(palette = "Dark2")+
-      theme_bw()+
-      labs(title = paste0(ifelse(varInfo$snpId==""|| is.na(varInfo$snpId), varInfo$variantId, varInfo$snpId), "- ", phenotypeId, " (",tissueSiteDetail,")") )+
+      # labs(title = paste0(ifelse(varInfo$snpId==""|| is.na(varInfo$snpId), varInfo$variantId, varInfo$snpId), "- ", phenotypeId, " (",tissueSiteDetail,")") )+
       xlab("Genotypes")+
       ylab("Normalized expression")+
-      theme(axis.text.x=element_text(size=rel(1.3)),
-            axis.text.y = element_text(size=rel(1.3)),
-            axis.title = element_text(size=rel(1.3)),
-            legend.position = "none",
-            legend.background = element_rect(fill="white",
-                                             size=0.5, linetype="solid",
-                                             colour ="white"),
-            plot.title = element_text(hjust=0.5)
-      )
+      theme(
+        axis.text=element_text(size=rel(1.3)),
+        axis.title = element_text(size=rel(1.3)),
+        legend.position = "none",
+        plot.title = element_text(hjust=0.5)
+      )+
+      geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label= labelPvalue))
+
     print(p)
   }
 

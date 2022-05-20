@@ -1265,8 +1265,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #'
 #' @examples
 #' \donttest{
-#'  # url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/"
-#'                 ,"associations?gene_id=ENSG00000141510")
+#'  # url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/",
+#'  #                 "associations?gene_id=ENSG00000141510")
 #'  # gtexAsoo <- fetchContentEbi(url1)
 #' }
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){

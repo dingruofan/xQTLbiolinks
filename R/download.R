@@ -50,7 +50,7 @@
 #'   # Get proteing-coding genes' expression in Lung:
 #'   # prot <- xQTLquery_gene(genes="protein coding")
 #'   # proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
-#'                               toSummarizedExperiment=FALSE)
+#'   #                             toSummarizedExperiment=FALSE)
 #'   }
 xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
   gencodeId <- chromosome <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
@@ -270,8 +270,6 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #'  xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
 #'  xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
 #'                       tissueSiteDetail="Thyroid" )
-#'  xQTLdownload_eqtl(genes="ENSG00000141510.11",
-#'                    datasetId="gtex_v7",tissueSiteDetail="Thyroid" )
 #'
 #'  # Download eQTL info for a variant-gene pair:
 #'  xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
@@ -626,7 +624,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #' }
 xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail="", recordPerChunk=250, study="gtex_v8", withB37VariantId=TRUE){
   . <- geneInfoV19<-NULL
-  variantId <- variant <- b37VariantId <- snpId <- NULL
+  variantId <- variant <- gencodeId <- genes<- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -667,9 +665,9 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   setDT(qtl_tissue)
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) || tissueSiteDetail==""   ){
-    stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
+    stop("Parameter \"tissueSiteDetail\" should be chosen from the tissue list (view with tissueSiteDetailGTExv8 or tissueSiteDetailGTExv7)!")
   }else if(length(tissueSiteDetail)!=1){
-    stop("Parameter \"tissueSiteDetail\" should be chosen from following tissue names!")
+    stop("Parameter \"tissueSiteDetail\" should be chosen from the tissue list (view with tissueSiteDetailGTExv8 or tissueSiteDetailGTExv7)!")
   }else if( !(tissueSiteDetail %in% c("All", tissueSiteDetailGTEx$tissueSiteDetail)) ){
     message("",paste0(c(paste0(1:nrow(qtl_tissue),". ",qtl_tissue$tissueSiteDetail)), collapse = "\n"))
     stop("Parameter \"tissueSiteDetail\" should be chosen from above tissue names!")
@@ -761,23 +759,19 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
 #'
 #' @examples
 #' \donttest{
-#'  # Download sQTL info for a variant:
+#'  # Download sQTL detail for a variant:
 #'  xQTLdownload_sqtlSig(variantName="rs201327123")
 #'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
 #'  xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38",
 #'                       tissueSiteDetail="Whole Blood")
 #'
-#'  # Download sQTL association according to all tissues with genome location:
-#'  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
-#'  xQTLdownload_sqtlSig(variantName=varInfo$snpId, variantType="snpId")
-#'
-#'  # Download sQTL info for a gene:
+#'  # Download sQTL detail for a gene:
 #'  xQTLdownload_sqtlSig(gene="ATAD3B")
 #'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
 #'  xQTLdownload_sqtlSig(gene="ENSG00000141510.16",
 #'                       tissueSiteDetail="Lung" )
 #'
-#'  # Download eQTL info for a variant-gene pair:
+#'  # Download eQTL detail for a variant-gene pair:
 #'  xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
 #'  xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38",
 #'                       gene="TP53", tissueSiteDetail="Lung")
@@ -941,7 +935,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
 #'                      tissueSiteDetail="Stomach")
 #' }
 xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
-  gencodeGenetype <- chromosome  <-NULL
+  gencodeGenetype <- chromosome <-gencodeId <-NULL
   .<-NULL
 
   # variantName="chr1_14677_G_A_b38"

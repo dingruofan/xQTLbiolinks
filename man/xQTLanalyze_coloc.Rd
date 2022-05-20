@@ -46,6 +46,6 @@ conduct colocalization analysis with detected gene.
 }
 \examples{
 \donttest{
-  # see vignette.
+  # please see see vignette.
 }
 }

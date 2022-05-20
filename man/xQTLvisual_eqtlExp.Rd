@@ -27,7 +27,7 @@ xQTLvisual_eqtlExp(
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }
 \value{
-A list containing expression profile and a ggplot object.
+A list containing eQTL detail, expression profile and a ggplot object.
 }
 \description{
 plot normalized expression among genotypes for eQTL.
