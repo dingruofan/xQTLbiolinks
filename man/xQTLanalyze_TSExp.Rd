@@ -28,10 +28,7 @@ perform tissue-specific expression analysis.
 }
 \examples{
 \donttest{
- protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
- TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100])
- genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
- TSgene <- xQTLanalyze_TSExp(genes, datasetId="gtex_v8")
- xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
+ TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])
+ # xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 }
 }

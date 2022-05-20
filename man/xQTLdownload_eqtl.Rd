@@ -58,7 +58,7 @@ can be quried with a gene/variant-gene pair.
  xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
  xQTLdownload_eqtl(variantName="rs11657498",gene="TP53",
                       datasetId="gtex_v7")
- xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
+ xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
                       tissueSiteDetail="Kidney - Cortex")
  xQTLdownload_eqtl(variantName="17_7492388_G_A_b37",gene="TP53",
                       tissueSiteDetail="Uterus",  datasetId="gtex_v7")

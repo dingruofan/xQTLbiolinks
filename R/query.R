@@ -1,7 +1,7 @@
 #' @title xQTLquery_gene.
 #' @description
 #'  users can use this function to query basic information (including gene name, symbol, position and description, etc ) of genes.
-#' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
+#' @param genes A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
 #'
@@ -47,9 +47,9 @@
 #' @examples
 #' \donttest{
 #'  # get all protein coding genes and description:
-#'  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
+#'  # protein_coding <- xQTLquery_gene(genes="protein coding")
 #'  # get all miRNA and description:
-#'  miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
+#'  # miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 #'
 #'  # hg38 test:
 #'  geneInfo <- xQTLquery_gene("TP53")
@@ -62,10 +62,9 @@
 #'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"),
 #'                             geneType="gencodeId", gencodeVersion="v19")
 #'
-#'  geneInfo <- xQTLquery_gene(unique(protein_coding$geneSymbol))
 #'  }
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
-  gencodeGenetype <- geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
+  geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
   page_tmp <- 0
   pageSize_tmp <- recordPerChunk
@@ -91,7 +90,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
     if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
       geneType <- "gencodeId"
     }else if( length(genes)==1 ){
-      if( genes %in% gencodeGenetype$V26 | genes %in% gencodeGenetype$V19 ){
+      if( genes %in% gencodeGenetype[["V26"]] | genes %in% gencodeGenetype[["V19"]] ){
         geneType <- "geneCategory"
       }else{
         geneType <- "geneSymbol"
@@ -622,7 +621,7 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 #' @examples
 #' \donttest{
 #'   # don't run:
-#'  allGenes <- xQTLquery_geneAll()
+#'   # allGenes <- xQTLquery_geneAll()
 #'   }
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
@@ -1126,11 +1125,6 @@ apiEbi_ping <- function(){
 #' \donttest{
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 #'  fetchContent(url1, method="download")
-#'
-#'  url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?",
-#'                 "var=rs3&pop=MXL&r2_d=r2&",
-#'                 "window=500000&genome_build=grch38&token=9246d2db7917")
-#'  fetchContent(url1, method="download", isJson=FALSE)
 #' }
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
   # if( method == "GetWithHeader"){
@@ -1271,9 +1265,9 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #'
 #' @examples
 #' \donttest{
-#'  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/"
+#'  # url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/"
 #'                 ,"associations?gene_id=ENSG00000141510")
-#'  gtexAsoo <- fetchContentEbi(url1)
+#'  # gtexAsoo <- fetchContentEbi(url1)
 #' }
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
@@ -1353,7 +1347,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #' \donttest{
 #'
 #'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-#'                             endPos=100000, genomeBuild="GRCh38/hg38",
+#'                             endPos=50000, genomeBuild="GRCh38/hg38",
 #'                             track="snp151Common" )
 #' }
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){

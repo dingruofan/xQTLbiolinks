@@ -24,12 +24,6 @@
 #'    gwasDF <- data.table::fread(gwasFile, sep="\t")
 #'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
 #'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
-#'
-#'    gwasDF <- fread("D:\\R_project\\GLGC_CG0052_result.txt.gz", sep="\t")
-#'    gwasDF <- gwasDF[,.(rsid, chr, position, `p-value`, maf)]
-#'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e4,
-#'                                                genomeVersion="grch37",
-#'                                                grch37To38=TRUE)
 #' }
 xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e4, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   position <- pValue <- maf <- rsid <- chr <- NULL
@@ -277,7 +271,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion=
 #'
 #' @examples
 #' \donttest{
-#'   # xQTLanalyze_coloc
+#'   # see vignette.
 #' }
 xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="CEU", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL
@@ -386,7 +380,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   }
 
 
-  #####################
+  #
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
   gwasEqtldata <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
   # centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
@@ -438,11 +432,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #'
 #' @examples
 #' \donttest{
-#'  protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
-#'  TSgene <- xQTLanalyze_TSExp( unique(protein_coding$gencodeId)[1:100])
-#'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[400:410]
-#'  TSgene <- xQTLanalyze_TSExp(genes, datasetId="gtex_v8")
-#'  xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
+#'  TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])
+#'  # xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
 xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){
   gencodeId <- geneSymbol <-.<-NULL

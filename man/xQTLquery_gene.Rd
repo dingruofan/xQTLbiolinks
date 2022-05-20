@@ -12,7 +12,7 @@ xQTLquery_gene(
 )
 }
 \arguments{
-\item{genes}{A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
+\item{genes}{A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
 \itemize{
 \item \strong{gene symbol (Default)}.
 
@@ -56,9 +56,9 @@ users can use this function to query basic information (including gene name, sym
 \examples{
 \donttest{
  # get all protein coding genes and description:
- protein_coding <- xQTLquery_gene(genes="protein coding", geneType="geneCategory", "v26" )
+ # protein_coding <- xQTLquery_gene(genes="protein coding")
  # get all miRNA and description:
- miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
+ # miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 
  # hg38 test:
  geneInfo <- xQTLquery_gene("TP53")
@@ -71,6 +71,5 @@ users can use this function to query basic information (including gene name, sym
  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"),
                             geneType="gencodeId", gencodeVersion="v19")
 
- geneInfo <- xQTLquery_gene(unique(protein_coding$geneSymbol))
  }
 }

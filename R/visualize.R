@@ -186,7 +186,6 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
@@ -201,9 +200,9 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @examples
 #' \donttest{
 #'  # sQTL associatons of TP53:
-#'  expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
-#'                                phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
-#'                                tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+#'  expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
+#'            phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
+#'            tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #' }
 xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <-geneType<- labelNum <- p <- NULL
@@ -336,7 +335,8 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @param posRange visualized genome region of interest. Default is the region that covers all snps.
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
-#' @param genome "grch38"(default) or "grch37".
+#' @param genomeVersion "grch38"(default) or "grch37".
+#' @param snpLD A data.frame of LD matirx.
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -373,7 +373,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #'                       genomeVersion="grch38" )
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
-  snpId <- pos <- snpLD<- pValue <- logP <- pointShape<- NULL
+  snpId <- pos <- pValue <- logP <- pointShape<- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- genomeVersion<- .<-NULL
   # highlightSnp=""
   # population="EUR"
@@ -517,6 +517,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
 #' @param genome "grch38"(default) or "grch37".
+#' @param snpLD A data.frame object of LD matrix.
 #' @import data.table
 #' @import ggplot2
 #' @import stringr

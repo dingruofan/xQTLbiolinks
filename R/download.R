@@ -34,9 +34,9 @@
 #'   expProfiles <- xQTLdownload_exp(c("ENSG00000210195.2"),
 #'                                  tissueSiteDetail="Liver")
 #'   # extract expression profile from SummarizedExperiment object:
-#'   SummarizedExperiment::assay(expProfiles)
+#'   expDT <- SummarizedExperiment::assay(expProfiles)
 #'   # extract samples' detail from SummarizedExperiment object:
-#'   SummarizedExperiment::colData(expProfiles)
+#'   sampleDT <- SummarizedExperiment::colData(expProfiles)
 #'
 #'   # Download gene expression profiles of multiple genes:
 #'   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
@@ -47,9 +47,9 @@
 #'                                  tissueSiteDetail="Artery - Coronary",
 #'                                  datasetId="gtex_v7")
 #'
-#'   # Get proteing-coding genes' expression:
-#'   proT <- xQTLquery_gene (genes="protein coding")
-#'   proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung",
+#'   # Get proteing-coding genes' expression in Lung:
+#'   # prot <- xQTLquery_gene(genes="protein coding")
+#'   # proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
 #'                               toSummarizedExperiment=FALSE)
 #'   }
 xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
@@ -129,6 +129,9 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Check the gene name :")
   geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
+  # 在Y染色体上的重复基因被过滤掉了。
+  geneInfo <- geneInfo[!is.na(gencodeId)]
+  geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
 
   # Only keep genes with non-na gencode ID
   geneInfo <- geneInfo[!is.na(gencodeId)]
@@ -437,7 +440,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #'  xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
 #'  xQTLdownload_eqtl(variantName="rs11657498",gene="TP53",
 #'                       datasetId="gtex_v7")
-#'  xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
+#'  xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
 #'                       tissueSiteDetail="Kidney - Cortex")
 #'  xQTLdownload_eqtl(variantName="17_7492388_G_A_b37",gene="TP53",
 #'                       tissueSiteDetail="Uterus",  datasetId="gtex_v7")
@@ -513,6 +516,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else{
@@ -677,7 +681,9 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   if(gene !=""){
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion)
-    geneInfo <- na.omit(geneInfo)
+    # 对于只需要一个基因的：
+    geneInfo <- geneInfo[!is.na(gencodeId)]
+    geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
     # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or set gene with gencodeId.")
@@ -852,6 +858,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
 
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
     }else{
@@ -1011,6 +1018,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0|| is.null(geneInfo) || !exists("geneInfo")){
       stop("Invalid gene name or type, please correct your input.")
     }else{
@@ -1264,6 +1272,7 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
   # Fetch gene info:
   message("== Check the gene name:")
   geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+  geneInfo <- geneInfo[!is.na(gencodeId)]
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("The gene [",gene,"] you entered could not be found!")
   }
@@ -1381,6 +1390,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
     }
@@ -1518,6 +1528,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+    geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
     }
@@ -1645,7 +1656,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v
   }
 
   # Fetch gene info:
-  if(genes!="" || length(genes)>0){
+  if(all(genes!="") || length(genes)>0){
 
     # Automatically determine the type of variable:
     if(geneType=="auto"){

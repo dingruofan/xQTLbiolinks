@@ -46,6 +46,6 @@ conduct colocalization analysis with detected gene.
 }
 \examples{
 \donttest{
-  # xQTLanalyze_coloc
+  # see vignette.
 }
 }

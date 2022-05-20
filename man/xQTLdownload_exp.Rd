@@ -47,9 +47,9 @@ download normalized gene expression at the sample level in a specified tissue.
   expProfiles <- xQTLdownload_exp(c("ENSG00000210195.2"),
                                  tissueSiteDetail="Liver")
   # extract expression profile from SummarizedExperiment object:
-  SummarizedExperiment::assay(expProfiles)
+  expDT <- SummarizedExperiment::assay(expProfiles)
   # extract samples' detail from SummarizedExperiment object:
-  SummarizedExperiment::colData(expProfiles)
+  sampleDT <- SummarizedExperiment::colData(expProfiles)
 
   # Download gene expression profiles of multiple genes:
   expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
@@ -60,9 +60,9 @@ download normalized gene expression at the sample level in a specified tissue.
                                  tissueSiteDetail="Artery - Coronary",
                                  datasetId="gtex_v7")
 
-  # Get proteing-coding genes' expression:
-  proT <- xQTLquery_gene (genes="protein coding")
-  proTexp <- xQTLdownload_exp(proT$geneSymbol[1:100], tissueSiteDetail="Lung",
+  # Get proteing-coding genes' expression in Lung:
+  # prot <- xQTLquery_gene(genes="protein coding")
+  # proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
                               toSummarizedExperiment=FALSE)
   }
 }

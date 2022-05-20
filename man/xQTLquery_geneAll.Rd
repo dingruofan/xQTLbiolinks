@@ -20,6 +20,6 @@ fetch basic information of all genes.
 \examples{
 \donttest{
   # don't run:
- allGenes <- xQTLquery_geneAll()
+  # allGenes <- xQTLquery_geneAll()
   }
 }

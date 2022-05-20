@@ -29,6 +29,8 @@ xQTLvisual_locusCompare(
 \item{windowSize}{Window around the highlighted snp for querying linkage disequilibrium information. Default:500000}
 
 \item{genome}{"grch38"(default) or "grch37".}
+
+\item{snpLD}{A data.frame object of LD matrix.}
 }
 \value{
 A plot

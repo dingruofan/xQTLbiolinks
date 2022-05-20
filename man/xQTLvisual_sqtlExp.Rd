@@ -22,8 +22,6 @@ xQTLvisual_sqtlExp(
 \item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
-
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 }
 \value{
 A list of variant detail and expression profile.
@@ -34,8 +32,8 @@ plot normalized expression among genotypes for sQTL.
 \examples{
 \donttest{
  # sQTL associatons of TP53:
- expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
-                               phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
-                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+ expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
+           phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
+           tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 }
 }
