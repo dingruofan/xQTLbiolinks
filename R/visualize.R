@@ -401,7 +401,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
-  RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- genomeVersion<- .<-NULL
+  RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
   # highlightSnp=""
   # population="EUR"
   # posRange="chr6:46488310-48376712"
@@ -429,7 +429,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     stop("Please enlarge the genomeVersion range!")
   }
 
-  hSnpCount <- 1
+  # hSnpCount <- 1
   # highligth SNP:
   if(highlightSnp ==""){
     highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
@@ -437,14 +437,17 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 
   # LD info:
   if(is.na(snpLD)){
-    try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
+    try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
     # 如果 L1000未有该突变则会报错，所以再选择第二个。
-    while( is.null(snpLD) ){
+    for(ldNum in 1:10 ){
       message("==========")
-      hSnpCount <- hSnpCount+1
+      # hSnpCount <- hSnpCount+1
       highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
-      message("Highlighted Snp [", highlightSnp, "] dosen't exist in L1000, choose next!-",hSnpCount,"-",highlightSnp)
+      message("Highlighted Snp [", highlightSnp, "] dosen't exist in L1000, choose next!-",ldNum,"-",highlightSnp)
       try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
+      if(!is.null(snpLD)){
+        break()
+      }
     }
   }
   snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]

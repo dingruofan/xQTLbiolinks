@@ -1800,9 +1800,9 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
                    "&window=",as.character(as.integer(windowSize)),
                    "&genome_build=",genomeVersion,
                    "&token=", token)
-
+    message(url1)
     # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
-    try( snpLDtmp <- fetchContent(url1, method="download", isJson=FALSE) )
+    try( snpLDtmp <- fetchContent(url1, method=method, isJson=FALSE) )
     if( exists("snpLDtmp") && ncol(snpLDtmp)<=1 ){
       rm(snpLDtmp)
     }else{
