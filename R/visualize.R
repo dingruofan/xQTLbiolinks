@@ -354,52 +354,45 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
 
 #' @title xQTLvisual_locusZoom
-#' @description plot locuszoom for showing regional information of the association signal relative to genomic position
-#'
-#' @param DF A data.frame or a data.table object. Four columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); chromosome, chr1-chr22; Genome position; P-value.
+#' @description For showing regional signals relative to genomic position
+#' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
+#' @param DF A data.frame or a data.table object. Four columns are required (arbitrary column names is supported):
+#'  `Col 1`. "snps" (character), , using an rsID (e.g. "rs11966562");
+#'  `Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22;
+#'  `Col 3`. "postion" (integer), genome position of snp.
+#'  `Col 4`. "P-value" (numeric).
 #' @param highlightSnp Default is the snp that with lowest p-value.
-#' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
-#' @param posRange visualized genome region of interest. Default is the region that covers all snps.
-#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
-#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
-#' @param genomeVersion "grch38"(default) or "grch37".
-#' @param snpLD A data.frame of LD matirx.
+#' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
+#' @param posRange Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.
+#' @param snpLD A data.frame of LD matirx. Default is null.
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
 #' @import ggrepel
+#' @importFrom  cowplot ggdraw draw_label
 #' @import utils
 #' @return A data.table object and plot.
 #' @export
 #'
 #' @examples
 #' \donttest{
-#'  # For GWAS:
-#'  gwasFile <- tempfile(pattern = "file")
+#'  # For GWAS dataset:
 #'  gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
 #'                    "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
-#'  utils::download.file(gwasURL, destfile=gwasFile)
-#'  gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+#'  gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(
+#'                              gwasURL)$content), sep="\t")
 #'  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
 #'  xQTLvisual_locusZoom(gwasDF)
-#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7",
-#'                       population ="AFR", windowSize=200000)
-#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR",
-#'                       windowSize=500000, highlightSnp="rs9271165")
+#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7",
+#'                       population ="EUR", legend_position="topright")
 #'
-#'  # For eQTL:
+#'  # For eQTL of a gene of interest:
 #'  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
 #'                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
-#'  eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(
-#'                              eqtlAsso$variantId, function(x){
-#'                              a=stringr::str_split(x,"_")[[1]];
-#'                              return(data.table(chrom=a[1], pos=a[2])) }))
-#'  xQTLvisual_locusZoom(eqtlAsso[,.(snpId, chrom, pos, pValue)],
-#'                       population="EUR",
-#'                       posRange="chr6:46488310-48376712",
-#'                       genomeVersion="grch38" )
+#'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")],
+#'                       highlightSnp="rs4711878" )
 #' }
-xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", token="9246d2db7917", windowSize=500000, genomeVersion="grch38", snpLD=NA){
+xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
   # highlightSnp=""
@@ -407,10 +400,12 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   # posRange="chr6:46488310-48376712"
   # token="9246d2db7917"
   # windowSize=1e6
-  # genomeVersion="grch38"
 
+  DF <- DF[,1:4]
   names(DF) <- c("snpId", "chrom", "pos", "pValue")
+  data.table::setDT(DF)
   DF$pos <- as.integer(DF$pos)
+  DF[,chrom:=.(ifelse(stringr::str_detect(chrom,"^chr"), chrom,paste("chr",chrom,sep="")))]
   # chrome check:
   P_chrom <- unique(DF$chrom)
   if( length(P_chrom) !=1 || !(P_chrom %in% paste0("chr",c(1:22,"x"))) ){
@@ -426,31 +421,22 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     DF <-DF[pos>min(as.integer(posRangeSplit[2:3])) & pos< max(as.integer(posRangeSplit[2:3]))]
   }
   if(nrow(DF)<2){
-    stop("Please enlarge the genomeVersion range!")
+    stop("Please enlarge the genome range!")
   }
 
-  # hSnpCount <- 1
+  hSnpCount <- 1
   # highligth SNP:
   if(highlightSnp ==""){
     highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
   }
 
   # LD info:
-  if(is.na(snpLD)){
-    try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
-    # 如果 L1000未有该突变则会报错，所以再选择第二个。
-    for(ldNum in 1:10 ){
-      message("==========")
-      # hSnpCount <- hSnpCount+1
-      highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
-      message("Highlighted Snp [", highlightSnp, "] dosen't exist in L1000, choose next!-",ldNum,"-",highlightSnp)
-      try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
-      if(!is.null(snpLD)){
-        break()
-      }
-    }
+  if( is.null(snpLD) ){
+    try(snpLD <- retrieveLD(DF[order(pValue)][hSnpCount,]$chrom, highlightSnp, population))
+    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+    data.table::setDT(snpLD)
   }
-  snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
+  # snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
   # Set LD SNP color:
   if( nrow(snpLD)>0 ){
@@ -479,8 +465,9 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 
   # set color:
   colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
-                         pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
-                         pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"),
+                         pointFill= c('blue4','skyblue','darkgreen','orange','red'),
+                         # pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"),
+                         pointColor = c('black','black','black','black','black'),
                          pointSize = c(1,1,2,2,2.5))
   colorDT <- merge(colorDT, unique(DF[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
   # set shape:
@@ -510,49 +497,64 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
   p <- ggplot(DF)+
-    geom_point(aes(x=pos, y=logP, fill=r2Cut, color=r2Cut, size=pointShape, shape=pointShape))+
-    scale_size_manual(breaks = c('normal', "highlight"), values =  c(2,3)  )+
-    scale_shape_manual(breaks = c('normal', "highlight"), values =  c(16,23) )+
-    scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
+    geom_point(aes(x=pos, y=logP, fill=r2Cut,  size=pointShape, shape=pointShape), color="black")+
+    scale_size_manual(breaks = c('normal', "highlight"), values =  c(3,3.5)  )+
+    scale_shape_manual(breaks = c('normal', "highlight"), values =  c(21,23) )+
+    # scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
     scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
     ggrepel::geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
     # labs(title = plotTitle )+
     xlab( xLab )+
     ylab( yLab )+
-    theme_bw()+
+    theme_classic()+
     theme(axis.text.x=element_text(size=rel(1.3)),
           axis.title.x=element_text(size=rel(1.3)),
           axis.title.y=element_text(size=rel(1.3)),
           plot.title = element_text(hjust=0.5),
-          legend.title = element_text(size=rel(1.3)),
-          legend.text = element_text(size=rel(1.2))
-    )
-  if(nrow(snpLD)==0){
-    p <- p+ guides( fill="none", color = "none", shape="none", size="none")
-  }else{
-    p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
+          legend.position = "none"
+    )+ guides( shape="none", color="none", size="none", fill = "none" )
+
+  if (legend == TRUE) {
+    legend_position = match.arg(legend_position)
+    if (legend_position == 'bottomright'){
+      legend_box = data.frame(x = 0.8, y = seq(0.4, 0.2, -0.05))
+    } else if (legend_position == 'topright'){
+      legend_box = data.frame(x = 0.8, y = seq(0.8, 0.6, -0.05))
+    } else {
+      legend_box = data.frame(x = 0.2, y = seq(0.8, 0.6, -0.05))
+    }
+
+    p = ggdraw(p) +
+      geom_rect(data = legend_box,
+                aes(xmin = x, xmax = x + 0.05, ymin = y, ymax = y + 0.05),
+                color = "black",
+                fill = rev(c("blue4", "skyblue", "darkgreen", "orange", "red"))) +
+      draw_label("0.8", x = legend_box$x[1] + 0.05, y = legend_box$y[1], hjust = -0.3, size = 10) +
+      draw_label("0.6", x = legend_box$x[2] + 0.05, y = legend_box$y[2], hjust = -0.3, size = 10) +
+      draw_label("0.4", x = legend_box$x[3] + 0.05, y = legend_box$y[3], hjust = -0.3, size = 10) +
+      draw_label("0.2", x = legend_box$x[4] + 0.05, y = legend_box$y[4], hjust = -0.3, size = 10) +
+      draw_label(parse(text = "r^2"), x = legend_box$x[1] + 0.05, y = legend_box$y[1], vjust = -2, size = 10)
   }
+
   print(p)
   return(p)
 }
 
 #' @title xQTLvisual_locusCompare
-#' @description visualize the colocalization of association summary statistics.
+#' @description This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #'
 #' @param eqtlDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param gwasDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param highlightSnp Default is the snp that is farthest from the origin of the coordinates.
-#' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
-#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
-#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
-#' @param genome "grch38"(default) or "grch37".
-#' @param snpLD A data.frame object of LD matrix.
+#' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
+#' @param snpLD A data.frame object of LD matrix. Default is null.
 #' @import data.table
 #' @import ggplot2
 #' @import stringr
 #' @import ggrepel
-#' @return A plot
+#' @importFrom  cowplot ggdraw draw_label
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
@@ -563,9 +565,9 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t")
 #'   eqtlDF <- eqtlDF[,.(snpId, pValue)]
 #'   gwasDF <- gwasDF[,.(rsid, P)]
-#'   xQTLvisual_locusCompare( eqtlDF, gwasDF )
+#'   xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 #' }
-xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR",  token="9246d2db7917", windowSize=500000, genome="grch38",snpLD=NA ){
+xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
   genomeVersion <- snpLD<- NULL
 
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
@@ -588,7 +590,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   # mege:
   DF <- merge(eqtlDF, gwasDF, by="snpId", suffixes = c(".eqtl", ".gwas"))
   if(nrow(DF)<2){
-    stop("Please enlarge the genome range!")
+    stop("No shared variants detected, please enlarge the genome range.")
   }
 
   # log:
@@ -600,23 +602,16 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   # highligth SNP:
   if(highlightSnp ==""){
     highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
+    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
   }
 
   # LD info:
-  if(is.na(snpLD)){
-    try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
-    # 如果 L1000未有该突变则会报错，所以再选择第二个。
-    while( is.null(snpLD) ){
-      message("==========")
-      hSnpCount <- hSnpCount+1
-      highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
-      message("Highlighted Snp [", highlightSnp, "] dosen't exist in L1000, choose next!-",hSnpCount,"-",highlightSnp)
-      try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token))
-    }
+  if( is.null(snpLD) ){
+    try(snpLD <- retrieveLD(highlightSnpInfo$chromosome, highlightSnp, population))
+    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+    data.table::setDT(snpLD)
   }
-  snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
-
-
+  # snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
 
   # Set LD SNP color:
   if( nrow(snpLD)>0 ){
@@ -636,8 +631,9 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1.0]"
   # set color:
   colorDT <- data.table::data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
-                                     pointColor= c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#A40340"),
-                                     pointFill = c("#9C8B88", "#e09351", "#df7e66", "#b75347", "#096CFD"))
+                                     pointFill= c('blue4','skyblue','darkgreen','orange','red'),
+                                     pointColor = c('black','black','black','black','black')
+                                     )
   colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
   # gwas_eqtl <- merge( gwas_eqtl, colorDT, by="r2Cut")
   # set shape:
@@ -648,7 +644,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   gwas_eqtl <- rbind( gwas_eqtl[snpId!=highlightSnp ], gwas_eqtl[snpId==highlightSnp, ] )
 
   # title:
-  plotTitle <- paste0("LocusCompare plot (",nrow(gwas_eqtl)," snps)")
+  plotTitle <- paste0(nrow(gwas_eqtl)," snps")
 
   # Xlab and ylab:
   xLab <- expression(-log["10"]("p-value") (eQTL))
@@ -659,24 +655,41 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
       geom_point(aes(x=logP.eqtl, y=logP.gwas, fill=r2Cut, color=r2Cut, shape=pointShape, size=pointShape))+
       scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill)+
       scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor)+
-      scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(16,23) )+
-      scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(2,3) )+
+      scale_shape_manual("Highlight",breaks = c('normal', "highlight"), values =  c(21,23) )+
+      scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(3,3.5) )+
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
       geom_label_repel(data=gwas_eqtl[snpId==highlightSnp,], aes(x=logP.eqtl, y=logP.gwas, label=snpId) )+
       labs(title = plotTitle )+
       xlab( xLab )+
       ylab( yLab )+
-      theme_bw()+
+      theme_classic()+
       theme(axis.text=element_text(size=rel(1.4)),
             axis.title=element_text(size=rel(1.5)),
             plot.title = element_text(hjust=0.5),
             legend.title = element_text(size=rel(1.3)),
             legend.text = element_text(size=rel(1.2))
-      )
-    if( nrow(snpLD)==0){
-      p <- p+ guides( fill="none", color = "none", shape="none", size="none" )
-    }else{
-      p <- p+ guides( shape="none", size="none", color = guide_legend(override.aes = list(size = 4)) )
+      )+ guides( shape="none", color="none", size="none", fill = "none" )
+
+    if (legend == TRUE) {
+      legend_position = match.arg(legend_position)
+      if (legend_position == 'bottomright'){
+        legend_box = data.frame(x = 0.8, y = seq(0.4, 0.2, -0.05))
+      } else if (legend_position == 'topright'){
+        legend_box = data.frame(x = 0.8, y = seq(0.8, 0.6, -0.05))
+      } else {
+        legend_box = data.frame(x = 0.2, y = seq(0.8, 0.6, -0.05))
+      }
+
+      p = ggdraw(p) +
+        geom_rect(data = legend_box,
+                  aes(xmin = x, xmax = x + 0.05, ymin = y, ymax = y + 0.05),
+                  color = "black",
+                  fill = rev(c("blue4", "skyblue", "darkgreen", "orange", "red"))) +
+        draw_label("0.8", x = legend_box$x[1] + 0.05, y = legend_box$y[1], hjust = -0.3, size = 10) +
+        draw_label("0.6", x = legend_box$x[2] + 0.05, y = legend_box$y[2], hjust = -0.3, size = 10) +
+        draw_label("0.4", x = legend_box$x[3] + 0.05, y = legend_box$y[3], hjust = -0.3, size = 10) +
+        draw_label("0.2", x = legend_box$x[4] + 0.05, y = legend_box$y[4], hjust = -0.3, size = 10) +
+        draw_label(parse(text = "r^2"), x = legend_box$x[1] + 0.05, y = legend_box$y[1], vjust = -2, size = 12)
     }
     print(p)
   }

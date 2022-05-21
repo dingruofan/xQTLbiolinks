@@ -9,60 +9,49 @@ xQTLvisual_locusZoom(
   highlightSnp = "",
   population = "EUR",
   posRange = "",
-  token = "9246d2db7917",
-  windowSize = 5e+05,
-  genomeVersion = "grch38",
-  snpLD = NA
+  legend = TRUE,
+  legend_position = c("topright", "bottomright", "topleft"),
+  snpLD = NULL
 )
 }
 \arguments{
-\item{DF}{A data.frame or a data.table object. Four columns are required: "snps", a character list, using an rsID or chromosome coordinate (e.g. "chr7:24966446"); chromosome, chr1-chr22; Genome position; P-value.}
+\item{DF}{A data.frame or a data.table object. Four columns are required (arbitrary column names is supported):
+\verb{Col 1}. "snps" (character), , using an rsID (e.g. "rs11966562");
+\verb{Col 2}. "chromosome" (character), one of the chromosome from chr1-chr22;
+\verb{Col 3}. "postion" (integer), genome position of snp.
+\verb{Col 4}. "P-value" (numeric).}
 
 \item{highlightSnp}{Default is the snp that with lowest p-value.}
 
-\item{population}{Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"}
+\item{population}{One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.}
 
-\item{posRange}{visualized genome region of interest. Default is the region that covers all snps.}
+\item{posRange}{Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.}
 
-\item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
-
-\item{windowSize}{Window around the highlighted snp for querying linkage disequilibrium information. Default:500000}
-
-\item{genomeVersion}{"grch38"(default) or "grch37".}
-
-\item{snpLD}{A data.frame of LD matirx.}
+\item{snpLD}{A data.frame of LD matirx. Default is null.}
 }
 \value{
 A data.table object and plot.
 }
 \description{
-plot locuszoom for showing regional information of the association signal relative to genomic position
+For showing regional signals relative to genomic position
+This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 }
 \examples{
 \donttest{
- # For GWAS:
- gwasFile <- tempfile(pattern = "file")
+ # For GWAS dataset:
  gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
                    "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
- utils::download.file(gwasURL, destfile=gwasFile)
- gwasDF <- data.table::fread(gwasFile, sep="\t", header=TRUE)
+ gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(
+                             gwasURL)$content), sep="\t")
  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
  xQTLvisual_locusZoom(gwasDF)
- xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7",
-                      population ="AFR", windowSize=200000)
- xQTLvisual_locusZoom(gwasDF, posRange="chr6:3e7-7e7", population ="AFR",
-                      windowSize=500000, highlightSnp="rs9271165")
+ xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7",
+                      population ="EUR", legend_position="topright")
 
- # For eQTL:
+ # For eQTL of a gene of interest:
  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
- eqtlAsso[,c("chrom","pos")]<-rbindlist(lapply(
-                             eqtlAsso$variantId, function(x){
-                             a=stringr::str_split(x,"_")[[1]];
-                             return(data.table(chrom=a[1], pos=a[2])) }))
- xQTLvisual_locusZoom(eqtlAsso[,.(snpId, chrom, pos, pValue)],
-                      population="EUR",
-                      posRange="chr6:46488310-48376712",
-                      genomeVersion="grch38" )
+ xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")],
+                      highlightSnp="rs4711878" )
 }
 }

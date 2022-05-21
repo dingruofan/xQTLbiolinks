@@ -9,10 +9,9 @@ xQTLvisual_locusCompare(
   gwasDF,
   highlightSnp = "",
   population = "EUR",
-  token = "9246d2db7917",
-  windowSize = 5e+05,
-  genome = "grch38",
-  snpLD = NA
+  legend = TRUE,
+  legend_position = c("topright", "bottomright", "topleft"),
+  snpLD = NULL
 )
 }
 \arguments{
@@ -22,21 +21,15 @@ xQTLvisual_locusCompare(
 
 \item{highlightSnp}{Default is the snp that is farthest from the origin of the coordinates.}
 
-\item{population}{Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()}
+\item{population}{One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
 
-\item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
-
-\item{windowSize}{Window around the highlighted snp for querying linkage disequilibrium information. Default:500000}
-
-\item{genome}{"grch38"(default) or "grch37".}
-
-\item{snpLD}{A data.frame object of LD matrix.}
+\item{snpLD}{A data.frame object of LD matrix. Default is null.}
 }
 \value{
-A plot
+A ggplot object
 }
 \description{
-visualize the colocalization of association summary statistics.
+This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 }
 \examples{
 \donttest{
@@ -46,6 +39,6 @@ visualize the colocalization of association summary statistics.
   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t")
   eqtlDF <- eqtlDF[,.(snpId, pValue)]
   gwasDF <- gwasDF[,.(rsid, P)]
-  xQTLvisual_locusCompare( eqtlDF, gwasDF )
+  xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 }
 }
