@@ -23,6 +23,10 @@ xQTLvisual_locusCompare(
 
 \item{population}{One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
 
+\item{legend}{(boolean, optional) Should the legend be shown? Default: TRUE.}
+
+\item{legend_position}{(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
+
 \item{snpLD}{A data.frame object of LD matrix. Default is null.}
 }
 \value{

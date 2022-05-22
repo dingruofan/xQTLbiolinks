@@ -23,7 +23,12 @@ Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor packa
 
 ```r
 if(!require("remotes")){install.packages("remotes")}
-remotes::install_git("https://gitee.com/stronghoney/xQTLbiolinks.git")
+# install required bioconductor packages:
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+bio_pkgs=c("SummarizedExperiment", "IRanges", "GenomicRanges", "GenomeInfoDb", "BiocGenerics")
+BiocManager::install(bio_pkgs)
+# install xQTLbiolinks:
 remotes::install_github("dingruofan/xQTLbiolinks")
 ```
 

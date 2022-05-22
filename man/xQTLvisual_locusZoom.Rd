@@ -27,6 +27,10 @@ xQTLvisual_locusZoom(
 
 \item{posRange}{Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.}
 
+\item{legend}{(boolean, optional) Should the legend be shown? Default: TRUE.}
+
+\item{legend_position}{(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
+
 \item{snpLD}{A data.frame of LD matirx. Default is null.}
 }
 \value{

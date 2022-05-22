@@ -364,6 +364,8 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @param highlightSnp Default is the snp that with lowest p-value.
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @param posRange Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.
+#' @param legend (boolean, optional) Should the legend be shown? Default: TRUE.
+#' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
 #' @param snpLD A data.frame of LD matirx. Default is null.
 #' @import data.table
 #' @import stringr
@@ -548,6 +550,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @param gwasDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param highlightSnp Default is the snp that is farthest from the origin of the coordinates.
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
+#' @param legend (boolean, optional) Should the legend be shown? Default: TRUE.
+#' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
 #' @param snpLD A data.frame object of LD matrix. Default is null.
 #' @import data.table
 #' @import ggplot2
