@@ -74,7 +74,7 @@ expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 
 <br/>
 <p align="center">
-<img src="img/22fcccaea960bc9409ecc076663bd95e.png" alt="plot" height=15% width=15% />
+<img src="img/1653233488636.png" alt="plot" height=15% width=15% />
 </p>
 
 ```r
@@ -83,7 +83,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 ```
 <p align="center">
-<img src="img/bd5301ffea17efb8a2ac7b82172d776a.png" alt="plot" height=18% width=18% />
+<img src="img/1653233514115.png" alt="plot" height=18% width=18% />
 </p>
 
 > **An example of coloclization analysis.**
@@ -129,23 +129,24 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    - Conductor colocalization analysis using coloc package.
 
    
-   Conduct colocalization analysis for each trait gene with this function:
+   Conduct colocalization analysis for each trait gene with this function using a for loop:
    ```
+   colocResultAll <- data.table()
+   traitGenes <- unique(traitsAll$geneSymbol)
     for(i in 1:length(traitGenes)){
       colocResult <- xQTLanalyze_coloc(gwasDF, traitGenes[i], tissueSiteDetail=tissueSiteDetail)
       colocResult <- colocResult$coloc_Out_summary
       colocResult$gene <-traitGenes[i]
       colocResultAll <- rbind(colocResultAll, colocResult)
-      message("===============")
-      message("===============")
       message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i, "== Gene:",traitGenes[i], " == PP4: ", colocResult$PP.H4.abf)
-      rm(colocResult)
      }
    ```
 
 6. Visualization of the results. For the potential casual gene (RPS26, PP4=0.998) with the largest value of PP4:
+
+   >prepare data:
+   
    ```
-   # prepare data:
    eqtlAsso <- xQTLdownload_eqtlAllAsso("RPS26", tissueSiteDetail = tissueSiteDetail, withB37VariantId=FALSE)
    gwasDF <- gwasDF[,.(rsid, chrom=paste0("chr",chr), maf, pValue=P, position)]
    eqtlAsso <- eqtlAsso[,.(rsid=snpId, maf, pValue, position=as.numeric(pos))]
@@ -184,7 +185,6 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    
    ```
    p_eqtlExp <- xQTLvisual_eqtlExp("rs1131017", "RPS26", tissueSiteDetail = tissueSiteDetail)
-
    ```
    <p align="center">
    <img src="img/exp.png" alt="plot" height=40% width=40% />
