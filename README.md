@@ -129,7 +129,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
 5. Following three steps of colocalization analysis are encapsulated in one function `xQTLanalyze_coloc`:
    - Retrieved all associations from EBI eQTL catalogue for a specified gene.
    - Merge the data.frame of GWAS and eQTL by rsid.
-   - Conductor colocalization analysis using coloc package.
+   - Perform colocalization analysis using coloc package.
 
    
    Conduct colocalization analysis for each trait gene with this function using a for loop:
