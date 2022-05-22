@@ -102,7 +102,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    ```r
    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, 
                                                centerRange=1e4,
-                                               enomeVersion="grch38")
+                                               genomeVersion="grch38")
    ```
 
 3. Identify trait genes for each sentinel SNPs:
@@ -112,7 +112,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    ```
    Totally, [2615] associations between [1103] traits genes and [1617] SNPs are detected
    
-4. download eGenes for the tissue of interest, then get the overlap of eGenes and trait genes to reduce the number of trait genes:
+4. Download eGenes for the tissue of interest, then get the overlap of eGenes and trait genes to reduce the number of trait genes:
 
    ```r
    tissueSiteDetail <- "Brain - Cerebellum"
