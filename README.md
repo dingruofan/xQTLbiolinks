@@ -89,6 +89,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
 > **An example of coloclization analysis.**
 
 1. Download and load a summary statistics dataset (GRCH38) from GWAS Catalog:
+
    ```r
    # http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006572/harmonised/30038396-GCST006572-EFO_0008354.h.tsv.gz
    gwasDF <- fread("D:\\OneDrive\\PC\\PostDoc\\xQTLbiolinks\\30038396-GCST006572-EFO_0008354.h.tsv.gz")
@@ -105,13 +106,15 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    ```
 
 3. Identify trait genes for each sentinel SNPs:
+
    ```r
    traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4)
    ```
    Totally, [2615] associations between [1103] traits genes and [1617] SNPs are detected
    
-4. download eGenes for the tissue of interest, then get the overlap of eGenes and trait genes to reduce the number of trait genes.
-   ```
+4. download eGenes for the tissue of interest, then get the overlap of eGenes and trait genes to reduce the number of trait genes:
+
+   ```r
    tissueSiteDetail <- "Brain - Cerebellum"
    egeneDF <- xQTLdownload_egene(tissueSiteDetail = tissueSiteDetail) #11240
    ```
@@ -130,7 +133,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
 
    
    Conduct colocalization analysis for each trait gene with this function using a for loop:
-   ```
+   ```r
    colocResultAll <- data.table()
    traitGenes <- unique(traitsAll$geneSymbol)
     for(i in 1:length(traitGenes)){
@@ -146,7 +149,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
 
    >prepare data:
    
-   ```
+   ```r
    eqtlAsso <- xQTLdownload_eqtlAllAsso("RPS26", tissueSiteDetail = tissueSiteDetail, withB37VariantId=FALSE)
    gwasDF <- gwasDF[,.(rsid, chrom=paste0("chr",chr), maf, pValue=P, position)]
    eqtlAsso <- eqtlAsso[,.(rsid=snpId, maf, pValue, position=as.numeric(pos))]
@@ -155,7 +158,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    
    >P-value distribution and comparison of the signals of GWAS and eQTL:
    
-   ```
+   ```r
    p1 <- xQTLvisual_locusCompare( gwasEqtldata[,.(rsid, pValue.eqtl)], 
                                   gwasEqtldata[,.(rsid, pValue.gwas)] )
    ```
@@ -165,7 +168,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    
    >Locuszoom plot of eQTL signals:
    
-   ```
+   ```r
    p_eqtl <- xQTLvisual_locusZoom( gwasEqtldata[,.(rsid, chrom, pos=position, pValue.eqtl)])
    ```
    <p align="center">
@@ -174,7 +177,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    
    >Locuszoom plot of GWAS signals:
    
-   ```
+   ```r
    p_gwas <- xQTLvisual_locusZoom( gwasEqtldata[,.(rsid, chrom, pos=position, pValue.gwas)])
    ```
    <p align="center">
@@ -183,7 +186,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    
    >Violin plot of normalized exprssion of eQTL:
    
-   ```
+   ```r
    p_eqtlExp <- xQTLvisual_eqtlExp("rs1131017", "RPS26", tissueSiteDetail = tissueSiteDetail)
    ```
    <p align="center">
