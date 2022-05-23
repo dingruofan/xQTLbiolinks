@@ -126,11 +126,8 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #'   sentinelSnpsURL <- paste0("https://gitee.com/stronghoney/exampleData/raw/",
 #'                            "master/gwas/GLGC_CG0052/sentinelSnpDF.txt")
 #'
-#'   sentinelSnpDF <- data.table::fread(
-#'                                rawToChar(curl::curl_fetch_memory(
-#'                                sentinelSnpsURL)$content), sep="\t")
-#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,
-#'                                      detectRange=1e4,
+#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content))
+#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,
 #'                                      genomeVersion="grch37", grch37To38=TRUE)
 #' }
 xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, genomeVersion="grch38", grch37To38=FALSE){

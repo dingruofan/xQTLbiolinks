@@ -95,7 +95,6 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    gwasDF <- fread("D:\\OneDrive\\PC\\PostDoc\\xQTLbiolinks\\30038396-GCST006572-EFO_0008354.h.tsv.gz")
    # extract columns.
    gwasDF<- gwasDF[,.(rsid = hm_rsid, chr=hm_chrom, position=hm_pos, P=p_value, maf=hm_effect_allele_frequency)]
-   gwasDF <- na.omit(gwasDF)
    ```
 
 2. Filter sentinel snps, and convert to GRCH38 if its genome version is GRCH37:

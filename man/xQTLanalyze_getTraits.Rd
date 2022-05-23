@@ -31,11 +31,8 @@ identify trait genes with sentinel SNPs:
   sentinelSnpsURL <- paste0("https://gitee.com/stronghoney/exampleData/raw/",
                            "master/gwas/GLGC_CG0052/sentinelSnpDF.txt")
 
-  sentinelSnpDF <- data.table::fread(
-                               rawToChar(curl::curl_fetch_memory(
-                               sentinelSnpsURL)$content), sep="\t")
-  traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,
-                                     detectRange=1e4,
+  sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content))
+  traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,
                                      genomeVersion="grch37", grch37To38=TRUE)
 }
 }
