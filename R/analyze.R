@@ -389,7 +389,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 
   #
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  gwasEqtldata <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
+  gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
   # centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
   # centerSnp <- xQTLquery_varId(sentinelSnp, variantType = variantType)
   # if(nrow(centerSnp)==0 ){
@@ -405,8 +405,6 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   #   centerSnp <- gwasDF[which.min(gwasDF$pValue),]
   #   gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$pos-(colocRange)) & position<=(centerSnp$pos+(colocRange)),][order(position)]
   # }
-  gwasEqtlInfo <- copy(gwasEqtldata)
-  rm(gwasEqtldata)
   if(nrow(gwasEqtlInfo)==0){
     message("No shared variants between eQTL and GWAS, please check your input!.")
     return(NULL)
