@@ -934,35 +934,37 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_
   expProfilesMelt$expTPM <- as.numeric(expProfilesMelt$expTPM)
   expProfilesMelt <- merge(expProfilesMelt, tissueSiteDetail, by="tissueSiteDetail")
 
+
   if(toTissueSite){
-    p1 <- ggplot(expProfilesMelt)+
-      geom_boxplot(aes(x=reorder(tissueSite, expTPM, median), y=(expTPM), fill=tissueSite), outlier.size = 0.3)+theme_bw()+	#分组绘制
+    tissueSiteDetail <- tissueSiteDetail[,.(tissueSite, colorHex)][,.(colorHex=colorHex[1]), by="tissueSite"]
+
+    p1 <- ggplot(expProfilesMelt,aes(x=tissueSite, y=(expTPM), fill=tissueSite))+
+      geom_violin(color="white", width=0.88, trim=FALSE, alpha=0.9, scale="width")+
+      geom_boxplot(width=0.2,  alpha=0.9, outlier.size = 0.8, outlier.alpha = 0.4, outlier.shape = 21)+
+      scale_fill_manual(breaks = tissueSiteDetail$tissueSite, values = tissueSiteDetail$colorHex)+
+      theme_classic()+	#分组绘制
       ylab("Expression (TPM)")+
       # scale_y_log10()+
-      theme(axis.text.x=element_text(size=rel(1.1), angle = 60, hjust = 1, vjust=1),
-            axis.text.y = element_text(size=rel(1.1)),
+      theme(axis.text.x=element_text(size=rel(1.3), angle = 300, hjust = 0, vjust=0.5),
+            axis.text.y = element_text(size=rel(1.3)),
             axis.title.x = element_blank(),
-            axis.title.y = element_text(size=rel(1.2)),
-            legend.position = "none",
-            legend.background = element_rect(fill="white", size=0.5, linetype="solid",  colour ="white"),
-            legend.margin = margin(0,0,0,0,unit="cm"),
-            legend.title = element_blank(),
-            legend.text = element_text(size=rel(1.1))
+            axis.title.y = element_text(size=rel(1.3)),
+            legend.position = "none"
       )
+    # + geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
   }else{
-    p1 <- ggplot(expProfilesMelt)+
-      geom_boxplot(aes(x=reorder(tissueSiteDetail, expTPM, median), y=(expTPM), fill=tissueSiteDetail), outlier.size = 0.3)+theme_bw()+	#分组绘制
+    p1 <- ggplot(expProfilesMelt, aes(x=tissueSiteDetail, y=(expTPM), fill=tissueSiteDetail))+
+      geom_violin(color="white", width=0.88, trim=FALSE, alpha=0.9, scale="width")+
+      geom_boxplot(width=0.2,  alpha=0.9, outlier.size = 0.8, outlier.alpha = 0.4, outlier.shape = 21)+
+      scale_fill_manual(breaks = tissueSiteDetail$tissueSiteDetail, values = tissueSiteDetail$colorHex)+
+      theme_classic()+
       ylab("Expression (TPM)")+
       # scale_y_log10()+
-      theme(axis.text.x=element_text(size=rel(1.1), angle = 60, hjust = 1, vjust=1),
+      theme(axis.text.x=element_text(size=rel(1.3), angle = 300, hjust = 0, vjust=0.5),
             axis.text.y = element_text(size=rel(1.1)),
             axis.title.x = element_blank(),
             axis.title.y = element_text(size=rel(1.2)),
-            legend.position = "none",
-            legend.background = element_rect(fill="white", size=0.5, linetype="solid",  colour ="white"),
-            legend.margin = margin(0,0,0,0,unit="cm"),
-            legend.title = element_blank(),
-            legend.text = element_text(size=rel(1.1))
+            legend.position = "none"
       )
   }
   print(p1)

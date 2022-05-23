@@ -910,8 +910,8 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #'
 #' @examples
 #' \donttest{
-#'   tissueAll <- xQTLquery_tissue(datasetId="gtex_v8")
-#'   BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v8")
+#'   tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
+#'   BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
 #' }
 xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
   if(datasetId != "gtex_v8" && datasetId != "gtex_v7"){

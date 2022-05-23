@@ -1,15 +1,15 @@
 ## xQTLbiolinks: a R package aims to query, download, visual and perform integrative analyses of xQTL data
 
-- By retrieving GTEx public-access data programmatically using the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/), the functions provided in this package enable users to access **molecular QTLs** (eQTLs and sQTLs) and **gene expressions** data filtered by tissue, gene, variant or dataset. 
+- **`xQTLbiolinks`** is an R package that enable users to access **molecular QTLs** (eQTLs and sQTLs) and **gene expressions** data filtered by tissue, gene, variant or dataset, by retrieving GTEx public-access data programmatically using the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/).
 - xQTLbiolinks consists of functions that can be grouped into four main levels: **Query**, **Download**, **Analyze** and **Visualize**.
 <img src="img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width=100% height=100% />
 <br/>
 
 ### xQTLbiolinks assist in:
 
-1. Fast query/download xQTLs and gene expression/splicing across 54 distinct cell types and tissues
+1. Fast query/download **xQTLs and gene expression/splicing** across 54 distinct  tissues.
 2. Visualization of xQTL and gene expression across tissues(e.g. ridgeline plots of gene expression, boxplots of xQTL expression; and locuszoom plots of xQTLs).
-3. Identify trait associated genes by perform colocalization analyses of GWAS and xQTL signals.
+3. Identify trait associated genes by perform **colocalization analyses** of GWAS and xQTL signals.
 4. Identify co-expressed and tissue-specific expressed genes.
 
 ### Citation
@@ -23,11 +23,12 @@ Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor packa
 
 ```r
 if(!require("remotes")){install.packages("remotes")}
+
 # install required bioconductor packages:
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+if (!requireNamespace("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
 bio_pkgs=c("SummarizedExperiment", "IRanges", "GenomicRanges", "GenomeInfoDb", "BiocGenerics")
 BiocManager::install(bio_pkgs)
+
 # install xQTLbiolinks:
 remotes::install_github("dingruofan/xQTLbiolinks")
 ```
@@ -44,47 +45,52 @@ xQTLvisual_eqtl("KIF15")
 <img src="img/7793e6ffaca063635afd2236918c6060.png" alt="eqtl" height=60% width=60%  />
 </p>
 
+
+
 ```r
  genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
  xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
 ```
 
-<br/>
 <p align="center">
 <img src="img/9c8c3aa9d5a42a371910caad89d3a50c.png" alt="plot" height=60% width=60% />
 </p>
 
-<br/>
+
 
 ```r
 geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 ```
 
-<br/>
 <p align="center">
 <img src="img/1652407865008.png" alt="plot" height=100% width=100% />
 </p>
 
-<br/>
+
 
 ```r
 expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
                               tissueSiteDetail="Lung")
 ```
 
-<br/>
 <p align="center">
 <img src="img/1653233488636.png" alt="plot" height=25% width=25% />
 </p>
+
+
 
 ```r
 expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="variantId",
                               phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 ```
+
 <p align="center">
 <img src="img/1653233514115.png" alt="plot" height=28% width=28% />
 </p>
+
+
+
 
 > **An example of coloclization analysis.**
 
@@ -123,7 +129,6 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
    traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId] 
    ```
    In total of 341 trait gene left.
-   
    
 5. Following three steps of colocalization analysis are encapsulated in one function `xQTLanalyze_coloc`:
    - Retrieved all associations from EBI eQTL catalogue for a specified gene.

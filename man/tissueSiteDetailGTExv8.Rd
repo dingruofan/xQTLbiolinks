@@ -10,6 +10,7 @@ A data frame with 54 rows and 2 variables
 \item{tissueSiteDetail}{character string, tissue name}
 \item{tissueSiteDetailId}{character string, tissue id removding special character}
 \item{tissueSite}{character string, whole tissue name}
+\item{colorHex}{character string, color of the tissue in GTEx}
 }
 Compared with GTEx v7
 \tabular{rrrrr}{

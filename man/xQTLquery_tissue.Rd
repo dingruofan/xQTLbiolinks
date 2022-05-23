@@ -20,7 +20,7 @@ Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq sa
 }
 \examples{
 \donttest{
-  tissueAll <- xQTLquery_tissue(datasetId="gtex_v8")
-  BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v8")
+  tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
+  BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
 }
 }
