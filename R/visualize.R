@@ -775,9 +775,8 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' @examples
 #' \donttest{
 #'  gene2 = c("AMOT", "HOXA4")
-#'  xQTLvisual_geneCorr( gene2, tissueSiteDetail="Liver" )
-#'  xQTLvisual_geneCorr( gene2, groupBy="pathologyNotesCategories.congestion",
-#'  tissueSiteDetail="Lung" )
+#'  xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
+#'  xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
 #' }
 xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
   geneSymbol <- NULL

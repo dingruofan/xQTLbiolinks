@@ -54,13 +54,11 @@
 #'  # hg38 test:
 #'  geneInfo <- xQTLquery_gene("TP53")
 #'  geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"),
-#'                                geneType="gencodeId")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 #'
 #'  # hg19 test:
 #'  geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"),
-#'                             geneType="gencodeId", gencodeVersion="v19")
+#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
 #'
 #'  }
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
@@ -349,12 +347,13 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @export
 #' @examples
 #' \donttest{
-#'   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="Liver", datasetId="gtex_v8",
-#'                     pathologyNotesCategories=TRUE  )
-#'   sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="All", dataType="RNASEQ",
-#'                     datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-#'   sampleInfo <- xQTLquery_sampleByTissue( "Brain - Amygdala", "RNASEQ",
-#'                     "gtex_v8", 200 )
+#'   sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
+#'                                          pathologyNotesCategories=TRUE  )
+#'
+#'   sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
+#'                                          datasetId="gtex_v8",pathologyNotesCategories=TRUE )
+#'
+#'   sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala", "RNASEQ","gtex_v8", 200 )
 #'   }
 xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL

@@ -3,7 +3,7 @@
 #'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e4 bp.
 #' @param gwasDF GWAS data.frame
 #' @param pValueThreshold Cutoff of gwas p-value. Default: 5e-8
-#' @param centerRange SNP-to-SNP distance. Default:1e4
+#' @param centerRange SNP-to-SNP distance. Default:1e6
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param genomeVersion Genome version of input file. "grch37" or "grch38" (default).
 #' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
@@ -25,7 +25,7 @@
 #'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
 #'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 #' }
-xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e4, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
+xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   position <- pValue <- maf <- rsid <- chr <- NULL
   .<-NULL
   # Detect gene with sentinal SNP:
@@ -133,7 +133,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #'                                      detectRange=1e4,
 #'                                      genomeVersion="grch37", grch37To38=TRUE)
 #' }
-xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e4, genomeVersion="grch38", grch37To38=FALSE){
+xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, genomeVersion="grch38", grch37To38=FALSE){
   rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
   . <-genes <- geneSymbol <- gencodeId <- geneType <- description<- NULL
 

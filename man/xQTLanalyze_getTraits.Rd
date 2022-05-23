@@ -6,7 +6,7 @@
 \usage{
 xQTLanalyze_getTraits(
   sentinelSnpDF,
-  detectRange = 10000,
+  detectRange = 1e+06,
   genomeVersion = "grch38",
   grch37To38 = FALSE
 )

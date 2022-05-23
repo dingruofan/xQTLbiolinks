@@ -7,7 +7,7 @@
 xQTLanalyze_getSentinelSnp(
   gwasDF,
   pValueThreshold = 5e-08,
-  centerRange = 10000,
+  centerRange = 1e+06,
   mafThreshold = 0.01,
   genomeVersion = "grch38",
   grch37To38 = FALSE
@@ -18,7 +18,7 @@ xQTLanalyze_getSentinelSnp(
 
 \item{pValueThreshold}{Cutoff of gwas p-value. Default: 5e-8}
 
-\item{centerRange}{SNP-to-SNP distance. Default:1e4}
+\item{centerRange}{SNP-to-SNP distance. Default:1e6}
 
 \item{mafThreshold}{Cutoff of maf to remove rare variants.}
 

@@ -89,11 +89,12 @@ query sample's details with a specifc tissue name
 }
 \examples{
 \donttest{
-  sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="Liver", datasetId="gtex_v8",
-                    pathologyNotesCategories=TRUE  )
-  sampleInfo <- xQTLquery_sampleByTissue( tissueSiteDetail="All", dataType="RNASEQ",
-                    datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-  sampleInfo <- xQTLquery_sampleByTissue( "Brain - Amygdala", "RNASEQ",
-                    "gtex_v8", 200 )
+  sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
+                                         pathologyNotesCategories=TRUE  )
+
+  sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
+                                         datasetId="gtex_v8",pathologyNotesCategories=TRUE )
+
+  sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala", "RNASEQ","gtex_v8", 200 )
   }
 }
