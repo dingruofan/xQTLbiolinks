@@ -18,13 +18,12 @@
 #'
 #' @examples
 #' \donttest{
-#'  # EQTL associatons of TP53:
-#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
-#'                                tissueSiteDetail="Esophagus - Mucosa")
-#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
-#'                                tissueSiteDetail="Lung")
-#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
-#'                                tissueSiteDetail="Whole Blood")
+#'  # EQTL associatons of TP53 in Esophagus - Mucosa:
+#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
+#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+#'
+#'  # EQTL associatons of IRF5:
+#'  expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
 #' }
 xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
@@ -385,14 +384,12 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #'                              gwasURL)$content), sep="\t")
 #'  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
 #'  xQTLvisual_locusZoom(gwasDF)
-#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7",
-#'                       population ="EUR", legend_position="topright")
+#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
 #'  # For eQTL of a gene of interest:
 #'  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
 #'                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
-#'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")],
-#'                       highlightSnp="rs4711878" )
+#'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
@@ -721,15 +718,13 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #'
 #' @examples
 #' \donttest{
-#'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1",
-#'              "COX11", "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13",
-#'              "HOXA4", "VSX1")
+#'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",
+#'              "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
 #'   xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
 #'
-#'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12",
-#'              "ENSG00000126016.15","ENSG00000179021.9","ENSG00000176678.5",
-#'              "ENSG00000166260.10","ENSG00000142748.12","ENSG00000107201.9",
-#'              "ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
+#'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15",
+#'              "ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12",
+#'              "ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
 #'              "ENSG00000197576.13","ENSG00000100987.14")
 #'   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 #' }

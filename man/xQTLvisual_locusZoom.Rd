@@ -49,13 +49,11 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
                              gwasURL)$content), sep="\t")
  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
  xQTLvisual_locusZoom(gwasDF)
- xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7",
-                      population ="EUR", legend_position="topright")
+ xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 
  # For eQTL of a gene of interest:
  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
- xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")],
-                      highlightSnp="rs4711878" )
+ xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
 }
 }
