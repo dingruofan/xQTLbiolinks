@@ -129,14 +129,20 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Check the gene name :")
   geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
-  # 在Y染色体上的重复基因被过滤掉了。
-  geneInfo <- geneInfo[!is.na(gencodeId)]
-  geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
-
   # Only keep genes with non-na gencode ID
   geneInfo <- geneInfo[!is.na(gencodeId)]
   # for gene of the same name but with different gencodeID, like SHOX, ENSG00000185960.13 the name is in X, ENSG00000185960.13_PAR_Y is the name in Y. retain the gencode In x.
   geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
+
+  # duplicates, only warning first duplicate:
+  # test: genes = c("LYNX1", "TP53")
+  dupGeneSymbol <- unique(geneInfo[,.(geneSymbol, gencodeId)][,.(.SD[duplicated(geneSymbol)])]$geneSymbol[1])
+  if(!is.na(dupGeneSymbol)){
+    message(" ")
+    message("  == Gene [",dupGeneSymbol,"] has multiple gencode IDs: [",paste0(geneInfo[geneSymbol == dupGeneSymbol]$gencodeId, collapse = ", "),"]")
+    stop("== Please remove duplicated genes, or take the unique gencode IDs as the input.")
+  }
+
   #
   if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
     stop("gene information is null.")
@@ -1603,7 +1609,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #'
 #' @examples
 #' \donttest{
-#'  geneMedExp <- xQTLdownload_geneMedExp(genes="TP53")
+#'  geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")
 #'  geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
 #' }
 xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){

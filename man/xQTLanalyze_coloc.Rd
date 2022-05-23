@@ -11,7 +11,7 @@ xQTLanalyze_coloc(
   genomeVersion = "grch38",
   tissueSiteDetail = "",
   mafThreshold = 0.01,
-  population = "CEU",
+  population = "EUR",
   gwasSampleNum = 50000,
   method = "coloc",
   token = "9246d2db7917"

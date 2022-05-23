@@ -111,6 +111,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @description identify trait genes with sentinel SNPs:
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
+#' @param tissueSiteDetail All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
 #' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
 #' @import data.table
@@ -123,18 +124,22 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #'
 #' @examples
 #' \donttest{
-#'   sentinelSnpsURL <- paste0("https://gitee.com/stronghoney/exampleData/raw/",
-#'                            "master/gwas/GLGC_CG0052/sentinelSnpDF.txt")
+#'   URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 #'
-#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(sentinelSnpsURL)$content))
-#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,
+#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(URL1)$content))
+#'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
 #'                                      genomeVersion="grch37", grch37To38=TRUE)
 #' }
-xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, genomeVersion="grch38", grch37To38=FALSE){
+xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDetail="", genomeVersion="grch38", grch37To38=FALSE){
   rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
   . <-genes <- geneSymbol <- gencodeId <- geneType <- description<- NULL
 
   data.table::as.data.table(sentinelSnpDF)
+
+
+  if( length(tissueSiteDetail)!=1 | tissueSiteDetail=="" | !(tissueSiteDetail %in% tissueSiteDetailGTExv8$tissueSiteDetail) ){
+    stop("== \"tissueSiteDetail\" can not be null. Please choose the tissue from tissue list of tissueSiteDetailGTExv8")
+  }
 
   # (未做) 由于下一步的 xQTLdownload_eqtlPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
   # 由于从 EBI category 里获得的是 hg38(v26) 的信息，所以如果这一步是 hg19 的1e6范围内，则在 hg38里就会未必，所以需要这一步，如果是hg19，则对突变的坐标进行变换：
@@ -242,10 +247,14 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, genomeVersion=
     traitsAll <- merge(geneAnnot[,.(genes, geneSymbol,gencodeId, geneType, description, chromosome, start,end ,strand)],traitsAll, by.x="genes",by.y="gencodeId",  all.x=TRUE)[,-c("genes")]
     traitsAll <- traitsAll[,.( chromosome, geneStart=start, geneEnd=end, geneStrand=strand, geneSymbol, gencodeId, rsid, position, pValue, maf )][order(as.numeric(str_remove(chromosome, "chr")), pValue, position)]
     message("== Totally, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
-    return(traitsAll)
-  }else{
-    return(traitsAll)
   }
+
+  # Get the overlap with the eGgenes:
+  egeneDF <- xQTLdownload_egene(tissueSiteDetail = tissueSiteDetail) #11240
+  traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId]
+  message("== After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
+
+  return(traitsAll)
 }
 
 
@@ -270,7 +279,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, genomeVersion=
 #' \donttest{
 #'   # please see see vignette.
 #' }
-xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="CEU", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL
   . <- NULL
 
@@ -334,11 +343,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf")
   # gwas subset:
   gwasDF <- na.omit(gwasDF)
-  # chromosome revise：
-  if( !str_detect(gwasDF[1,]$chr, regex("^chr")) ){
-    gwasDF$chr <- paste0("chr", gwasDF$chr)
-  }
-  gwasDF <- gwasDF[chr==P_chrom,]
+
+  gwasDF <- gwasDF[chr==ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"),P_chrom, stringr::str_remove(P_chrom, "chr")),]
   # convert variable class:
   gwasDF[,c("position", "pValue", "maf")] <- gwasDF[,.(position=as.numeric(position), pValue=as.numeric(pValue), maf=as.numeric(maf))]
   # MAF filter:
@@ -347,6 +353,10 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   gwasDF <- gwasDF[order(rsid, pValue)][!duplicated(rsid)]
   # retain SNPs with rs id:
   gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
+  # chromosome revise：
+  if( !str_detect(gwasDF[1,]$chr, stringr::regex("^chr")) ){
+    gwasDF$chr <- paste0("chr", gwasDF$chr)
+  }
 
   ##### convert to grch38:
   if(genomeVersion == "grch37"){
@@ -409,6 +419,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   coloc_Out_results <- as.data.table(coloc_Out$results)
   # coloc_Out_results$gene <- traitGenes[i]
   coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+  coloc_Out_summary$traitGene <- traitGene
   print(coloc_Out_summary)
   # coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
 

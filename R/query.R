@@ -220,7 +220,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
         tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
         tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
         tmp_all <- rbind(tmp_all, tmp)
-        message("Batch ",i,". Downloaded  ", url1GetText2Json$page+1, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
+        message("Batch ",i,"/",nrow(genesURL),". Downloaded  page", url1GetText2Json$page+1, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
 
         # if more pages:
         page_tmp<-page_tmp+1
