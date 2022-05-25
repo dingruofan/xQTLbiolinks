@@ -33,6 +33,7 @@ Imports:
     jsonlite (>= 1.7.2),
     methods,
     PupillometryR,
+    R.utils,
     RMySQL,
     stringr (>= 1.4.0),
     SummarizedExperiment (>= 1.4.0),

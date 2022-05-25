@@ -666,7 +666,8 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   # import tissueSiteDetailGTEx according to datasetId
   tissueSiteDetailGTEx <- data.table::copy(tissueSiteDetailGTExv8)
   gencodeVersion <- "v26"
-  qtl_groups <- EBIquery_allTerm("qtl_groups")
+  # come from：EBIquery_allTerm("qtl_groups")
+  qtl_groups <- data.table::copy(ebi_qtl_groups)
   qtl_tissue <- merge( tissueSiteDetailGTEx,qtl_groups, by.x="tissueSiteDetailId", by.y="qtl_group")
   setDT(qtl_tissue)
   # check tissueSiteDetail:
@@ -705,16 +706,17 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
 
   # construct url:
-  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
-                 "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
-                 "&qtl_group=",tissueSiteDetailId)
-  # check network:
-  bestFetchMethod <- apiEbi_ping()
-  if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-    message("Note: EBI API server is busy or your network has latency, please try again later.")
-    return(NULL)
-  }
-  gtexAsoo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2],  termSize=1000)
+  # url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
+  #                "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
+  #                "&qtl_group=",tissueSiteDetailId)
+  # # check network:
+  # bestFetchMethod <- apiEbi_ping()
+  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+  #   message("Note: EBI API server is busy or your network has latency, please try again later.")
+  #   return(NULL)
+  # }
+  # gtexAsoo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2],  termSize=1000)
+  gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=1000)
   gtexAsooList <- do.call(c, gtexAsoo)
   if(length(gtexAsooList)==0){
     message("No association found!")

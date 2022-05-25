@@ -162,7 +162,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
       # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
 
       # download with "download" method and retry 3 times.
-      url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+      url1GetText2Json <- fetchContent(url1, method = "fromJSON", downloadMethod = "auto")
 
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
       if( nrow(url1GetText2Json2DT)==0 ){
@@ -208,7 +208,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 
         # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
         # download with "download" method and retry 3 times.
-        url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+        url1GetText2Json <- fetchContent(url1, method = "fromJSON", downloadMethod = "auto")
 
 
         url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
@@ -235,7 +235,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
           )
           url1 <- utils::URLencode(url1)
           # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-          url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+          url1GetText2Json <- fetchContent(url1, method = "fromJSON", downloadMethod = "auto")
           url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
           if( nrow(url1GetText2Json2DT)==0 ){
             message( "0 record fatched!" )
@@ -1123,7 +1123,7 @@ apiEbi_ping <- function(){
 #' @examples
 #' \donttest{
 #'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-#'  fetchContent(url1, method="download")
+#'  fetchContent(url1, method="fromJSON")
 #' }
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
   # if( method == "GetWithHeader"){
@@ -1149,6 +1149,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 
       for (downloadTime in 1:3){
         if(downloadTime>1){message("download failed and try again.")}
+        # because of the limitation of the length of the url (<2084), so I rebulit the function.
         df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
         if(!methods::is(df, 'try-error')) break
       }
@@ -1180,8 +1181,9 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
     tmpFile <- tempfile(pattern = "file")
     if( file.exists(tmpFile) ){ file.remove(tmpFile) }
     # Retry for-loop R loop if error
-    for (downloadTime in 1:3){
+    for (downloadTime in 1:4){
         if(downloadTime>1){message("download failed and try again.")}
+        if(downloadTime>3){message("your connection is unstable.")}
         df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
         if(!is(df, 'try-error')) break
     }
@@ -1208,11 +1210,14 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       return(url1GetText)
     }
   }else if( method == "curl"){
-    url1Get <- curl::curl_fetch_memory(url1)
+    # url1Get <- curl::curl_fetch_memory(url1)
+    # url1GetText <- rawToChar(url1Get$content)
+    url1GetText <- RCurl::getURL(url1)
+    # url1Get <- RCurl::getURLContent(url1)
     # if( url1Get$status_code!=200){
     #   mesage("Http status code: ", url1Get$status_code)
     # }
-    url1GetText <- rawToChar(url1Get$content)
+
     if(isJson){
       # replace NAN with NULL:
       url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
@@ -1306,7 +1311,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
         embeddedList <- c(embeddedList,contentGot[[1]])
         embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
         contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
-        message("Requset: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+        message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
         break()
       }else{
         embeddedList <- c(embeddedList,contentGot[[1]])

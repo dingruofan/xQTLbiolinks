@@ -202,12 +202,26 @@ NULL
 #' @source \url{https://gtexportal.org/home/}
 NULL
 
+#' @title tissue resources in the ebi eQTL catelogue
+#' @description
+#'  A list of 101 tissue resources
+#' @docType data
+#' @keywords internal
+#' @name ebi_qtl_groups
+#' @format A Data.table
+#' \describe{
+#'   \item{qtl_group}{A character vector}
+#' }
+#' @source \url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api}
+NULL
+
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")
 utils::globalVariables("gencodeGeneInfoAllGranges")
 utils::globalVariables("gencodeGenetype")
-
+utils::globalVariables("ebi_qtl_groups")
 
 
 

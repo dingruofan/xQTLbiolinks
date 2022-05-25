@@ -467,6 +467,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("BiocGenerics")
 # usethis::use_package("methods")
 # usethis::use_package("cowplot")
+# usethis::use_package("R.utils")
 
 #
 # # suggest:
