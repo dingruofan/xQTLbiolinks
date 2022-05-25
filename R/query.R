@@ -162,7 +162,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
       # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
 
       # download with "download" method and retry 3 times.
-      url1GetText2Json <- fetchContent(url1, method = "fromJSON", downloadMethod = "auto")
+      url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
       url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
       if( nrow(url1GetText2Json2DT)==0 ){
@@ -208,7 +208,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 
         # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
         # download with "download" method and retry 3 times.
-        url1GetText2Json <- fetchContent(url1, method = "fromJSON", downloadMethod = "auto")
+        url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
 
         url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
@@ -235,7 +235,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
           )
           url1 <- utils::URLencode(url1)
           # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-          url1GetText2Json <- fetchContent(url1, method = "fromJSON", downloadMethod = "auto")
+          url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
           url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
           if( nrow(url1GetText2Json2DT)==0 ){
             message( "0 record fatched!" )
