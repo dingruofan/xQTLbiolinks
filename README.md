@@ -5,12 +5,11 @@
 <img src="img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width=100% height=100% />
 <br/>
 
-### xQTLbiolinks assist in:
+### Quick Start
 
-1. Fast query/download **xQTLs and gene expression/splicing** across 54 distinct  tissues.
-2. Visualization of xQTL and gene expression across tissues(e.g. ridgeline plots of gene expression, boxplots of xQTL expression; and locuszoom plots of xQTLs).
-3. Identify trait associated genes by perform **colocalization analyses** of GWAS and xQTL signals.
-4. Identify co-expressed and tissue-specific expressed genes.
+1. Install xQTLbiolinks from Github: `remotes::install_github("dingruofan/xQTLbiolinks")`. For more detailed setup instructions, see below.
+2. See the [Manual](https://github.com/BioinformaticsFMRP/TCGAbiolinks/wiki) for a quick study of colocalization analysis with xQTLbiolinks .
+3. Then walk through these vignettes to learn more about xQTLbiolinks: [tissue-specific expression analysis](xxx.html) and [visualization of expression and xQTL](xxx.html).
 
 ### Citation
 Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data. (submitted)
@@ -19,13 +18,15 @@ Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor packa
 
 ***
 
-### Installation
+### Setup
+
+
 
 ```r
 if(!require("remotes")){install.packages("remotes")}
 
 # install required bioconductor packages:
-if (!requireNamespace("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
+if (!require("BiocManager")){install.packages("BiocManager")}
 bio_pkgs=c("SummarizedExperiment", "IRanges", "GenomicRanges", "GenomeInfoDb", "BiocGenerics")
 BiocManager::install(bio_pkgs)
 
