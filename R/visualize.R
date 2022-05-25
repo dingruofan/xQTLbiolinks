@@ -393,7 +393,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
-  RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
+  chrom <- x <- y<- RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
   # highlightSnp=""
   # population="EUR"
   # posRange="chr6:46488310-48376712"
@@ -569,7 +569,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'   xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 #' }
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
-  genomeVersion <- snpLD<- NULL
+  x <- y<- genomeVersion <- snpLD<- NULL
 
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
@@ -729,7 +729,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #'   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 #' }
 xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", datasetId="gtex_v8"){
-  geneSymbol <- NULL
+  `..density..`<-geneSymbol <- NULL
 
   # Automatically determine the type of variable:
   if(geneType=="auto"){
@@ -894,7 +894,8 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
 #' }
 xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_v8", toTissueSite=TRUE){
-  tissueSite <- expTPM <- NULL
+  colorHex <- tissueSite <- expTPM <- NULL
+  .<-NULL
 
   if(datasetId == "gtex_v8"){
     tissueSiteDetail <- copy(tissueSiteDetailGTExv8)

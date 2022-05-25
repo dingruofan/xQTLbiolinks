@@ -1235,7 +1235,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #' }
 xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_v8", recordPerChunk=300){
   .<-NULL
-  variantId<-snpId <- snpId_1 <- variantId_1 <- snpId_2 <-variantId_2<- ldScore <- NULL
+  gencodeId <-variantId<-snpId <- snpId_1 <- variantId_1 <- snpId_2 <-variantId_2<- ldScore <- NULL
   # check genes
   if( is.null(gene) ||  any(is.na(gene)) || any(gene=="") ||length(gene)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")

@@ -1210,9 +1210,9 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       return(url1GetText)
     }
   }else if( method == "curl"){
-    # url1Get <- curl::curl_fetch_memory(url1)
-    # url1GetText <- rawToChar(url1Get$content)
-    url1GetText <- RCurl::getURL(url1)
+    url1Get <- curl::curl_fetch_memory(url1)
+    url1GetText <- rawToChar(url1Get$content)
+    # url1GetText <- RCurl::getURL(url1)
     # url1Get <- RCurl::getURLContent(url1)
     # if( url1Get$status_code!=200){
     #   mesage("Http status code: ", url1Get$status_code)
