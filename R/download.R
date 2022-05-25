@@ -706,9 +706,9 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
 
   # construct url:
-  # url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
-  #                "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
-  #                "&qtl_group=",tissueSiteDetailId)
+  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
+                 "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
+                 "&qtl_group=",tissueSiteDetailId)
   # # check network:
   # bestFetchMethod <- apiEbi_ping()
   # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
