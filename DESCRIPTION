@@ -1,6 +1,6 @@
 Package: xQTLbiolinks
 Title: xQTLbiolinks: a R package aims to query, download, visual and integrate integrative analysis of GTEx data
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person(given = "Ruofan", family = "Ding",        email = "dingruofan1@foxmail.com",   role  = c("aut", "cre")),
     person(given = "Xudong", family = "Zou",        email = "zouxd@szbl.ac.cn",   role  = c("ctb")),

@@ -8,8 +8,8 @@
 ### Quick Start
 
 1. Install xQTLbiolinks from Github: `remotes::install_github("dingruofan/xQTLbiolinks")`. For more detailed setup instructions, see below.
-2. See the [Manual](https://github.com/BioinformaticsFMRP/TCGAbiolinks/wiki) for a quick study of colocalization analysis with xQTLbiolinks .
-3. Then walk through these vignettes to learn more about xQTLbiolinks: [tissue-specific expression analysis](xxx.html) and [visualization of expression and xQTL](xxx.html).
+2. See the [**Manual**](https://github.com/dingruofan/xQTLbiolinks/wiki/Colocalization-analysis-with-xQTLbiolinks) for a quick application of colocalization analysis with xQTLbiolinks .
+3. Then walk through these vignettes to learn more about xQTLbiolinks: [tissue-specific expression analysis](https://github.com/dingruofan/xQTLbiolinks/wiki/Tissue-specific-expression-analysis) and [visualization of expression and xQTL](https://github.com/dingruofan/xQTLbiolinks/wiki/Visualization-of-expression-and-xQTL).
 
 ### Citation
 Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data. (submitted)
