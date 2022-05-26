@@ -14,7 +14,12 @@ xQTLanalyze_getSentinelSnp(
 )
 }
 \arguments{
-\item{gwasDF}{GWAS data.frame}
+\item{gwasDF}{A data.frame or a data.table object. Five columns are required (arbitrary column names is supported):
+\verb{Col 1}. "snps" (character), , using an rsID (e.g. "rs11966562");
+\verb{Col 2}. "chromosome" (character), one of the chromosome from chr1-chr22;
+\verb{Col 3}. "postion" (integer), genome position of snp.
+\verb{Col 4}. "P-value" (numeric).
+\verb{Col 5}. "MAF" (numeric). Allel frequency.}
 
 \item{pValueThreshold}{Cutoff of gwas p-value. Default: 5e-8}
 

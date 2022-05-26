@@ -1,7 +1,12 @@
 #' @title xQTLanalyze_getSentinelSnp
 #' @description detect sentinel SNPs in a given GWAS dataset.
 #'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e4 bp.
-#' @param gwasDF GWAS data.frame
+#' @param gwasDF A data.frame or a data.table object. Five columns are required (arbitrary column names is supported):
+#'  `Col 1`. "snps" (character), , using an rsID (e.g. "rs11966562");
+#'  `Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22;
+#'  `Col 3`. "postion" (integer), genome position of snp.
+#'  `Col 4`. "P-value" (numeric).
+#'  `Col 5`. "MAF" (numeric). Allel frequency.
 #' @param pValueThreshold Cutoff of gwas p-value. Default: 5e-8
 #' @param centerRange SNP-to-SNP distance. Default:1e6
 #' @param mafThreshold Cutoff of maf to remove rare variants.
@@ -410,6 +415,12 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     return(NULL)
   }
   message("== Start the colocalization analysis of gene [", traitGene,"]")
+  if(suppressMessages(!requireNamespace("coloc"))){
+    message("Package [coloc] is not installed! please install [coloc] with following: ")
+    message("---------")
+    message('\"if (!require("BiocManager", quietly = TRUE)); install.packages(\"coloc\")')
+    message("---------")
+  }
   # 只选择中心附近的 Num snp 进行分析：
   # 防止 check_dataset中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
   suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),

@@ -400,7 +400,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   # token="9246d2db7917"
   # windowSize=1e6
 
-  DF <- DF[,1:4]
+  DF <- na.omit(DF[,1:4])
   names(DF) <- c("snpId", "chrom", "pos", "pValue")
   data.table::setDT(DF)
   DF$pos <- as.integer(DF$pos)
@@ -573,8 +573,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
-  eqtlDF <- eqtlDF[,1:2]
-  gwasDF <- gwasDF[,1:2]
+  eqtlDF <- na.omit(eqtlDF[,1:2])
+  gwasDF <- na.omit(gwasDF[,1:2])
 
   setDT(eqtlDF)
   setDT(gwasDF)
