@@ -1317,7 +1317,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
         embeddedList <- c(embeddedList,contentGot[[1]])
         embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
         contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
-        message("Requset: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+        message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
         termStart <- termStart+as.integer(termSize)
       }
     }
