@@ -705,6 +705,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   }
   geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
 
+  message("== Start fetching associations...")
   # construct url:
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
                  "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
