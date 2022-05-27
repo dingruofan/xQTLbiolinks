@@ -536,7 +536,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
       draw_label(parse(text = "r^2"), x = legend_box$x[1] + 0.05, y = legend_box$y[1], vjust = -2, size = 10)
   }
 
-  print(p)
+  # print(p)
   return(p)
 }
 
@@ -604,6 +604,11 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   if(highlightSnp ==""){
     highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
     highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+  }else{
+    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+  }
+  if(nrow(highlightSnpInfo)==0){
+    stop(" Highlighted SNP [", highlightSnp,"] is not detected in GTEx, please set the correct highlightSnp.")
   }
 
   # LD info:
@@ -660,7 +665,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
       scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(3,3.5) )+
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
       geom_label_repel(data=gwas_eqtl[snpId==highlightSnp,], aes(x=logP.eqtl, y=logP.gwas, label=snpId) )+
-      labs(title = plotTitle )+
+      # labs(title = plotTitle )+
       xlab( xLab )+
       ylab( yLab )+
       theme_classic()+
@@ -692,9 +697,65 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
         draw_label("0.2", x = legend_box$x[4] + 0.05, y = legend_box$y[4], hjust = -0.3, size = 10) +
         draw_label(parse(text = "r^2"), x = legend_box$x[1] + 0.05, y = legend_box$y[1], vjust = -2, size = 12)
     }
-    print(p)
+    # print(p)
   }
   return(p)
+}
+
+
+#
+#' @title xQTLvisual_locusCombine
+#' @description Generated a combined plot with two locuszoom plots and a locuscompare
+#' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
+#' @param gwasEqtldata A data.frame or a data.table that including signals from both GWAS and eQTL. Five columns are required (arbitrary column names is supported):
+#'  `Col 1`. "snps" (character), , using an rsID (e.g. "rs11966562").
+#'  `Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22.
+#'  `Col 3`. "postion" (integer), genome position of snp.
+#'  `Col 4`. "P-value" (numeric) of GWAS signals.
+#'  `Col 5`. "P-value" (numeric) of eQTL signals.
+#' @param posRange Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.
+#' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
+#' @param highlightSnp Default is the snp that with lowest p-value.
+#' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
+#' @import data.table
+#' @import stringr
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'   gwasEqtldata <- data.table::fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt")
+#'   xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565", legend_position="bottomright")
+#' }
+xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="topright"){
+
+  gwasEqtldata <- gwasEqtldata[,1:5]
+  data.table::setDT(gwasEqtldata)
+  names(gwasEqtldata) <- c("rsid", "chrom", "position", "pValue.gwas", "pValue.eqtl")
+
+  # refine chrom:
+  gwasEqtldata[,chrom:=.(ifelse(stringr::str_detect(chrom,"^chr"), chrom, paste("chr",chrom,sep="")))]
+
+  # retain snps in range:
+  if(posRange!=""){
+    posRangeSplit <- stringr::str_split(posRange, stringr::regex(":|-"))[[1]]
+    gwasEqtldata <-gwasEqtldata[position>min(as.integer(posRangeSplit[2:3])) & position< max(as.integer(posRangeSplit[2:3]))]
+  }
+  if(nrow(gwasEqtldata)<2){
+    stop("No variant detected in this range, please enlarge the genome range!")
+  }
+  message("Start plotting locuscomappre...")
+  p_scatter<- xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], gwasEqtldata[,.(rsid, pValue.gwas)],
+                                      highlightSnp=highlightSnp, population = population, legend_position = legend_position)
+  message("Start plotting locuszoom for gwas...")
+  p_gwas <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE, highlightSnp = highlightSnp, population = population)
+  message("Start plotting locuszoom for eQTL... ")
+  p_eqtl <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE, highlightSnp = highlightSnp, population = population)
+
+  p_gwas_new = p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+  p_gwas_eqtl = cowplot::plot_grid(p_gwas_new, p_eqtl, align = "v", nrow = 2, rel_heights=c(0.8,1))
+  p_combined = cowplot::plot_grid(p_scatter, p_gwas_eqtl)
+  return(p_combined)
 }
 
 
