@@ -524,7 +524,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
       legend_box = data.frame(x = 0.2, y = seq(0.8, 0.6, -0.05))
     }
 
-    p = ggdraw(p) +
+    p <- ggdraw(p) +
       geom_rect(data = legend_box,
                 aes(xmin = x, xmax = x + 0.05, ymin = y, ymax = y + 0.05),
                 color = "black",
