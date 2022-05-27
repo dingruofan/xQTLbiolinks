@@ -7,16 +7,22 @@
 xQTLvisual_geneExpTissues(
   gene = "",
   geneType = "auto",
+  tissues = "All",
   datasetId = "gtex_v8",
-  toTissueSite = TRUE
+  log10y = FALSE,
+  toTissueSite = FALSE
 )
 }
 \arguments{
 \item{gene}{A characer vector. Gene symbol or gencode Id.}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{A character string. "auto", "geneSymbol" or "gencodeId". Default: "auto".}
+
+\item{tissues}{A character string or a vector. "All" (default) means that all tissues is included.}
 
 \item{datasetId}{"gtex_v8" or "gtex_v7". Default:"gtex_v8".}
+
+\item{log10y}{Display values of expression in log scale. Default: FALSE.}
 
 \item{toTissueSite}{TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.}
 }
@@ -28,6 +34,16 @@ plot distribution of the gene expression among multiple tissues.
 }
 \examples{
 \donttest{
-  geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
+  # Display gene expression in all tissues.
+  # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
+
+  # Display gene expression in specified tissues.
+  geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
+
+  # Display gene expression in log scale in specified tissues.
+  geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
+
+  # Display gene expression in whole tissue.
+  geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
 }
 }

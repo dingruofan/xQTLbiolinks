@@ -883,7 +883,9 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #'
 #' @param gene A characer vector. Gene symbol or gencode Id.
 #' @param geneType A character string. "auto", "geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissues A character string or a vector. "All" (default) means that all tissues is included.
 #' @param datasetId "gtex_v8" or "gtex_v7". Default:"gtex_v8".
+#' @param log10y Display values of expression in log scale. Default: FALSE.
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
 #'
 #' @return A list containing expression profile and a ggplot object.
@@ -891,9 +893,19 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #'
 #' @examples
 #' \donttest{
-#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53",toTissueSite=TRUE)
+#'   # Display gene expression in all tissues.
+#'   # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
+#'
+#'   # Display gene expression in specified tissues.
+#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
+#'
+#'   # Display gene expression in log scale in specified tissues.
+#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
+#'
+#'   # Display gene expression in whole tissue.
+#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
 #' }
-xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_v8", toTissueSite=TRUE){
+xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", datasetId="gtex_v8", log10y=FALSE, toTissueSite=FALSE){
   colorHex <- tissueSite <- expTPM <- NULL
   .<-NULL
 
@@ -904,6 +916,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_
   }else{
     stop("Please choose the right datasetId!")
   }
+  tissueSiteDetail <- tissueSiteDetail[order(tissueSite, tissueSiteDetail)]
 
   # Automatically determine the type of variable:
   if(geneType=="auto"){
@@ -915,18 +928,25 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_
   }
 
   expProfiles <- data.table()
-  tissues <- tissueSiteDetail$tissueSiteDetail
-  message("== Start fetching expression profiles of gene [",gene,"] of all tissues...")
+  if( length(tissues) ==1 && tissues=="All" ){
+    tissueSiteDetail_ <- tissueSiteDetail$tissueSiteDetail
+  }else{
+    tissueSiteDetail_ <- rbind(tissueSiteDetail[tissueSiteDetail %in% tissues], tissueSiteDetail[tissueSite %in% tissues])$tissueSiteDetail
+  }
+  message("== Start fetching expression profiles of gene [",gene,"] in following tissues...")
+  for( tt in 1:length(tissueSiteDetail_)){
+    message("   ", tt, " | ",  tissueSiteDetail_[tt])
+  }
   message("== This may take A few minutes...", format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
-  for(t in 1:length(tissues)){
-    suppressMessages( expTmp <- xQTLdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissues[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
+  for(t in 1:length(tissueSiteDetail_)){
+    suppressMessages( expTmp <- xQTLdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissueSiteDetail_[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
     expTmpGencodeId <- expTmp$gencodeId
     expTmp <- as.data.frame(t(expTmp))
     expTmp <- expTmp[ str_detect(rownames(expTmp), stringr::regex("^GTEX-")),, drop=FALSE]
     colnames(expTmp) <- expTmpGencodeId
-    expTmp <- as.data.table(cbind(data.table(tissueSiteDetail= tissues[t], sampleId = rownames(expTmp)), expTmp))
+    expTmp <- as.data.table(cbind(data.table(tissueSiteDetail= tissueSiteDetail_[t], sampleId = rownames(expTmp)), expTmp))
     expProfiles <- rbind(expProfiles,expTmp)
-    message("== Fetching expression...",t,"/",length(tissues), " - ", tissues[t], " - ", nrow(expTmp)," samples.", format(Sys.time(), " | %Y-%b-%d %H:%M:%S ") )
+    message("== Fetching expression...",t,"/",length(tissueSiteDetail_), " - ", tissueSiteDetail_[t], " - ", nrow(expTmp)," samples.", format(Sys.time(), " | %Y-%b-%d %H:%M:%S ") )
     rm(expTmp)
   }
   message("== Done")
@@ -935,7 +955,9 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_
   expProfilesMelt$expTPM <- as.numeric(expProfilesMelt$expTPM)
   expProfilesMelt <- merge(expProfilesMelt, tissueSiteDetail, by="tissueSiteDetail")
 
-
+  if(log10y==TRUE){
+    expProfilesMelt[expTPM==0,"expTPM"]<-1
+  }
   if(toTissueSite){
     tissueSiteDetail <- tissueSiteDetail[,.(tissueSite, colorHex)][,.(colorHex=colorHex[1]), by="tissueSite"]
 
@@ -968,6 +990,11 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", datasetId="gtex_
             legend.position = "none"
       )
   }
+  if(log10y==TRUE){
+    p1 <- p1 + scale_y_log10()
+  }
+
+
   print(p1)
   return(list(expProfiles=expProfiles, plot=p1))
 }
