@@ -882,7 +882,7 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #' @description plot distribution of the gene expression among multiple tissues.
 #'
 #' @param gene A characer vector. Gene symbol or gencode Id.
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param geneType A character string. "auto", "geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId "gtex_v8" or "gtex_v7". Default:"gtex_v8".
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
 #'
