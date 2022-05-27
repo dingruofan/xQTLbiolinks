@@ -429,6 +429,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   # coloc_Out_results$gene <- traitGenes[i]
   coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
   coloc_Out_summary$traitGene <- traitGene
+  message("== Done")
+
   print(coloc_Out_summary)
   # coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
 
