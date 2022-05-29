@@ -572,7 +572,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'   xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 #' }
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
-  x <- y<- genomeVersion <- snpLD<- NULL
+  x <- y<- genomeVersion <- NULL
 
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
@@ -607,19 +607,15 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   if(highlightSnp ==""){
     highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
     message("== Highlighted SNP: [",highlightSnp,"]...")
-    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
-  }else{
-    message("== Highlighted SNP: [",highlightSnp,"]")
-    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
   }
-
-  if(nrow(highlightSnpInfo)==0){
-    stop(" Highlighted SNP [", highlightSnp,"] is not detected in GTEx, please set the correct highlightSnp.")
-  }
-  message(" == Done.")
 
   # LD info:
   if( is.null(snpLD) ){
+    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+    if(nrow(highlightSnpInfo)==0){
+      stop(" Highlighted SNP [", highlightSnp,"] is not detected in GTEx, please set the correct highlightSnp.")
+    }
+    message(" == Done.")
     message("== Retrieve LD information for: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(highlightSnpInfo$chromosome, highlightSnp, population))
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
@@ -734,9 +730,9 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @examples
 #' \donttest{
 #'   gwasEqtldata <- data.table::fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt")
-#'   xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565", legend_position="bottomright")
+#'   xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 #' }
-xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="topright"){
+xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){
 
   gwasEqtldata <- gwasEqtldata[,1:5]
   data.table::setDT(gwasEqtldata)
@@ -754,13 +750,36 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
   if(nrow(gwasEqtldata)<2){
     stop("No variant detected in this range, please enlarge the genome range!")
   }
+
+  DF <- data.table::copy(gwasEqtldata)
+  DF$logP.eqtl <- (-log(DF$pValue.eqtl, 10))
+  DF$logP.gwas <- (-log(DF$pValue.gwas, 10))
+  DF$distance <- sqrt(DF$logP.gwas^2+DF$logP.eqtl^2)
+  hSnpCount <- 1
+  if(highlightSnp ==""){
+    highlightSnp <- DF[order(-distance)][hSnpCount,]$rsid
+    message("== Highlighted SNP: [",highlightSnp,"]...")
+    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+  }else{
+    message("== Highlighted SNP: [",highlightSnp,"]")
+    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+  }
+
+  # LD info:
+  if( is.null(snpLD) ){
+    message("== Retrieve LD information for: [",highlightSnp,"]...")
+    try( snpLD <- retrieveLD(DF[1,]$chrom, highlightSnp, population) )
+    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+    data.table::setDT(snpLD)
+  }
+
   message("Start plotting locuscomappre...")
   p_scatter<- xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], gwasEqtldata[,.(rsid, pValue.gwas)],
-                                      highlightSnp=highlightSnp, population = population, legend_position = legend_position)
+                                      highlightSnp=highlightSnp, population = population, legend_position = legend_position, snpLD = snpLD)
   message("Start plotting locuszoom for gwas...")
-  p_gwas <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE, highlightSnp = highlightSnp, population = population)
+  p_gwas <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE, highlightSnp = highlightSnp, population = population, snpLD = snpLD)
   message("Start plotting locuszoom for eQTL... ")
-  p_eqtl <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE, highlightSnp = highlightSnp, population = population)
+  p_eqtl <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE, highlightSnp = highlightSnp, population = population, snpLD = snpLD)
 
   p_gwas_new = p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
   p_gwas_eqtl = cowplot::plot_grid(p_gwas_new, p_eqtl, align = "v", nrow = 2, rel_heights=c(0.8,1))

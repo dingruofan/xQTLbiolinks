@@ -1147,8 +1147,9 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
   if(method == "fromJSON"){
     if(isJson){
 
-      for (downloadTime in 1:3){
-        if(downloadTime>1){message("download failed and try again.")}
+      for (downloadTime in 1:4){
+        if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",3)}
+        if(downloadTime>3){message("=> Your connection is unstable.")}
         # because of the limitation of the length of the url (<2084), so I rebulit the function.
         df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
         if(!methods::is(df, 'try-error')) break
@@ -1182,10 +1183,10 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
     if( file.exists(tmpFile) ){ file.remove(tmpFile) }
     # Retry for-loop R loop if error
     for (downloadTime in 1:4){
-        if(downloadTime>1){message("download failed and try again.")}
-        if(downloadTime>3){message("your connection is unstable.")}
-        df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
-        if(!is(df, 'try-error')) break
+      if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",3)}
+      if(downloadTime>3){message("=> Your connection is unstable.")}
+      df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+      if(!is(df, 'try-error')) break
     }
     # suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE ))
     if(isJson){

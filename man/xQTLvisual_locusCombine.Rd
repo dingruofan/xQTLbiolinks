@@ -9,7 +9,8 @@ xQTLvisual_locusCombine(
   posRange = "",
   population = "EUR",
   highlightSnp = "",
-  legend_position = "topright"
+  legend_position = "bottomright",
+  snpLD = NULL
 )
 }
 \arguments{
@@ -38,6 +39,6 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
 \examples{
 \donttest{
   gwasEqtldata <- data.table::fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt")
-  xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565", legend_position="bottomright")
+  xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 }
 }
