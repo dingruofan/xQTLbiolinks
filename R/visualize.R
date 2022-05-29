@@ -142,7 +142,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
     p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
       geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
       geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
-      scale_fill_brewer(palette="Dark2") + theme_light()+
+      scale_fill_brewer(palette="Dark2") + theme_classic()+
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
       # labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol) )+
       xlab("Genotypes")+
@@ -404,7 +404,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   names(DF) <- c("snpId", "chrom", "pos", "pValue")
   data.table::setDT(DF)
   DF$pos <- as.integer(DF$pos)
-  DF[,chrom:=.(ifelse(stringr::str_detect(chrom,"^chr"), chrom,paste("chr",chrom,sep="")))]
+  # DF[,chrom:=.(ifelse(stringr::str_detect(chrom,"^chr"), chrom,paste("chr",chrom,sep="")))]
+  DF$chrom <- ifelse(stringr::str_detect(DF$chrom,"^chr"), DF$chrom, paste("chr",DF$chrom,sep=""))
   # chrome check:
   P_chrom <- unique(DF$chrom)
   if( length(P_chrom) !=1 || !(P_chrom %in% paste0("chr",c(1:22,"x"))) ){
@@ -428,9 +429,11 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   if(highlightSnp ==""){
     highlightSnp <- DF[order(pValue)][hSnpCount,]$snpId
   }
+  message("== Highlighted SNP: [",highlightSnp,"]...")
 
   # LD info:
   if( is.null(snpLD) ){
+    message("== Retrieve LD information for: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(DF[order(pValue)][hSnpCount,]$chrom, highlightSnp, population))
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
     data.table::setDT(snpLD)
@@ -603,16 +606,21 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   # highligth SNP:
   if(highlightSnp ==""){
     highlightSnp <- DF[order(-distance)][hSnpCount,]$snpId
+    message("== Highlighted SNP: [",highlightSnp,"]...")
     highlightSnpInfo <- xQTLquery_varId(highlightSnp)
   }else{
+    message("== Highlighted SNP: [",highlightSnp,"]")
     highlightSnpInfo <- xQTLquery_varId(highlightSnp)
   }
+
   if(nrow(highlightSnpInfo)==0){
     stop(" Highlighted SNP [", highlightSnp,"] is not detected in GTEx, please set the correct highlightSnp.")
   }
+  message(" == Done.")
 
   # LD info:
   if( is.null(snpLD) ){
+    message("== Retrieve LD information for: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(highlightSnpInfo$chromosome, highlightSnp, population))
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
     data.table::setDT(snpLD)
@@ -630,6 +638,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
     message("No LD information of [",highlightSnp,"].")
     snpLD <- data.table::data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
   }
+  message("== Done.")
 
   # set color:
   gwas_eqtl <- merge(DF, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
@@ -734,7 +743,8 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
   names(gwasEqtldata) <- c("rsid", "chrom", "position", "pValue.gwas", "pValue.eqtl")
 
   # refine chrom:
-  gwasEqtldata[,chrom:=.(ifelse(stringr::str_detect(chrom,"^chr"), chrom, paste("chr",chrom,sep="")))]
+  # gwasEqtldata[,chrom:=.(ifelse(stringr::str_detect(chrom,"^chr"), chrom, paste("chr",chrom,sep="")))]
+  gwasEqtldata$chrom <- ifelse(stringr::str_detect(gwasEqtldata$chrom,"^chr"), gwasEqtldata$chrom, paste("chr",gwasEqtldata$chrom,sep=""))
 
   # retain snps in range:
   if(posRange!=""){

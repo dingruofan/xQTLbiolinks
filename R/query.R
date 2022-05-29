@@ -721,7 +721,7 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
   if(is.null(variantName) ||  any(is.na(variantName)) ){
     stop("Parameter \"variantName\" can not be NULL or NA!")
   }else if(length(variantName)!=1){
-    stop("Parameter \"variantName\" can not be NULL or NA!")
+    stop("Length of \"variantName\" >1 !")
   }else if( variantType=="snpId" && !(stringr::str_detect(variantName, stringr::regex("^rs")))  ){
     stop("Parameter \"variantName\" must begin with a \"rs\", like: \"rs147502335\", \"rs147538909\".")
   }
