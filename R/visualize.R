@@ -381,12 +381,16 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #'  library(data.table)
 #'  gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 #'  xQTLvisual_locusZoom(gwasDF)
+#'  # Zoom in:
 #'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
 #'  # For eQTL of a gene of interest:
 #'  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
 #'                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
 #'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
+#'  # Zoom in:
+#'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
+#'                       posRange="chr6:47.3e6-47.9e6")
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
