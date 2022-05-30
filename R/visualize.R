@@ -380,9 +380,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #'  # For GWAS dataset:
 #'  gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
 #'                    "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
-#'  gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(
-#'                              gwasURL)$content), sep="\t")
-#'  gwasDF <- gwasDF[,.(rsid, chr, position,P)]
+#'  gwasDF <- data.table::fread(gwasURL)
 #'  xQTLvisual_locusZoom(gwasDF)
 #'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
