@@ -80,7 +80,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
     message("== ",length(gwasRanges_hg38),"/",nrow(gwasDF)," left.")
     rm(gwasRanges, gwasRanges_hg38)
   }else if(genomeVersion =="grch37" & !grch37To38){
-    stop("Please set \"grch37To38=TRUE\". Because the genome version of eqtl associations only support GRCH38, so sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
+    stop("Please set \"grch37To38=TRUE\". Because the genome version of eqtl associations only support GRCH38, sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
   }else if(genomeVersion =="grch38" & grch37To38){
     stop("Only grch37 genome version can be converted to grch38!")
   }else if(!genomeVersion %in% c("grch38", "grch37")){
@@ -150,7 +150,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
   # 由于从 EBI category 里获得的是 hg38(v26) 的信息，所以如果这一步是 hg19 的1e6范围内，则在 hg38里就会未必，所以需要这一步，如果是hg19，则对突变的坐标进行变换：
   ####################### convert hg19 to hg38:
   if( genomeVersion =="grch37" & !grch37To38 ){
-    stop("Because the genome version of eqtl associations only support GRCH38, so sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
+    stop("Because the genome version of eqtl associations only support GRCH38, sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
     genecodeVersion = "v19"
     datasetId="gtex_v7"
   }else if( genomeVersion =="grch37" & grch37To38){
@@ -269,7 +269,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param gwasDF A dataframe of gwas.
 #' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param genomeVersion "v26" (default) or "v19"
+#' @param genomeVersion "grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.
 #' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
@@ -310,35 +310,31 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   }
 
   ###################### eqtl dataset:
-  if( genomeVersion=="grch37"){
-    gencodeVersion <- "v19"
-    geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
-    eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
-    # eqtlInfo <- eqtlInfo[b37VariantId!=""]
-    eqtlInfo[,"position":= .( as.integer(unlist(lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]}))) )]
-    # chromosome:
-    P_chrom <- paste0("chr",geneInfo$chromosome)
-  }else if(genomeVersion=="grch38"){
-    gencodeVersion <- "v26"
-    geneInfo <- xQTLquery_gene(traitGene, geneType = geneType, gencodeVersion =gencodeVersion)[1,]
-    eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene,geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
-    eqtlInfo[,"position":= .( unlist(lapply(variantId, function(x){str_split(x, fixed("_"))[[1]][2]})) )]
-    # chromosome:
-    P_chrom <- geneInfo$chromosome
-  }
+  ###################### eqtl dataset:
+  eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
+  eqtlInfo[,position:=.(pos)]
 
-  if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0){
+  if( !exists("eqtlInfo") || is.null(eqtlInfo)){
     message(i," | gene", traitGene, "has no eqtl associations, next!")
     message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
     return(NULL)
   }
 
+  # chromosome:
+  P_chrom <- paste0("chr",eqtlInfo[1,]$chrom)
 
   eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
   # 去重：
   eqtlInfo <- eqtlInfo[order(snpId, pValue)][!duplicated(snpId)]
   # subset:
   eqtlInfo <- na.omit( eqtlInfo[,.(rsid=snpId, maf=as.numeric(maf), beta, se, pValue=as.numeric(pValue), position=as.numeric(position))] )
+
+  if(nrow(eqtlInfo)==0){
+    message("Number of eQTL association is <1")
+    return(NULL)
+  }
+
+
 
   message("Data processing...")
 
@@ -349,15 +345,17 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   # gwas subset:
   gwasDF <- na.omit(gwasDF)
 
-  gwasDF <- gwasDF[chr==ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"),P_chrom, stringr::str_remove(P_chrom, "chr")),]
+  p_chrom_tmp <- ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"),P_chrom, stringr::str_remove(P_chrom, "chr"))
+  gwasDF <- gwasDF[chr==p_chrom_tmp,]
   # convert variable class:
-  gwasDF[,c("position", "pValue", "maf")] <- gwasDF[,.(position=as.numeric(position), pValue=as.numeric(pValue), maf=as.numeric(maf))]
+  gwasDF[,c("position", "pValue", "maf"):=.(as.numeric(position), as.numeric(pValue), as.numeric(maf))]
   # MAF filter:
   gwasDF <- gwasDF[maf > mafThreshold & maf<1,]
   # 去重：
   gwasDF <- gwasDF[order(rsid, pValue)][!duplicated(rsid)]
   # retain SNPs with rs id:
   gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
+
   # chromosome revise：
   if( !str_detect(gwasDF[1,]$chr, stringr::regex("^chr")) ){
     gwasDF$chr <- paste0("chr", gwasDF$chr)
