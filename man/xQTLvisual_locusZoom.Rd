@@ -43,11 +43,8 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
 \examples{
 \donttest{
  # For GWAS dataset:
- gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
-                   "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
- gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(
-                             gwasURL)$content), sep="\t")
- gwasDF <- gwasDF[,.(rsid, chr, position,P)]
+ library(data.table)
+ gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
  xQTLvisual_locusZoom(gwasDF)
  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 

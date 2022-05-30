@@ -378,9 +378,8 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @examples
 #' \donttest{
 #'  # For GWAS dataset:
-#'  gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
-#'                    "exampleData/master/gwas/AD/gwasChr6Sub1.txt")
-#'  gwasDF <- data.table::fread(gwasURL)
+#'  library(data.table)
+#'  gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 #'  xQTLvisual_locusZoom(gwasDF)
 #'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
@@ -431,7 +430,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 
   # LD info:
   if( is.null(snpLD) ){
-    message("== Retrieve LD information for: [",highlightSnp,"]...")
+    message("== Retrieve LD information of SNP: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(DF[order(pValue)][hSnpCount,]$chrom, highlightSnp, population))
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
     data.table::setDT(snpLD)
@@ -446,7 +445,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
-    # message("No LD information of [",highlightSnp,"].")
+    message("No LD information of [",highlightSnp,"] was detected.")
     snpLD <- data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
   }
 
@@ -561,12 +560,9 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'
 #' @examples
 #' \donttest{
-#'   eqtlURL <- "https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso.txt"
-#'   gwasURL <- "https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub1.txt"
-#'   eqtlDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(eqtlURL)$content), sep="\t")
-#'   gwasDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(gwasURL)$content), sep="\t")
-#'   eqtlDF <- eqtlDF[,.(snpId, pValue)]
-#'   gwasDF <- gwasDF[,.(rsid, P)]
+#'   library(data.table)
+#'   eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
+#'   gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
 #'   xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 #' }
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
@@ -614,7 +610,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
       stop(" Highlighted SNP [", highlightSnp,"] is not detected in GTEx, please set the correct highlightSnp.")
     }
     message(" == Done.")
-    message("== Retrieve LD information for: [",highlightSnp,"]...")
+    message("== Retrieve LD information of SNP: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(highlightSnpInfo$chromosome, highlightSnp, population))
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
     data.table::setDT(snpLD)
@@ -629,7 +625,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
     snpLD$r2Cut = as.character(cut(snpLD$R2,breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE))
     # snpLD$sizeP = as.character(cut(snpLD$R2,breaks=c(0,0.8, 0.9,1), labels=c(1,1.01,1.1), include.lowest=TRUE))
   }else{
-    message("No LD information of [",highlightSnp,"].")
+    message("No LD information of SNP [",highlightSnp,"] was detected.")
     snpLD <- data.table::data.table(SNP_A=character(0), SNP_B =character(0),R2=numeric(0), color=character(0),r2Cut=character(0) )
   }
   message("== Done.")
@@ -765,7 +761,7 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 
   # LD info:
   if( is.null(snpLD) ){
-    message("== Retrieve LD information for: [",highlightSnp,"]...")
+    message("== Retrieve LD information of SNP: [",highlightSnp,"]...")
     try( snpLD <- retrieveLD(DF[1,]$chrom, highlightSnp, population) )
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
     data.table::setDT(snpLD)
