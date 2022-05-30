@@ -18,13 +18,13 @@ VignetteBuilder:
     knitr
 Imports: 
     BiocGenerics,
-    cowplot,
+    cowplot (>= 1.1.1),
     curl (>= 4.3.2),
     data.table (>= 1.14.2),
     DBI,
     GenomeInfoDb,
     GenomicRanges,
-    ggplot2,
+    ggplot2 (>= 3.3.6),
     ggpubr,
     ggrepel,
     ggridges,
