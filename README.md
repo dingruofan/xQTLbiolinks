@@ -1,4 +1,4 @@
-## xQTLbiolinks: a R package aims to query, download, visual and perform integrative analyses of xQTL data
+## xQTLbiolinks: a R package aims to query, download, visualize and perform colocalization analyses between xQTL data and GWAS signals
 
 - **`xQTLbiolinks`** is an R package that enable users to access **molecular QTLs** (eQTLs and sQTLs) and **gene expressions** data filtered by tissue, gene, variant or dataset, by retrieving GTEx public-access data programmatically using the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/).
 - xQTLbiolinks consists of functions that can be grouped into four main levels: **Query**, **Download**, **Analyze** and **Visualize**.
