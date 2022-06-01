@@ -21,7 +21,7 @@ xQTLdownload_sqtlSig(
 
 \item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 }
 \value{
 A data.table

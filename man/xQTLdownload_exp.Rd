@@ -25,7 +25,7 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 
 \item{geneType}{A character string. Types of queried genes. Options: "auto" (default), "geneSymbol" and "gencodeId";}
 
-\item{tissueSiteDetail}{All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
 

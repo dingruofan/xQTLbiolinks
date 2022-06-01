@@ -22,7 +22,7 @@ xQTLdownload_eqtlExp(
 
 \item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
 }

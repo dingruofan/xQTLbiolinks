@@ -118,7 +118,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @description identify trait genes with sentinel SNPs:
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
-#' @param tissueSiteDetail All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
 #' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
 #' @import data.table
@@ -271,7 +271,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param genomeVersion "grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
 #' @param gwasSampleNum Sample number of GWAS dataset. Default:50000.

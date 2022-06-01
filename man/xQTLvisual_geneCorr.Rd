@@ -17,7 +17,7 @@ xQTLvisual_geneCorr(
 
 \item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{groupBy}{Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.}
 

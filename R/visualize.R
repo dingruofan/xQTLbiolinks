@@ -5,7 +5,7 @@
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import stringr
@@ -203,7 +203,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import stringr
@@ -802,7 +802,7 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
 #' }
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import ggpubr
 #' @importFrom SummarizedExperiment assay colData
@@ -859,7 +859,7 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #'
 #' @return A ggplot object

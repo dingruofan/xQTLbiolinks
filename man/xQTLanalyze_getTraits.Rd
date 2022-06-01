@@ -17,7 +17,7 @@ xQTLanalyze_getTraits(
 
 \item{detectRange}{A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp}
 
-\item{tissueSiteDetail}{All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{genomeVersion}{"grch38" or "grch37". Default: "grch38"}
 

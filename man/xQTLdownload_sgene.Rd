@@ -19,7 +19,7 @@ xQTLdownload_sgene(
 
 \item{datasetId}{A character string. only support "gtex_v8". Default: "gtex_v8".}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 2000).}
 }

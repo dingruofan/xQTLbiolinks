@@ -19,7 +19,7 @@ xQTLdownload_geneMedExp(
 
 \item{datasetId}{"gtex_v7" or "gtex_v8"(default)}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{recordPerChunk}{1-2000. Default: 150.}
 }

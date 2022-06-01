@@ -18,7 +18,7 @@ xQTLdownload_eqtlAllAsso(
 
 \item{geneType}{geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
 

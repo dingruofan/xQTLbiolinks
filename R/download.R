@@ -11,7 +11,7 @@
 #' }
 #'
 #' @param geneType A character string. Types of queried genes. Options: "auto" (default), "geneSymbol" and "gencodeId";
-#' @param tissueSiteDetail All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #'
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param toSummarizedExperiment whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
@@ -248,7 +248,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @param genes A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -412,7 +412,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @param gene A gene symbol or a gencode id (versioned). Can not be null.
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param recordPerChunk A integer value (1-500). number of records fetched per request (default: 100).
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
@@ -613,7 +613,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #'
 #' @param gene gene A gene symbol or a gencode id (versioned).
 #' @param geneType geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
 #' @param study "gtex_v8" only GTEx v8 is supported.
 #' @param withB37VariantId Whether to return the genome location(GTEx v7) of variants. Default: TRUE.
@@ -758,7 +758,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -917,7 +917,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
 #' @param gene A gene symbol or a gencode id (versioned).
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -1077,7 +1077,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 #' @param variantName A character string. like dbsnp ID or variant id in GTEx.
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
 #' @import data.table
 #' @import curl
@@ -1324,7 +1324,7 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #' @param gene  A charater string of gene symbol, gencode id (versioned).
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
 #' @import data.table
 #' @import stringr
@@ -1460,7 +1460,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @param gene  A charater string of gene symbol, gencode id (versioned). Can be null.
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId A character string. only support "gtex_v8". Default: "gtex_v8".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 2000).
 #' @import data.table
 #' @import stringr
@@ -1602,7 +1602,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @param genes A character vector of gene symbol/gencode ID.
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId "gtex_v7" or "gtex_v8"(default)
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param recordPerChunk 1-2000. Default: 150.
 #' @import data.table
 #' @import utils
