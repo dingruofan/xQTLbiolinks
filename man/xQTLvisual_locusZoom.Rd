@@ -16,9 +16,13 @@ xQTLvisual_locusZoom(
 }
 \arguments{
 \item{DF}{A data.frame or a data.table object. Four columns are required (arbitrary column names is supported):
+
 \verb{Col 1}. "snps" (character), , using an rsID (e.g. "rs11966562");
+
 \verb{Col 2}. "chromosome" (character), one of the chromosome from chr1-chr22;
+
 \verb{Col 3}. "postion" (integer), genome position of snp.
+
 \verb{Col 4}. "P-value" (numeric).}
 
 \item{highlightSnp}{Default is the snp that with lowest p-value.}

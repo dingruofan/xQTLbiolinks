@@ -1,11 +1,16 @@
 #' @title xQTLanalyze_getSentinelSnp
 #' @description detect sentinel SNPs in a given GWAS dataset.
-#'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e4 bp.
+#'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
 #' @param gwasDF A data.frame or a data.table object. Five columns are required (arbitrary column names is supported):
+#'
 #'  `Col 1`. "snps" (character), , using an rsID (e.g. "rs11966562").
+#'
 #'  `Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22.
+#'
 #'  `Col 3`. "postion" (integer), genome position of snp.
+#'
 #'  `Col 4`. "P-value" (numeric).
+#'
 #'  `Col 5`. "MAF" (numeric). Allel frequency.
 #' @param pValueThreshold Cutoff of gwas p-value. Default: 5e-8
 #' @param centerRange SNP-to-SNP distance. Default:1e6

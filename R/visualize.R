@@ -356,9 +356,13 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @description For showing regional signals relative to genomic position
 #' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param DF A data.frame or a data.table object. Four columns are required (arbitrary column names is supported):
+#'
 #'  `Col 1`. "snps" (character), , using an rsID (e.g. "rs11966562");
+#'
 #'  `Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22;
+#'
 #'  `Col 3`. "postion" (integer), genome position of snp.
+#'
 #'  `Col 4`. "P-value" (numeric).
 #' @param highlightSnp Default is the snp that with lowest p-value.
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
