@@ -60,7 +60,7 @@
 <dt>geneType</dt>
 <dd><p>A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>datasetId</dt>
 <dd><p>A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".</p></dd>
 </dl></div>
@@ -71,51 +71,17 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in">  <span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FNDC8"</span>, <span class="st">"S100Z"</span>, <span class="st">"AQP6"</span>, <span class="st">"AMOT"</span>, <span class="st">"C3orf38"</span>, <span class="st">"FOXL1"</span>, <span class="st">"COX11"</span>,</span>
-<span class="r-in">             <span class="st">"FCN3"</span>, <span class="st">"DDX58"</span>, <span class="st">"CFI"</span>, <span class="st">"MS4A18"</span>, <span class="st">"NUDT13"</span>, <span class="st">"HOXA4"</span>, <span class="st">"VSX1"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name :</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:40:16 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Batch 1/1. Downloaded  page1/1; 14 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Get the samples' detail:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying samples by tissue... | 2022-6月-01 16:40:16 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total records: 578; downloaded: 1/4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total records: 578; downloaded: 2/4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total records: 578; downloaded: 3/4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total records: 578; downloaded: 4/4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Get the gene expression:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloaded part 1/1; 14 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.0353</span>
-<span class="r-plt img"><img src="xQTLvisual_genesExp-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.0353</span>
-<span class="r-plt img"><img src="xQTLvisual_genesExp-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000073598.5"</span>,<span class="st">"ENSG00000171643.13"</span>,<span class="st">"ENSG00000086159.12"</span>,<span class="st">"ENSG00000126016.15"</span>,</span>
-<span class="r-in">             <span class="st">"ENSG00000179021.9"</span>,<span class="st">"ENSG00000176678.5"</span>,<span class="st">"ENSG00000166260.10"</span>,<span class="st">"ENSG00000142748.12"</span>,</span>
-<span class="r-in">             <span class="st">"ENSG00000107201.9"</span>,<span class="st">"ENSG00000205403.12"</span>,<span class="st">"ENSG00000214782.7"</span>,<span class="st">"ENSG00000166321.13"</span>,</span>
-<span class="r-in">             <span class="st">"ENSG00000197576.13"</span>,<span class="st">"ENSG00000100987.14"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name :</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:40:28 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Batch 1/1. Downloaded  page1/1; 14 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Get the samples' detail:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying samples by tissue... | 2022-6月-01 16:40:29 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total records: 226; downloaded: 1/2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total records: 226; downloaded: 2/2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Get the gene expression:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloaded part 1/1; 14 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.037</span>
-<span class="r-plt img"><img src="xQTLvisual_genesExp-3.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.037</span>
-<span class="r-plt img"><img src="xQTLvisual_genesExp-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+  <span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FNDC8"</span>, <span class="st">"S100Z"</span>, <span class="st">"AQP6"</span>, <span class="st">"AMOT"</span>, <span class="st">"C3orf38"</span>, <span class="st">"FOXL1"</span>, <span class="st">"COX11"</span>,
+             <span class="st">"FCN3"</span>, <span class="st">"DDX58"</span>, <span class="st">"CFI"</span>, <span class="st">"MS4A18"</span>, <span class="st">"NUDT13"</span>, <span class="st">"HOXA4"</span>, <span class="st">"VSX1"</span><span class="op">)</span>
+  <span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
+
+  <span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000073598.5"</span>,<span class="st">"ENSG00000171643.13"</span>,<span class="st">"ENSG00000086159.12"</span>,<span class="st">"ENSG00000126016.15"</span>,
+             <span class="st">"ENSG00000179021.9"</span>,<span class="st">"ENSG00000176678.5"</span>,<span class="st">"ENSG00000166260.10"</span>,<span class="st">"ENSG00000142748.12"</span>,
+             <span class="st">"ENSG00000107201.9"</span>,<span class="st">"ENSG00000205403.12"</span>,<span class="st">"ENSG00000214782.7"</span>,<span class="st">"ENSG00000166321.13"</span>,
+             <span class="st">"ENSG00000197576.13"</span>,<span class="st">"ENSG00000100987.14"</span><span class="op">)</span>
+  <span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

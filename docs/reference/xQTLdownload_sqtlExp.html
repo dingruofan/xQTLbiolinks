@@ -60,7 +60,7 @@
 <dt>variantType</dt>
 <dd><p>A character string. "auto", "snpId" or "variantId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>datasetId</dt>
 <dd><p>A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".</p></dd>
 </dl></div>
@@ -71,71 +71,17 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"> <span class="co"># Download exp in different tissues:</span></span>
-<span class="r-in"> <span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1450891501"</span>,</span>
-<span class="r-in">                      phenotypeId<span class="op">=</span><span class="st">"chr1:497299:498399:clu_54863:ENSG00000239906.1"</span>,</span>
-<span class="r-in">                      tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the variant name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:36:05 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Downloading expression...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> =================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Summary: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValue ]:          5.93492283559215e-07</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValueThreshold ]: 2.10462e-05</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ nes ]:             1.49360971143302</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ maf ]:             0.00776699029126214</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ error ]:           0.295170581523851</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Normalized expression and genotypes of [515] samples were found for variant [rs1450891501] - phenotypeId [chr1:497299:498399:clu_54863:ENSG00000239906.1] pair in tissue [Lung] in [gtex_v8].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Genotype: 6 het; 1 hom; 508 ref.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         normExp genotypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  1.5011214         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  0.5549300         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -0.8925282         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:  1.6455877         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  1.5287871         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 511:  0.3806881         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 512: -0.9349318         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 513: -0.7257876         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 514: -1.1425818         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 515:  0.1055783         0</span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co"># Dowload exp using variant ID.</span></span>
-<span class="r-in"> <span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1259424_T_C_b38"</span>,</span>
-<span class="r-in">                      phenotypeId<span class="op">=</span><span class="st">" chr1:1487914:1489204:clu_52051:ENSG00000160072.19"</span>,</span>
-<span class="r-in">                      tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Subcutaneous"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the variant name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:36:07 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Downloading expression...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> =================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Summary: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValue ]:          2.63274330410663e-06</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValueThreshold ]: 6.49936e-06</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ nes ]:             -0.334711684766284</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ maf ]:             0.301204819277108</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ error ]:           0.0705140406615062</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Normalized expression and genotypes of [581] samples were found for variant [chr1_1259424_T_C_b38] - phenotypeId [ chr1:1487914:1489204:clu_52051:ENSG00000160072.19] pair in tissue [Adipose - Subcutaneous] in [gtex_v8].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Genotype: 194 het; 78 hom; 309 ref.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         normExp genotypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  0.7685717         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  1.7084808         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -1.1936438         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -0.8390463         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  1.5652198         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 577: -0.0660877         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 578:  0.7391191         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 579:  0.2699149         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 580: -0.2832245         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 581:  0.3222542         0</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+ <span class="co"># Download exp in different tissues:</span>
+ <span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1450891501"</span>,
+                      phenotypeId<span class="op">=</span><span class="st">"chr1:497299:498399:clu_54863:ENSG00000239906.1"</span>,
+                      tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
+
+ <span class="co"># Dowload exp using variant ID.</span>
+ <span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1259424_T_C_b38"</span>,
+                      phenotypeId<span class="op">=</span><span class="st">" chr1:1487914:1489204:clu_52051:ENSG00000160072.19"</span>,
+                      tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Subcutaneous"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

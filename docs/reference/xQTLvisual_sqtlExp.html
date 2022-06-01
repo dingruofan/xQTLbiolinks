@@ -60,7 +60,7 @@
 <dt>variantType</dt>
 <dd><p>A character string. "auto", "snpId" or "variantId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>datasetId</dt>
 <dd><p>A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".</p></dd>
 </dl></div>
@@ -71,18 +71,12 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"> <span class="co"># sQTL associatons of TP53:</span></span>
-<span class="r-in"> <span class="va">expSqtl</span> <span class="op">&lt;-</span><span class="fu">xQTLvisual_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_66561248_T_C_b38"</span>,</span>
-<span class="r-in">           phenotypeId <span class="op">=</span><span class="st">"chr11:66348070:66353455:clu_8500:ENSG00000255468.6"</span>,</span>
-<span class="r-in">           tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:41:08 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying expression from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Normalized expression of [605] samples were obtaioned in Skin - Sun Exposed (Lower leg) in gtex_v8.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Significant sQTL association found!</span>
-<span class="r-plt img"><img src="xQTLvisual_sqtlExp-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+ <span class="co"># sQTL associatons of TP53:</span>
+ <span class="va">expSqtl</span> <span class="op">&lt;-</span><span class="fu">xQTLvisual_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_66561248_T_C_b38"</span>,
+           phenotypeId <span class="op">=</span><span class="st">"chr11:66348070:66353455:clu_8500:ENSG00000255468.6"</span>,
+           tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

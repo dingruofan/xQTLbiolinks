@@ -1,4 +1,41 @@
 url: ~
 template:
-  bootstrap: 5
+  includes:
+    before_title: <!-- inserted before the package title in the header ->
+    before_navbar: <!-- inserted before the navbar links -->
+    after_navbar: <!-- inserted after the navbar links -->
 
+footer:
+  structure:
+    left: xQTLbiolinks
+    right: [Lei Li, legal]
+  components:
+    legal: Provided without **any warranty**.
+
+home:
+  links:
+  - text: Link text
+    href: https://website.com
+  - text: Roadmap
+    href: /roadmap.html
+  sidebar:
+    structure: [authors, custom, toc, dev]
+    components:
+      custom:
+        title: Funding
+        text: We are *grateful* for funding!
+
+navbar:
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Functions"
+      href: reference/index.html
+
+articles:
+  - title: "Vignettes"
+    desc: >
+      The following vignettes provide detailed illustrations of the
+      mashr package, as well as guidance on correct application of the
+      statistical methods.
+    contents:

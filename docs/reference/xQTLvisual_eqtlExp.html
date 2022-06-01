@@ -63,7 +63,7 @@
 <dt>geneType</dt>
 <dd><p>A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>datasetId</dt>
 <dd><p>A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".</p></dd>
 </dl></div>
@@ -74,35 +74,14 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"> <span class="co"># EQTL associatons of TP53 in Esophagus - Mucosa:</span></span>
-<span class="r-in"> <span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying significant eQTL associations from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    A record of eQTL association was found in gtex_v8 of gene [TP53] and variant [rs78378222 in [Liver].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying expression from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Normalized expression of [208] samples for gene [TP53] were obtaioned in Liver in gtex_v8.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-plt img"><img src="xQTLvisual_eqtlExp-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"> <span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying significant eQTL associations from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    A record of eQTL association was found in gtex_v8 of gene [TP53] and variant [rs78378222 in [Lung].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying expression from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Normalized expression of [515] samples for gene [TP53] were obtaioned in Lung in gtex_v8.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-plt img"><img src="xQTLvisual_eqtlExp-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co"># EQTL associatons of IRF5:</span></span>
-<span class="r-in"> <span class="va">expEqtl</span><span class="op">&lt;-</span><span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs3778754"</span>,gene <span class="op">=</span><span class="st">"IRF5"</span>,tissueSiteDetail<span class="op">=</span><span class="st">"Whole Blood"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying significant eQTL associations from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    A record of eQTL association was found in gtex_v8 of gene [IRF5] and variant [rs3778754 in [Whole Blood].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Querying expression from API server:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Normalized expression of [670] samples for gene [IRF5] were obtaioned in Whole Blood in gtex_v8.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done</span>
-<span class="r-plt img"><img src="xQTLvisual_eqtlExp-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+ <span class="co"># EQTL associatons of TP53 in Esophagus - Mucosa:</span>
+ <span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
+ <span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
+
+ <span class="co"># EQTL associatons of IRF5:</span>
+ <span class="va">expEqtl</span><span class="op">&lt;-</span><span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs3778754"</span>,gene <span class="op">=</span><span class="st">"IRF5"</span>,tissueSiteDetail<span class="op">=</span><span class="st">"Whole Blood"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -63,7 +63,7 @@
 <dt>geneType</dt>
 <dd><p>A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>datasetId</dt>
 <dd><p>A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".</p></dd>
 </dl></div>
@@ -74,145 +74,21 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"> <span class="co"># Download exp in different tissues:</span></span>
-<span class="r-in"> <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the variant name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:34:42 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:34:42 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Downloading expression...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> =================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Summary: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValue ]:          0.505004562579237</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValueThreshold ]: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ nes ]:             -0.0591939830668164</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ maf ]:             0.137019230769231</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ error ]:           0.0886042275784638</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Normalized expression and genotypes of [208] samples were found for variant [rs1641513] - gene [TP53] pair in tissue [Liver] in [gtex_v8].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Genotype: 55 het; 152 hom; 1 ref.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         normExp genotypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  0.6632397         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  1.3351777         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -0.6190473         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -1.0231856         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: -2.1874713         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 204:  0.5760324         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205:  1.2521195         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206:  0.8904846         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207: -1.6660986         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 208: -0.1626254         2</span>
-<span class="r-in"> <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"ATAD3B"</span>,</span>
-<span class="r-in">                      tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the variant name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:34:44 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:34:45 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Downloading expression...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> =================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Summary: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValue ]:          0.333526428463219</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValueThreshold ]: 8.61351e-05</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ nes ]:             -0.0434399046505509</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ maf ]:             0.132038834951456</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ error ]:           0.0448718699868367</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Normalized expression and genotypes of [515] samples were found for variant [rs1641513] - gene [ATAD3B] pair in tissue [Lung] in [gtex_v8].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Genotype: 122 het; 386 hom; 7 ref.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          normExp genotypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  0.16100048         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: -0.05346133         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:  1.32236538         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -0.71154886         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  2.88808355         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 511:  0.72411971         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 512: -0.13644074         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 513:  0.99892823         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 514: -1.25548617         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 515:  0.08267681         1</span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co"># Download exp in gtex v7:</span></span>
-<span class="r-in"> <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs140894808"</span>,gene<span class="op">=</span><span class="st">"ATAD3B"</span>,</span>
-<span class="r-in">                      tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Visceral (Omentum)"</span>,</span>
-<span class="r-in">                      datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the variant name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:34:48 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:34:48 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Downloading expression...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> =================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Summary: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValue ]:          0.486829862983167</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValueThreshold ]: 2.62696e-05</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ nes ]:             -0.112258178283616</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ maf ]:             0.0175718849840256</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ error ]:           0.161209615571349</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Normalized expression and genotypes of [313] samples were found for variant [rs140894808] - gene [ATAD3B] pair in tissue [Adipose - Visceral (Omentum)] in [gtex_v7].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Genotype: 11 het; 0 hom; 302 ref.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          normExp genotypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -0.61069537         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: -1.27073861         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:  0.02395097         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -0.97167915         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: -0.85075681         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 309: -1.38646456         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 310: -2.72813121         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 311: -1.10880127         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 312: -0.78386212         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 313:  0.18465049         0</span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co"># Dowload exp using variant ID and gencode ID.</span></span>
-<span class="r-in"> <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_14677_G_A_b38"</span>,gene<span class="op">=</span><span class="st">"ENSG00000228463.9"</span>,</span>
-<span class="r-in">                     tissueSiteDetail<span class="op">=</span><span class="st">"Stomach"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the variant name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying variant... | 2022-6月-01 16:34:51 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:34:52 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Downloading expression...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> =================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Summary: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValue ]:          0.00838239590620601</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ pValueThreshold ]: </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ nes ]:             -0.579666996023008</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ maf ]:             0.037037037037037</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ error ]:           0.218258011099875</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Normalized expression and genotypes of [324] samples were found for variant [chr1_14677_G_A_b38] - gene [ENSG00000228463.9] pair in tissue [Stomach] in [gtex_v8].</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Genotype: 24 het; 0 hom; 300 ref.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == For more normalization method details, you can visit: https://www.gtexportal.org/home/faq#normalization. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         normExp genotypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -1.4260769         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  0.3666955         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -1.3083069         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:  1.0200762         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  0.4676988         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 320:  0.8416212         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 321:  1.4932009         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 322:  0.6291807         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 323: -0.5646561         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 324:  0.6866431         0</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+ <span class="co"># Download exp in different tissues:</span>
+ <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
+ <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"ATAD3B"</span>,
+                      tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
+
+ <span class="co"># Download exp in gtex v7:</span>
+ <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs140894808"</span>,gene<span class="op">=</span><span class="st">"ATAD3B"</span>,
+                      tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Visceral (Omentum)"</span>,
+                      datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
+
+ <span class="co"># Dowload exp using variant ID and gencode ID.</span>
+ <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_14677_G_A_b38"</span>,gene<span class="op">=</span><span class="st">"ENSG00000228463.9"</span>,
+                     tissueSiteDetail<span class="op">=</span><span class="st">"Stomach"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

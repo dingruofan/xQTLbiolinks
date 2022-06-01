@@ -62,7 +62,7 @@ source of all eQTL associations is EBI eQTL category.</p>
 <dt>geneType</dt>
 <dd><p>geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>tissueSiteDetail A character string. tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>recordPerChunk</dt>
 <dd><p>A integer value (1-200). number of records fetched per request (default: 200).</p></dd>
 <dt>study</dt>
@@ -77,23 +77,11 @@ source of all eQTL associations is EBI eQTL category.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in">  <span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span><span class="st">"ATP11B"</span>,</span>
-<span class="r-in">                                       tissueSiteDetail<span class="op">=</span><span class="st">"Muscle - Skeletal"</span>,</span>
-<span class="r-in">                                       withB37VariantId<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:34:21 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Start fetching associations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 1; Got records: 1000; Total records: 1000</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 2; Got records: 1000; Total records: 2000</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 3; Got records: 1000; Total records: 3000</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 4; Got records: 1000; Total records: 4000</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 5; Got records: 1000; Total records: 5000</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 6; Got records: 1000; Total records: 6000</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request: 7; Got records: 654; Total records: 6654</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+  <span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span><span class="st">"ATP11B"</span>,
+                                       tissueSiteDetail<span class="op">=</span><span class="st">"Muscle - Skeletal"</span>,
+                                       withB37VariantId<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

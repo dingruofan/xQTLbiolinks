@@ -58,7 +58,7 @@
 <dt>detectRange</dt>
 <dd><p>A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>genomeVersion</dt>
 <dd><p>"grch38" or "grch37". Default: "grch38"</p></dd>
 <dt>grch37To38</dt>
@@ -71,101 +71,12 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in">  <span class="va">URL1</span><span class="op">&lt;-</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"</span></span>
-<span class="r-in">  <span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">URL1</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getTraits</span><span class="op">(</span><span class="va">sentinelSnpDF</span>,detectRange<span class="op">=</span><span class="fl">1e4</span>,<span class="st">"Brain - Cerebellum"</span>,</span>
-<span class="r-in">                                     genomeVersion<span class="op">=</span><span class="st">"grch37"</span>, grch37To38<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Converting SNPs' coordinate to GRCH38... </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == 170/170 left.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Detecting the trait genes of sentinel snps... </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 - chr1 - [30] gene-SNP pairs of [30] genes and [16] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2 - chr2 - [13] gene-SNP pairs of [13] genes and [9] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3 - chr3 - [10] gene-SNP pairs of [10] genes and [9] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 4 - chr4 - [9] gene-SNP pairs of [9] genes and [5] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 5 - chr5 - [14] gene-SNP pairs of [14] genes and [11] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 6 - chr6 - [18] gene-SNP pairs of [18] genes and [12] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 7 - chr7 - [9] gene-SNP pairs of [9] genes and [7] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 8 - chr8 - [7] gene-SNP pairs of [7] genes and [6] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 9 - chr9 - [10] gene-SNP pairs of [10] genes and [5] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 10 - chr10 - [6] gene-SNP pairs of [6] genes and [5] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 11 - chr11 - [10] gene-SNP pairs of [10] genes and [4] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 12 - chr12 - [5] gene-SNP pairs of [5] genes and [5] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 13 - chr13 - [1] gene-SNP pairs of [1] genes and [1] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 14 - chr14 - [8] gene-SNP pairs of [7] genes and [6] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 15 - chr15 - [3] gene-SNP pairs of [3] genes and [1] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 16 - chr16 - [6] gene-SNP pairs of [6] genes and [6] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 17 - chr17 - [13] gene-SNP pairs of [13] genes and [7] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 18 - chr18 - [5] gene-SNP pairs of [5] genes and [4] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 19 - chr19 - [18] gene-SNP pairs of [18] genes and [7] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 20 - chr20 - [4] gene-SNP pairs of [4] genes and [2] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 21 - chr21 - [0] gene-SNP pairs of [0] genes and [0] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 22 - chr22 - [14] gene-SNP pairs of [14] genes and [9] SNPs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Fetching [212] genes' information from the GTEx.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:32:14 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Batch 1/2. Downloaded  page1/1; 150 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Batch 2/2. Downloaded  page1/1; 212 records.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Totally, [213] associations between [212] traits genes and [137] SNPs are detected.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading eGenes..</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 200/11240; downloaded: 1/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 400/11240; downloaded: 2/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 600/11240; downloaded: 3/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 800/11240; downloaded: 4/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 1000/11240; downloaded: 5/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 1200/11240; downloaded: 6/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 1400/11240; downloaded: 7/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 1600/11240; downloaded: 8/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 1800/11240; downloaded: 9/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 2000/11240; downloaded: 10/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 2200/11240; downloaded: 11/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 2400/11240; downloaded: 12/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 2600/11240; downloaded: 13/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 2800/11240; downloaded: 14/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 3000/11240; downloaded: 15/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 3200/11240; downloaded: 16/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 3400/11240; downloaded: 17/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 3600/11240; downloaded: 18/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 3800/11240; downloaded: 19/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 4000/11240; downloaded: 20/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 4200/11240; downloaded: 21/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 4400/11240; downloaded: 22/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 4600/11240; downloaded: 23/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 4800/11240; downloaded: 24/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 5000/11240; downloaded: 25/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 5200/11240; downloaded: 26/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 5400/11240; downloaded: 27/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 5600/11240; downloaded: 28/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 5800/11240; downloaded: 29/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 6000/11240; downloaded: 30/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 6200/11240; downloaded: 31/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 6400/11240; downloaded: 32/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 6600/11240; downloaded: 33/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 6800/11240; downloaded: 34/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 7000/11240; downloaded: 35/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 7200/11240; downloaded: 36/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 7400/11240; downloaded: 37/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 7600/11240; downloaded: 38/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 7800/11240; downloaded: 39/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 8000/11240; downloaded: 40/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 8200/11240; downloaded: 41/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 8400/11240; downloaded: 42/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 8600/11240; downloaded: 43/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 8800/11240; downloaded: 44/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 9000/11240; downloaded: 45/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 9200/11240; downloaded: 46/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 9400/11240; downloaded: 47/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 9600/11240; downloaded: 48/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 9800/11240; downloaded: 49/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 10000/11240; downloaded: 50/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 10200/11240; downloaded: 51/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 10400/11240; downloaded: 52/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 10600/11240; downloaded: 53/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 10800/11240; downloaded: 54/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 11000/11240; downloaded: 55/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 11200/11240; downloaded: 56/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 11240/11240; downloaded: 57/57</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == After taking the intersection with egenes, [74] associations between [74] traits genes and [63] SNPs are detected.</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+  <span class="va">URL1</span><span class="op">&lt;-</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"</span>
+  <span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">URL1</span><span class="op">)</span>
+  <span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getTraits</span><span class="op">(</span><span class="va">sentinelSnpDF</span>,detectRange<span class="op">=</span><span class="fl">1e4</span>,<span class="st">"Brain - Cerebellum"</span>,
+                                     genomeVersion<span class="op">=</span><span class="st">"grch37"</span>, grch37To38<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

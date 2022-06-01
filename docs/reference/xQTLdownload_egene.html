@@ -63,7 +63,7 @@ eGenes are genes that have at least one significant cis-eQTL acting upon them. R
 <dt>datasetId</dt>
 <dd><p>A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"</p></dd>
+<dd><p>A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
 <dt>recordPerChunk</dt>
 <dd><p>A integer value (1-200). number of records fetched per request (default: 200).</p></dd>
 </dl></div>
@@ -74,34 +74,13 @@ eGenes are genes that have at least one significant cis-eQTL acting upon them. R
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"> <span class="co"># don't run:</span></span>
-<span class="r-in"> <span class="co"># eGeneInfoAlltissue &lt;- xQTLdownload_egene()</span></span>
-<span class="r-in"> <span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_egene</span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:33:27 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading eGenes..</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 7/7; downloaded: 1/1</span>
-<span class="r-in"> <span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_egene</span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span>, recordPerChunk<span class="op">=</span><span class="fl">2000</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading eGenes..</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 2000/14113; downloaded: 1/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 4000/14113; downloaded: 2/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 6000/14113; downloaded: 3/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 8000/14113; downloaded: 4/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 10000/14113; downloaded: 5/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 12000/14113; downloaded: 6/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 14000/14113; downloaded: 7/8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 14113/14113; downloaded: 8/8</span>
-<span class="r-in"> <span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_egene</span><span class="op">(</span><span class="st">"DDX11"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Tibial"</span> <span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Check the gene name:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying genes... | 2022-6月-01 16:33:46 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 record has been obtained!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> == Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading eGenes..</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Records: 1/1; downloaded: 1/1</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+ <span class="co"># don't run:</span>
+ <span class="co"># eGeneInfoAlltissue &lt;- xQTLdownload_egene()</span>
+ <span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_egene</span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span>
+ <span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_egene</span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span>, recordPerChunk<span class="op">=</span><span class="fl">2000</span><span class="op">)</span>
+ <span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_egene</span><span class="op">(</span><span class="st">"DDX11"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Tibial"</span> <span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
