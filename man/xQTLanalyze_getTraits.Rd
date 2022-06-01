@@ -32,8 +32,7 @@ identify trait genes with sentinel SNPs:
 \examples{
 \donttest{
   URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
-
-  sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(URL1)$content))
+  sentinelSnpDF <- data.table::fread(URL1)
   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
                                      genomeVersion="grch37", grch37To38=TRUE)
 }

@@ -46,6 +46,6 @@ conduct colocalization analysis with detected gene.
 }
 \examples{
 \donttest{
-  # please see see vignette.
+ # https://github.com/dingruofan/xQTLbiolinks/wiki/Colocalization-analysis-with-xQTLbiolinks
 }
 }

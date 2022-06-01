@@ -27,13 +27,9 @@
 #'
 #' @examples
 #' \donttest{
-#'    gwasFile <- tempfile(pattern = "file")
-#'    gwasURL <- paste0("https://raw.githubusercontent.com/dingruofan/",
-#'                      "exampleData/master/gwas/AD/GLGC_AD_chr1_6_Sub3.txt")
-#'    utils::download.file(gwasURL, destfile=gwasFile)
-#'    gwasDF <- data.table::fread(gwasFile, sep="\t")
-#'    gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
-#'    sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
+#'  library(data.table)
+#'  gwasDF <- fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt")
+#'  sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF[, .(rsid, chr, position, P, maf)])
 #' }
 xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   position <- pValue <- maf <- rsid <- chr <- NULL
@@ -136,8 +132,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @examples
 #' \donttest{
 #'   URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
-#'
-#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(URL1)$content))
+#'   sentinelSnpDF <- data.table::fread(URL1)
 #'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
 #'                                      genomeVersion="grch37", grch37To38=TRUE)
 #' }
@@ -288,7 +283,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #'
 #' @examples
 #' \donttest{
-#'   # please see see vignette.
+#'  # https://github.com/dingruofan/xQTLbiolinks/wiki/Colocalization-analysis-with-xQTLbiolinks
 #' }
 xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL
@@ -455,7 +450,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #'
 #' @examples
 #' \donttest{
-#'  TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])
+#'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20]
+#'  TSgene <- xQTLanalyze_TSExp(genes)
 #'  # xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
 xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){

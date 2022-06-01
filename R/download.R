@@ -1334,10 +1334,10 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #'
 #' @examples
 #' \donttest{
-#'  eGeneInfoAlltissue <- xQTLdownload_egene()
+#'  # don't run:
+#'  # eGeneInfoAlltissue <- xQTLdownload_egene()
 #'  eGeneInfo <- xQTLdownload_egene("TP53")
 #'  eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#'  eGeneInfo <- xQTLdownload_egene("ENSG00000141510.16")
 #'  eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
 #' }
 xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
