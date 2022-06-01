@@ -40,6 +40,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
   .<-NULL
   # Detect gene with sentinal SNP:
   gwasDF <- gwasDF[,1:5]
+  data.table::setDT(gwasDF)
   message("== Preparing GWAS dataset... ")
   names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf")
   gwasDF <- na.omit(gwasDF)
@@ -144,7 +145,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
   rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
   . <-genes <- geneSymbol <- gencodeId <- geneType <- description<- NULL
 
-  data.table::as.data.table(sentinelSnpDF)
+  data.table::setDT(sentinelSnpDF)
 
 
   if( length(tissueSiteDetail)!=1 | tissueSiteDetail=="" | !(tissueSiteDetail %in% tissueSiteDetailGTExv8$tissueSiteDetail) ){

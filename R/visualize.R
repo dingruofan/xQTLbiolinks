@@ -581,8 +581,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   eqtlDF <- na.omit(eqtlDF[,1:2])
   gwasDF <- na.omit(gwasDF[,1:2])
 
-  setDT(eqtlDF)
-  setDT(gwasDF)
+  data.table::setDT(eqtlDF)
+  data.table::setDT(gwasDF)
   colnames(eqtlDF) <- c("snpId","pValue")
   colnames(gwasDF) <- c("snpId","pValue")
   # remove duplicates:
