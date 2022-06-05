@@ -91,25 +91,48 @@ knitr::opts_chunk$set(
   }
   ```
   
-    ```{r message=FALSE, warning=FALSE, include=FALSE}
+  ```{r message=FALSE, warning=FALSE, include=FALSE}
   colocResultAll <- example_Coloc_colocResultAll
   ```
   
   Package `coloc` Estimated the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:
+    
   - H0 : neither trait has a genetic association in the region
   - H1: only trait 1 has a genetic association in the region
   - H2: only trait 2 has a genetic association in the region
   - H3: both traits are associated, but with different causal variants
   - H4: both traits are associated and share a single causal variant
 
-  Outputs is a data.table that combined all results of `coloc_Out_summary` of all genes. te posterior probability of variants fo each hypothesis (H0-H4) are listed in `colocResultAll`:
+  Outputs is a data.table that combined all results of `coloc_Out_summary` of all genes. The posterior probability of variants fo each hypothesis (H0-H4) are listed in `colocResultAll`:
   ```{r eval=TRUE}
   head(colocResultAll)
   ```
 
-5. We considered coloc tests with a Posterior probability of hypothesis 4 (PPH4.ABF) ≥ 0.75 as having strong or moderate evidence for colocalization.
+5.We considered coloc tests with a Posterior probability of hypothesis 4 (PPH4.ABF) ≥ 0.75 as having strong or moderate evidence for colocalization.
   
-  ```
-  colocResultsig <- colocResultAll[PP.H4.abf>0.75]
+  ```{r message=FALSE, warning=FALSE, include=FALSE}
+  colocResultsig <- example_Coloc_colocResultsig
   ```
   
+  ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+  colocResultsig <- colocResultAll[PP.H4.abf>0.75][order(-PP.H4.abf)]
+  ```
+  There are 27 trait genes that are associated and share a single causal variant:
+  ```{r eval=TRUE}
+  colocResultsig
+  ```
+6.To gain insight into the function of these genes, and explore the potential regulatory mechanism of the prostate cancer, we first fetched genes' details with `xQTLquery_gene`:
+
+  ```{r eval=TRUE, message=FALSE}
+  colocResultsigGene <- xQTLquery_gene(colocResultsig$traitGene)
+  ```
+  Add PPH4 for each gene:
+  ```{r eval=TRUE}
+  colocResultsigGene <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
+                              colocResultsigGene[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
+  colocResultsigGene
+  ```
+  Co-expression analysis can be conducted among these genes:
+  ```
+  exp <- xQTLdownload_exp(colocResultsigGene$geneSymbol, tissueSiteDetail=tissueSiteDetail,toSummarizedExperiment=FALSE)
+  ```

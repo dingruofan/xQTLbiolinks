@@ -291,6 +291,26 @@ NULL
 #' @source xQTLanalyze_coloc
 NULL
 
+#' @title data for vignette
+#' @description
+#'  head 6 rows of traitsAll of significant results from xQTLanalyze_coloc
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_colocResultsig
+#' @format A Data.table
+#' \describe{
+#'   \item{nsnps}{A character vector}
+#'   \item{PP.H0.abf}{A numeric vector}
+#'   \item{PP.H1.abf}{A numeric vector}
+#'   \item{PP.H2.abf}{A numeric vector}
+#'   \item{PP.H3.abf}{A numeric vector}
+#'   \item{PP.H4.abf}{A numeric vector}
+#'   \item{traitGene}{A character vector}
+#' }
+#' @source xQTLanalyze_coloc
+NULL
+
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")
@@ -301,5 +321,6 @@ utils::globalVariables("example_Coloc_gwasDF")
 utils::globalVariables("example_Coloc_sentinelSNP")
 utils::globalVariables("example_Coloc_traitsAll")
 utils::globalVariables("example_Coloc_colocResultAll")
+utils::globalVariables("example_Coloc_colocResultsig")
 
 
