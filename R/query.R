@@ -45,22 +45,19 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  # get all protein coding genes and description:
-#'  # protein_coding <- xQTLquery_gene(genes="protein coding")
-#'  # get all miRNA and description:
-#'  # miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
+#' # get all protein coding genes and description:
+#' # protein_coding <- xQTLquery_gene(genes="protein coding")
+#' # get all miRNA and description:
+#' # miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 #'
-#'  # hg38 test:
-#'  geneInfo <- xQTLquery_gene("TP53")
-#'  geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
+#' # hg38 test:
+#' geneInfo <- xQTLquery_gene("TP53")
+#' geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
+#' geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 #'
-#'  # hg19 test:
-#'  geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
-#'  geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
-#'
-#'  }
+#' # hg19 test:
+#' geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
+#' geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
@@ -346,15 +343,13 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @return returen sample information
 #' @export
 #' @examples
-#' \donttest{
-#'   sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
-#'                                          pathologyNotesCategories=TRUE  )
+#' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
+#'                                        pathologyNotesCategories=TRUE  )
 #'
-#'   sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
-#'                                          datasetId="gtex_v8",pathologyNotesCategories=TRUE )
+#' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
+#'                                        datasetId="gtex_v8",pathologyNotesCategories=TRUE )
 #'
-#'   sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala", "RNASEQ","gtex_v8", 200 )
-#'   }
+#' sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala", "RNASEQ","gtex_v8", 200 )
 xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
   .<-NULL
@@ -518,11 +513,9 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
-#'                  "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
-#'   sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
-#' }
+#' sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
+#'                "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
+#' sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
 xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNotesCategories=FALSE ){
   . <- NULL
 
@@ -618,10 +611,8 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 #' @import data.table
 #' @export
 #' @examples
-#' \donttest{
-#'   # don't run:
-#'   # allGenes <- xQTLquery_geneAll()
-#'   }
+#' # Fetch all genes. This will take several minutes:
+#' # allGenes <- xQTLquery_geneAll()
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
@@ -710,12 +701,10 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #' @export
 #'
 #' @examples
-#'  \donttest{
-#'   xQTLquery_varId("rs12596338")
-#'   xQTLquery_varId("rs12596338", datasetId="gtex_v7")
-#'   xQTLquery_varId("chr11_66561248_T_C_b38")
-#'   xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
-#'  }
+#' xQTLquery_varId("rs12596338")
+#' xQTLquery_varId("rs12596338", datasetId="gtex_v7")
+#' xQTLquery_varId("chr11_66561248_T_C_b38")
+#' xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
 xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_v8"){
   ########## parameter check: variantName
   if(is.null(variantName) ||  any(is.na(variantName)) ){
@@ -810,11 +799,9 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
-#'  xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
-#'  xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
-#' }
+#' xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
+#' xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
+#' xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=200){
   .<-NULL
   ########## parameter check: variantName
@@ -909,10 +896,8 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
-#'   BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
-#' }
+#' tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
+#' BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
 xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
   if(datasetId != "gtex_v8" && datasetId != "gtex_v7"){
     stop("\"datasetId\" must be choosen from \"gtex_v8\" or \"gtex_v7\"")
@@ -974,12 +959,9 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
 #' @description
 #'  test GTEx API server and return download method.
 #' @param fetchMethod fetchMethod.
-#' @export
 #' @return A character of fetchContent method.
 #' @examples
-#' \donttest{
-#'   apiAdmin_ping()
-#'  }
+#' #apiAdmin_ping()
 apiAdmin_ping <- function(fetchMethod=""){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 
@@ -1066,12 +1048,9 @@ apiAdmin_ping <- function(fetchMethod=""){
 #' @title Heartbeat to check EBI API server connectivity.
 #' @description
 #'  test EBI API server and return download method.
-#' @export
 #' @return A character of fetchContent method.
 #' @examples
-#' \donttest{
-#'   apiEbi_ping()
-#'  }
+#' # apiEbi_ping()
 apiEbi_ping <- function(){
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
   fetchMethod = c("fromJSON","curl", "download","GET")
@@ -1121,10 +1100,8 @@ apiEbi_ping <- function(){
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-#'  fetchContent(url1, method="fromJSON")
-#' }
+#' url1 <- "https://gtexportal.org/rest/v1/admin/ping"
+#' fetchContent(url1, method="fromJSON")
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
   # if( method == "GetWithHeader"){
   #   mycookie <- ''
@@ -1208,6 +1185,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       }
     }else{
       url1GetText <- data.table::fread(tmpFile, sep="\t", header = TRUE)
+      file.remove(tmpFile)
+      # closeAllConnections()
       return(url1GetText)
     }
   }else if( method == "curl"){
@@ -1269,11 +1248,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @return A data.frame
 #'
 #' @examples
-#' \donttest{
-#'  # url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/",
-#'  #                 "associations?gene_id=ENSG00000141510")
-#'  # gtexAsoo <- fetchContentEbi(url1)
-#' }
+#' url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
+#' gtexAsoo <- fetchContentEbi(url1)
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
   # downloadMethod="auto"
@@ -1349,12 +1325,9 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'
-#'  snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-#'                             endPos=50000, genomeBuild="GRCh38/hg38",
-#'                             track="snp151Common" )
-#' }
+#' snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
+#'                            endPos=50000, genomeBuild="GRCh38/hg38",
+#'                            track="snp151Common" )
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
   # url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
   # chrom="chr1"
@@ -1440,18 +1413,15 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @return a data.table
 #' @export
 #' @examples
-#' \donttest{
+#' associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+#' # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
+#' studies <- EBIquery_allTerm("studies")
+#' tissues <- EBIquery_allTerm("tissues")
+#' qtl_groups <- EBIquery_allTerm("qtl_groups")
+#' # geneList <- EBIquery_allTerm("genes")
+#' # chromosomes <- EBIquery_allTerm("chromosomes")
 #'
-#'  associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
-#'  # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
-#'  studies <- EBIquery_allTerm("studies")
-#'  tissues <- EBIquery_allTerm("tissues")
-#'  qtl_groups <- EBIquery_allTerm("qtl_groups")
-#'  # geneList <- EBIquery_allTerm("genes")
-#'  # chromosomes <- EBIquery_allTerm("chromosomes")
-#'
-#'  # merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
-#' }
+#' # merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 EBIquery_allTerm <- function( term="genes",termSize=5000){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
@@ -1502,9 +1472,7 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
-#' }
+#' gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
 extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="v26"){
   .<-NULL
   a <- data.table::copy(gencodeGeneInfoAllGranges)

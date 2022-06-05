@@ -45,6 +45,9 @@
 <li>
   <a href="reference/index.html">Functions</a>
 </li>
+<li>
+  <a href="baidu.com">哈哈</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -58,15 +61,14 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div class="section level2">
-<h2 id="xqtlbiolinks-a-r-package-aims-to-query-download-visualize-and-perform-colocalization-analyses-between-xqtl-data-and-gwas-signals">xQTLbiolinks: a R package aims to query, download, visualize and perform colocalization analyses between xQTL data and GWAS signals<a class="anchor" aria-label="anchor" href="#xqtlbiolinks-a-r-package-aims-to-query-download-visualize-and-perform-colocalization-analyses-between-xqtl-data-and-gwas-signals"></a>
-</h2>
-<ul>
-<li>
-<strong><code>xQTLbiolinks</code></strong> is a well-developed R package that enables users-customized query, extraction, and visualization of <strong>molecular QTLs</strong> (eQTLs and sQTLs) and <strong>gene expression</strong> data from public resources (e.g., GTEx) through the application programming interface (API) of <a href="https://gtexportal.org/home/api-docs" class="external-link">GTEx</a> and <a href="https://www.ebi.ac.uk/eqtl/api-docs/" class="external-link">eQTL Catalogue</a>.</li>
-<li>xQTLbiolinks consists of tailored functions that can be grouped into four modules: <strong>Query</strong>, <strong>Download</strong>, <strong>Analyze</strong> and <strong>Visualization</strong>. <img src="img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width="100%" height="100%"><br>
-</li>
-</ul>
+
+<div class="section level3">
+<h3 id="xqtlbiolinks-a-r-package-aims-to-query-download-visualize-and-perform-colocalization-analyses-between-xqtl-data-and-gwas-signals">xQTLbiolinks: a R package aims to query, download, visualize and perform colocalization analyses between xQTL data and GWAS signals<a class="anchor" aria-label="anchor" href="#xqtlbiolinks-a-r-package-aims-to-query-download-visualize-and-perform-colocalization-analyses-between-xqtl-data-and-gwas-signals"></a>
+</h3>
+<p><strong><code>xQTLbiolinks</code></strong> is a well-developed R package that enables users-customized query, extraction, and visualization of <strong>molecular QTLs</strong> (eQTLs and sQTLs) and <strong>gene expression</strong> data from public resources (e.g., GTEx) through the application programming interface (API) of <a href="https://gtexportal.org/home/api-docs" class="external-link">GTEx</a> and <a href="https://www.ebi.ac.uk/eqtl/api-docs/" class="external-link">eQTL Catalogue</a>.</p>
+<p>xQTLbiolinks consists of tailored functions that can be grouped into four modules: <strong>Query</strong>, <strong>Download</strong>, <strong>Analyze</strong> and <strong>Visualization</strong>.</p>
+<p><img src="https://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width="100%" height="100%"><br></p>
+</div>
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
@@ -79,8 +81,7 @@
 <div class="section level3">
 <h3 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h3>
-<p>Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. <strong>xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data.</strong> (submitted)</p>
-<p>Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518055, China</p>
+<p>If you find the xQTLbiolinks package or any of the source code in this repository useful for your work, please cite: &gt;Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. <strong>xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data.</strong> (submitted) Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518055, China</p>
 <hr>
 </div>
 <div class="section level3">
@@ -96,29 +97,31 @@
 <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">}</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"dingruofan/xQTLbiolinks"</span><span class="op">)</span></code></pre></div>
 </div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="developers">
+    <div class="license">
+<h2 data-toc-skip>License</h2>
+<ul class="list-unstyled">
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small>GPL (&gt;= 3)</small></li>
+</ul>
+</div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing xQTLbiolinks</a></li>
+</ul>
+</div>
+
+<div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Ruofan Ding <br><small class="roles"> Author, maintainer </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
-</ul>
-</div>
-
-<div class="funding">
-<h2 data-toc-skip>Funding</h2>
-<ul class="list-unstyled">
-<li><p>We are <em>grateful</em> for funding!</p></li>
-</ul>
-</div>
-
-<div class="table-of-contents">
-<h2 data-toc-skip>Table of contents</h2>
-<ul class="list-unstyled">
-<li><nav id="toc"></nav></li>
 </ul>
 </div>
 
@@ -130,12 +133,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>NULL</p>
+<p>Developed by Ruofan Ding.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>NULL Provided without <strong>any warranty</strong>.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

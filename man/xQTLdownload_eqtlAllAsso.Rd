@@ -34,9 +34,6 @@ download all tested variant-gene associations.
 source of all eQTL associations is EBI eQTL category.
 }
 \examples{
-\donttest{
-  geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B",
-                                       tissueSiteDetail="Muscle - Skeletal",
-                                       withB37VariantId=FALSE)
-}
+geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueSiteDetail="Muscle - Skeletal",
+                                     withB37VariantId=FALSE)
 }

@@ -24,9 +24,7 @@ a data.frame.
 query sample's details with samples' IDs.
 }
 \examples{
-\donttest{
-  sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
-                 "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
-  sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
-}
+sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
+               "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
+sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
 }

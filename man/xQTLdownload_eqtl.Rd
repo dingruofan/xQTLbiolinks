@@ -37,30 +37,24 @@ download significant or unsignificant eQTL data of a tissue or across all tissue
 can be quried with a gene/variant-gene pair.
 }
 \examples{
-\donttest{
+# Download eQTL info with a gene symbol:
+eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
+xQTLdownload_eqtl(gene="ATAD3B", datasetId="gtex_v7")
 
- # Download eQTL info for a gene:
- eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
- xQTLdownload_eqtl(gene="ATAD3B", datasetId="gtex_v7")
+# Use unversioned gencode ID in GTEx V7:
+eqtl_v7 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v7")
+# Use unversioned gencode ID in GTEx V8:
+eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
 
- # Unversioned gencode ID in GTEx V7:
- eqtl_v7 <- xQTLdownload_eqtl(gene="ENSG00000141510",
-                              datasetId="gtex_v7")
- # Unversioned gencode ID in GTEx V8:
- eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510",
-                              datasetId="gtex_v8")
+# In a specific tissue:
+xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
+                  datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
 
- # In a specific tissue:
- xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
-                      datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
-
- # Download eQTL info for a variant-gene pair:
- xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
- xQTLdownload_eqtl(variantName="rs11657498",gene="TP53",
-                      datasetId="gtex_v7")
- xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
-                      tissueSiteDetail="Kidney - Cortex")
- xQTLdownload_eqtl(variantName="17_7492388_G_A_b37",gene="TP53",
-                      tissueSiteDetail="Uterus",  datasetId="gtex_v7")
-}
+# Download eQTL info with a variant-gene pair:
+xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+xQTLdownload_eqtl(variantName="rs11657498",gene="TP53", datasetId="gtex_v7")
+xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
+                  tissueSiteDetail="Kidney - Cortex")
+xQTLdownload_eqtl(variantName="17_7492388_G_A_b37",gene="TP53",
+                  tissueSiteDetail="Uterus",  datasetId="gtex_v7")
 }

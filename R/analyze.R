@@ -27,9 +27,12 @@
 #'
 #' @examples
 #' \donttest{
-#'  library(data.table)
-#'  gwasDF <- fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt")
-#'  sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF[, .(rsid, chr, position, P, maf)])
+#'  gwasFile <- tempfile(pattern = "file")
+#'  url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+#'  utils::download.file(url, destfile=gwasFile)
+#'  gwasDF <- data.table::fread(gwasFile, sep="\t")
+#'  gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
+#'  sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 #' }
 xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   position <- pValue <- maf <- rsid <- chr <- NULL
@@ -118,7 +121,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @description identify trait genes with sentinel SNPs:
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
-#' @param tissueSiteDetail All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
 #' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
 #' @import data.table
@@ -132,7 +135,8 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @examples
 #' \donttest{
 #'   URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
-#'   sentinelSnpDF <- data.table::fread(URL1)
+#'
+#'   sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(URL1)$content))
 #'   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
 #'                                      genomeVersion="grch37", grch37To38=TRUE)
 #' }
@@ -271,7 +275,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param genomeVersion "grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
 #' @param gwasSampleNum Sample number of GWAS dataset. Default:50000.
@@ -283,7 +287,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #'
 #' @examples
 #' \donttest{
-#'  # https://github.com/dingruofan/xQTLbiolinks/wiki/Colocalization-analysis-with-xQTLbiolinks
+#'   # please see see vignette.
 #' }
 xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL
@@ -450,8 +454,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #'
 #' @examples
 #' \donttest{
-#'  genes <- extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20]
-#'  TSgene <- xQTLanalyze_TSExp(genes)
+#'  TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])
 #'  # xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 #' }
 xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){

@@ -33,17 +33,15 @@ A list containing expression profile and a ggplot object.
 plot distribution of the gene expression among multiple tissues.
 }
 \examples{
-\donttest{
-  # Display gene expression in all tissues.
-  # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
+# Display gene expression in all tissues.
+# geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
 
-  # Display gene expression in specified tissues.
-  geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
+# Display gene expression in specified tissues.
+geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
 
-  # Display gene expression in log scale in specified tissues.
-  geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
+# Display gene expression in log scale in specified tissues.
+geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
 
-  # Display gene expression in whole tissue.
-  geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
-}
+# Display gene expression in whole tissue.
+geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
 }

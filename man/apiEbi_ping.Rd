@@ -13,7 +13,5 @@ A character of fetchContent method.
 test EBI API server and return download method.
 }
 \examples{
-\donttest{
-  apiEbi_ping()
- }
+# apiEbi_ping()
 }

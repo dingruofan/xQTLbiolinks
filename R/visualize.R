@@ -17,14 +17,12 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  # EQTL associatons of TP53 in Esophagus - Mucosa:
-#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
-#'  expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+#' # EQTL associatons of TP53 in Esophagus - Mucosa:
+#' expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
+#' expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
 #'
-#'  # EQTL associatons of IRF5:
-#'  expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
-#' }
+#' # EQTL associatons of IRF5:
+#' expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
 xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
 
@@ -215,12 +213,10 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  # sQTL associatons of TP53:
-#'  expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
-#'            phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
-#'            tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
-#' }
+#' # sQTL associatons of TP53:
+#' expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
+#'           phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
+#'           tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <-geneType<- labelNum <- p <- NULL
 
@@ -380,22 +376,20 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  # For GWAS dataset:
-#'  library(data.table)
-#'  gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
-#'  xQTLvisual_locusZoom(gwasDF)
-#'  # Zoom in:
-#'  xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
+#' # For GWAS dataset:
+#' library(data.table)
+#' gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
+#' xQTLvisual_locusZoom(gwasDF)
+#' # Zoom in:
+#' xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
-#'  # For eQTL of a gene of interest:
-#'  eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
-#'                 tissueSiteDetail = "Brain - Cortex", withB37VariantId=FALSE)
-#'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
-#'  # Zoom in:
-#'  xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
-#'                       posRange="chr6:47.3e6-47.9e6")
-#' }
+#' # For eQTL of a gene of interest:
+#' eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex",
+#'                                      withB37VariantId=FALSE)
+#' xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
+#' # Zoom in:
+#' xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
+#'                      posRange="chr6:47.3e6-47.9e6")
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   chrom <- x <- y<- RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
@@ -567,12 +561,10 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   library(data.table)
-#'   eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
-#'   gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
-#'   xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
-#' }
+#' library(data.table)
+#' eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
+#' gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+#' xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
   x <- y<- genomeVersion <- NULL
 
@@ -724,18 +716,19 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @param highlightSnp Default is the snp that with lowest p-value.
 #' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
+#' @param snpLD A data.frame object of LD matrix. Default is null.
 #' @import data.table
 #' @import stringr
 #' @return A ggplot object
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
-#'   gwasEqtldata <- data.table::fread(u1)
-#'   xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
-#' }
+#' u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
+#' gwasEqtldata <- data.table::fread(u1)
+#' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){
+  position <- distance <- rsid <- pValue.eqtl <- pValue.gwas <- chrom <- NULL
+  . <- NULL
 
   gwasEqtldata <- gwasEqtldata[,1:5]
   data.table::setDT(gwasEqtldata)
@@ -810,17 +803,15 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",
-#'              "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
-#'   xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
+#' genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",
+#'            "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
+#' xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
 #'
-#'   genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15",
-#'              "ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12",
-#'              "ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
-#'              "ENSG00000197576.13","ENSG00000100987.14")
-#'   xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
-#' }
+#' genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15",
+#'            "ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12",
+#'            "ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
+#'            "ENSG00000197576.13","ENSG00000100987.14")
+#' xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", datasetId="gtex_v8"){
   `..density..`<-geneSymbol <- NULL
 
@@ -866,11 +857,9 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'  gene2 = c("AMOT", "HOXA4")
-#'  xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
-#'  xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
-#' }
+#' gene2 = c("AMOT", "HOXA4")
+#' xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
+#' xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
 xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
   geneSymbol <- NULL
 
@@ -923,10 +912,8 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   xQTLvisual_eqtl("KIF15")
-#'   xQTLvisual_eqtl("MLH1")
-#' }
+#' xQTLvisual_eqtl("KIF15")
+#' xQTLvisual_eqtl("MLH1")
 xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
   variantId <- tissueSiteDetail <- pValue <- logP <- NULL
   . <- NULL
@@ -985,19 +972,17 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #' @export
 #'
 #' @examples
-#' \donttest{
-#'   # Display gene expression in all tissues.
-#'   # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
+#' # Display gene expression in all tissues.
+#' # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
 #'
-#'   # Display gene expression in specified tissues.
-#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
+#' # Display gene expression in specified tissues.
+#' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
 #'
-#'   # Display gene expression in log scale in specified tissues.
-#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
+#' # Display gene expression in log scale in specified tissues.
+#' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
 #'
-#'   # Display gene expression in whole tissue.
-#'   geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
-#' }
+#' # Display gene expression in whole tissue.
+#' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
 xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", datasetId="gtex_v8", log10y=FALSE, toTissueSite=FALSE){
   colorHex <- tissueSite <- expTPM <- NULL
   .<-NULL

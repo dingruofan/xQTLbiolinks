@@ -30,15 +30,13 @@ A data.table
 download normalized expression of intron for a sQTL pair.
 }
 \examples{
-\donttest{
- # Download exp in different tissues:
- xQTLdownload_sqtlExp(variantName="rs1450891501",
-                      phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1",
-                      tissueSiteDetail="Lung")
+# Download sQTL expression in different tissues:
+xQTLdownload_sqtlExp(variantName="rs1450891501",
+                     phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1",
+                     tissueSiteDetail="Lung")
 
- # Dowload exp using variant ID.
- xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
-                      phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
-                      tissueSiteDetail="Adipose - Subcutaneous")
-}
+# Dowload sQTL expression using variant ID.
+xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
+                     phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
+                     tissueSiteDetail="Adipose - Subcutaneous")
 }

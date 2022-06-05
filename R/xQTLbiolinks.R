@@ -216,13 +216,90 @@ NULL
 NULL
 
 
+#' @title data for vignette
+#' @description
+#'  head 6 rows of gwasDF of GLGC_CG0276_result.txt(GCST006085)
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_gwasDF
+#' @format A Data.table
+#' \describe{
+#'   \item{rsid}{A character vector}
+#'   \item{chr}{A character vector}
+#'   \item{position}{A integer vector}
+#'   \item{pValue}{A numeric vector}
+#'   \item{maf}{A numeric vector}
+#' }
+#' @source \url{http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz}
+NULL
+
+#' @title data for vignette
+#' @description
+#'  head 6 rows of sentinelSnpDF of xQTLanalyze_getSentinelSnp
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_sentinelSNP
+#' @format A Data.table
+#' \describe{
+#'   \item{rsid}{A character vector}
+#'   \item{chr}{A character vector}
+#'   \item{position}{A integer vector}
+#'   \item{pValue}{A numeric vector}
+#'   \item{maf}{A numeric vector}
+#' }
+#' @source xQTLanalyze_getSentinelSnp
+NULL
+
+#' @title data for vignette
+#' @description
+#'  head 6 rows of traitsAll of xQTLanalyze_getTraits
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_traitsAll
+#' @format A Data.table
+#' \describe{
+#'   \item{chromosome}{A character vector}
+#'   \item{geneStart}{A integer vector}
+#'   \item{geneEnd}{A integer vector}
+#'   \item{geneStrand}{A character vector}
+#'   \item{geneSymbol}{A character vector}
+#'   \item{gencodeId}{A character vector}
+#'   \item{rsid}{A character vector}
+#'   \item{position}{A integer vector}
+#'   \item{pValue}{A numeric vector}
+#'   \item{maf}{A numeric vector}
+#' }
+#' @source xQTLanalyze_getTraits
+NULL
+
+#' @title data for vignette
+#' @description
+#'  head 6 rows of traitsAll of xQTLanalyze_coloc
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_colocResultAll
+#' @format A Data.table
+#' \describe{
+#'   \item{nsnps}{A character vector}
+#'   \item{PP.H0.abf}{A numeric vector}
+#'   \item{PP.H1.abf}{A numeric vector}
+#'   \item{PP.H2.abf}{A numeric vector}
+#'   \item{PP.H3.abf}{A numeric vector}
+#'   \item{PP.H4.abf}{A numeric vector}
+#'   \item{traitGene}{A character vector}
+#' }
+#' @source xQTLanalyze_coloc
+NULL
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")
 utils::globalVariables("gencodeGeneInfoAllGranges")
 utils::globalVariables("gencodeGenetype")
 utils::globalVariables("ebi_qtl_groups")
-
-
+utils::globalVariables("example_Coloc_gwasDF")
+utils::globalVariables("example_Coloc_sentinelSNP")
+utils::globalVariables("example_Coloc_traitsAll")
+utils::globalVariables("example_Coloc_colocResultAll")
 
 

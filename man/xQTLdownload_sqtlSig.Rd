@@ -31,22 +31,18 @@ download significant sQTL associations of a tissue or across all tissues.
 Only GTEx v8 is supported.
 }
 \examples{
-\donttest{
- # Download sQTL detail for a variant:
- xQTLdownload_sqtlSig(variantName="rs201327123")
- xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
- xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38",
-                      tissueSiteDetail="Whole Blood")
+# Download sQTL detail with rsid:
+xQTLdownload_sqtlSig(variantName="rs201327123")
+xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
+xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
 
- # Download sQTL detail for a gene:
- xQTLdownload_sqtlSig(gene="ATAD3B")
- xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
- xQTLdownload_sqtlSig(gene="ENSG00000141510.16",
-                      tissueSiteDetail="Lung" )
+# Download sQTL detail with gene symbol and gencode ID:
+xQTLdownload_sqtlSig(gene="ATAD3B")
+xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
+xQTLdownload_sqtlSig(gene="ENSG00000141510.16", tissueSiteDetail="Lung" )
 
- # Download eQTL detail for a variant-gene pair:
- xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
- xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38",
-                      gene="TP53", tissueSiteDetail="Lung")
-}
+# Download eQTL detail with a variant-gene pair:
+xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
+xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", gene="TP53",
+                     tissueSiteDetail="Lung")
 }

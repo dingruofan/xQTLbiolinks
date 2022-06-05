@@ -20,8 +20,6 @@ A ggplot object
 plot significance of all eQTL associations for a gene across tissues.
 }
 \examples{
-\donttest{
-  xQTLvisual_eqtl("KIF15")
-  xQTLvisual_eqtl("MLH1")
-}
+xQTLvisual_eqtl("KIF15")
+xQTLvisual_eqtl("MLH1")
 }

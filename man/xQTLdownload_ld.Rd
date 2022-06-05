@@ -27,9 +27,7 @@ A data.frame
 download linkage disequilibrium data of the variants associated with this gene.
 }
 \examples{
-\donttest{
- xQTLdownload_ld("TP53" )
- xQTLdownload_ld("TP53", datasetId="gtex_v7")
- xQTLdownload_ld(gene="ENSG00000008128.22")
-}
+xQTLdownload_ld("TP53" )
+xQTLdownload_ld("TP53", datasetId="gtex_v7")
+xQTLdownload_ld(gene="ENSG00000008128.22")
 }

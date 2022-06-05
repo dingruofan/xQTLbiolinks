@@ -1,0 +1,115 @@
+---
+title: "Colocalization_analysis_with_xQTLbiolinks"
+date: "`r format(Sys.time(), '%Y-%b-%d')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Colocalization_analysis_with_xQTLbiolinks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE,
+  progress =FALSE,
+  collapse = TRUE,
+  comment = ">"
+)
+```
+
+  ```{r setup, message=FALSE}
+  library(data.table)
+  library(xQTLbiolinks)
+  ```
+
+
+1.Download summary statistics dataset of a GWAS study ([GCST006085](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz)) of prostate cancer from GWAS category and load the dataset in R with `data.table` package.
+
+
+  ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+  gwasDF <- fread("D:\\R_project\\Data\\GLGC_CG0276_result.txt")
+  # extract columns.
+  gwasDF<- gwasDF[str_detect(variant_id, "^rs"),.(rsid=variant_id, chrom=chromosome, position= base_pair_location, pValue=p_value, AF=effect_allele_frequency)]
+  ```
+
+  ``` {r message=FALSE, warning=FALSE, include=FALSE}
+  gwasDF <- example_Coloc_gwasDF
+  ```
+  In this case, we retain the variants with dbSNP id (start with `rs`), and a data.table object named `gwasDF` of 13,498,990 (rows) x 5 (cols) is loaded.
+  ```{r eval=TRUE}
+  head(gwasDF)
+  ```
+
+2.Filter sentinel snps. Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value < 5e-8 and SNP-to-SNP distance > 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE`:
+
+  ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+  sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e6,
+                                              genomeVersion="grch37", grch37To38=TRUE)
+  ```
+
+  ```{r message=FALSE, warning=FALSE, include=FALSE}
+  sentinelSnpDF <- example_Coloc_sentinelSNP
+  ```
+
+  A total of 94 sentinel SNPs are detected.
+  ```{r eval=TRUE}
+  head(sentinelSnpDF)
+  ```
+
+3.Identify trait genes for each sentinel SNPs. Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter `detectRange`) of sentinel SNPs. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function `xQTLanalyze_getTraits`:
+
+  ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+  tissueSiteDetail="Brain - Cerebellum"
+  traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e6, tissueSiteDetail=tissueSiteDetail)
+  ```
+
+  Totally, 898 associations between 835 traits genes and 92 sentinel SNPs are detected
+
+  ```{r message=FALSE, warning=FALSE, include=FALSE}
+  traitsAll <- example_Coloc_traitsAll
+  ```
+
+  ```{r eval=TRUE}
+  head(example_Coloc_traitsAll)
+  ```
+
+
+4.Conduct colocalization analysis. Following three steps of colocalization analysis are encapsulated in one function xQTLanalyze_coloc:
+
+  - Retrieved all associations from EBI eQTL catalogue for a specified gene.
+  - Merge the data.frame of GWAS and eQTL by rsid.
+  - Perform colocalization analysis usingcoloc package.
+
+  For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several hours):
+  ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+  genesAll<- unique(traitsAll$gencodeId)
+  colocResultAll <- data.table()
+  for(i in 1:length(genesAll)){
+    colocResult <- xQTLanalyze_coloc(gwasDF, genomeVersion = "grch37", genesAll[i], tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary
+    if(!is.null(colocResult)){ colocResultAll <- rbind(colocResultAll, colocResult)}
+    message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i,"/",length(genesAll)," == Gene:",genesAll[i], " == PP4: ", colocResult$PP.H4.abf)
+  }
+  ```
+  
+    ```{r message=FALSE, warning=FALSE, include=FALSE}
+  colocResultAll <- example_Coloc_colocResultAll
+  ```
+  
+  Package `coloc` Estimated the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:
+  - H0 : neither trait has a genetic association in the region
+  - H1: only trait 1 has a genetic association in the region
+  - H2: only trait 2 has a genetic association in the region
+  - H3: both traits are associated, but with different causal variants
+  - H4: both traits are associated and share a single causal variant
+
+  Outputs is a data.table that combined all results of `coloc_Out_summary` of all genes. te posterior probability of variants fo each hypothesis (H0-H4) are listed in `colocResultAll`:
+  ```{r eval=TRUE}
+  head(colocResultAll)
+  ```
+
+5. We considered coloc tests with a Posterior probability of hypothesis 4 (PPH4.ABF) ≥ 0.75 as having strong or moderate evidence for colocalization.
+  
+  ```
+  colocResultsig <- colocResultAll[PP.H4.abf>0.75]
+  ```
+  

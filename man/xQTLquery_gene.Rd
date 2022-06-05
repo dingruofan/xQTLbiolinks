@@ -54,20 +54,17 @@ A data.table of queried gene information. including following columns:
 users can use this function to query basic information (including gene name, symbol, position and description, etc ) of genes.
 }
 \examples{
-\donttest{
- # get all protein coding genes and description:
- # protein_coding <- xQTLquery_gene(genes="protein coding")
- # get all miRNA and description:
- # miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
+# get all protein coding genes and description:
+# protein_coding <- xQTLquery_gene(genes="protein coding")
+# get all miRNA and description:
+# miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
 
- # hg38 test:
- geneInfo <- xQTLquery_gene("TP53")
- geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
- geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
+# hg38 test:
+geneInfo <- xQTLquery_gene("TP53")
+geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
+geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 
- # hg19 test:
- geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
- geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
-
- }
+# hg19 test:
+geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
+geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
 }

@@ -19,8 +19,6 @@ Fetch all detail information of a specified tissue or all tissues.
 Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 }
 \examples{
-\donttest{
-  tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
-  BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
-}
+tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
+BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
 }

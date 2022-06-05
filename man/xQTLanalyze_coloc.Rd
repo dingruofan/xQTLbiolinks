@@ -26,7 +26,7 @@ xQTLanalyze_coloc(
 
 \item{genomeVersion}{"grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{mafThreshold}{Cutoff of maf to remove rare variants.}
 
@@ -46,6 +46,6 @@ conduct colocalization analysis with detected gene.
 }
 \examples{
 \donttest{
- # https://github.com/dingruofan/xQTLbiolinks/wiki/Colocalization-analysis-with-xQTLbiolinks
+  # please see see vignette.
 }
 }

@@ -1,12 +1,12 @@
-#' @title download gtf files and extract gene info from attribute column:
-#'
-#' @param gencodeVersion "v26" or "v19"
-#'
-#' @return create .rds file
-#'
-#' @importFrom utils download.file
-#' @importFrom data.table fread rbindlist setnames as.data.table data.table
-#' @importFrom stringr str_split
+# @title download gtf files and extract gene info from attribute column:
+#
+# @param gencodeVersion "v26" or "v19"
+#
+# @return create .rds file
+#
+# @importFrom utils download.file
+# @importFrom data.table fread rbindlist setnames as.data.table data.table
+# @importFrom stringr str_split
 gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 
   type <- NULL
@@ -73,26 +73,26 @@ gtfSubsGeneInfo <- function(gencodeVersion="v26"){
 }
 
 
-#' @title Extract gene attributes of interest
-#' @description
-#' as a funciton of lapply
-#' @param gtf_attributes A character string or a character vector. Like: c("gene_id", "gene_type", "gene_name"). Default: "gene_id", "gene_type", "gene_name".
-#' @param att_of_interest A character string or a character vector. Attributes of interest.
-#'
-#' @return specificed attributes
-#' @importFrom data.table as.data.table
-#' @examples
-#'  \dontrun{
-#'   # extract gene info:
-#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
-#'                                               gtfSubsGene,
-#'                                               c("gene_id", "gene_type", "gene_name")))
-#'   # extract transcript info:
-#'   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
-#'                                               gtfSubsGene,
-#'                                               c("gene_id","transcript_id",
-#'                                               "gene_type", "gene_name")))
-#'  }
+# @title Extract gene attributes of interest
+# @description
+# as a funciton of lapply
+# @param gtf_attributes A character string or a character vector. Like: c("gene_id", "gene_type", "gene_name"). Default: "gene_id", "gene_type", "gene_name".
+# @param att_of_interest A character string or a character vector. Attributes of interest.
+#
+# @return specificed attributes
+# @importFrom data.table as.data.table
+# @examples
+#  \dontrun{
+#   # extract gene info:
+#   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
+#                                               gtfSubsGene,
+#                                               c("gene_id", "gene_type", "gene_name")))
+#   # extract transcript info:
+#   gencodeENSG <- data.table::rbindlist(lapply(gencodeAnnoGene$attributes,
+#                                               gtfSubsGene,
+#                                               c("gene_id","transcript_id",
+#                                               "gene_type", "gene_name")))
+#  }
 gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_type", "gene_name")){
   att <- unlist(stringr::str_split(gtf_attributes, " ")[[1]])
   # att_of_interest <- c("gene_id", "gene_type", "gene_name")
@@ -105,20 +105,17 @@ gtfSubsGene <- function(gtf_attributes,  att_of_interest= c("gene_id", "gene_typ
 }
 
 
-#' @title fetch reference genes by API.
-#'
-#' @param geneId a character or a character vector(versioned ensemble ID or unversioned ensemble ID)
-#' @param gencodeVersion "v26" or "v19"
-#' @param genomeBuild "GRCh38/hg38" or "GRCh37/hg19"
-#'
-#' @return queried gene info table
-#' @importFrom jsonlite fromJSON
-#' @importFrom data.table as.data.table
-#' @export
-#' @examples
-#' \dontrun{
-#'   apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
-#'  }
+# @title fetch reference genes by API.
+#
+# @param geneId a character or a character vector(versioned ensemble ID or unversioned ensemble ID)
+# @param gencodeVersion "v26" or "v19"
+# @param genomeBuild "GRCh38/hg38" or "GRCh37/hg19"
+#
+# @return queried gene info table
+# @importFrom jsonlite fromJSON
+# @importFrom data.table as.data.table
+# @examples
+# # apiRef_gene(c("ENSG00000116885.18","ENSG00000222623"), "v26", "GRCh38/hg38")
 apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg38" ){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
@@ -152,11 +149,11 @@ apiRef_gene <- function(geneId="", gencodeVersion="v26", genomeBuild="GRCh38/hg3
 }
 
 
-#' @title create .rds file with xQTLquery_sample function
-#'
-#' @param datasetId "gtex_v8" or "gtex_v7"
-#'
-#' @return none
+# @title create .rds file with xQTLquery_sample function
+#
+# @param datasetId "gtex_v8" or "gtex_v7"
+#
+# @return none
 createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
   # tissueSiteDetail <- tissueSiteDetailId <- NULL
   # .<-NULL
@@ -190,95 +187,94 @@ createTissueSiteDetailMappingData <- function(datasetId="gtex_v8"){
   return(NULL)
 }
 
-#' @title Query gene information through all genes' information
-#' @description
-#'  users can use this function to search gene of interest
-#' @param genes Following gene types are supported:
-#' \itemize{
-#'   \item \strong{Gene symbol}.
-#'
-#'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
-#'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
-#'
-#'    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
-#'   \item \strong{Entrez gene ID}.
-#'
-#'   A integer string or a integer vectors. like: 51150,5590,4509.
-#'
-#'   \item \strong{geneCategory}.
-#'
-#'   When choose "geneCategory", "genes" must be chosen from following gene category:
-#'   \itemize{
-#'   \item protein coding
-#'   \item antisense
-#'   \item lincRNA
-#'   \item unprocessed pseudogene
-#'   \item miRNA
-#'   \item transcribed unprocessed pseudogene
-#'   \item snRNA
-#'   \item processed pseudogene
-#'   \item processed transcript
-#'   \item TEC
-#'   \item transcribed unitary pseudogene
-#'   \item transcribed processed pseudogene
-#'   \item sense intronic
-#'   \item misc RNA
-#'   \item snoRNA
-#'   \item scaRNA
-#'   \item rRNA
-#'   \item unitary pseudogene
-#'   \item 3prime overlapping ncRNA
-#'   \item polymorphic pseudogene
-#'   \item bidirectional promoter lncRNA
-#'   \item sense overlapping
-#'   \item pseudogene
-#'   \item IG V pseudogene
-#'   \item scRNA
-#'   \item IG C gene
-#'   \item IG J gene
-#'   \item IG V gene
-#'   \item sRNA
-#'   \item ribozyme
-#'   \item vaultRNA
-#'   \item non coding
-#'   \item TR J gene
-#'   \item TR C gene
-#'   \item TR V gene
-#'   \item TR V pseudogene
-#'   \item TR D gene
-#'   \item IG C pseudogene
-#'   \item macro lncRNA
-#'   \item TR J pseudogene
-#'   \item IG D gene
-#'   \item IG J pseudogene
-#'   \item IG pseudogene
-#'   \item Mt tRNA
-#'   \item Mt rRNA
-#'   }
-#' }
-#'
-#' @param geneType A character string. Types of queried genes. Options: "geneSymbol" (default), "gencodeId", "entrezId";
-#' @param gencodeVersion A character string. Two version are supported: "v26" (default) and "v19"
-#' @param genomeBuild A character string. "GRCh38/hg38"(default) for gencodeVersion "v26", "GRCh37/hg19" for gencodeVersion "v19"
-#' @import data.table
-#' @import stringr
-#' @return A data.table of queried gene information. including following columns:
-#' \itemize{
-#'  \item \strong{genes.} Input genes
-#'  \item \strong{geneSymbol.} Gene symbol.
-#'  \item \strong{gencodeId.} Gencode/ensemble id (versioned).
-#'  \item \strong{entrezGeneId.} Entrez gene ID.
-#'  \item \strong{geneType.} Gene type.
-#'  \item \strong{chromosome.} Note: "chr" is added in gencode v26,
-#'  \item \strong{start.}
-#'  \item \strong{end.}
-#'  \item \strong{strand.}
-#'  \item \strong{tss.} Transcriptional start site.
-#'  \item \strong{gencodeVersion.} Gencode Version.
-#'  \item \strong{genomeBuild.} Genome version.
-#'  \item \strong{description.}
-#'  }
-#'
+# @title Query gene information through all genes' information
+# @description
+#  users can use this function to search gene of interest
+# @param genes Following gene types are supported:
+# \itemize{
+#   \item \strong{Gene symbol}.
+#
+#   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
+#   \item \strong{Gencode/ensemble id} (versioned or unversioned).
+#
+#    A character string or a character vector (case ignored). like: "ENSG00000210195.2","ENSG00000078808".
+#   \item \strong{Entrez gene ID}.
+#
+#   A integer string or a integer vectors. like: 51150,5590,4509.
+#
+#   \item \strong{geneCategory}.
+#
+#   When choose "geneCategory", "genes" must be chosen from following gene category:
+#   \itemize{
+#   \item protein coding
+#   \item antisense
+#   \item lincRNA
+#   \item unprocessed pseudogene
+#   \item miRNA
+#   \item transcribed unprocessed pseudogene
+#   \item snRNA
+#   \item processed pseudogene
+#   \item processed transcript
+#   \item TEC
+#   \item transcribed unitary pseudogene
+#   \item transcribed processed pseudogene
+#   \item sense intronic
+#   \item misc RNA
+#   \item snoRNA
+#   \item scaRNA
+#   \item rRNA
+#   \item unitary pseudogene
+#   \item 3prime overlapping ncRNA
+#   \item polymorphic pseudogene
+#   \item bidirectional promoter lncRNA
+#   \item sense overlapping
+#   \item pseudogene
+#   \item IG V pseudogene
+#   \item scRNA
+#   \item IG C gene
+#   \item IG J gene
+#   \item IG V gene
+#   \item sRNA
+#   \item ribozyme
+#   \item vaultRNA
+#   \item non coding
+#   \item TR J gene
+#   \item TR C gene
+#   \item TR V gene
+#   \item TR V pseudogene
+#   \item TR D gene
+#   \item IG C pseudogene
+#   \item macro lncRNA
+#   \item TR J pseudogene
+#   \item IG D gene
+#   \item IG J pseudogene
+#   \item IG pseudogene
+#   \item Mt tRNA
+#   \item Mt rRNA
+#   }
+# }
+#
+# @param geneType A character string. Types of queried genes. Options: "geneSymbol" (default), "gencodeId", "entrezId";
+# @param gencodeVersion A character string. Two version are supported: "v26" (default) and "v19"
+# @param genomeBuild A character string. "GRCh38/hg38"(default) for gencodeVersion "v26", "GRCh37/hg19" for gencodeVersion "v19"
+# @import data.table
+# @import stringr
+# @return A data.table of queried gene information. including following columns:
+# \itemize{
+#  \item \strong{genes.} Input genes
+#  \item \strong{geneSymbol.} Gene symbol.
+#  \item \strong{gencodeId.} Gencode/ensemble id (versioned).
+#  \item \strong{entrezGeneId.} Entrez gene ID.
+#  \item \strong{geneType.} Gene type.
+#  \item \strong{chromosome.} Note: "chr" is added in gencode v26,
+#  \item \strong{start.}
+#  \item \strong{end.}
+#  \item \strong{strand.}
+#  \item \strong{tss.} Transcriptional start site.
+#  \item \strong{gencodeVersion.} Gencode Version.
+#  \item \strong{genomeBuild.} Genome version.
+#  \item \strong{description.}
+#  }
 apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", genomeBuild="GRCh38/hg38"){
   # check null/na
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
@@ -384,10 +380,10 @@ apiRef_genes <- function(genes="", geneType="geneSymbol", gencodeVersion="v26", 
   }
 }
 
-#' @title Create gene annotation data
-#' @import data.table
-#' @import stringr
-#' @return NULL
+# @title Create gene annotation data
+# @import data.table
+# @import stringr
+# @return NULL
 createGencodeGeneInfoAll <- function(){
   gencodeId <- chromosome <- strand <- gencodeId_unversioned <- startV26 <- startV19 <- NULL
   .<-NULL

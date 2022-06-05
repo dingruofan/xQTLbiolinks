@@ -16,7 +16,5 @@ A character of fetchContent method.
 test GTEx API server and return download method.
 }
 \examples{
-\donttest{
-  apiAdmin_ping()
- }
+#apiAdmin_ping()
 }

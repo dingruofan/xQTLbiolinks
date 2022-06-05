@@ -18,7 +18,5 @@ a data.table
 extract gene infor of specified genome from gencodeGeneInfoAllGranges
 }
 \examples{
-\donttest{
-  gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
-}
+gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)
 }

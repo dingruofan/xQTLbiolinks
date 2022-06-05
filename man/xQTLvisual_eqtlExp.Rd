@@ -33,12 +33,10 @@ A list containing eQTL detail, expression profile and a ggplot object.
 plot normalized expression among genotypes for eQTL.
 }
 \examples{
-\donttest{
- # EQTL associatons of TP53 in Esophagus - Mucosa:
- expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
- expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+# EQTL associatons of TP53 in Esophagus - Mucosa:
+expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
+expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
 
- # EQTL associatons of IRF5:
- expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
-}
+# EQTL associatons of IRF5:
+expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
 }

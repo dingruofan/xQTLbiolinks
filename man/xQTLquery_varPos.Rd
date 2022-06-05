@@ -27,9 +27,7 @@ A data.table.
 query varints with genome postion.
 }
 \examples{
-\donttest{
- xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
- xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
- xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
-}
+xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
+xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
+xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
 }

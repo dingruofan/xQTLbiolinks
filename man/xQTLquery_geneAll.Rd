@@ -18,8 +18,6 @@ A data.table with all genes' information.
 fetch basic information of all genes.
 }
 \examples{
-\donttest{
-  # don't run:
-  # allGenes <- xQTLquery_geneAll()
-  }
+# Fetch all genes. This will take several minutes:
+# allGenes <- xQTLquery_geneAll()
 }

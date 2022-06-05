@@ -30,8 +30,6 @@ A data.frame
 download genes' median expression in a tissue or across all tissues.
 }
 \examples{
-\donttest{
- geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")
- geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
-}
+geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")
+geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
 }

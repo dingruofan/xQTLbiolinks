@@ -24,9 +24,7 @@ a data frame
 This fucntion is rebuilt from LDlink package.
 }
 \examples{
-\donttest{
-  ldMat <- retrieveLD_LDmatrix(c("rs12202891", "rs10807323",
-                     "rs9381401", "rs2026458", "rs150503442"),
-                      pop="CEU", token="9246d2db7917")
-}
+ldMat <- retrieveLD_LDmatrix(c("rs12202891", "rs10807323",
+                             "rs9381401", "rs2026458", "rs150503442"),
+                              pop="CEU", token="9246d2db7917")
 }

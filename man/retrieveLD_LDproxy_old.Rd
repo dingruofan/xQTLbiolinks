@@ -36,7 +36,5 @@ a data.frame
 Retrive SNP pairwise LD from LDlink database
 }
 \examples{
-\donttest{
-  # snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
-}
+# snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
 }

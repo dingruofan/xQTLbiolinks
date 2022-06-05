@@ -20,10 +20,8 @@ A data.table.
 query variant with variant ID or SNP ID.
 }
 \examples{
- \donttest{
-  xQTLquery_varId("rs12596338")
-  xQTLquery_varId("rs12596338", datasetId="gtex_v7")
-  xQTLquery_varId("chr11_66561248_T_C_b38")
-  xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
- }
+xQTLquery_varId("rs12596338")
+xQTLquery_varId("rs12596338", datasetId="gtex_v7")
+xQTLquery_varId("chr11_66561248_T_C_b38")
+xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
 }

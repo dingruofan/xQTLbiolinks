@@ -30,10 +30,8 @@ A list of variant detail and expression profile.
 plot normalized expression among genotypes for sQTL.
 }
 \examples{
-\donttest{
- # sQTL associatons of TP53:
- expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
-           phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
-           tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
-}
+# sQTL associatons of TP53:
+expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
+          phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
+          tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 }

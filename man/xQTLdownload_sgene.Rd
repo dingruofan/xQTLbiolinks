@@ -31,12 +31,9 @@ download sGenes (sQTL Genes).
 sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 }
 \examples{
-\donttest{
- # don't run:
- #sGeneInfoAlltissue <- xQTLdownload_sgene()
+#sGeneInfoAlltissue <- xQTLdownload_sgene()
 
- sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
- sGeneInfo <- xQTLdownload_sgene("ENSG00000141510.16",  tissueSiteDetail="Lung")
- sGeneInfo <- xQTLdownload_sgene("DDX11", tissueSiteDetail="Artery - Tibial" )
-}
+sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
+sGeneInfo <- xQTLdownload_sgene("ENSG00000141510.16",  tissueSiteDetail="Lung")
+sGeneInfo <- xQTLdownload_sgene("DDX11", tissueSiteDetail="Artery - Tibial" )
 }

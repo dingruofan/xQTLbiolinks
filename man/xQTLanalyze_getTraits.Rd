@@ -17,7 +17,7 @@ xQTLanalyze_getTraits(
 
 \item{detectRange}{A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp}
 
-\item{tissueSiteDetail}{All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{All tissues' name can be listed with \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
 
 \item{genomeVersion}{"grch38" or "grch37". Default: "grch38"}
 
@@ -32,7 +32,8 @@ identify trait genes with sentinel SNPs:
 \examples{
 \donttest{
   URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
-  sentinelSnpDF <- data.table::fread(URL1)
+
+  sentinelSnpDF <- data.table::fread(rawToChar(curl::curl_fetch_memory(URL1)$content))
   traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
                                      genomeVersion="grch37", grch37To38=TRUE)
 }

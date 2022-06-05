@@ -42,27 +42,26 @@ return a SummarizedExperiment or data.frame object harbing gene expression profi
 download normalized gene expression at the sample level in a specified tissue.
 }
 \examples{
-\donttest{
-  # Download gene expression with a genecode ID:
-  expProfiles <- xQTLdownload_exp(c("ENSG00000210195.2"),
-                                 tissueSiteDetail="Liver")
-  # extract expression profile from SummarizedExperiment object:
-  expDT <- SummarizedExperiment::assay(expProfiles)
-  # extract samples' detail from SummarizedExperiment object:
-  sampleDT <- SummarizedExperiment::colData(expProfiles)
+# Download gene expression with a genecode ID:
+expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")
 
-  # Download gene expression profiles of multiple genes:
-  expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-                                 tissueSiteDetail="Artery - Coronary",
-                                 pathologyNotesCategories=TRUE,
-                                 toSummarizedExperiment=FALSE)
-  expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-                                 tissueSiteDetail="Artery - Coronary",
-                                 datasetId="gtex_v7")
+# extract expression profile from SummarizedExperiment object:
+expDT <- SummarizedExperiment::assay(expProfiles)
 
-  # Get proteing-coding genes' expression in Lung:
-  # prot <- xQTLquery_gene(genes="protein coding")
-  # proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
-  #                             toSummarizedExperiment=FALSE)
-  }
+# extract samples' detail from SummarizedExperiment object:
+sampleDT <- SummarizedExperiment::colData(expProfiles)
+
+# Download gene expression profiles of multiple genes:
+expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
+                                tissueSiteDetail="Artery - Coronary",
+                                pathologyNotesCategories=TRUE,
+                                toSummarizedExperiment=FALSE)
+expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
+                                tissueSiteDetail="Artery - Coronary",
+                                datasetId="gtex_v7")
+
+# Get proteing-coding genes' expression in Lung:
+# prot <- xQTLquery_gene(genes="protein coding")
+# proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
+#                             toSummarizedExperiment=FALSE)
 }

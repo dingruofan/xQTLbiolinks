@@ -28,6 +28,8 @@ xQTLvisual_locusCombine(
 \item{highlightSnp}{Default is the snp that with lowest p-value.}
 
 \item{legend_position}{(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
+
+\item{snpLD}{A data.frame object of LD matrix. Default is null.}
 }
 \value{
 A ggplot object
@@ -37,9 +39,7 @@ Generated a combined plot with two locuszoom plots and a locuscompare
 This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 }
 \examples{
-\donttest{
-  u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
-  gwasEqtldata <- data.table::fread(u1)
-  xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
-}
+u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
+gwasEqtldata <- data.table::fread(u1)
+xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 }

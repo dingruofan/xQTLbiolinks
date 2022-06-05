@@ -30,9 +30,7 @@ A ggplot object
 The correlation plot of two genes’ expression.
 }
 \examples{
-\donttest{
- gene2 = c("AMOT", "HOXA4")
- xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
- xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
-}
+gene2 = c("AMOT", "HOXA4")
+xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
+xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
 }

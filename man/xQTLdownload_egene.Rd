@@ -31,11 +31,8 @@ download eGenes (eQTL Genes).
 eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
 }
 \examples{
-\donttest{
- # don't run:
- # eGeneInfoAlltissue <- xQTLdownload_egene()
- eGeneInfo <- xQTLdownload_egene("TP53")
- eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
- eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial" )
-}
+# eGeneInfoAlltissue <- xQTLdownload_egene()
+eGeneInfo <- xQTLdownload_egene("TP53")
+eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
+eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7", tissueSiteDetail="Artery - Tibial")
 }

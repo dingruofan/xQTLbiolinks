@@ -42,5 +42,6 @@ Imports:
 Suggests: 
     coloc,
     knitr,
+    rmarkdown,
     rtracklayer,
     usethis
