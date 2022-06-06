@@ -15,7 +15,7 @@
 #'
 #' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
 #' @param toSummarizedExperiment whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
-#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 150).
+#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 80).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #' @import data.table
 #' @import curl
@@ -51,7 +51,7 @@
 #' # prot <- xQTLquery_gene(genes="protein coding")
 #' # proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
 #' #                             toSummarizedExperiment=FALSE)
-xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=150, pathologyNotesCategories=FALSE  ){
+xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=80, pathologyNotesCategories=FALSE  ){
   gencodeId <- chromosome <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
@@ -127,19 +127,27 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Check the gene name :")
-  geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk=recordPerChunk)
+  geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion)
   # Only keep genes with non-na gencode ID
   geneInfo <- geneInfo[!is.na(gencodeId)]
   # for gene of the same name but with different gencodeID, like SHOX, ENSG00000185960.13 the name is in X, ENSG00000185960.13_PAR_Y is the name in Y. retain the gencode In x.
   geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
+  # for gene of the same name but with different gencodeID, like BTBD8 with entrezGeneId is NA, remove.
+  geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & is.na(entrezGeneId))]
+  # retain source is Source:NCBI
+  geneInfo[(genes %in% geneInfo[duplicated(geneSymbol), ]$genes)]
 
   # duplicates, only warning first duplicate:
   # test: genes = c("LYNX1", "TP53")
-  dupGeneSymbol <- unique(geneInfo[,.(geneSymbol, gencodeId)][,.(.SD[duplicated(geneSymbol)])]$geneSymbol[1])
-  if(!is.na(dupGeneSymbol)){
-    message(" ")
-    message("  == Gene [",dupGeneSymbol,"] has multiple gencode IDs: [",paste0(geneInfo[geneSymbol == dupGeneSymbol]$gencodeId, collapse = ", "),"]")
-    stop("== Please remove duplicated genes, or take the unique gencode IDs as the input.")
+  # dupGeneSymbol <- unique(geneInfo[,.(geneSymbol, gencodeId)][,.(.SD[duplicated(geneSymbol)])]$geneSymbol[1])
+  # if(!is.na(dupGeneSymbol)){
+  #   message(" ")
+  #   message("  == Gene [",dupGeneSymbol,"] has multiple gencode IDs: [",paste0(geneInfo[geneSymbol == dupGeneSymbol]$gencodeId, collapse = ", "),"]")
+  #   stop("== Please remove duplicated genes, or take the unique gencode IDs as the input.")
+  # }
+  dupGencodeId <- unique(geneInfo[,.(geneSymbol, gencodeId)][,.(.SD[duplicated(gencodeId)])]$gencodeId[1])
+  if(!is.na(dupGencodeId)){
+    stop("duplicated gencodeId detected: ", paste0(dupGencodeId, collapse = "; "))
   }
 
   #
@@ -151,7 +159,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
   ############ get sample info:
   message("== Get the samples' detail:")
-  sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, recordPerChunk=recordPerChunk,pathologyNotesCategories=pathologyNotesCategories )
+  sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, pathologyNotesCategories=pathologyNotesCategories )
   message("== Done.")
   if( !exists("sampleInfo") ||is.null(sampleInfo) ){
     stop("Failed to fetch sample information.")
@@ -677,6 +685,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
     # 对于只需要一个基因的：
     geneInfo <- geneInfo[!is.na(gencodeId)]
     geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
+    geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & is.na(entrezGeneId))]
     # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or set gene with gencodeId.")

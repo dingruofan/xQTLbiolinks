@@ -10,7 +10,7 @@ xQTLdownload_exp(
   tissueSiteDetail = "Liver",
   datasetId = "gtex_v8",
   toSummarizedExperiment = TRUE,
-  recordPerChunk = 150,
+  recordPerChunk = 80,
   pathologyNotesCategories = FALSE
 )
 }
@@ -31,7 +31,7 @@ A character string or a character vector (case ignored). like: "tp53","naDK","SD
 
 \item{toSummarizedExperiment}{whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.}
 
-\item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 150).}
+\item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 80).}
 
 \item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }

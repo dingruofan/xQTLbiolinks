@@ -1068,7 +1068,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
             legend.position = "none"
       )
   }
-  if(log10y==TRUE){
+  if(log10y){
     p1 <- p1 + scale_y_log10()
   }
 
