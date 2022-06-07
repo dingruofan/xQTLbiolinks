@@ -707,11 +707,17 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @description Generated a combined plot with two locuszoom plots and a locuscompare
 #' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param gwasEqtldata A data.frame or a data.table that including signals from both GWAS and eQTL. Five columns are required (arbitrary column names is supported):
-#'  `Col 1`. "snps" (character), , using an rsID (e.g. "rs11966562").
+#'
+#'  `Col 1`. "snps" (character), using an rsID (e.g. "rs11966562").
+#'
 #'  `Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22.
+#'
 #'  `Col 3`. "postion" (integer), genome position of snp.
+#'
 #'  `Col 4`. "P-value" (numeric) of GWAS signals.
+#'
 #'  `Col 5`. "P-value" (numeric) of eQTL signals.
+#'
 #' @param posRange Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @param highlightSnp Default is the snp that with lowest p-value.

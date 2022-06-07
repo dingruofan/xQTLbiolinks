@@ -95,7 +95,7 @@ Following three steps of colocalization analysis are encapsulated in one functio
 
 1. Retrieved all associations from EBI eQTL catalogue for a specified gene.
 2. Merge the data.frame of GWAS and eQTL by rsid.
-3. Perform colocalization analysis usingcoloc package.
+3. Perform colocalization analysis using coloc package.
 
 
 For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several hours):
@@ -121,7 +121,7 @@ In this case, we invoke the funciton `coloc.abf` from package `coloc` to estimat
 - H3: both traits are associated, but with different causal variants
 - H4: both traits are associated and share a single causal variant
 
-Output is a data.table that combined all results of `coloc_Out_summary` of all genes. The posterior probability of variants fo each hypothesis (H0-H4) are listed in `colocResultAll`:
+Output is a data.table that combined all results of `coloc_Out_summary` of all genes. The posterior probability of variants to each hypothesis (H0-H4) are listed in `colocResultAll`:
 ```{r eval=TRUE}
 head(colocResultAll)
 ```
@@ -137,38 +137,88 @@ colocResultsig <- example_Coloc_colocResultsig
 ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 colocResultsig <- colocResultAll[PP.H4.abf>0.75][order(-PP.H4.abf)]
 ```
+
 There are 27 trait genes that are associated and share a single causal variant:
+
 ```{r eval=TRUE}
 head(colocResultsig)
 ```
-For the potential cancer-related trait gene `ENSG00000137673.8` that with the highest `PPH4.ABF=0.9978`, gene's detail can be fetched:
-```{r eval=TRUE, message=FALSE, warning=FALSE}
-geneInfo <- xQTLquery_gene("ENSG00000137673.8")
-geneInfo
+  
+All these genes' details can be fetched with `xQTLquery_gene`:
+
+```{r eval=TRUE, message=FALSE}
+colocResultsigGene <- xQTLquery_gene(colocResultsig$traitGene)
 ```
-  
-  
+
+Add the value of PPH4 for each gene, and remove non-protein-coding genes:
+```{r eval=TRUE}
+colocResultsigGene <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
+                            colocResultsigGene[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
+colocResultsigGene <- colocResultsigGene[geneType =="protein coding"]
+```
+
+```{r eval=TRUE}
+colocResultsigGene
+```
+
+Ridgeline plot can be used to compare the expressions among these genes:
+
+```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_genesExp(colocResultsigGene$geneSymbol, tissueSiteDetail=tissueSiteDetail)
+```
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("prostate_geneExpInOneTissue.png")
+grid.raster(img)
+```
+
+For the potential cancer-related trait gene `MMP7` that with the highest `PPH4.ABF=0.9978`, expression of which in multiple tissues can be plotted with `xQTLvisual_geneExpTissues`:
+```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+geneExpTissues <- xQTLvisual_geneExpTissues("MMP7", log10y = TRUE)
+```
+```{r, fig.width=7, fig.height=3.3, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("prostate_exp_multissues.png")
+grid.raster(img)
+```
+
+The number and significance of eQTLs in distinguished tissues are capable of showing a tissue-specific effect or a ubiquitous effect. The function `xQTLvisual_eqtl` can be used to indicate whether the gene is widely regulation in various tissues.
+```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_eqtl("MMP7")
+```
+```{r, fig.width=7, fig.height=2.9, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("prostate_eqtlTissues.png")
+grid.raster(img)
+```
+
+
+Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoom` to  visualize the colocalization between the GWAS and the eQTL dataset for a specified gene, we take the gene `MMP7` as an example:
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 t1 <- tempfile()
 utils::download.file("https://gitee.com/stronghoney/exampleData/raw/master/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
 ```
 
-Merge the variants of GWAS and eQTL dataset by rsid:
+
 ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000137673.8",tissueSiteDetail = tissueSiteDetail, 
+# Download all eQTL associations of gene  MMP7 in prostate:
+eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueSiteDetail = tissueSiteDetail, 
                                      withB37VariantId=FALSE)
-# Here we use genome position of hg19 to visualization:
+# Merge the variants of GWAS and eQTL dataset by rsid:
 gwasEqtldata <- merge(gwasDF[,-c("AF")], eqtlAsso[,.(rsid=snpId, pValue)],
                       by=c("rsid"), suffixes = c(".gwas",".eqtl"))
 ```
 
-Five fields are retained:
+Five retained fields are required:
 ```{r eval=TRUE}
 gwasEqtldata
 ```
   
-Visualization of P-value distribution and comparison of the signals of GWAS and eQTL:
+Visualization of p-value distribution and comparison of the signals of GWAS and eQTL:
 ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], 
                         gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
@@ -215,7 +265,7 @@ grid.raster(img)
   
 From the above figures, we can see that the SNP `rs11568818` is potential causal variant, and we can use a violin plot to show the normalized effect size of it:
 ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-xQTLvisual_eqtlExp("rs11568818", "ENSG00000137673.8", tissueSiteDetail = tissueSiteDetail)
+xQTLvisual_eqtlExp("rs11568818", "MMP7", tissueSiteDetail = tissueSiteDetail)
 ```
 ```{r, fig.width=3.5, fig.height=3.2, echo=FALSE, fig.align="center"}
 library(png)
@@ -223,54 +273,27 @@ library(grid)
 img <- readPNG("prostate_eQTL_exp.png")
 grid.raster(img)
 ```
-  
-visualization of the gene expression among multiple tissues:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-geneExpTissues <- xQTLvisual_geneExpTissues("ENSG00000137673.8", tissues="All")
-```
+
 
 
 ## Extension: Integrative analysis with external packages or tools
 
-To gain insight into the function of trait genes with PPH4>0.75, and explore the potential regulatory mechanism of the prostate cancer, we first fetched all these genes' details with `xQTLquery_gene`:
-
-```{r eval=TRUE, message=FALSE}
-library(SummarizedExperiment)
-
-colocResultsigGene <- xQTLquery_gene(colocResultsig$traitGene)
-```
-Add the value of PPH4 for each gene:
-```{r eval=TRUE}
-colocResultsigGene <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
-                            colocResultsigGene[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
-head(colocResultsigGene)
-```
-
-To explore the genes that co-expressed with above genes, we download expression profiles of all protein-coding genes in prostate.
+To gain insight into the function of trait genes with high PPH4, and explore the potential regulatory mechanism of the prostate cancer, we first download expression profiles of the genes with higher value of PPH4 (>0.75) in prostate.
 
 ```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-prot <- xQTLquery_gene(genes="protein coding")
-protExp <- xQTLdownload_exp(prot$gencodeId, tissueSiteDetail=tissueSiteDetail)
-# Extract expression profiles: 
-expMat <- SummarizedExperiment::assay(protExp)
+expMat <- xQTLdownload_exp(colocResultsigGene$gencodeId, tissueSiteDetail=tissueSiteDetail, toSummarizedExperiment =FALSE)
 ```
 
-```{r eval=TRUE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 expZip <- tempfile(fileext = ".zip")
 utils::download.file("https://raw.githubusercontent.com/dingruofan/exampleData/master/expmat.zip", expZip)
 expMat<- read.table(unzip(expZip, "expmat.txt", exdir = dirname(expZip)), row.names = 1, fill=TRUE, header = TRUE, check.names = FALSE)
 ```
 
+For convenience, we convert `expMat` to a data.table object and retain gene name as a column.
 ```{r eval=TRUE}
+expMat <- na.omit( cbind(data.table( gencodeId = rownames(expMat) ), as.data.table(expMat) ) )
 expMat[1:5,1:4]
 ```
-
-We can calculate pearson coefficient with the expression matrix for each trait gene:
-```
-<!-- for( i in 1:nrow(colocResultsigGene)){ -->
-<!--   lapply(colocResultsigGene[i]$gencodeId) -->
-<!-- } -->
-```
-
 
 
