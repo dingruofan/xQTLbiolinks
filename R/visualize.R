@@ -729,7 +729,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @export
 #'
 #' @examples
-#' u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
+#' u1 <-"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
 #' gwasEqtldata <- data.table::fread(u1)
 #' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){

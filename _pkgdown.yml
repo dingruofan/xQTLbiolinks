@@ -13,4 +13,4 @@ articles:
     desc: >
       The following vignettes provide detailed application of the xQTLbiolinks package.
     contents:
-    - Case study: Colocalization analysis with xQTLbiolinks
+  - Case study: Colocalization analysis with xQTLbiolinks

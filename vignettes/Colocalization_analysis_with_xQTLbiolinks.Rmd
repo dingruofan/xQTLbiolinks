@@ -1,105 +1,108 @@
 ---
 title: "Colocalization_analysis_with_xQTLbiolinks"
-date: "`r format(Sys.time(), '%Y-%b-%d')`"
+date: "2022-06-08"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Colocalization_analysis_with_xQTLbiolinks}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+link-citations: true
+lang: en-US
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   echo=TRUE,
   progress =FALSE,
-  collapse = TRUE,
   comment = ">"
 )
 ```
 
+## Before we start.
 
+All we need to prepare include three parts:
 
-## Before we start. 
-All we need to prepare include two parts: 
+1.  GWAS summary statistics dataset.
+2.  Name of tissue of interest.
+3.  Following three packages.
 
-  1. GWAS summary statistics dataset.
-  2. Name of tissue of interest. 
-  
-In this example, we download summary statistics dataset of a GWAS study ([GCST006085](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz)) of prostate cancer from GWAS category and load the dataset in R with `data.table` package. Correspondingly, we chose tissue `Porstate` for study.
-
-```{r setup, message=FALSE}
+```{r, message = FALSE, warning = FALSE, include = FALSE}
 library(data.table)
 library(xQTLbiolinks)
 library(stringr)
 ```
 
-We retain the variants with dbSNP id (start with `rs`), and a data.table object named `gwasDF` of 13,498,990 (rows) x 5 (cols) is loaded.
+------------------------------------------------------------------------
 
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-gwasDF <- fread("D:\\R_project\\Data\\GLGC_CG0276_result.txt")
+Prostate cancer is one of the most common cancers in men. Prostate cancer pathogenesis involves both heritable and environmental factors. The molecular events involved in the development or progression of prostate cancer are still unclear. In this example, we aim to figure out the causal variants and genes assocaited with prostate cancer, and to uncover potential molecular mechanisms of regulation.
+
+For data preparation, we download summary statistics dataset of a GWAS study ([GCST006085](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz)) of prostate cancer from GWAS category and load the dataset in R with `data.table` package. Correspondingly, we chose tissue `Porstate` for study. We retain the variants with dbSNP id (start with `rs`), and a data.table object named `gwasDF` of 13,498,990 (rows) x 5 (cols) is loaded.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+gwasDF <- fread("29892016-GCST006085-EFO_0001663-build37.f.tsv.gz")
 # extract columns.
 gwasDF<- gwasDF[str_detect(variant_id, "^rs"),.(rsid=variant_id, chrom=chromosome, position= base_pair_location, pValue=p_value, AF=effect_allele_frequency)]
 # tissue:
 tissueSiteDetail="Prostate"
 ```
 
-``` {r message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 gwasDF <- example_Coloc_gwasDF
 ```
 
-```{r eval=TRUE}
+```{r, eval=TRUE}
 head(gwasDF)
 ```
 
-## Step 1: Filter sentinel snps. 
+## Step 1: Filter sentinel snps.
 
-Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value < 5e-8 and SNP-to-SNP distance > 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE`:
+Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value \< 5e-8 and SNP-to-SNP distance \> 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE`:
 
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e6,
                                             genomeVersion="grch37", grch37To38=TRUE)
 ```
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 sentinelSnpDF <- example_Coloc_sentinelSNP
 ```
 
 A total of 94 sentinel SNPs are detected.
-```{r eval=TRUE}
+
+```{r, eval=TRUE}
 head(sentinelSnpDF)
 ```
 
-## Step 2: Identify trait genes for each sentinel SNPs. 
+## Step 2: Identify trait genes for each sentinel SNPs.
 
 Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter `detectRange`) of sentinel SNPs. In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function `xQTLanalyze_getTraits`:
 
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e6, tissueSiteDetail=tissueSiteDetail)
 ```
 
 Totally, 898 associations between 835 traits genes and 92 sentinel SNPs are detected
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 tissueSiteDetail="Prostate"
 traitsAll <- example_Coloc_traitsAll
 ```
 
-```{r eval=TRUE}
+```{r, eval=TRUE}
 head(example_Coloc_traitsAll)
 ```
 
-
-## Step 3: Conduct colocalization analysis. 
+## Step 3: Conduct colocalization analysis.
 
 Following three steps of colocalization analysis are encapsulated in one function xQTLanalyze_coloc:
 
-1. Retrieved all associations from EBI eQTL catalogue for a specified gene.
-2. Merge the data.frame of GWAS and eQTL by rsid.
-3. Perform colocalization analysis using coloc package.
-
+1.  Retrieved all associations from EBI eQTL catalogue for a specified gene.
+2.  Merge the data.frame of GWAS and eQTL by rsid.
+3.  Perform colocalization analysis using coloc package.
 
 For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several hours):
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 genesAll<- unique(traitsAll$gencodeId)
 colocResultAll <- data.table()
 for(i in 1:length(genesAll)){
@@ -108,64 +111,73 @@ for(i in 1:length(genesAll)){
   message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i,"/",length(genesAll)," == Gene:",genesAll[i], " == PP4: ", colocResult$PP.H4.abf)
 }
 ```
-  
-```{r message=FALSE, warning=FALSE, include=FALSE}
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 colocResultAll <- example_Coloc_colocResultAll
 ```
 
-In this case, we invoke the funciton `coloc.abf` from package `coloc` to estimate the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:
-  
-- H0 : neither trait has a genetic association in the region
-- H1: only trait 1 has a genetic association in the region
-- H2: only trait 2 has a genetic association in the region
-- H3: both traits are associated, but with different causal variants
-- H4: both traits are associated and share a single causal variant
+In this case, we invoke the funciton `coloc.abf` from package `coloc` to estimate the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:[@zheng2021]
+
+-   H0 : neither trait has a genetic association in the region
+-   H1: only trait 1 has a genetic association in the region
+-   H2: only trait 2 has a genetic association in the region
+-   H3: both traits are associated, but with different causal variants
+-   H4: both traits are associated and share a single causal variant
 
 Output is a data.table that combined all results of `coloc_Out_summary` of all genes. The posterior probability of variants to each hypothesis (H0-H4) are listed in `colocResultAll`:
-```{r eval=TRUE}
+
+```{r, eval=TRUE}
 head(colocResultAll)
+```
+
+To save time and go through this case as soon as possible, you can get the above result directly with:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+colocResultAll <- fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt")
 ```
 
 ## Step 4: Visualization of the results.
 
 We considered colocalization tests with a posterior probability of hypothesis 4 (PPH4.ABF) ≥ 0.75 as having strong or moderate evidence for colocalization.
-  
-```{r message=FALSE, warning=FALSE, include=FALSE}
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 colocResultsig <- example_Coloc_colocResultsig
 ```
 
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 colocResultsig <- colocResultAll[PP.H4.abf>0.75][order(-PP.H4.abf)]
 ```
 
 There are 27 trait genes that are associated and share a single causal variant:
 
-```{r eval=TRUE}
+```{r, eval=TRUE}
 head(colocResultsig)
 ```
-  
+
 All these genes' details can be fetched with `xQTLquery_gene`:
 
 ```{r eval=TRUE, message=FALSE}
-colocResultsigGene <- xQTLquery_gene(colocResultsig$traitGene)
+outGenes <- xQTLquery_gene(colocResultsig$traitGene)
 ```
 
 Add the value of PPH4 for each gene, and remove non-protein-coding genes:
-```{r eval=TRUE}
-colocResultsigGene <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
-                            colocResultsigGene[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
-colocResultsigGene <- colocResultsigGene[geneType =="protein coding"]
+
+```{r, eval=TRUE}
+outGenes <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
+                            outGenes[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
+outGenes <- outGenes[geneType =="protein coding"]
 ```
 
-```{r eval=TRUE}
-colocResultsigGene
+```{r, eval=TRUE}
+outGenes
 ```
 
 Ridgeline plot can be used to compare the expressions among these genes:
 
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-xQTLvisual_genesExp(colocResultsigGene$geneSymbol, tissueSiteDetail=tissueSiteDetail)
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_genesExp(outGenes$geneSymbol, tissueSiteDetail=tissueSiteDetail)
 ```
+
 ```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
@@ -173,10 +185,14 @@ img <- readPNG("prostate_geneExpInOneTissue.png")
 grid.raster(img)
 ```
 
-For the potential cancer-related trait gene `MMP7` that with the highest `PPH4.ABF=0.9978`, expression of which in multiple tissues can be plotted with `xQTLvisual_geneExpTissues`:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis **refseq**. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 **zhang2017**. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer **tregunna2020**.
+
+Expression of MMP7 in multiple tissues can be plotted with `xQTLvisual_geneExpTissues`:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 geneExpTissues <- xQTLvisual_geneExpTissues("MMP7", log10y = TRUE)
 ```
+
 ```{r, fig.width=7, fig.height=3.3, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
@@ -185,9 +201,11 @@ grid.raster(img)
 ```
 
 The number and significance of eQTLs in distinguished tissues are capable of showing a tissue-specific effect or a ubiquitous effect. The function `xQTLvisual_eqtl` can be used to indicate whether the gene is widely regulation in various tissues.
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtl("MMP7")
 ```
+
 ```{r, fig.width=7, fig.height=2.9, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
@@ -195,16 +213,15 @@ img <- readPNG("prostate_eqtlTissues.png")
 grid.raster(img)
 ```
 
+Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoom` to visualize the colocalization between the GWAS and the eQTL dataset for a specified gene, we take the gene `MMP7` as an example:
 
-Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoom` to  visualize the colocalization between the GWAS and the eQTL dataset for a specified gene, we take the gene `MMP7` as an example:
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 t1 <- tempfile()
 utils::download.file("https://gitee.com/stronghoney/exampleData/raw/master/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
 ```
 
-
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 # Download all eQTL associations of gene  MMP7 in prostate:
 eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueSiteDetail = tissueSiteDetail, 
                                      withB37VariantId=FALSE)
@@ -214,59 +231,70 @@ gwasEqtldata <- merge(gwasDF[,-c("AF")], eqtlAsso[,.(rsid=snpId, pValue)],
 ```
 
 Five retained fields are required:
-```{r eval=TRUE}
+
+```{r, eval=TRUE}
 gwasEqtldata
 ```
-  
+
 Visualization of p-value distribution and comparison of the signals of GWAS and eQTL:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], 
                         gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
 ```
+
 ```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
 img <- readPNG("prostate_locuscompare.png")
 grid.raster(img)
 ```
-  
+
 Locuszoom plot of GWAS signals:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE)
 ```
+
 ```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
 img <- readPNG("prostate_locuszoom_gwas.png")
 grid.raster(img)
 ```
-  
+
 Locuszoom plot of eQTL signals:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE)
 ```
+
 ```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
 img <- readPNG("prostate_locuszoom_eqtl.png")
 grid.raster(img)
 ```
-  
+
 We can also combine locuscompare and locuszoom plot using function `xQTLvisual_locusCombine`:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas", "pValue.eqtl")])
 ```
+
 ```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
 img <- readPNG("prostate_combined.png")
 grid.raster(img)
 ```
-  
+
 From the above figures, we can see that the SNP `rs11568818` is potential causal variant, and we can use a violin plot to show the normalized effect size of it:
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtlExp("rs11568818", "MMP7", tissueSiteDetail = tissueSiteDetail)
 ```
+
 ```{r, fig.width=3.5, fig.height=3.2, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
@@ -274,26 +302,61 @@ img <- readPNG("prostate_eQTL_exp.png")
 grid.raster(img)
 ```
 
-
-
 ## Extension: Integrative analysis with external packages or tools
 
-To gain insight into the function of trait genes with high PPH4, and explore the potential regulatory mechanism of the prostate cancer, we first download expression profiles of the genes with higher value of PPH4 (>0.75) in prostate.
+To gain insight into the function of trait genes with high PPH4, and explore the potential regulatory mechanism of the prostate cancer, we can conduct exploratory analysis, like co-expression analysis, and gene ontology enrichment analyses.
 
-```{r results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-expMat <- xQTLdownload_exp(colocResultsigGene$gencodeId, tissueSiteDetail=tissueSiteDetail, toSummarizedExperiment =FALSE)
+First we download expression profiles of the genes with higher value of PPH4 (>0.75) in prostate.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+expMat <- xQTLdownload_exp(outGenes$gencodeId, tissueSiteDetail=tissueSiteDetail, toSummarizedExperiment =FALSE)
 ```
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
-expZip <- tempfile(fileext = ".zip")
-utils::download.file("https://raw.githubusercontent.com/dingruofan/exampleData/master/expmat.zip", expZip)
-expMat<- read.table(unzip(expZip, "expmat.txt", exdir = dirname(expZip)), row.names = 1, fill=TRUE, header = TRUE, check.names = FALSE)
+Pearson coefficient can be calculated with the expression matrix for each gene:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+corDT <- cor(t(expMat[,-1:-6]))
+colnames(corDT) <- outGenes$geneSymbol
+rownames(corDT) <- outGenes$geneSymbol
 ```
 
-For convenience, we convert `expMat` to a data.table object and retain gene name as a column.
-```{r eval=TRUE}
-expMat <- na.omit( cbind(data.table( gencodeId = rownames(expMat) ), as.data.table(expMat) ) )
-expMat[1:5,1:4]
+R package `corrplot` is used to display this correlation matrix:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+library(corrplot) 
+corrplot(corDT, method="color",  
+         type="upper",    
+         order = "hclust",
+         addCoef.col = "#ff0099", 
+         number.cex = 0.7) 
 ```
 
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("prostate_cor.png")
+grid.raster(img)
+```
 
+R package `clusterProfiler` is used for gene functional annotation:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+library(clusterProfiler)
+ego <- enrichGO(gene = as.character(outGenes$entrezGeneId),
+                OrgDb = org.Hs.eg.db,
+                ont= "BP",
+                pAdjustMethod ="none",
+                readable = TRUE)
+dotplot(ego, showCategory=15)
+```
+
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("prostate_Go.png")
+grid.raster(img)
+```
+
+Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighten the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate **abidi2018c**. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.
+
+## References

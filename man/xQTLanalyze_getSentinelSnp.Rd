@@ -45,10 +45,8 @@ Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 
 }
 \examples{
 \donttest{
- gwasFile <- tempfile(pattern = "file")
- url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
- utils::download.file(url, destfile=gwasFile)
- gwasDF <- data.table::fread(gwasFile, sep="\t")
+ url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+ gwasDF <- data.table::fread(url)
  gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
  sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 }
