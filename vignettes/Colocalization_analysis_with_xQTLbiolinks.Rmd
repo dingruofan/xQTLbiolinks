@@ -1,5 +1,5 @@
 ---
-title: "Colocalization_analysis_with_xQTLbiolinks"
+title: "Case study: colocalization analysis in prostate cancer"
 date: "2022-06-08"
 output: rmarkdown::html_vignette
 vignette: >
@@ -8,6 +8,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 link-citations: true
 lang: en-US
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -24,15 +25,13 @@ All we need to prepare include three parts:
 
 1.  GWAS summary statistics dataset.
 2.  Name of tissue of interest.
-3.  Following three packages.
+3.  Following three installed packages.
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 library(data.table)
 library(xQTLbiolinks)
 library(stringr)
 ```
-
-------------------------------------------------------------------------
 
 Prostate cancer is one of the most common cancers in men. Prostate cancer pathogenesis involves both heritable and environmental factors. The molecular events involved in the development or progression of prostate cancer are still unclear. In this example, we aim to figure out the causal variants and genes assocaited with prostate cancer, and to uncover potential molecular mechanisms of regulation.
 
@@ -56,7 +55,7 @@ head(gwasDF)
 
 ## Step 1: Filter sentinel snps.
 
-Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value \< 5e-8 and SNP-to-SNP distance \> 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE`:
+Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value \< 5e-8 and SNP-to-SNP distance \> 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE` (package `rtracklayer`is required):
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e6,
@@ -133,7 +132,7 @@ head(colocResultAll)
 To save time and go through this case as soon as possible, you can get the above result directly with:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-colocResultAll <- fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt")
+colocResultAll <- fread("http://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt")
 ```
 
 ## Step 4: Visualization of the results.
@@ -185,7 +184,7 @@ img <- readPNG("prostate_geneExpInOneTissue.png")
 grid.raster(img)
 ```
 
-Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis **refseq**. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 **zhang2017**. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer **tregunna2020**.
+Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis [@RefSeq]. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 [@zhang2017]. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer [@tregunna2020].
 
 Expression of MMP7 in multiple tissues can be plotted with `xQTLvisual_geneExpTissues`:
 
@@ -357,6 +356,6 @@ img <- readPNG("prostate_Go.png")
 grid.raster(img)
 ```
 
-Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighten the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate **abidi2018c**. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.
+Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighten the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate [@abidi2018]. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.
 
 ## References

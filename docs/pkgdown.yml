@@ -1,6 +1,8 @@
 pandoc: 2.14.0.3
 pkgdown: 2.0.3
 pkgdown_sha: ~
-articles: {}
-last_built: 2022-06-02T07:00Z
+articles:
+  Colocalization_analysis_with_xQTLbiolinks: Colocalization_analysis_with_xQTLbiolinks.html
+  Quick_start: Quick_start.html
+last_built: 2022-06-08T16:29Z
 

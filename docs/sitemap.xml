@@ -4,6 +4,15 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/Colocalization_analysis_with_xQTLbiolinks.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/Quick_start.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -38,6 +47,21 @@
   </url>
   <url>
     <loc>/reference/ebi_qtl_groups.html</loc>
+  </url>
+  <url>
+    <loc>/reference/example_Coloc_colocResultAll.html</loc>
+  </url>
+  <url>
+    <loc>/reference/example_Coloc_colocResultsig.html</loc>
+  </url>
+  <url>
+    <loc>/reference/example_Coloc_gwasDF.html</loc>
+  </url>
+  <url>
+    <loc>/reference/example_Coloc_sentinelSNP.html</loc>
+  </url>
+  <url>
+    <loc>/reference/example_Coloc_traitsAll.html</loc>
   </url>
   <url>
     <loc>/reference/extractGeneInfo.html</loc>

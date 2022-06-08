@@ -47,7 +47,7 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
 \examples{
 # For GWAS dataset:
 library(data.table)
-gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
+gwasDF <- fread("http://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 xQTLvisual_locusZoom(gwasDF)
 # Zoom in:
 xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")

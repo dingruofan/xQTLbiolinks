@@ -26,10 +26,13 @@
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/index.html">Vignettes</a>
+</li>
+<li>
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../baidu.com">哈哈</a>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/wiki/Visualization-of-expression-and-xQTL" class="external-link">Visualization</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -80,9 +83,8 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-  <span class="va">URL1</span><span class="op">&lt;-</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"</span>
-
-  <span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">rawToChar</a></span><span class="op">(</span><span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">URL1</span><span class="op">)</span><span class="op">$</span><span class="va">content</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">URL1</span><span class="op">&lt;-</span><span class="st">"http://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"</span>
+  <span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">URL1</span><span class="op">)</span>
   <span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getTraits</span><span class="op">(</span><span class="va">sentinelSnpDF</span>,detectRange<span class="op">=</span><span class="fl">1e4</span>,<span class="st">"Brain - Cerebellum"</span>,
                                      genomeVersion<span class="op">=</span><span class="st">"grch37"</span>, grch37To38<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># }</span>

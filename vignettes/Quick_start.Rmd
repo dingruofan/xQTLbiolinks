@@ -1,0 +1,238 @@
+---
+title: "A quick application of coloclization analysis"
+date: "2022-06-08"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick_start}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+lang: en-US
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE,
+  collapse = FALSE,
+  progress =FALSE,
+  comment = ">"
+)
+```
+
+```{r setup}
+library(xQTLbiolinks)
+```
+
+# A quick application of coloclization analysis
+
+## Before we start
+
+Colocalization analysis can be performed with `xQTLbiolinks` by providing their own GWAS summary statistics data. All we need to prepare include three parts:
+
+1.  GWAS summary statistics dataset.
+2.  Name of tissue of interest.
+3.  Following three installed packages.
+
+```{r, message = FALSE, warning = FALSE, include = FALSE}
+library(data.table)
+library(xQTLbiolinks)
+library(stringr)
+```
+
+## Step 1. data preparation.
+
+Download and load an example file of summary statistics dataset (GRCh38). We perform colocalization analysis in `Brain - Cerebellum`.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+gwasDF <- fread("http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt")
+tissueSiteDetail="Brain - Cerebellum"
+```
+
+In this example, a data.table object of 16538 (rows) x 5 (cols) is loaded. Five columns are required (arbitrary column names is supported, but columns must be as the following order):
+
+`Col 1`. "variants" (character), , using an rsID (e.g. "rs11966562");
+
+`Col 2`. "chromosome" (character), one of the chromosome from chr1-chr22;
+
+`Col 3`. "position" (integer), genome position of snp;
+
+`Col 4`. "P-value" (numeric);
+
+`Col 5`. "MAF" (numeric). Allel frequency;
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+head(gwasDF)
+```
+
+| rsid       | chr  | position | P        | maf    |
+|:-----------|:-----|:---------|----------|--------|
+| rs13120565 | chr4 | 10702513 | 5.66e-10 | 0.6429 |
+| rs4697781  | chr4 | 10703243 | 8.94e-10 | 0.6446 |
+| rs4697779  | chr4 | 10701187 | 5.74e-09 | 0.3231 |
+| rs4697780  | chr4 | 10701381 | 5.95e-09 | 0.3231 |
+| rs4547789  | chr4 | 10702891 | 1.46e-08 | 0.3197 |
+| rs11726285 | chr4 | 10700944 | 1.47e-08 | 0.3214 |
+
+## Step 2. Filter sentinel snps.
+
+Sentinel SNPs can be detected using `xQTLanalyze_getSentinelSnp` with the arguments `p-value < 5e-8` and `SNP-to-SNP distance > 10e6 bp`. We recommend converting the genome version of the GWAS file to GRCh38 if that is GRCh37 (run with parameter: `genomeVersion="grch37"`; `grch37To38=TRUE`, and package `rtracklayer`is required).
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, pValueThreshold = 5e-08)
+```
+
+After filtering, a sentinel SNP with P-value\<5e-8 is detected in this example:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+sentinelSnpDF
+```
+
+| rsid       | chr  | position | pValue   | maf    |
+|------------|------|----------|----------|--------|
+| rs13120565 | chr4 | 10702513 | 5.66e-10 | 0.6429 |
+
+## Step 3. Identify trait genes for each sentinel SNPs.
+
+Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter `detectRange`) of sentinel SNPs. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function `xQTLanalyze_getTraits`.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e6, tissueSiteDetail=tissueSiteDetail)
+```
+
+Totally, 3 associations between 3 traits genes and 1 SNPs are detected
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+traitsAll
+```
+
+| chromosome | geneStart | geneEnd  | geneStrand | geneSymbol    | gencodeId          | rsid       | position | pValue   | maf    |
+|------------|-----------|----------|------------|---------------|--------------------|------------|----------|----------|--------|
+| chr4       | 11393150  | 11429765 | \-         | HS3ST1        | ENSG00000002587.9  | rs13120565 | 10702513 | 5.66e-10 | 0.6429 |
+| chr4       | 10486395  | 10684865 | \-         | CLNK          | ENSG00000109684.14 | rs13120565 | 10702513 | 5.66e-10 | 0.6429 |
+| chr4       | 10068089  | 10073019 | \-         | RP11-448G15.3 | ENSG00000261490.1  | rs13120565 | 10702513 | 5.66e-10 | 0.6429 |
+
+## Step 4. Conduct colocalization analysis.
+
+Following three steps of colocalization analysis are encapsulated in one function `xQTLanalyze_coloc`:
+
+-   Retrieved all associations from EBI eQTL catalogue for a specified gene.
+-   Merge the data.frame of GWAS and eQTL by rsid.
+-   Perform colocalization analysis using`coloc` package.
+
+**For a single trait gene**, like *CLNK* in above table, colocalization analysis can be performed with:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+output <- xQTLanalyze_coloc(gwasDF, "CLNK", tissueSiteDetail=tissueSiteDetail) # using gene symbol
+```
+
+*output* is a list, including three parts: *coloc_Out_summary*, *gwasEqtlInfo*, and *gwasEqtlInfo*.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+output$coloc_Out_summary
+```
+
+| nsnps | PP.H0.abf    | PP.H1.abf   | PP.H2.abf    | PP.H3.abf  | PP.H4.abf | traitGene |
+|-------|--------------|-------------|--------------|------------|-----------|-----------|
+| 7108  | 7.097893e-11 | 1.32221e-07 | 3.890211e-06 | 0.00625302 | 0.993743  | CLNK      |
+
+**For multiple trait genes**, a for loop or lapply function can be used to get all genes' outputs.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+outputs <- rbindlist(lapply( unique(traitsAll$gencodeId), function(x){ # using gencode ID.
+ xQTLanalyze_coloc(gwasDF, x, tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary }))
+```
+
+*outputs* is a data.table that combined all results of *coloc_Out_summary* of all genes.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+outputs
+```
+
++---------+--------------+--------------+--------------+------------+------------+--------------------+
+| nsnps   | PP.H0.abf    | PP.H1.abf    | PP.H2.abf    | PP.H3.abf  | PP.H4.abf  | traitGene          |
++=========+==============+==============+==============+============+============+====================+
+| 6453    | 1.730172e-05 | 3.218423e-02 | 6.603463e-05 | 0.12199027 | 0.84574216 | ENSG00000002587.9  |
++---------+--------------+--------------+--------------+------------+------------+--------------------+
+| 7108    | 7.097893e-11 | 1.322210e-07 | 3.890211e-06 | 0.00625302 | 0.99374296 | ENSG00000109684.14 |
++---------+--------------+--------------+--------------+------------+------------+--------------------+
+| 6601    | 5.287051e-05 | 9.848309e-02 | 4.801374e-04 | 0.89435622 | 0.00662768 | ENSG00000261490.1  |
++---------+--------------+--------------+--------------+------------+------------+--------------------+
+
+## Step 5. Visualization of the results.
+
+For the potential casual gene (***ENSG00000187323.11***, PP4=**0.9937**), We merge the variants of GWAS and eQTL by rsid.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000109684.14", 
+                                     tissueSiteDetail = tissueSiteDetail, 
+                                     withB37VariantId=FALSE)
+gwasEqtldata <- merge(gwasDF, eqtlAsso[,.(rsid=snpId, position=pos, maf, pValue)],
+                      by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
+```
+
+Visualization of p-value distribution and comparison of the signals of GWAS and eQTL:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], 
+                       gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
+```
+
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("../img/compare.png")
+grid.raster(img)
+```
+
+Locuszoom plot of GWAS signals:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE)
+```
+
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("../img/gwas_legendF.png")
+grid.raster(img)
+```
+
+Locuszoom plot of eQTL signals:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], 
+                     highlightSnp = "rs13120565", legend=FALSE)
+```
+
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("../img/eqtl_legendF.png")
+grid.raster(img)
+```
+
+Violin plot of normalized exprssion of eQTL:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_eqtlExp("rs13120565", "ENSG00000109684.14", tissueSiteDetail = tissueSiteDetail)
+```
+
+```{r, fig.width=3.3, fig.height=3, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("../img/exp.png")
+grid.raster(img)
+```
+
+We can also combine locuscompare and locuszoom plot using `xQTLvisual_locusCombine`:
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas", "pValue.eqtl")], 
+                        highlightSnp="rs13120565")
+```
+
+```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
+library(png)
+library(grid)
+img <- readPNG("../img/xQTLvisual_locusCombine.png")
+grid.raster(img)
+```

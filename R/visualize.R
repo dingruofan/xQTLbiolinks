@@ -378,7 +378,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @examples
 #' # For GWAS dataset:
 #' library(data.table)
-#' gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
+#' gwasDF <- fread("http://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 #' xQTLvisual_locusZoom(gwasDF)
 #' # Zoom in:
 #' xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
@@ -562,8 +562,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'
 #' @examples
 #' library(data.table)
-#' eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
-#' gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+#' eqtlDF <-fread("http://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
+#' gwasDF <-fread("http://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
 #' xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
   x <- y<- genomeVersion <- NULL

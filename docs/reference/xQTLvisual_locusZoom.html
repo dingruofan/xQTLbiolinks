@@ -27,10 +27,13 @@ This function is rebuilt from locuscompare.R (https://github.com/boxiangliu/locu
   <a href="../index.html">Home</a>
 </li>
 <li>
+  <a href="../articles/index.html">Vignettes</a>
+</li>
+<li>
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../baidu.com">哈哈</a>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/wiki/Visualization-of-expression-and-xQTL" class="external-link">Visualization</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -93,7 +96,7 @@ This function is rebuilt from <code>locuscompare.R</code> (https://github.com/bo
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># For GWAS dataset:</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
-<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span>
+<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span>
 <span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span>
 <span class="co"># Zoom in:</span>
 <span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">gwasDF</span>, posRange<span class="op">=</span><span class="st">"chr6:4.7e7-4.8e7"</span>, population <span class="op">=</span><span class="st">"EUR"</span><span class="op">)</span>
