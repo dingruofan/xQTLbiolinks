@@ -45,7 +45,5 @@ coloc resut
 conduct colocalization analysis with detected gene.
 }
 \examples{
-\donttest{
-  # please see see vignette.
-}
+# Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/
 }

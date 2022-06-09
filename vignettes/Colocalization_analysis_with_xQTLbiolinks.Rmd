@@ -180,7 +180,7 @@ xQTLvisual_genesExp(outGenes$geneSymbol, tissueSiteDetail=tissueSiteDetail)
 ```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_geneExpInOneTissue.png")
+img <- readPNG("../img/prostate/prostate_geneExpInOneTissue.png")
 grid.raster(img)
 ```
 
@@ -195,7 +195,7 @@ geneExpTissues <- xQTLvisual_geneExpTissues("MMP7", log10y = TRUE)
 ```{r, fig.width=7, fig.height=3.3, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_exp_multissues.png")
+img <- readPNG("../img/prostate/prostate_exp_multissues.png")
 grid.raster(img)
 ```
 
@@ -208,7 +208,7 @@ xQTLvisual_eqtl("MMP7")
 ```{r, fig.width=7, fig.height=2.9, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_eqtlTissues.png")
+img <- readPNG("../img/prostate/prostate_eqtlTissues.png")
 grid.raster(img)
 ```
 
@@ -245,7 +245,7 @@ xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)],
 ```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_locuscompare.png")
+img <- readPNG("../img/prostate/prostate_locuscompare.png")
 grid.raster(img)
 ```
 
@@ -258,7 +258,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legen
 ```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_locuszoom_gwas.png")
+img <- readPNG("../img/prostate/prostate_locuszoom_gwas.png")
 grid.raster(img)
 ```
 
@@ -271,7 +271,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legen
 ```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_locuszoom_eqtl.png")
+img <- readPNG("../img/prostate/prostate_locuszoom_eqtl.png")
 grid.raster(img)
 ```
 
@@ -284,7 +284,7 @@ xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas
 ```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_combined.png")
+img <- readPNG("../img/prostate/prostate_combined.png")
 grid.raster(img)
 ```
 
@@ -297,7 +297,7 @@ xQTLvisual_eqtlExp("rs11568818", "MMP7", tissueSiteDetail = tissueSiteDetail)
 ```{r, fig.width=3.5, fig.height=3.2, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_eQTL_exp.png")
+img <- readPNG("../img/prostate/prostate_eQTL_exp.png")
 grid.raster(img)
 ```
 
@@ -333,7 +333,7 @@ corrplot(corDT, method="color",
 ```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_cor.png")
+img <- readPNG("../img/prostate/prostate_cor.png")
 grid.raster(img)
 ```
 
@@ -352,7 +352,7 @@ dotplot(ego, showCategory=15)
 ```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
 library(png)
 library(grid)
-img <- readPNG("prostate_Go.png")
+img <- readPNG("../img/prostate/prostate_Go.png")
 grid.raster(img)
 ```
 

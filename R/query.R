@@ -889,8 +889,8 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #' @title xQTLquery_tissue
 #' @description Fetch all detail information of a specified tissue or all tissues.
 #'  Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
-#' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"
-#' @param datasetId gtex_v8 or gtex_v7. Default: gtex_v8
+#' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId "gtex_v8" or "gtex_v7". Default: "gtex_v8"
 #'
 #' @return A data.table
 #' @export
