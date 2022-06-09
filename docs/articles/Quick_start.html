@@ -76,30 +76,25 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">xQTLbiolinks</span><span class="op">)</span></code></pre></div>
-<pre><code>&gt; xQTLbiolinks v0.1.0  For help: https://github.com/lilab-bioinfo/xQTLbiolinks/
-&gt; 
-&gt; If you use xQTLbiolinks in published research, please cite:
-&gt; Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data.</code></pre>
 <div class="section level2">
-<h2 id="a-quick-application-of-coloclization-analysis">A quick application of coloclization analysis<a class="anchor" aria-label="anchor" href="#a-quick-application-of-coloclization-analysis"></a>
+<h2 id="before-we-start">Before we start<a class="anchor" aria-label="anchor" href="#before-we-start"></a>
 </h2>
-<div class="section level3">
-<h3 id="before-we-start">Before we start<a class="anchor" aria-label="anchor" href="#before-we-start"></a>
-</h3>
 <p>Colocalization analysis can be performed with <code>xQTLbiolinks</code> by providing their own GWAS summary statistics data. All we need to prepare include three parts:</p>
 <ol style="list-style-type: decimal">
 <li>GWAS summary statistics dataset.</li>
 <li>Name of tissue of interest.</li>
 <li>Following three installed packages.</li>
 </ol>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">xQTLbiolinks</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="step-1--data-preparation-">Step 1. data preparation.<a class="anchor" aria-label="anchor" href="#step-1--data-preparation-"></a>
-</h3>
+<div class="section level2">
+<h2 id="step-1--data-preparation-">Step 1. data preparation.<a class="anchor" aria-label="anchor" href="#step-1--data-preparation-"></a>
+</h2>
 <p>Download and load an example file of summary statistics dataset (GRCh38). We perform colocalization analysis in <code>Brain - Cerebellum</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"</span><span class="op">)</span>
 <span class="va">tissueSiteDetail</span><span class="op">=</span><span class="st">"Brain - Cerebellum"</span></code></pre></div>
 <p>In this example, a data.table object of 16538 (rows) x 5 (cols) is loaded. Five columns are required (arbitrary column names is supported, but columns must be as the following order):</p>
@@ -108,7 +103,7 @@
 <p><code>Col 3</code>. “position” (integer), genome position of snp;</p>
 <p><code>Col 4</code>. “P-value” (numeric);</p>
 <p><code>Col 5</code>. “MAF” (numeric). Allel frequency;</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -164,14 +159,14 @@
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="step-2--filter-sentinel-snps-">Step 2. Filter sentinel snps.<a class="anchor" aria-label="anchor" href="#step-2--filter-sentinel-snps-"></a>
-</h3>
+<div class="section level2">
+<h2 id="step-2--filter-sentinel-snps-">Step 2. Filter sentinel snps.<a class="anchor" aria-label="anchor" href="#step-2--filter-sentinel-snps-"></a>
+</h2>
 <p>Sentinel SNPs can be detected using <code>xQTLanalyze_getSentinelSnp</code> with the arguments <code>p-value &lt; 5e-8</code> and <code>SNP-to-SNP distance &gt; 10e6 bp</code>. We recommend converting the genome version of the GWAS file to GRCh38 if that is GRCh37 (run with parameter: <code>genomeVersion="grch37"</code>; <code>grch37To38=TRUE</code>, and package <code>rtracklayer</code>is required).</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_getSentinelSnp.html">xQTLanalyze_getSentinelSnp</a></span><span class="op">(</span><span class="va">gwasDF</span>, pValueThreshold <span class="op">=</span> <span class="fl">5e-08</span><span class="op">)</span></code></pre></div>
 <p>After filtering, a sentinel SNP with P-value&lt;5e-8 is detected in this example:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sentinelSnpDF</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -190,14 +185,14 @@
 </tr></tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="step-3--identify-trait-genes-for-each-sentinel-snps-">Step 3. Identify trait genes for each sentinel SNPs.<a class="anchor" aria-label="anchor" href="#step-3--identify-trait-genes-for-each-sentinel-snps-"></a>
-</h3>
+<div class="section level2">
+<h2 id="step-3--identify-trait-genes-for-each-sentinel-snps-">Step 3. Identify trait genes for each sentinel SNPs.<a class="anchor" aria-label="anchor" href="#step-3--identify-trait-genes-for-each-sentinel-snps-"></a>
+</h2>
 <p>Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter <code>detectRange</code>) of sentinel SNPs. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function <code>xQTLanalyze_getTraits</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_getTraits.html">xQTLanalyze_getTraits</a></span><span class="op">(</span><span class="va">sentinelSnpDF</span>, detectRange<span class="op">=</span><span class="fl">1e6</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span></code></pre></div>
 <p>Totally, 3 associations between 3 traits genes and 1 SNPs are detected</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">traitsAll</span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -264,9 +259,9 @@
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="step-4--conduct-colocalization-analysis-">Step 4. Conduct colocalization analysis.<a class="anchor" aria-label="anchor" href="#step-4--conduct-colocalization-analysis-"></a>
-</h3>
+<div class="section level2">
+<h2 id="step-4--conduct-colocalization-analysis-">Step 4. Conduct colocalization analysis.<a class="anchor" aria-label="anchor" href="#step-4--conduct-colocalization-analysis-"></a>
+</h2>
 <p>Following three steps of colocalization analysis are encapsulated in one function <code>xQTLanalyze_coloc</code>:</p>
 <ul>
 <li>Retrieved all associations from EBI eQTL catalogue for a specified gene.</li>
@@ -274,10 +269,10 @@
 <li>Perform colocalization analysis using<code>coloc</code> package.</li>
 </ul>
 <p><strong>For a single trait gene</strong>, like <em>CLNK</em> in above table, colocalization analysis can be performed with:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="st">"CLNK"</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span> <span class="co"># using gene symbol</span></code></pre></div>
 <p><em>output</em> is a list, including three parts: <em>coloc_Out_summary</em>, <em>gwasEqtlInfo</em>, and <em>gwasEqtlInfo</em>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">output</span><span class="op">$</span><span class="va">coloc_Out_summary</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -300,11 +295,11 @@
 </tr></tbody>
 </table>
 <p><strong>For multiple trait genes</strong>, a for loop or lapply function can be used to get all genes’ outputs.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="co"># using gencode ID.</span>
  <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">x</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span><span class="op">$</span><span class="va">coloc_Out_summary</span> <span class="op">}</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><em>outputs</em> is a data.table that combined all results of <em>coloc_Out_summary</em> of all genes.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">outputs</span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -356,40 +351,39 @@
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="step-5--visualization-of-the-results-">Step 5. Visualization of the results.<a class="anchor" aria-label="anchor" href="#step-5--visualization-of-the-results-"></a>
-</h3>
+<div class="section level2">
+<h2 id="step-5--visualization-of-the-results-">Step 5. Visualization of the results.<a class="anchor" aria-label="anchor" href="#step-5--visualization-of-the-results-"></a>
+</h2>
 <p>For the potential casual gene (<strong><em>ENSG00000187323.11</em></strong>, PP4=<strong>0.9937</strong>), We merge the variants of GWAS and eQTL by rsid.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000109684.14"</span>, 
                                      tissueSiteDetail <span class="op">=</span> <span class="va">tissueSiteDetail</span>, 
                                      withB37VariantId<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">snpId</span>, position<span class="op">=</span><span class="va">pos</span>, <span class="va">maf</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span>,
                       by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>, <span class="st">"position"</span><span class="op">)</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Visualization of p-value distribution and comparison of the signals of GWAS and eQTL:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCompare.html">xQTLvisual_locusCompare</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, 
                        <span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend_position <span class="op">=</span> <span class="st">"bottomright"</span><span class="op">)</span></code></pre></div>
 <p><img src="Quick_start_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Locuszoom plot of GWAS signals:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="Quick_start_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Locuszoom plot of eQTL signals:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, 
                      highlightSnp <span class="op">=</span> <span class="st">"rs13120565"</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="Quick_start_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Violin plot of normalized exprssion of eQTL:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_eqtlExp.html">xQTLvisual_eqtlExp</a></span><span class="op">(</span><span class="st">"rs13120565"</span>, <span class="st">"ENSG00000109684.14"</span>, tissueSiteDetail <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></code></pre></div>
 <p><img src="Quick_start_files/figure-html/unnamed-chunk-21-1.png" width="316.8" style="display: block; margin: auto;"></p>
 <p>We can also combine locuscompare and locuszoom plot using <code>xQTLvisual_locusCombine</code>:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>,<span class="st">"chrom"</span>, <span class="st">"position"</span>, <span class="st">"pValue.gwas"</span>, <span class="st">"pValue.eqtl"</span><span class="op">)</span><span class="op">]</span>, 
                         highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></code></pre></div>
 <p><img src="Quick_start_files/figure-html/unnamed-chunk-23-1.png" width="576" style="display: block; margin: auto;"></p>
-</div>
 </div>
   </div>
 

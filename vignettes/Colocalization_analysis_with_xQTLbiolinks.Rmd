@@ -27,7 +27,7 @@ All we need to prepare include three parts:
 2.  Name of tissue of interest.
 3.  Following three installed packages.
 
-```{r, message = FALSE, warning = FALSE, include = FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 library(data.table)
 library(xQTLbiolinks)
 library(stringr)
