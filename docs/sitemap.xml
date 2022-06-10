@@ -13,6 +13,9 @@
     <loc>/articles/Quick_start.html</loc>
   </url>
   <url>
+    <loc>/articles/visualization.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -26,18 +29,6 @@
   </url>
   <url>
     <loc>/reference/apiEbi_ping.html</loc>
-  </url>
-  <url>
-    <loc>/reference/apiRef_gene.html</loc>
-  </url>
-  <url>
-    <loc>/reference/apiRef_genes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createGencodeGeneInfoAll.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createTissueSiteDetailMappingData.html</loc>
   </url>
   <url>
     <loc>/reference/dbsnpQueryRange.html</loc>
@@ -77,12 +68,6 @@
   </url>
   <url>
     <loc>/reference/gencodeGenetype.html</loc>
-  </url>
-  <url>
-    <loc>/reference/gtfSubsGene.html</loc>
-  </url>
-  <url>
-    <loc>/reference/gtfSubsGeneInfo.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>

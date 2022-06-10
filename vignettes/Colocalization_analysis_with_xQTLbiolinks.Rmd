@@ -15,7 +15,7 @@ bibliography: references.bib
 knitr::opts_chunk$set(
   echo=TRUE,
   progress =FALSE,
-  comment = ">"
+  comment = "#>"
 )
 ```
 
@@ -104,10 +104,13 @@ For above 835 trait genes, a for loop can be used to get these genes' outputs of
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 genesAll<- unique(traitsAll$gencodeId)
 colocResultAll <- data.table()
+#
 for(i in 1:length(genesAll)){
-  colocResult <- xQTLanalyze_coloc(gwasDF, genomeVersion = "grch37", genesAll[i], tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary
+  colocResult <- xQTLanalyze_coloc(gwasDF, 
+                                   genomeVersion = "grch37", 
+                                   genesAll[i], tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary
   if(!is.null(colocResult)){ colocResultAll <- rbind(colocResultAll, colocResult)}
-  message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i,"/",length(genesAll)," == Gene:",genesAll[i], " == PP4: ", colocResult$PP.H4.abf)
+  message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i,"/",length(genesAll)," == Gene:",genesAll[i])
 }
 ```
 
@@ -163,7 +166,7 @@ Add the value of PPH4 for each gene, and remove non-protein-coding genes:
 
 ```{r, eval=TRUE}
 outGenes <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
-                            outGenes[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
+                  outGenes[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
 outGenes <- outGenes[geneType =="protein coding"]
 ```
 
@@ -177,12 +180,13 @@ Ridgeline plot can be used to compare the expressions among these genes:
 xQTLvisual_genesExp(outGenes$geneSymbol, tissueSiteDetail=tissueSiteDetail)
 ```
 
-```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_geneExpInOneTissue.png")
-grid.raster(img)
+
+```{r, prostate_geneExpInOneTissue.png, fig.align = 'center', out.width = "50%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_geneExpInOneTissue.png", error = FALSE)
 ```
+
+
+<!-- [![I'm Caption](images/prostate_geneExpInOneTissue.png "I'm title")](I'm link){width=50%} -->
 
 Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis [@RefSeq]. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 [@zhang2017]. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer [@tregunna2020].
 
@@ -192,11 +196,8 @@ Expression of MMP7 in multiple tissues can be plotted with `xQTLvisual_geneExpTi
 geneExpTissues <- xQTLvisual_geneExpTissues("MMP7", log10y = TRUE)
 ```
 
-```{r, fig.width=7, fig.height=3.3, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_exp_multissues.png")
-grid.raster(img)
+```{r, prostate_exp_multissues.png, fig.align = 'center', out.width = "90%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_exp_multissues.png")
 ```
 
 The number and significance of eQTLs in distinguished tissues are capable of showing a tissue-specific effect or a ubiquitous effect. The function `xQTLvisual_eqtl` can be used to indicate whether the gene is widely regulation in various tissues.
@@ -205,18 +206,15 @@ The number and significance of eQTLs in distinguished tissues are capable of sho
 xQTLvisual_eqtl("MMP7")
 ```
 
-```{r, fig.width=7, fig.height=2.9, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_eqtlTissues.png")
-grid.raster(img)
+```{r, prostate_eqtlTissues.png, fig.align = 'center', out.width = "90%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_eqtlTissues.png")
 ```
 
 Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoom` to visualize the colocalization between the GWAS and the eQTL dataset for a specified gene, we take the gene `MMP7` as an example:
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 t1 <- tempfile()
-utils::download.file("https://gitee.com/stronghoney/exampleData/raw/master/gwasEqtldata.txt", t1)
+utils::download.file("http://gitee.com/stronghoney/exampleData/raw/master/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
 ```
 
@@ -242,11 +240,8 @@ xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)],
                         gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
 ```
 
-```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_locuscompare.png")
-grid.raster(img)
+```{r, prostate_locuscompare.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_locuscompare.png")
 ```
 
 Locuszoom plot of GWAS signals:
@@ -255,11 +250,8 @@ Locuszoom plot of GWAS signals:
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE)
 ```
 
-```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_locuszoom_gwas.png")
-grid.raster(img)
+```{r, prostate_locuszoom_gwas.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_locuszoom_gwas.png")
 ```
 
 Locuszoom plot of eQTL signals:
@@ -268,11 +260,8 @@ Locuszoom plot of eQTL signals:
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE)
 ```
 
-```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_locuszoom_eqtl.png")
-grid.raster(img)
+```{r, prostate_locuszoom_eqtl.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_locuszoom_eqtl.png")
 ```
 
 We can also combine locuscompare and locuszoom plot using function `xQTLvisual_locusCombine`:
@@ -281,11 +270,8 @@ We can also combine locuscompare and locuszoom plot using function `xQTLvisual_l
 xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas", "pValue.eqtl")])
 ```
 
-```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_combined.png")
-grid.raster(img)
+```{r, prostate_combined.png, fig.align = 'center', out.width = "90%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_combined.png")
 ```
 
 From the above figures, we can see that the SNP `rs11568818` is potential causal variant, and we can use a violin plot to show the normalized effect size of it:
@@ -294,11 +280,8 @@ From the above figures, we can see that the SNP `rs11568818` is potential causal
 xQTLvisual_eqtlExp("rs11568818", "MMP7", tissueSiteDetail = tissueSiteDetail)
 ```
 
-```{r, fig.width=3.5, fig.height=3.2, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_eQTL_exp.png")
-grid.raster(img)
+```{r, prostate_eQTL_exp.png, fig.align = 'center', out.width = "40%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_eQTL_exp.png")
 ```
 
 ## Extension: Integrative analysis with external packages or tools
@@ -330,11 +313,8 @@ corrplot(corDT, method="color",
          number.cex = 0.7) 
 ```
 
-```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_cor.png")
-grid.raster(img)
+```{r, prostate_cor.png, fig.align = 'center', out.width = "90%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_cor.png")
 ```
 
 R package `clusterProfiler` is used for gene functional annotation:
@@ -349,11 +329,8 @@ ego <- enrichGO(gene = as.character(outGenes$entrezGeneId),
 dotplot(ego, showCategory=15)
 ```
 
-```{r, fig.width=6, fig.height=5.5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/prostate/prostate_Go.png")
-grid.raster(img)
+```{r, prostate_Go.png, fig.align = 'center', out.width = "80%", echo=FALSE}
+knitr::include_graphics("images/prostate/prostate_Go.png")
 ```
 
 Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighten the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate [@abidi2018]. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.

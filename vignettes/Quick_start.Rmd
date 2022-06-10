@@ -12,9 +12,8 @@ lang: en-US
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   echo=TRUE,
-  collapse = FALSE,
   progress =FALSE,
-  comment = ">"
+  comment = "#>"
 )
 ```
 
@@ -116,7 +115,7 @@ output$coloc_Out_summary
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 outputs <- rbindlist(lapply( unique(traitsAll$gencodeId), function(x){ # using gencode ID.
- xQTLanalyze_coloc(gwasDF, x, tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary }))
+           xQTLanalyze_coloc(gwasDF, x, tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary }))
 ```
 
 *outputs* is a data.table that combined all results of *coloc_Out_summary* of all genes.
@@ -144,11 +143,9 @@ xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)],
                        gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
 ```
 
-```{r, fig.width=6, fig.height=5.2, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/quick_start/compare.png")
-grid.raster(img)
+
+```{r, compare.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+knitr::include_graphics("images/quick_start/compare.png")
 ```
 
 Locuszoom plot of GWAS signals:
@@ -157,11 +154,9 @@ Locuszoom plot of GWAS signals:
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE)
 ```
 
-```{r, fig.width=6, fig.height=5.2, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/quick_start/gwas_legendF.png")
-grid.raster(img)
+
+```{r, gwas_legendF.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+knitr::include_graphics("images/quick_start/gwas_legendF.png")
 ```
 
 Locuszoom plot of eQTL signals:
@@ -171,11 +166,8 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)],
                      highlightSnp = "rs13120565", legend=FALSE)
 ```
 
-```{r, fig.width=6, fig.height=5.2, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/quick_start/eqtl_legendF.png")
-grid.raster(img)
+```{r, eqtl_legendF.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+knitr::include_graphics("images/quick_start/eqtl_legendF.png")
 ```
 
 Violin plot of normalized exprssion of eQTL:
@@ -184,11 +176,8 @@ Violin plot of normalized exprssion of eQTL:
 xQTLvisual_eqtlExp("rs13120565", "ENSG00000109684.14", tissueSiteDetail = tissueSiteDetail)
 ```
 
-```{r, fig.width=3.3, fig.height=3, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/quick_start/exp.png")
-grid.raster(img)
+```{r, exp.png, fig.align = 'center', out.width = "30%", echo=FALSE}
+knitr::include_graphics("images/quick_start/exp.png")
 ```
 
 We can also combine locuscompare and locuszoom plot using `xQTLvisual_locusCombine`:
@@ -198,11 +187,9 @@ xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas
                         highlightSnp="rs13120565")
 ```
 
-```{r, fig.width=6, fig.height=5, echo=FALSE, fig.align="center"}
-library(png)
-library(grid)
-img <- readPNG("../img/quick_start/xQTLvisual_locusCombine.png")
-grid.raster(img)
+
+```{r, xQTLvisual_locusCombine.png, fig.align = 'center', out.width = "90%", echo=FALSE}
+knitr::include_graphics("images/quick_start/xQTLvisual_locusCombine.png")
 ```
 
 For applying `xQTLbiolinks` to a whole case study, please find this [**Document**](https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html).

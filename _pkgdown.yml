@@ -7,7 +7,7 @@ navbar:
     - text: "Functions"
       href: reference/index.html
     - text: "Visualization"
-      href: "https://github.com/dingruofan/xQTLbiolinks/wiki/Visualization-of-expression-and-xQTL"
+      href: articles/visualization.html
 
 
 articles:
@@ -17,3 +17,4 @@ articles:
     contents:
     - Quick_start
     - Colocalization_analysis_with_xQTLbiolinks
+    - visualization

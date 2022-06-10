@@ -4,7 +4,7 @@
 
 xQTLbiolinks consists of tailored functions that can be grouped into four modules: **Query**, **Download**, **Analyze** and **Visualization**.
 
-<img src="http://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/b1ba7eb80950d93d626cb12acf4c54f5.png" alt="Overview" width=100% height=100% />
+<img src="http://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/Overview.png" alt="Overview" width=100% height=100% />
 
 
 ### Quick Start
@@ -16,6 +16,7 @@ xQTLbiolinks consists of tailored functions that can be grouped into four module
 ### Citation
 If you find the xQTLbiolinks package or any of the source code in this repository useful for your work, please cite:
 >Ruofan Ding, Xudong Zou, Gao Wang, Lei Li. **xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data.** (submitted)
+
 Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518055, China
 
 ***
