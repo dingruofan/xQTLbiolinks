@@ -186,7 +186,6 @@ knitr::include_graphics("images/prostate/prostate_geneExpInOneTissue.png", error
 ```
 
 
-<!-- [![I'm Caption](images/prostate_geneExpInOneTissue.png "I'm title")](I'm link){width=50%} -->
 
 Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis [@RefSeq]. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 [@zhang2017]. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer [@tregunna2020].
 
@@ -240,7 +239,7 @@ xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)],
                         gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
 ```
 
-```{r, prostate_locuscompare.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+```{r, prostate_locuscompare.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/prostate/prostate_locuscompare.png")
 ```
 
@@ -250,7 +249,7 @@ Locuszoom plot of GWAS signals:
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE)
 ```
 
-```{r, prostate_locuszoom_gwas.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+```{r, prostate_locuszoom_gwas.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/prostate/prostate_locuszoom_gwas.png")
 ```
 
@@ -260,7 +259,7 @@ Locuszoom plot of eQTL signals:
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE)
 ```
 
-```{r, prostate_locuszoom_eqtl.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+```{r, prostate_locuszoom_eqtl.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/prostate/prostate_locuszoom_eqtl.png")
 ```
 

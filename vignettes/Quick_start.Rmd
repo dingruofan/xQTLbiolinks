@@ -144,7 +144,7 @@ xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)],
 ```
 
 
-```{r, compare.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+```{r, compare.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/quick_start/compare.png")
 ```
 
@@ -155,7 +155,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legen
 ```
 
 
-```{r, gwas_legendF.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+```{r, gwas_legendF.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/quick_start/gwas_legendF.png")
 ```
 
@@ -166,7 +166,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)],
                      highlightSnp = "rs13120565", legend=FALSE)
 ```
 
-```{r, eqtl_legendF.png, fig.align = 'center', out.width = "60%", echo=FALSE}
+```{r, eqtl_legendF.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/quick_start/eqtl_legendF.png")
 ```
 
