@@ -552,7 +552,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
   }
 
   # url1 <- "https://gtexportal.org/rest/v1/association/metasoft?gencodeId=ENSG00000141510.11&datasetId=gtex_v7"
-  message("== Querying significant eQTL associations from API server:")
+  message("== Querying eQTL associations from API server:")
   ########## construct url for sig association
   url1 <- paste0("https://gtexportal.org/rest/v1/association/metasoft?",
                  "&datasetId=",datasetId,
@@ -626,7 +626,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #'                                      withB37VariantId=FALSE)
 xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail="", recordPerChunk=250, study="gtex_v8", withB37VariantId=TRUE){
   . <- geneInfoV19<-NULL
-  variantId <- variant <- gencodeId <- genes<- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
+  variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -664,7 +664,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   gencodeVersion <- "v26"
   # come from：EBIquery_allTerm("qtl_groups")
   qtl_groups <- data.table::copy(ebi_qtl_groups)
-  qtl_tissue <- merge( tissueSiteDetailGTEx,qtl_groups, by.x="tissueSiteDetailId", by.y="qtl_group")
+  qtl_tissue <- merge( tissueSiteDetailGTEx, qtl_groups, by.x="tissueSiteDetailId", by.y="qtl_group")
   setDT(qtl_tissue)
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) || tissueSiteDetail==""   ){
@@ -707,6 +707,8 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", tissueSiteDetail=
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/",study,
                  "/associations?links=False&gene_id=", geneInfo$gencodeIdUnv,
                  "&qtl_group=",tissueSiteDetailId)
+
+
   # # check network:
   # bestFetchMethod <- apiEbi_ping()
   # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){

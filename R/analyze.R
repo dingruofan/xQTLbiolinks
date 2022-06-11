@@ -281,7 +281,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @examples
 #' # Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/
 xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
-  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- i <- variantId <- NULL
+  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- NULL
   . <- NULL
 
   # tissueSiteDetail="Brain - Cortex"

@@ -1405,6 +1405,13 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
   abs(x - round(x)) < tol
 }
 
+tissueStudy <- data.table()
+for( i in 1:nrow(studies)){
+  tissue_S <- EBIquery_allTerm( paste0("tissues?study_accession=", studies[i]$study_accession) )
+  tissue_S$study <- studies[i]$study_accession
+  tissueStudy <- rbind(tissueStudy, tissue_S)
+  message(i, " | study: ", studies[i]$study_accession, " | ", nrow(tissue_S))
+}
 
 #' @title EBIquery_allTerm
 #'
@@ -1414,15 +1421,22 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @export
 #' @examples
 #' associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
-#' # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
+#' # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
 #' studies <- EBIquery_allTerm("studies")
 #' tissues <- EBIquery_allTerm("tissues")
+#' # fetch all tissues in all studies:
+#'
+#' for( i in 1:length(studies)){
+#'   tissue_S <- EBIquery_allTerm( paste0("tissues?study_accession=", studies[i]) )
+#'   message(i, " | study: ", studies[i], " | ", nrow(tissue_S))
+#' }
+#'
 #' qtl_groups <- EBIquery_allTerm("qtl_groups")
 #' # geneList <- EBIquery_allTerm("genes")
 #' # chromosomes <- EBIquery_allTerm("chromosomes")
 #'
 #' # merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
-EBIquery_allTerm <- function( term="genes",termSize=5000){
+EBIquery_allTerm <- function( term="genes", termSize=2000){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
     # message("Note: API server is busy or your network has latency, please try again later.")
@@ -1435,11 +1449,11 @@ EBIquery_allTerm <- function( term="genes",termSize=5000){
 
 
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
-  allTerms <- fetchContent(url1,method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-  allTerms <- names(allTerms$`_links`)
-  if( !(term %in% allTerms) ){
-    message("Parameter \"term\" must be chosen from \"", paste0(allTerms, collapse = "\", \""),".")
-  }
+  # allTerms <- fetchContent(url1,method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+  # allTerms <- names(allTerms$`_links`)
+  # if( !(term %in% allTerms) ){
+  #   message("Parameter \"term\" must be chosen from \"", paste0(allTerms, collapse = "\", \""),".")
+  # }
   #
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/", term)
   termInfo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2], termSize = termSize)
