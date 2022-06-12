@@ -7,9 +7,11 @@
 xQTLdownload_eqtlAllAsso(
   gene = "",
   geneType = "auto",
-  tissueSiteDetail = "",
-  recordPerChunk = 250,
+  variantName = "",
+  variantType = "auto",
+  tissueLabel = "",
   study = "gtex_v8",
+  recordPerChunk = 250,
   withB37VariantId = TRUE
 )
 }
@@ -18,11 +20,15 @@ xQTLdownload_eqtlAllAsso(
 
 \item{geneType}{geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
+
+\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
+
+\item{tissueLabel}{A character string, all supported tissues can be listed using "ebi_study_tissues"}
+
+\item{study}{Studies can be listed using "ebi_study_tissues"}
 
 \item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
-
-\item{study}{"gtex_v8" only GTEx v8 is supported.}
 
 \item{withB37VariantId}{Whether to return the genome location(GTEx v7) of variants. Default: TRUE.}
 }
@@ -34,6 +40,8 @@ download all tested variant-gene associations.
 source of all eQTL associations is EBI eQTL category.
 }
 \examples{
-geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueSiteDetail="Muscle - Skeletal",
+geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal",
                                      withB37VariantId=FALSE)
+geneAsso1 <- xQTLdownload_eqtlAllAsso(gene= "ATP11B", variantName="rs263022",
+                                      withB37VariantId=FALSE)
 }

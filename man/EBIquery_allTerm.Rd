@@ -4,7 +4,7 @@
 \alias{EBIquery_allTerm}
 \title{EBIquery_allTerm}
 \usage{
-EBIquery_allTerm(term = "genes", termSize = 5000)
+EBIquery_allTerm(term = "genes", termSize = 2000)
 }
 \arguments{
 \item{term}{"associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".}
@@ -19,12 +19,13 @@ EBIquery_allTerm
 }
 \examples{
 associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
-# molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes")
+# molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
 studies <- EBIquery_allTerm("studies")
 tissues <- EBIquery_allTerm("tissues")
+
+# fetch tissue-study mapping relationships
+tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
+
 qtl_groups <- EBIquery_allTerm("qtl_groups")
 # geneList <- EBIquery_allTerm("genes")
-# chromosomes <- EBIquery_allTerm("chromosomes")
-
-# merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 }

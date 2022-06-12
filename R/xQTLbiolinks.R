@@ -310,6 +310,21 @@ NULL
 #' @source xQTLanalyze_coloc
 NULL
 
+#' @title data for vignette
+#' @description
+#'  a dataset containing all study-tissues mapping relationships.
+#' @docType data
+#' @keywords internal
+#' @name ebi_study_tissues
+#' @format A Data.table
+#' \describe{
+#'   \item{study_accession}{A character vector}
+#'   \item{tissue_label}{A character vector}
+#'   \item{tissue}{A character vector}
+#'   \item{tissueType}{A character vector}
+#' }
+#' @source EBIquery_allTerm
+NULL
 
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
@@ -317,6 +332,8 @@ utils::globalVariables("sampleNum")
 utils::globalVariables("gencodeGeneInfoAllGranges")
 utils::globalVariables("gencodeGenetype")
 utils::globalVariables("ebi_qtl_groups")
+utils::globalVariables("ebi_study_tissues")
+
 utils::globalVariables("example_Coloc_gwasDF")
 utils::globalVariables("example_Coloc_sentinelSNP")
 utils::globalVariables("example_Coloc_traitsAll")

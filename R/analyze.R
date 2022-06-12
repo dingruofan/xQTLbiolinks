@@ -510,6 +510,112 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 
 
 
+#' @title eQTL pvalues in different LD bins.
+#'
+#' @param gene gene A gene symbol or a gencode id (versioned).
+#' @param geneType geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
+#' @param study Studies can be listed using "ebi_study_tissues"
+#' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
+#'
+#' @return a ggplot2 object
+#' @export
+#'
+#' @examples
+#' p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818")
+xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="", variantType="auto", study="", population="EUR"){
+
+  ebi_ST <-copy(ebi_study_tissues)
+  if(gene=="" || variantName==""){
+    stop("gene and variant can not be null!")
+  }
+
+  # check geneType
+  if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
+  }
+  if( length(gene)==1 && gene!=""){
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+  }
+
+  # check variantType:
+  if( !(variantType %in% c("auto","snpId", "variantId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\", \"snpId\", and \"variantId\".")
+  }
+  if(length(variantName)==1 && variantName!=""){
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")>=3){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+  }
+
+  # check study:
+  if( length(study) ==1 && study!="" ){
+    if(toupper(study) %in% toupper(unique(ebi_ST$study_accession))){
+      study <- unique(ebi_ST$study_accession)[ toupper(unique(ebi_ST$study_accession)) == toupper(study) ]
+      message("== Study [", study, "] detected...")
+    }else{
+      message("ID\tstudy\ttissueLabel")
+      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+      stop("== Study [",study,"] can not be correctly matched, please choose from above list: ")
+    }
+  }
+
+  variantInfo <- xQTLquery_varId(variantName, variantType = variantType)
+
+  message("== Retrieve LD information of SNP: [",variantInfo$snpId,"]...")
+  try(snpLD <- retrieveLD(variantInfo$chromosome, variantInfo$snpId, population))
+  # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+  data.table::setDT(snpLD)
+
+  if(nrow(snpLD)<1){
+    stop("No LD found!")
+  }
+
+  snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=5) ))
+  snpLD <- snpLD[order(R2)]
+
+  assoAll <- data.table()
+  for(i in 1:nrow(snpLD)){
+    asso_I <- xQTLdownload_eqtlAllAsso(gene = gene, variantName= snpLD[i,]$SNP_B, withB37VariantId=FALSE)
+    message("== ID:",i, ", SNP: [",snpLD[i,]$SNP_B,"], got records: ", nrow(asso_I),"\n")
+    if( is.null(asso_I) || nrow(asso_I)==0){
+      next()
+    }
+    asso_I <- asso_I[,.(snpId, pValue, tissue)]
+    assoAll <- rbind(assoAll,asso_I)
+    rm(asso_I)
+  }
+  assoAllLd <- merge(snpLD[,.(snpId=SNP_B, LDbins)], assoAll, by="snpId")
+  assoAllLd <- assoAllLd[,.(minP=min(pValue)), by= c("LDbins", "tissue")]
+  assoAllLd <- merge(assoAllLd, ebi_ST[,.(tissueLabel=tissue_label, tissue)], by="tissue")
+  assoAllLd$logP <- (-log(assoAllLd$minP,10))
+
+  p <- ggplot(assoAllLd)+
+    geom_tile(aes(x=LDbins, y=tissueLabel, fill=logP),color = "black")+
+    scale_fill_gradientn(colors = rev(hcl.colors(20, "RdYlGn")))+
+    theme_classic()
+  plot(p)
+  return(p)
+
+}
+
+
+
 
 
 

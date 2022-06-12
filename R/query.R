@@ -1405,13 +1405,6 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
   abs(x - round(x)) < tol
 }
 
-tissueStudy <- data.table()
-for( i in 1:nrow(studies)){
-  tissue_S <- EBIquery_allTerm( paste0("tissues?study_accession=", studies[i]$study_accession) )
-  tissue_S$study <- studies[i]$study_accession
-  tissueStudy <- rbind(tissueStudy, tissue_S)
-  message(i, " | study: ", studies[i]$study_accession, " | ", nrow(tissue_S))
-}
 
 #' @title EBIquery_allTerm
 #'
@@ -1424,18 +1417,12 @@ for( i in 1:nrow(studies)){
 #' # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
 #' studies <- EBIquery_allTerm("studies")
 #' tissues <- EBIquery_allTerm("tissues")
-#' # fetch all tissues in all studies:
 #'
-#' for( i in 1:length(studies)){
-#'   tissue_S <- EBIquery_allTerm( paste0("tissues?study_accession=", studies[i]) )
-#'   message(i, " | study: ", studies[i], " | ", nrow(tissue_S))
-#' }
+#' # fetch tissue-study mapping relationships
+#' tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
 #'
 #' qtl_groups <- EBIquery_allTerm("qtl_groups")
 #' # geneList <- EBIquery_allTerm("genes")
-#' # chromosomes <- EBIquery_allTerm("chromosomes")
-#'
-#' # merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")
 EBIquery_allTerm <- function( term="genes", termSize=2000){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
