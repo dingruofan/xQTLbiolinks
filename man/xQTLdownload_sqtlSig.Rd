@@ -2,32 +2,31 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_sqtlSig}
 \alias{xQTLdownload_sqtlSig}
-\title{xQTLdownload_sqtlSig}
+\title{Download significant sQTL associations of a tissue or across all tissues}
 \usage{
 xQTLdownload_sqtlSig(
   variantName = "",
-  gene = "",
+  genes = "",
   variantType = "auto",
   geneType = "auto",
   tissueSiteDetail = ""
 )
 }
 \arguments{
-\item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
+\item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
-\item{gene}{A gene symbol or a gencode id (versioned).}
+\item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{tissueSiteDetail}{A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 }
 \value{
 A data.table
 }
 \description{
-download significant sQTL associations of a tissue or across all tissues.
 Only GTEx v8 is supported.
 }
 \examples{
@@ -37,12 +36,12 @@ xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
 xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
 
 # Download sQTL detail with gene symbol and gencode ID:
-xQTLdownload_sqtlSig(gene="ATAD3B")
-xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
-xQTLdownload_sqtlSig(gene="ENSG00000141510.16", tissueSiteDetail="Lung" )
+xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
+xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))
+xQTLdownload_sqtlSig(genes=c("ENSG00000141510.16","ENSG00000076242.14"))
 
-# Download eQTL detail with a variant-gene pair:
-xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
-xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", gene="TP53",
-                     tissueSiteDetail="Lung")
+# Download sQTL detail with the variant-genes pair:
+xQTLdownload_sqtlSig(variantName="rs1987191",genes="ATAD3B")
+xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
+xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")
 }

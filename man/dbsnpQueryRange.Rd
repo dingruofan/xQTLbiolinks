@@ -13,7 +13,7 @@ dbsnpQueryRange(
 )
 }
 \arguments{
-\item{chrom}{A character string. Chromesome of human, including chr1-chr23, chrX, chrY.}
+\item{chrom}{(character) name of chromesome, including chr1-chr22, chrX, chrY.}
 
 \item{startPos}{A positive integer.}
 

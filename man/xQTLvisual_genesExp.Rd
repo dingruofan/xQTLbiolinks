@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_genesExp}
 \alias{xQTLvisual_genesExp}
-\title{xQTLvisual_genesExp}
+\title{Density plot of expression profiles of the gene}
 \usage{
 xQTLvisual_genesExp(
   genes,
@@ -12,25 +12,19 @@ xQTLvisual_genesExp(
 )
 }
 \arguments{
-\item{genes}{Following gene types are supported:
-\itemize{
-\item \strong{Gene symbol}.
+\item{genes}{(character vector) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
-\item \strong{Gencode/ensemble id} (versioned or unversioned).
-}}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
-
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A ggplot object
 }
 \description{
-density plot of specified genes' expression profiles in a specified tissue.
+
 }
 \examples{
 genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",

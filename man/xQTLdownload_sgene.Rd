@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_sgene}
 \alias{xQTLdownload_sgene}
-\title{xQTLdownload_sgene}
+\title{Download details of sGenes (sQTL Genes) for a specified gene or a tissue.}
 \usage{
 xQTLdownload_sgene(
   gene = "",
@@ -13,21 +13,20 @@ xQTLdownload_sgene(
 )
 }
 \arguments{
-\item{gene}{A charater string of gene symbol, gencode id (versioned). Can be null.}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported). Can be null.}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{A character string. only support "gtex_v8". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 2000).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
 \value{
 a data.table
 }
 \description{
-download sGenes (sQTL Genes).
 sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 }
 \examples{

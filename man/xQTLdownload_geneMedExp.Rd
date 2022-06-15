@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_geneMedExp}
 \alias{xQTLdownload_geneMedExp}
-\title{xQTLdownload_geneMedExp}
+\title{Download median expression of all samples for specified genes across tissues.}
 \usage{
 xQTLdownload_geneMedExp(
   genes = "",
@@ -13,21 +13,21 @@ xQTLdownload_geneMedExp(
 )
 }
 \arguments{
-\item{genes}{A character vector of gene symbol/gencode ID.}
+\item{genes}{(character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{"gtex_v7" or "gtex_v8"(default)}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{recordPerChunk}{1-2000. Default: 150.}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 150).}
 }
 \value{
 A data.frame
 }
 \description{
-download genes' median expression in a tissue or across all tissues.
+
 }
 \examples{
 geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")

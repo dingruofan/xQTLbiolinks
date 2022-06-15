@@ -1,12 +1,12 @@
-#' @title xQTLvisual_eqtlExp
-#' @description plot normalized expression among genotypes for eQTL.
+#' @title Boxplot of normalized expression among genotypes for eQTL.
+#' @description
 #'
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -140,11 +140,12 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
     p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
       geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
       geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
-      scale_fill_brewer(palette="Dark2") + theme_classic()+
+      scale_fill_brewer(palette="Dark2") +
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
       # labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol) )+
       xlab("Genotypes")+
       ylab("Normalized expression")+
+      theme_classic()+
       theme(
         axis.text.x=element_text(size=rel(1.3)),
         axis.text.y = element_text(size=rel(1.3)),
@@ -154,55 +155,18 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
       )+
       geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
     print(p)
-    # p <- ggplot(genoLable)+
-    #   geom_boxplot( aes(x= genoLabels, y=normExp, fill=genoLabels), alpha=0.8)+
-    #   geom_jitter(aes(x= genoLabels, y=normExp, fill=genoLabels), position=position_jitter(0.18), size=2.0, alpha=0.4, pch=21)+
-    #   scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
-    #   # scale_fill_manual(values=c("green", "red"))+
-    #   # scale_fill_brewer(palette = "Dark2")+
-    #   theme_bw()+
-    #   labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol, " (",tissueSiteDetail,")") )+
-    #   xlab("Genotypes")+
-    #   ylab("Normalized expression")+
-    #   theme(axis.text.x=element_text(size=rel(1.3)),
-    #         axis.text.y = element_text(size=rel(1.3)),
-    #         axis.title = element_text(size=rel(1.3)),
-    #         legend.position = "none",
-    #         legend.background = element_rect(fill="white",
-    #                                          size=0.5, linetype="solid",
-    #                                          colour ="white"),
-    #         plot.title = element_text(hjust=0.5)
-    #   )
-
   }
-
-  # ggplot(genoLabelPie) +
-  #   geom_bar( aes(x="", y=labelNum, fill=genoLabels), stat = "identity") + coord_polar("y", start=0)+
-  #   labs(x = "", y = "", title = "") +
-  #   theme_bw()+
-  #   theme(
-  #     axis.ticks = element_blank(),
-  #     axis.text.x = element_blank(),
-  #     legend.title =element_text(face="bold",size=rel(1.1)),
-  #     legend.position = "right",
-  #     legend.text = element_text(size=rel(1.1)),
-  #     panel.border = element_blank(),
-  #     panel.grid = element_blank()
-  #   )+ scale_fill_discrete("geno Labels",breaks=genoLabelPie$genoLabels, label=genoLabelPie$legends)
-
-  # gridExtra::grid.arrange()
-
   return(list(eqtl=eqtlInfo, exp=genoLable, p=p))
 }
 
-#' @title xQTLvisual_sqtlExp
-#' @description plot normalized expression among genotypes for sQTL.
+#' @title Boxplot of normalized expression among genotypes for sQTL.
+#' @description
 #'
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -274,14 +238,6 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
     return(data.table::data.table())
   }
 
-  # message("== Querying significant sQTL associations from API server:")
-  # suppressMessages(sqtlInfo <- xQTLdownload_sqtlSig(variantName = variantName, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
-  # if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
-  #   stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
-  # }else{
-  #   message("   eQTL association was found in ", datasetId, " of gene [", gene,"] and variant [", variantName," in [", tissueSiteDetail,"].")
-  #   message("== Done")
-  # }
 
   message("== Querying expression from API server:")
   suppressMessages(sqtlExp <- xQTLdownload_sqtlExp(variantName = variantName, variantType = variantType, phenotypeId = phenotypeId, tissueSiteDetail = tissueSiteDetail))
@@ -313,7 +269,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
   # retrieve sQTL detail:
   P_geneName <- stringr::str_split(phenotypeId, ":")[[1]][5]
-  try(suppressMessages(sqtlInfo <- xQTLdownload_sqtlSig(variantName = varInfo$variantId, gene = P_geneName, tissueSiteDetail=tissueSiteDetail)), silent = TRUE)
+  try(suppressMessages(sqtlInfo <- xQTLdownload_sqtlSig(variantName = varInfo$variantId, genes = P_geneName, tissueSiteDetail=tissueSiteDetail)), silent = TRUE)
   sqtlInfo <- sqtlInfo[phenotypeId==phenotypeId]
   if(exists("sqtlInfo") & !is.null(sqtlInfo) & nrow(sqtlInfo)==1 ){
     message("Significant sQTL association found!")
@@ -327,11 +283,12 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
     p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
       geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
       geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
-      scale_fill_brewer(palette="Dark2") + theme_light()+
+      scale_fill_brewer(palette="Dark2") +
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
       # labs(title = paste0(ifelse(varInfo$snpId==""|| is.na(varInfo$snpId), varInfo$variantId, varInfo$snpId), "- ", phenotypeId, " (",tissueSiteDetail,")") )+
       xlab("Genotypes")+
       ylab("Normalized expression")+
+      theme_classic()+
       theme(
         axis.text=element_text(size=rel(1.3)),
         axis.title = element_text(size=rel(1.3)),
@@ -348,8 +305,8 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
 
 
-#' @title xQTLvisual_locusZoom
-#' @description For showing regional signals relative to genomic position
+#' @title Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics
+#' @description
 #' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param DF A data.frame or a data.table object. Four columns are required (arbitrary column names is supported):
 #'
@@ -509,9 +466,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     xlab( xLab )+
     ylab( yLab )+
     theme_classic()+
-    theme(axis.text.x=element_text(size=rel(1.3)),
-          axis.title.x=element_text(size=rel(1.3)),
-          axis.title.y=element_text(size=rel(1.3)),
+    theme(axis.text=element_text(size=rel(1.5), color = "black"),
+          axis.title=element_text(size=rel(1.4), color = "black"),
           plot.title = element_text(hjust=0.5),
           legend.position = "none"
     )+ guides( shape="none", color="none", size="none", fill = "none" )
@@ -542,7 +498,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   return(p)
 }
 
-#' @title xQTLvisual_locusCompare
+#' @title Dotplot of comparing regional signals between GWAS and xQTL.
 #' @description This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #'
 #' @param eqtlDF A data.frame or data.table with two columns: dbSNP id and p-value.
@@ -668,8 +624,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
       xlab( xLab )+
       ylab( yLab )+
       theme_classic()+
-      theme(axis.text=element_text(size=rel(1.4)),
-            axis.title=element_text(size=rel(1.5)),
+      theme(axis.text=element_text(size=rel(1.5), color = "black"),
+            axis.title=element_text(size=rel(1.5),color = "black"),
             plot.title = element_text(hjust=0.5),
             legend.title = element_text(size=rel(1.3)),
             legend.text = element_text(size=rel(1.2))
@@ -703,8 +659,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 
 
 #
-#' @title xQTLvisual_locusCombine
-#' @description Generated a combined plot with two locuszoom plots and a locuscompare
+#' @title Generate a combined figure including locuszoom and locuscompare plot object.
+#' @description
 #' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param gwasEqtldata A data.frame or a data.table that including signals from both GWAS and eQTL. Five columns are required (arbitrary column names is supported):
 #'
@@ -790,19 +746,13 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 }
 
 
-#' @title xQTLvisual_genesExp
-#' @description density plot of specified genes' expression profiles in a specified tissue.
+#' @title Density plot of expression profiles of the gene
+#' @description
 #'
-#' @param genes Following gene types are supported:
-#' \itemize{
-#'   \item \strong{Gene symbol}.
-#'
-#'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
-#'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
-#' }
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param genes (character vector) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import ggpubr
 #' @importFrom SummarizedExperiment assay colData
 #' @return A ggplot object
@@ -850,14 +800,14 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 }
 
 
-#' @title xQTLvisual_geneCorr
-#' @description The correlation plot of two genes’ expression.
+#' @title Scatter plot for showing the correlation of two genes’ expression.
+#' @description
 #'
 #' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #'
 #' @return A ggplot object
 #' @export
@@ -904,12 +854,12 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
 
 
 
-#' @title xQTLvisual_eqtl
-#' @description plot significance of all eQTL associations for a gene across tissues.
+#' @title Box plot with jittered points for showing number and significance of eQTL associations
+#' @description
 #'
-#' @param gene A gene symbol or a gencode id (versioned).
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -964,13 +914,13 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 }
 
 
-#' @title xQTLvisual_geneExpTissues
-#' @description plot distribution of the gene expression among multiple tissues.
+#' @title Violin plot of distribution of the gene expression profiles among multiple tissues.
+#' @description
 #'
-#' @param gene A characer vector. Gene symbol or gencode Id.
-#' @param geneType A character string. "auto", "geneSymbol" or "gencodeId". Default: "auto".
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissues A character string or a vector. "All" (default) means that all tissues is included.
-#' @param datasetId "gtex_v8" or "gtex_v7". Default:"gtex_v8".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param log10y Display values of expression in log scale. Default: FALSE.
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
 #'
@@ -994,9 +944,9 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
   .<-NULL
 
   if(datasetId == "gtex_v8"){
-    tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
+    tissueSiteDetail <- data.table::copy(tissueSiteDetailGTExv8)
   }else if(datasetId == "gtex_v7"){
-    tissueSiteDetail <- copy(tissueSiteDetailGTExv7)
+    tissueSiteDetail <- data.table::copy(tissueSiteDetailGTExv7)
   }else{
     stop("Please choose the right datasetId!")
   }

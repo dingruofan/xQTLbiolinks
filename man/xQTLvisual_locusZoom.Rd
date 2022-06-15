@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_locusZoom}
 \alias{xQTLvisual_locusZoom}
-\title{xQTLvisual_locusZoom}
+\title{Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics}
 \usage{
 xQTLvisual_locusZoom(
   DF,
@@ -41,7 +41,6 @@ xQTLvisual_locusZoom(
 A data.table object and plot.
 }
 \description{
-For showing regional signals relative to genomic position
 This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 }
 \examples{

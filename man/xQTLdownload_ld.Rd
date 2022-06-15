@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_ld}
 \alias{xQTLdownload_ld}
-\title{xQTLdownload_ld}
+\title{Download linkage disequilibrium data of the variants associated with this gene.}
 \usage{
 xQTLdownload_ld(
   gene = "",
@@ -12,19 +12,19 @@ xQTLdownload_ld(
 )
 }
 \arguments{
-\item{gene}{A gene symbol, gencode id (versioned), or a charater string of gene type.}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{recordPerChunk}{A integer value (1-500). number of records fetched per request (default: 100).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 100).}
 }
 \value{
 A data.frame
 }
 \description{
-download linkage disequilibrium data of the variants associated with this gene.
+
 }
 \examples{
 xQTLdownload_ld("TP53" )

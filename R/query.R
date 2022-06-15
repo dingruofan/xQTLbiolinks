@@ -1,6 +1,6 @@
-#' @title xQTLquery_gene.
+#' @title Query basic information (including name, symbol, position and description, etc. ) of genes.
 #' @description
-#'  users can use this function to query basic information (including gene name, symbol, position and description, etc ) of genes.
+#'
 #' @param genes A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
@@ -15,10 +15,10 @@
 #'   when "geneType" is "geneCategory", supported "genes" can be listed using function `gencodeGenetype$V26` or `gencodeGenetype$V19`
 #'
 #' }
-#' @param geneType A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #'
-#' @param gencodeVersion "v26" or "v19"
-#' @param recordPerChunk A integer value. Defaulut: 150
+#' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 150).
 #'
 #' @return A data.table of queried gene information. including following columns:
 #' \itemize{
@@ -270,71 +270,13 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
   }
 }
 
-#' @title xQTLquery_sampleByTissue
-#' @description  query sample's details with a specifc tissue name
-#' @param tissueSiteDetail
-#'  Tissue must be chosen from the following tissue names:
-#' \tabular{rrrrr}{
-#'   \strong{tissue name} \tab \strong{GTEx V8} \tab \strong{GTEx V7} \cr
-#'    Adipose - Subcutaneous \tab √ \tab √\cr
-#'    Adipose - Visceral (Omentum) \tab √ \tab √\cr
-#'    Adrenal Gland \tab √ \tab √\cr
-#'    Artery - Aorta \tab √ \tab √\cr
-#'    Artery - Coronary \tab √ \tab √\cr
-#'    Artery - Tibial \tab √ \tab √\cr
-#'    Bladder \tab √ \tab √\cr
-#'    Brain - Amygdala \tab √ \tab √\cr
-#'    Brain - Anterior cingulate cortex (BA24) \tab √ \tab √\cr
-#'    Brain - Caudate (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Cerebellar Hemisphere \tab √ \tab √\cr
-#'    Brain - Cerebellum \tab √ \tab √\cr
-#'    Brain - Cortex \tab √ \tab √\cr
-#'    Brain - Frontal Cortex (BA9) \tab √ \tab √\cr
-#'    Brain - Hippocampus \tab √ \tab √\cr
-#'    Brain - Hypothalamus \tab √ \tab √\cr
-#'    Brain - Nucleus accumbens (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Putamen (basal ganglia) \tab √ \tab √\cr
-#'    Brain - Spinal cord (cervical c-1) \tab √ \tab √\cr
-#'    Brain - Substantia nigra \tab √ \tab √\cr
-#'    Breast - Mammary Tissue \tab √ \tab √\cr
-#'    Cells - Cultured fibroblasts \tab √ \tab x\cr
-#'    Cells - EBV-transformed lymphocytes \tab √ \tab √\cr
-#'    Cells - Transformed fibroblasts \tab x \tab √\cr
-#'    Cervix - Ectocervix \tab √ \tab √\cr
-#'    Cervix - Endocervix \tab √ \tab √\cr
-#'    Colon - Sigmoid \tab √ \tab √\cr
-#'    Colon - Transverse \tab √ \tab √\cr
-#'    Esophagus - Gastroesophageal Junction \tab √ \tab √\cr
-#'    Esophagus - Mucosa \tab √ \tab √\cr
-#'    Esophagus - Muscularis \tab √ \tab √\cr
-#'    Fallopian Tube \tab √ \tab √\cr
-#'    Heart - Atrial Appendage \tab √ \tab √\cr
-#'    Heart - Left Ventricle \tab √ \tab √\cr
-#'    Kidney - Cortex \tab √ \tab √\cr
-#'    Kidney - Medulla \tab √ \tab x\cr
-#'    Liver \tab √ \tab √\cr
-#'    Lung \tab √ \tab √\cr
-#'    Minor Salivary Gland \tab √ \tab √\cr
-#'    Muscle - Skeletal \tab √ \tab √\cr
-#'    Nerve - Tibial \tab √ \tab √\cr
-#'    Ovary \tab √ \tab √\cr
-#'    Pancreas \tab √ \tab √\cr
-#'    Pituitary \tab √ \tab √\cr
-#'    Prostate \tab √ \tab √\cr
-#'    Skin - Not Sun Exposed (Suprapubic) \tab √ \tab √\cr
-#'    Skin - Sun Exposed (Lower leg) \tab √ \tab √\cr
-#'    Small Intestine - Terminal Ileum \tab √ \tab √\cr
-#'    Spleen \tab √ \tab √\cr
-#'    Stomach \tab √ \tab √\cr
-#'    Testis \tab √ \tab √\cr
-#'    Thyroid \tab √ \tab √\cr
-#'    Uterus \tab √ \tab √\cr
-#'    Vagina \tab √ \tab √\cr
-#'    Whole Blood \tab √ \tab √\cr
-#' }
+#' @title Query sample's details with tissue name
+#' @description
+#'
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
-#' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
-#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 200).
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #' @import data.table
 #' @import utils
@@ -503,10 +445,11 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 
 
 
-#' @title xQTLquery_sampleBySampleId
-#' @description query sample's details with samples' IDs.
+#' @title Query sample's details with samples' IDs.
+#' @description
+#'
 #' @param sampleIds A character vector or a string of sample ID.
-#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 200).
+#' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #'
 #' @return a data.frame.
@@ -600,11 +543,11 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 
 
 
-# Indepedently fetch geneInfo:
-#' @title xQTLquery_geneAll
-#' @description fetch basic information of all genes.
-#' @param gencodeVersion A character string. "v26" or "v19".
-#' @param recordPerChunk A integer value. From 1 to 2000.
+#' @title Fetch details of all genes supported in GTEx.
+#' @description
+#'
+#' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #'
 #' @return A data.table with all genes' information.
 #' @import utils
@@ -687,11 +630,12 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 }
 
 
-#' @title xQTLquery_varId
-#' @description query variant with variant ID or SNP ID.
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @title Query variant in GTEx with variant ID or dbSNP ID
+#' @description
+#'
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -783,12 +727,13 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
   return(outInfo)
 }
 
-#' @title xQTLquery_varPos
-#' @description query varints with genome postion.
-#' @param chrom A character string.
+#' @title Query varints in GTEx using genome position.
+#' @description
+#'
+#' @param chrom (character) name of chromesome, including chr1-chr22, chrX, chrY.
 #' @param pos An integer array.
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
-#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -849,7 +794,7 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
   # out:
   outInfo <- data.table::data.table()
   for( ii in 1:nrow(var_tmpCut)){
-    message("   Got varints: ",nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)),"/",nrow(var_tmp))
+    message("   Got varints: ",nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)),"/",nrow(var_tmp), " (",paste0(round( (nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)))/nrow(var_tmp),4)*100,"%"),")")
     url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
                    "datasetId=", datasetId,"&",
                    "chromosome=", chrom, "&",
@@ -886,11 +831,11 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 }
 
 
-#' @title xQTLquery_tissue
-#' @description Fetch all detail information of a specified tissue or all tissues.
+#' @title Fetch all details of a specified tissue or all tissues
+#' @description
 #'  Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 #' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId "gtex_v8" or "gtex_v7". Default: "gtex_v8"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #'
 #' @return A data.table
 #' @export
@@ -1274,6 +1219,8 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
     embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
     contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
     message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
+
+  # 这个API 有点问题，如果fetch 多个组织的结果，如果该组织剩下不足1000，就会将剩下的附加到这次fetch，导致 _links 里没有next，进而终止检索，所以再没有 next后，额外再fetch一次，如果有next则继续。
   }else if(termSize > 0){
     for(i in 1:1000000){
       urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
@@ -1283,8 +1230,8 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
       if( !is.null(contentGot$status) && contentGot$status==404 ){
         print(i)
         return(NULL)
-      }else if( is.null(contentGot$`_links`$`next`$href) ){
-      # }else if( length(contentGot[[1]][[1]])==0|| length(contentGot[[1]][[1]][[1]])==0 ){
+      }else if( length(contentGot$`_embedded`$associations)==0 ){
+        # is.null( contentGot$`_links` $`next`$href)
         embeddedList <- c(embeddedList,contentGot[[1]])
         embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
         contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
@@ -1295,7 +1242,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
         embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
         contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
         message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
-        termStart <- termStart+as.integer(termSize)
+        termStart <- termStart+as.integer(contentGotCount)
       }
     }
   }else{
@@ -1311,7 +1258,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 
 #' @title retrieve snps from dbSNP using coordinate.
 #'
-#' @param chrom A character string. Chromesome of human, including chr1-chr23, chrX, chrY.
+#' @param chrom (character) name of chromesome, including chr1-chr22, chrX, chrY.
 #' @param startPos A positive integer.
 #' @param endPos A positive integer.
 #' @param genomeBuild "GRCh38/hg38" or "GRCh38/hg19". Default: "GRCh38/hg38".
@@ -1343,7 +1290,7 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
     stop("Parameter \"chrom\" can not be NULL or NA!")
   }
   if( !stringr::str_detect(chrom, stringr::regex("^[cC][hH][rR]1[0-9]$|^[cC][hH][rR]2[0-3]$|^[cC][hH][rR][1-9]$|^[xXyY]$"))  ){
-    stop("Parameter \"chrom\" stands for chromosome, which must be chosen from \"chr1-chr23, chrx, chry\" ")
+    stop("Parameter \"chrom\" stands for chromosome, which must be chosen from \"chr1-chr22, chrx, chry\" ")
   }
 
   # Parameter check: startPos

@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_TSExp}
 \alias{xQTLanalyze_TSExp}
-\title{xQTLanalyze_TSExp}
+\title{Perform tissue-specific expression analysis for genes.}
 \usage{
 xQTLanalyze_TSExp(
   genes,
@@ -14,17 +14,17 @@ xQTLanalyze_TSExp(
 \arguments{
 \item{genes}{A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.}
 
-\item{geneType}{A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{method}{"SPM" or "entropy"}
 
-\item{datasetId}{"gtex_v8" or "gtex_v7".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A data.table
 }
 \description{
-perform tissue-specific expression analysis.
+
 }
 \examples{
 TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])

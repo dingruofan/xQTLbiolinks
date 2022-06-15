@@ -40,6 +40,9 @@
     <loc>/reference/ebi_qtl_groups.html</loc>
   </url>
   <url>
+    <loc>/reference/ebi_study_tissues.html</loc>
+  </url>
+  <url>
     <loc>/reference/example_Coloc_colocResultAll.html</loc>
   </url>
   <url>
@@ -82,6 +85,9 @@
     <loc>/reference/retrieveLD_LDmatrix.html</loc>
   </url>
   <url>
+    <loc>/reference/retrieveLD_LDproxy.html</loc>
+  </url>
+  <url>
     <loc>/reference/retrieveLD_LDproxy_old.html</loc>
   </url>
   <url>
@@ -103,6 +109,9 @@
     <loc>/reference/xQTLanalyze_getTraits.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLanalyze_qtlSpecificity.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLanalyze_TSExp.html</loc>
   </url>
   <url>
@@ -116,6 +125,9 @@
   </url>
   <url>
     <loc>/reference/xQTLdownload_eqtlAllAsso.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLdownload_eqtlAllAssoPos.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLdownload_eqtlExp.html</loc>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_getSentinelSnp}
 \alias{xQTLanalyze_getSentinelSnp}
-\title{xQTLanalyze_getSentinelSnp}
+\title{Detect sentinel SNPs in a given summary statistis dataset.}
 \usage{
 xQTLanalyze_getSentinelSnp(
   gwasDF,
@@ -40,7 +40,6 @@ xQTLanalyze_getSentinelSnp(
 A data.table object.
 }
 \description{
-detect sentinel SNPs in a given GWAS dataset.
 Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
 }
 \examples{

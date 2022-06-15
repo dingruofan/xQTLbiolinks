@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_geneExpTissues}
 \alias{xQTLvisual_geneExpTissues}
-\title{xQTLvisual_geneExpTissues}
+\title{Violin plot of distribution of the gene expression profiles among multiple tissues.}
 \usage{
 xQTLvisual_geneExpTissues(
   gene = "",
@@ -14,13 +14,13 @@ xQTLvisual_geneExpTissues(
 )
 }
 \arguments{
-\item{gene}{A characer vector. Gene symbol or gencode Id.}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{A character string. "auto", "geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissues}{A character string or a vector. "All" (default) means that all tissues is included.}
 
-\item{datasetId}{"gtex_v8" or "gtex_v7". Default:"gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{log10y}{Display values of expression in log scale. Default: FALSE.}
 
@@ -30,7 +30,7 @@ xQTLvisual_geneExpTissues(
 A list containing expression profile and a ggplot object.
 }
 \description{
-plot distribution of the gene expression among multiple tissues.
+
 }
 \examples{
 # Display gene expression in all tissues.

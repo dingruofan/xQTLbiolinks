@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_eqtlAllAsso}
 \alias{xQTLdownload_eqtlAllAsso}
-\title{xQTLdownload_eqtlAllAsso}
+\title{Download summary statistics of eQTL of a specified gene, variant, tissue or study.}
 \usage{
 xQTLdownload_eqtlAllAsso(
   gene = "",
@@ -11,37 +11,49 @@ xQTLdownload_eqtlAllAsso(
   variantType = "auto",
   tissueLabel = "",
   study = "gtex_v8",
-  recordPerChunk = 250,
-  withB37VariantId = TRUE
+  recordPerChunk = 1000,
+  withB37VariantId = FALSE
 )
 }
 \arguments{
-\item{gene}{gene A gene symbol or a gencode id (versioned).}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
+\item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
-\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
+\item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{tissueLabel}{A character string, all supported tissues can be listed using "ebi_study_tissues"}
+\item{tissueLabel}{(character) all supported tissues can be listed using "ebi_study_tissues"}
 
-\item{study}{Studies can be listed using "ebi_study_tissues"}
+\item{study}{(character) name of studies can be listed using "ebi_study_tissues"}
 
-\item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 1000).}
 
-\item{withB37VariantId}{Whether to return the genome location(GTEx v7) of variants. Default: TRUE.}
+\item{withB37VariantId}{a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.}
 }
 \value{
 a data.table
 }
 \description{
-download all tested variant-gene associations.
 source of all eQTL associations is EBI eQTL category.
 }
 \examples{
-geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal",
-                                     withB37VariantId=FALSE)
-geneAsso1 <- xQTLdownload_eqtlAllAsso(gene= "ATP11B", variantName="rs263022",
-                                      withB37VariantId=FALSE)
+# Download all associations of gene TP53 in all tissues from all studies:
+# geneAsso <- xQTLdownload_eqtlAllAsso("TP53", study="")
+
+# Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:
+geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
+
+# Download associations of gene ATP11B in CD4+ T cell from all supported studies:
+# geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
+
+# Download all associations of SNP rs11568818 in all tissues from all supported studies.
+varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", stydy="")
+# Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
+varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
+                                    tissueLabel="Muscle - Skeletal")
+
+# Download all associations of MLH1-rs13315355 pair in all tissues from all studies:
+eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")
 }

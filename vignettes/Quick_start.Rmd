@@ -130,8 +130,7 @@ For the potential casual gene (***ENSG00000187323.11***, PP4=**0.9937**), We mer
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000109684.14", 
-                                     tissueSiteDetail = tissueSiteDetail, 
-                                     withB37VariantId=FALSE)
+                                     tissueLabel = tissueSiteDetail)
 gwasEqtldata <- merge(gwasDF, eqtlAsso[,.(rsid=snpId, position=pos, maf, pValue)],
                       by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
 ```

@@ -94,7 +94,7 @@ knitr::include_graphics("images/visualization/visualization_locusZoom.png")
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
-                                     tissueSiteDetail = "Brain - Cortex",withB37VariantId=FALSE)
+                                     tissueLabel = "Brain - Cortex")
 p_all <- xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
 p_sub <- xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",                                   posRange="chr6:47.3e6-47.9e6")
 cowplot::plot_grid(p_all, p_sub, align = "h", ncol = 2)

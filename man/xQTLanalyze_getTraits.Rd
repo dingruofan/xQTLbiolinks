@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_getTraits}
 \alias{xQTLanalyze_getTraits}
-\title{xQTLanalyze_getTraits}
+\title{Identify trait genes using sentinel SNPs generated from \code{xQTLanalyze_getSentinelSnp}}
 \usage{
 xQTLanalyze_getTraits(
   sentinelSnpDF,
@@ -17,7 +17,7 @@ xQTLanalyze_getTraits(
 
 \item{detectRange}{A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp}
 
-\item{tissueSiteDetail}{All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{genomeVersion}{"grch38" or "grch37". Default: "grch38"}
 
@@ -27,7 +27,7 @@ xQTLanalyze_getTraits(
 A data.table object
 }
 \description{
-identify trait genes with sentinel SNPs:
+
 }
 \examples{
 URL1<-"http://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"

@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_coloc}
 \alias{xQTLanalyze_coloc}
-\title{xQTLanalyze_coloc}
+\title{Conduct colocalization analysis with trait genes generated from \code{xQTLanalyze_getTraits}}
 \usage{
 xQTLanalyze_coloc(
   gwasDF,
@@ -22,11 +22,11 @@ xQTLanalyze_coloc(
 
 \item{traitGene}{A gene symbol or a gencode id (versioned).}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{genomeVersion}{"grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using \"tissueSiteDetailGTExv8\" or \"tissueSiteDetailGTExv7\"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{mafThreshold}{Cutoff of maf to remove rare variants.}
 
@@ -42,7 +42,7 @@ xQTLanalyze_coloc(
 coloc resut
 }
 \description{
-conduct colocalization analysis with detected gene.
+
 }
 \examples{
 # Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/

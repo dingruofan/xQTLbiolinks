@@ -202,20 +202,6 @@ NULL
 #' @source \url{https://gtexportal.org/home/}
 NULL
 
-#' @title tissue resources in the ebi eQTL catelogue
-#' @description
-#'  A list of 101 tissue resources
-#' @docType data
-#' @keywords internal
-#' @name ebi_qtl_groups
-#' @format A Data.table
-#' \describe{
-#'   \item{qtl_group}{A character vector}
-#' }
-#' @source \url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api}
-NULL
-
-
 #' @title data for vignette
 #' @description
 #'  head 6 rows of gwasDF of GLGC_CG0276_result.txt(GCST006085)
@@ -323,7 +309,7 @@ NULL
 #'   \item{tissue}{A character vector}
 #'   \item{tissueType}{A character vector}
 #' }
-#' @source EBIquery_allTerm
+#' @source \url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api} or EBIquery_allTerm
 NULL
 
 utils::globalVariables("tissueSiteDetailGTExv8")
@@ -331,7 +317,7 @@ utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")
 utils::globalVariables("gencodeGeneInfoAllGranges")
 utils::globalVariables("gencodeGenetype")
-utils::globalVariables("ebi_qtl_groups")
+# utils::globalVariables("ebi_qtl_groups")
 utils::globalVariables("ebi_study_tissues")
 
 utils::globalVariables("example_Coloc_gwasDF")

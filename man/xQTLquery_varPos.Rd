@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_varPos}
 \alias{xQTLquery_varPos}
-\title{xQTLquery_varPos}
+\title{Query varints in GTEx using genome position.}
 \usage{
 xQTLquery_varPos(
   chrom = "",
@@ -12,19 +12,19 @@ xQTLquery_varPos(
 )
 }
 \arguments{
-\item{chrom}{A character string.}
+\item{chrom}{(character) name of chromesome, including chr1-chr22, chrX, chrY.}
 
 \item{pos}{An integer array.}
 
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 }
 \value{
 A data.table.
 }
 \description{
-query varints with genome postion.
+
 }
 \examples{
 xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")

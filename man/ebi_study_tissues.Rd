@@ -14,7 +14,7 @@ A Data.table
 }
 }
 \source{
-EBIquery_allTerm
+\url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api} or EBIquery_allTerm
 }
 \description{
 a dataset containing all study-tissues mapping relationships.

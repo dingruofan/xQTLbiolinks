@@ -219,8 +219,7 @@ gwasEqtldata <- data.table::fread(t1)
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 # Download all eQTL associations of gene  MMP7 in prostate:
-eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueSiteDetail = tissueSiteDetail, 
-                                     withB37VariantId=FALSE)
+eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = tissueSiteDetail)
 # Merge the variants of GWAS and eQTL dataset by rsid:
 gwasEqtldata <- merge(gwasDF[,-c("AF")], eqtlAsso[,.(rsid=snpId, pValue)],
                       by=c("rsid"), suffixes = c(".gwas",".eqtl"))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_egene}
 \alias{xQTLdownload_egene}
-\title{xQTLdownload_egene}
+\title{Download details of eGenes (eQTL Genes) for a specified gene or a tissue.}
 \usage{
 xQTLdownload_egene(
   gene = "",
@@ -13,22 +13,21 @@ xQTLdownload_egene(
 )
 }
 \arguments{
-\item{gene}{A charater string of gene symbol, gencode id (versioned).}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{recordPerChunk}{A integer value (1-200). number of records fetched per request (default: 200).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 }
 \value{
 a data.table
 }
 \description{
-download eGenes (eQTL Genes).
-eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
+eGenes are genes that have at least one significant cis-eQTL acting upon them. Results can be filtered by tissue.
 }
 \examples{
 # eGeneInfoAlltissue <- xQTLdownload_egene()

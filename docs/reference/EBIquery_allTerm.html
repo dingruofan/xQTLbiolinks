@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">EBIquery_allTerm</span><span class="op">(</span>term <span class="op">=</span> <span class="st">"genes"</span>, termSize <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">EBIquery_allTerm</span><span class="op">(</span>term <span class="op">=</span> <span class="st">"genes"</span>, termSize <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -71,14 +71,15 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">associations</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"associations"</span>,termSize<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># molecular_phenotypes &lt;- EBIquery_allTerm("molecular_phenotypes")</span>
+<span class="co"># molecular_phenotypes &lt;- EBIquery_allTerm("molecular_phenotypes", termSize=2000)</span>
 <span class="va">studies</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"studies"</span><span class="op">)</span>
 <span class="va">tissues</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"tissues"</span><span class="op">)</span>
+
+<span class="co"># fetch tissue-study mapping relationships</span>
+<span class="va">tissue_S</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"tissues/"</span>, <span class="st">"UBER_0002046"</span>,<span class="st">"/studies"</span> <span class="op">)</span><span class="op">)</span>
+
 <span class="va">qtl_groups</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"qtl_groups"</span><span class="op">)</span>
 <span class="co"># geneList &lt;- EBIquery_allTerm("genes")</span>
-<span class="co"># chromosomes &lt;- EBIquery_allTerm("chromosomes")</span>
-
-<span class="co"># merge(qtl_groups, tissueSiteDetailGTExv8, by.x="qtl_group", by.y="tissueSiteDetail")</span>
 </code></pre></div>
     </div>
   </div>

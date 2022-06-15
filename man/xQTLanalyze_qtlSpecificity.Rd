@@ -2,25 +2,28 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_qtlSpecificity}
 \alias{xQTLanalyze_qtlSpecificity}
-\title{eQTL pvalues in different LD bins.}
+\title{eQTL-specific analysis}
 \usage{
 xQTLanalyze_qtlSpecificity(
   gene = "",
   geneType = "auto",
   variantName = "",
   variantType = "auto",
+  binNum = 4,
   study = "",
   population = "EUR"
 )
 }
 \arguments{
-\item{gene}{gene A gene symbol or a gencode id (versioned).}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
+\item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
-\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
+\item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
+
+\item{binNum}{A integer value. Number of bins to split values of R2 of LD into homogeneous bins.}
 
 \item{study}{Studies can be listed using "ebi_study_tissues"}
 
@@ -30,8 +33,8 @@ xQTLanalyze_qtlSpecificity(
 a ggplot2 object
 }
 \description{
-eQTL pvalues in different LD bins.
+eQTL-specific analysis
 }
 \examples{
-p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818")
+p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="gtex_v8")
 }

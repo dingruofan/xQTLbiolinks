@@ -2,20 +2,20 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_geneAll}
 \alias{xQTLquery_geneAll}
-\title{xQTLquery_geneAll}
+\title{Fetch details of all genes supported in GTEx.}
 \usage{
 xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 }
 \arguments{
-\item{gencodeVersion}{A character string. "v26" or "v19".}
+\item{gencodeVersion}{(character) options: "v26"(default, matched with gtex_v8) or "v19"}
 
-\item{recordPerChunk}{A integer value. From 1 to 2000.}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
 \value{
 A data.table with all genes' information.
 }
 \description{
-fetch basic information of all genes.
+
 }
 \examples{
 # Fetch all genes. This will take several minutes:

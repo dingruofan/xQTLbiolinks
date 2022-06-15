@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_gene}
 \alias{xQTLquery_gene}
-\title{xQTLquery_gene.}
+\title{Query basic information (including name, symbol, position and description, etc. ) of genes.}
 \usage{
 xQTLquery_gene(
   genes = "",
@@ -26,11 +26,11 @@ when "geneType" is "geneCategory", supported "genes" can be listed using functio
 
 }}
 
-\item{geneType}{A character string. "auto"(default), "geneSymbol", "gencodeId" or "geneCategory".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{gencodeVersion}{"v26" or "v19"}
+\item{gencodeVersion}{(character) options: "v26"(default, matched with gtex_v8) or "v19"}
 
-\item{recordPerChunk}{A integer value. Defaulut: 150}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 150).}
 }
 \value{
 A data.table of queried gene information. including following columns:
@@ -51,7 +51,7 @@ A data.table of queried gene information. including following columns:
 }
 }
 \description{
-users can use this function to query basic information (including gene name, symbol, position and description, etc ) of genes.
+
 }
 \examples{
 # get all protein coding genes and description:

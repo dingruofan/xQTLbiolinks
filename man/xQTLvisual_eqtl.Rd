@@ -2,22 +2,22 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_eqtl}
 \alias{xQTLvisual_eqtl}
-\title{xQTLvisual_eqtl}
+\title{Box plot with jittered points for showing number and significance of eQTL associations}
 \usage{
 xQTLvisual_eqtl(gene, geneType = "auto", datasetId = "gtex_v8")
 }
 \arguments{
-\item{gene}{A gene symbol or a gencode id (versioned).}
+\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A ggplot object
 }
 \description{
-plot significance of all eQTL associations for a gene across tissues.
+
 }
 \examples{
 xQTLvisual_eqtl("KIF15")

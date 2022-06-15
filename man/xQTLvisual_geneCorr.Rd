@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_geneCorr}
 \alias{xQTLvisual_geneCorr}
-\title{xQTLvisual_geneCorr}
+\title{Scatter plot for showing the correlation of two genes’ expression.}
 \usage{
 xQTLvisual_geneCorr(
   gene2 = "",
@@ -15,19 +15,19 @@ xQTLvisual_geneCorr(
 \arguments{
 \item{gene2}{Gene symbol or gencode ID of two genes. Default: gene symbol.}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
 \item{groupBy}{Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.}
 
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A ggplot object
 }
 \description{
-The correlation plot of two genes’ expression.
+
 }
 \examples{
 gene2 = c("AMOT", "HOXA4")

@@ -1,22 +1,13 @@
-
-#' @title xQTLdownload_exp
+#' @title Download normalized gene expression at the sample level in a specified tissue.
 #' @description
-#'  download normalized gene expression at the sample level in a specified tissue.
-#' @param genes Following gene types are supported:
-#' \itemize{
-#'   \item \strong{Gene symbol}.
 #'
-#'   A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
-#'   \item \strong{Gencode/ensemble id} (versioned or unversioned).
-#' }
-#'
-#' @param geneType A character string. Types of queried genes. Options: "auto" (default), "geneSymbol" and "gencodeId";
-#' @param tissueSiteDetail All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#'
-#' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
-#' @param toSummarizedExperiment whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
-#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 80).
-#' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
+#' @param genes (character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param toSummarizedExperiment a logical value indicating whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
+#' @param recordPerChunk (integer) number of records fetched per request (default: 80).
+#' @param pathologyNotesCategories a logical value indicating whether to return pathologyNotes. Default: FALSE, the pathologyNotes is ignored.
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -248,15 +239,15 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 }
 
 
-#' @title xQTLdownload_eqtlSig
-#' @description download significant eQTL associations of a tissue or across all tissues.
+#' @title Download significant eQTL associations of a specified tissue or across all tissues.
+#' @description
 #'
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param genes A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param genes (character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -409,17 +400,17 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 }
 
 
-#' @title xQTLdownload_eqtl
-#' @description download significant or unsignificant eQTL data of a tissue or across all tissues.
+#' @title Download significant or unsignificant eQTL associations of a tissue or across all tissues
+#' @description
 #'  can be quried with a gene/variant-gene pair.
 #'
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned). Can not be null.
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param recordPerChunk A integer value (1-500). number of records fetched per request (default: 100).
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported). Can not be null.
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 100).
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -606,29 +597,43 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 }
 
 
-#' @title xQTLdownload_eqtlAllAsso
-#' @description download all tested variant-gene associations.
+#' @title Download summary statistics of eQTL of a specified gene, variant, tissue or study.
+#' @description
 #'  source of all eQTL associations is EBI eQTL category.
 #'
-#' @param gene gene A gene symbol or a gencode id (versioned).
-#' @param geneType geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param tissueLabel A character string, all supported tissues can be listed using "ebi_study_tissues"
-#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
-#' @param study Studies can be listed using "ebi_study_tissues"
-#' @param withB37VariantId Whether to return the genome location(GTEx v7) of variants. Default: TRUE.
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param tissueLabel (character) all supported tissues can be listed using "ebi_study_tissues"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 1000).
+#' @param study (character) name of studies can be listed using "ebi_study_tissues"
+#' @param withB37VariantId a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.
 #' @import data.table
 #' @import stringr
 #' @return a data.table
 #' @export
 #'
 #' @examples
-#' geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal",
-#'                                      withB37VariantId=FALSE)
-#' geneAsso1 <- xQTLdownload_eqtlAllAsso(gene= "ATP11B", variantName="rs263022",
-#'                                       withB37VariantId=FALSE)
-xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=250, withB37VariantId=TRUE){
+#' # Download all associations of gene TP53 in all tissues from all studies:
+#' # geneAsso <- xQTLdownload_eqtlAllAsso("TP53", study="")
+#'
+#' # Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:
+#' geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
+#'
+#' # Download associations of gene ATP11B in CD4+ T cell from all supported studies:
+#' # geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
+#'
+#' # Download all associations of SNP rs11568818 in all tissues from all supported studies.
+#' varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", stydy="")
+#
+#' # Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
+#' varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
+#'                                     tissueLabel="Muscle - Skeletal")
+#'
+#' # Download all associations of MLH1-rs13315355 pair in all tissues from all studies:
+#' eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")
+xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
   . <- geneInfoV19<-NULL
   variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
@@ -710,16 +715,22 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
     variantName <- stringr::str_remove(variantName, "_b38")
   }
 
-  #
+  # Excessive empty variables:
   if(gene=="" && variantName=="" && tissueLabel==""){
     warning("== All associations from Study [", study,"] will be returned, this will take several days...")
+    warning("== Please make sure you have enough memory...")
     message("== Specified gene, variant or tissueLabel is recommended.")
   }
+  if(gene=="" && variantName=="" && study==""){
+    warning("== All associations in Tissue [", tissueLabel,"] will be returned, this will take several days...")
+    warning("== Please make sure you have enough memory...")
+    message("== Specified gene, variant or study is recommended.")
+  }
   if(gene=="" && variantName=="" && tissueLabel=="" && study==""){
-    stop("== All required fileds are empty...")
+    stop("== All required fileds are empty, please specify gene, variant study or tissueLabel")
   }
 
-  # if gene is not null, check geneName:
+  # if gene is not null, check geneName and add gene unversioned ensemble name.
   if(gene !=""){
     message("== Check the gene name:")
     geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v26")
@@ -734,26 +745,35 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
       geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
       message("== Done.")
     }
-  }else{
-    stop("Parameter \"gene\" can not be null! ")
   }
 
   ##################### fetch geneInfo:
-  # if(variantName!="" && variantType!= "auto"){
-  #   # construct url:
-  #   # aa<-"https://www.ebi.ac.uk/eqtl/api/associations/rs2302765?study=GTEx_V8&gene_id=ENSG00000238917&tissue=UBER_0001211"
-  #   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/associations/",variantName,"?links=False",
-  #                  ifelse(gene !="", paste0("&gene_id=",geneInfo$gencodeIdUnv),"")
-  #                  )
-  # }else
-  if(gene!="" && geneType!="auto"){
+  if( variantName!="" && variantType!= "auto"){
+    # construct url:
+    # aa<-"https://www.ebi.ac.uk/eqtl/api/associations/rs2302765?study=GTEx_V8&gene_id=ENSG00000238917&tissue=UBER_0001211"
+    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/associations/",variantName,"?links=False",
+                   ifelse(gene !="", paste0("&gene_id=",geneInfo$gencodeIdUnv),""),
+                   ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
+                   ifelse(study!="", paste0("&study=",study),"")
+                   )
+  }else if(gene!="" && geneType!="auto"){
     # aa <-“https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000282458/associations?variant_id=chr19_80901_G_T&tissue=UBER_0001954&study=GTEx_V8”
     url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/genes/",geneInfo$gencodeIdUnv,"/associations?links=False",
                    ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
-                   ifelse(study!="", paste0("&study=",study),""),
-                   ifelse(variantName!="",paste0("&variant_id=",variantName),"")
+                   ifelse(study!="", paste0("&study=",study),"")
+                   # ifelse(variantName!="",paste0("&variant_id=",variantName),"")
                    )
+  }else if( tissueLabel!=""  ){
+    # aa <- "https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000235/studies/Alasoo_2018/associations"
+    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/",ebi_ST[tissue_label==tissueLabel]$tissue[1],
+                   ifelse(study!="", paste0("/studies/",study),""),
+                   "/associations?links=False"
+                   )
+  }else if( study!="" ){
+    # aa <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations"
+    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/", study, "/associations?links=False")
   }
+  # message(url1)
 
   message("== Start fetching associations...")
   # construct url:
@@ -765,48 +785,216 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
   #   return(NULL)
   # }
   # gtexAsoo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2],  termSize=1000)
-  gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=1000)
+  gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=recordPerChunk)
   gtexAsooList <- do.call(c, gtexAsoo)
   if(length(gtexAsooList)==0){
     message("No association found!")
     return(NULL)
   }
   gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variantId= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
-                                                               chrom=x$chromosome, pos=x$position,
-                                                               # ref=x$ref, alt=x$alt, gene_id= x$gene_id, study_id=x$study_id
+                                                               chrom=x$chromosome, pos=x$position,ref=x$ref, alt=x$alt,study_id=x$study_id,
                                                                se=x$se, median_tpm=x$median_tpm, pValue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
                                                                tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
-                                                               molecular_trait_id = x$molecular_trait_id
+                                                               molecular_trait_id = x$molecular_trait_id, gene_id= x$gene_id
                                                                ) })
   gtexAsooDT <- data.table::rbindlist(gtexAsooList, fill=TRUE)
-  gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
-  gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
-  # gtexAsooDT$gencodeId_GTEX_v7 <- ifelse( exists("geneInfoV19") && nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
+  gtexAsooDT[,variantId:=.(paste0( "chr",stringr::str_remove_all(chrom, "chr"),"_",pos,"_",ref,"_",alt ))]
+  if( !("tissue_label" %in% names(gtexAsooDT)) ){
+    gtexAsooDT <- merge(gtexAsooDT, ebi_ST[,.(tissue, tissue_label,study_id=study_accession)], by = c("tissue","study_id"))
+  }
+  gtexAsooDT <- cbind(gtexAsooDT[,-c("study_id", "tissue", "tissue_label", "qtl_group")], gtexAsooDT[,c("study_id", "tissue", "tissue_label", "qtl_group")])
+  if(gene!="" && geneType!="auto"){
+    gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
+    gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
+    # gtexAsooDT$gencodeId_GTEX_v7 <- ifelse( exists("geneInfoV19") && nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
+  }else{
+    geneInfo <- xQTLquery_gene(unique(gtexAsooDT$gene_id))
+    gtexAsooDT <- merge(gtexAsooDT[,], geneInfo[,.(gene_id=genes, geneSymbol, gencodeId_GTEX_v8=gencodeId)], by = "gene_id", all.x = TRUE)[,-c("gene_id")]
+  }
   if(withB37VariantId){
     # add dbSNP id and  hg19 cordinate:
-    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = gtexAsooDT$pos, datasetId = "gtex_v8", recordPerChunk = recordPerChunk)
+    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), datasetId = "gtex_v8", recordPerChunk = 250)
     gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
     gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
-    gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
-    gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
-    return(gtexAsooDT)
-  }else{
-    return(gtexAsooDT)
+    # gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+    # gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
   }
+  gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+  return(gtexAsooDT)
 }
 
 
 
+#' @title Download summary statistics of eQTL with genome position.
+#'
+#' @param chrom (character) name of chromesome, including chr1-chr22, chrX.
+#' @param pos_lower (integer) lower base pair location threshold, expressed as an integer
+#' @param pos_upper (integer) upper base pair location threshold, expressed as an integer
+#' @param p_lower (numeric) lower p-value threshold, can be expressed as a float or using mantissa and exponent annotation (0.001 or 1e-3 or 1E-3)
+#' @param p_upper (numeric) upper p-value threshold, can be expressed as a float or using mantissa and exponent annotation (0.001 or 1e-3 or 1E-3)
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueLabel (character) all supported tissues can be listed using "ebi_study_tissues".
+#' @param study (character) name of studies can be listed using "ebi_study_tissues".
+#' @param recordPerChunk (integer) number of records fetched per request (default: 1000).
+#' @param withB37VariantId a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.
+#'
+#' @import data.table
+#' @import stringr
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#'
+xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_upper=numeric(0), p_lower=0, p_upper=1.1,  gene="", geneType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
 
-#' @title xQTLdownload_sqtlSig
-#' @description download significant sQTL associations of a tissue or across all tissues.
+  ebi_ST <- data.table::copy(ebi_study_tissues)
+
+  # check chrome:
+  if(length(chrom)==1 && chrom!="" && !is.na(chrom) ){
+    chrom <- toupper(stringr::str_remove(chrom, "chr"))
+  }else if( !(chrom %in% c(1:22, "X")) ){
+    stop("Chromosome must be choosen from one of: ", paste0(paste0("chr",c(1:22, "X")), collapse = ", "))
+  }else{
+    message("== chromosome: ", chrom)
+  }
+
+  # check position and pvalue:
+  if( length(pos_lower)==1 && length(pos_upper) ==1 && length(p_upper)==1 && length(p_lower)==1 && is.wholenumber(pos_lower) && is.wholenumber(pos_upper) && is.numeric(p_lower) && is.numeric(p_upper)){
+    message()
+  }else{
+    stop("pos_lower, pos_upper must be the whole numbers, and p_lower, p_upper must be the numeric value.")
+  }
+  if(pos_upper < pos_lower){stop("pos_upper must greater than pos_lower")}
+  if( p_upper < p_lower ){ stop("p_upper must greater than p_lower")}
+
+
+
+  # check study:
+  if( length(study) ==1 && study!="" ){
+    if(toupper(study) %in% toupper(unique(ebi_ST$study_accession))){
+      study <- unique(ebi_ST$study_accession)[ toupper(unique(ebi_ST$study_accession)) == toupper(study) ]
+      message("== Study [", study, "] detected...")
+    }else{
+      message("ID\tstudy\ttissueLabel")
+      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+      stop("== Study [",study,"] can not be correctly matched, please choose from above list: ")
+    }
+  }
+
+  # check tissue:
+  if( length(tissueLabel)==1 && tissueLabel!="" ){
+    if( toupper(tissueLabel) %in% toupper(unique(ebi_ST$tissue_label)) ){
+      message("== Tissue label [", tissueLabel, "] detected...")
+      tissueLabel <- unique(ebi_ST$tissue_label)[ toupper(unique(ebi_ST$tissue_label)) == toupper(tissueLabel) ]
+    }else{
+      message("ID\tstudy\ttissueLabel")
+      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+      stop("== tissueLabel [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
+    }
+  }
+
+  # check study-tissue:
+  if( length(study) ==1 && length(tissueLabel)==1 && study!="" && tissueLabel!=""){
+    if(nrow( ebi_ST[study_accession == study & tissue_label==tissueLabel])==1){
+      message("== Study [",study,"] -- Tissue label [",tissueLabel,"] corrcted mapped..")
+    }else{
+      message("ID\tstudy\ttissueLabel")
+      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+      stop("== Study [",study,"] -- Tissue label [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
+    }
+  }
+
+  # check geneType
+  if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
+  }
+  if( length(gene)==1 && gene!=""){
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+  }
+
+  # if gene is not null, check geneName and add gene unversioned ensemble name.
+  if(gene !=""){
+    message("== Check the gene name:")
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v26")
+    # 对于只需要一个基因的：
+    geneInfo <- geneInfo[!is.na(gencodeId)]
+    geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
+    geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & is.na(entrezGeneId))]
+    # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
+    if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
+      stop("Invalid gene name or type, please correct your input, or set gene with gencodeId.")
+    }else{
+      geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
+      message("== Done.")
+    }
+  }
+
+  # url1 <- "https://www.ebi.ac.uk/eqtl/api/chromosomes/11/associations?study=GTEx_V8&gene_id=ENSG00000137673&bp_lower=101798614&bp_upper=103462313&p_upper=1e-1"
+  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/chromosomes/", chrom, "/associations?links=False",
+                 "&bp_lower=",as.character(as.integer(pos_lower)), "&bp_upper=",as.character(as.integer(pos_upper)), "&p_upper=",p_upper, "&p_lower=",p_lower,
+                 ifelse(gene !="", paste0("&gene_id=",geneInfo$gencodeIdUnv),""),
+                 ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
+                 ifelse(study!="", paste0("&study=",study),"")
+                 )
+
+  gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=recordPerChunk)
+  gtexAsooList <- do.call(c, gtexAsoo)
+  if(length(gtexAsooList)==0){
+    message("No association found!")
+    return(NULL)
+  }
+  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variantId= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
+                                                               chrom=x$chromosome, pos=x$position,ref=x$ref, alt=x$alt,study_id=x$study_id,
+                                                               se=x$se, median_tpm=x$median_tpm, pValue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
+                                                               tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
+                                                               molecular_trait_id = x$molecular_trait_id, gene_id= x$gene_id
+  ) })
+  gtexAsooDT <- data.table::rbindlist(gtexAsooList, fill=TRUE)
+  gtexAsooDT[,variantId:=.(paste0( "chr",stringr::str_remove_all(chrom, "chr"),"_",pos,"_",ref,"_",alt ))]
+  if( !("tissue_label" %in% names(gtexAsooDT)) ){
+    gtexAsooDT <- merge(gtexAsooDT, ebi_ST[,.(tissue, tissue_label,study_id=study_accession)], by = c("tissue","study_id"))
+  }
+  gtexAsooDT <- cbind(gtexAsooDT[,-c("study_id", "tissue", "tissue_label", "qtl_group")], gtexAsooDT[,c("study_id", "tissue", "tissue_label", "qtl_group")])
+
+  # add gene info.
+  if(gene!="" && geneType!="auto"){
+    gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
+    gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
+    # gtexAsooDT$gencodeId_GTEX_v7 <- ifelse( exists("geneInfoV19") && nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
+  }else{
+    geneInfo <- xQTLquery_gene(unique(gtexAsooDT$gene_id))
+    gtexAsooDT <- merge(gtexAsooDT[,], geneInfo[,.(gene_id=genes, geneSymbol, gencodeId_GTEX_v8=gencodeId)], by = "gene_id", all.x = TRUE)[,-c("gene_id")]
+  }
+  if(withB37VariantId){
+    # add dbSNP id and  hg19 cordinate:
+    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), datasetId = "gtex_v8", recordPerChunk = 250)
+    gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+    gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
+    # gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+    # gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
+  }
+  gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+  return(gtexAsooDT)
+}
+
+
+#' @title Download significant sQTL associations of a tissue or across all tissues
+#' @description
 #'  Only GTEx v8 is supported.
 #'
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -821,15 +1009,15 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
 #' xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
 #'
 #' # Download sQTL detail with gene symbol and gencode ID:
-#' xQTLdownload_sqtlSig(gene="ATAD3B")
-#' xQTLdownload_sqtlSig(gene="ENSG00000141510.16")
-#' xQTLdownload_sqtlSig(gene="ENSG00000141510.16", tissueSiteDetail="Lung" )
+#' xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
+#' xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))
+#' xQTLdownload_sqtlSig(genes=c("ENSG00000141510.16","ENSG00000076242.14"))
 #'
-#' # Download eQTL detail with a variant-gene pair:
-#' xQTLdownload_sqtlSig(variantName="rs546057177", gene="TP53")
-#' xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", gene="TP53",
-#'                      tissueSiteDetail="Lung")
-xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="" ){
+#' # Download sQTL detail with the variant-genes pair:
+#' xQTLdownload_sqtlSig(variantName="rs1987191",genes="ATAD3B")
+#' xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
+#' xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")
+xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", geneType="auto", tissueSiteDetail="" ){
   .<-NULL
   variantId <- snpId <- gencodeId <- geneSymbol <- phenotypeId <- pValue <- nes <- NULL
   # variantName="chr1_739465_TTTTG_T_b38"
@@ -851,10 +1039,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
   }else{
     stop("sQTL only support \"gtex_v8\" of datasetId.")
   }
-  # check gene:
-  if( length(gene) >1 || !is.character(gene) ){
-    stop("Parameter \"gene\" must be a character string. ")
-  }
+
   # check tissueSiteDetail:
   if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail)) ){
     stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
@@ -892,11 +1077,11 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
   }
 
   ##################### fetch geneInfo:
-  if(gene !=""){
+  if( all(genes !="")){
 
     # Automatically determine the type of variable:
     if(geneType=="auto"){
-      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
         geneType <- "gencodeId"
       }else{
         geneType <- "geneSymbol"
@@ -904,7 +1089,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
@@ -913,7 +1098,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
     }
   }
   # both are null: error!
-  if(variantName=="" && gene == ""){
+  if(variantName=="" && all(genes == "") ){
     stop("Parameter \"variantName\" and \"gene\" can not be null at the same time. ")
   }
 
@@ -927,7 +1112,7 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
   url1 <- paste0("https://gtexportal.org/rest/v1/association/singleTissueSqtl?format=json",
                  "&datasetId=",datasetId,
                  ifelse(variantName=="","",paste0("&variantId=",varInfo$variantId)),
-                 ifelse(gene=="","",paste0("&gencodeId=",geneInfo$gencodeId)),
+                 ifelse(all(genes==""),"",paste0("&gencodeId=",paste0(geneInfo$gencodeId, collapse = ","))),
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
   )
   # check network:
@@ -940,8 +1125,8 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
   # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
   tmp <- data.table::as.data.table(url1GetText2Json$singleTissueSqtl)
-  if(nrow(tmp)==0){
-    message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!="","-",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
+  if(!exists("tmp")||nrow(tmp)==0){
+    message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & genes!="","-",""),ifelse(genes=="","",paste0(" gene [", genes,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
     return(data.table::data.table())
   }else{
     message("== Done.")
@@ -949,20 +1134,20 @@ xQTLdownload_sqtlSig <- function(variantName="", gene="", variantType="auto", ge
   tmp <- merge(tmp, tissueSiteDetailGTEx, by = "tissueSiteDetailId")
   outInfo <- tmp[,.(variantId, snpId, gencodeId, geneSymbol, phenotypeId, tissueSiteDetail, pValue, nes, datasetId)]
   message("=================================")
-  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & gene!=""," -",""),ifelse(gene=="","",paste0(" gene [", gene,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
+  message("Totally ", nrow(outInfo), " associatons were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & genes!=""," -",""),ifelse(all(genes==""),"",paste0(" gene: [",paste0(genes, collapse = ", "),"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail))," in ",datasetId,"."  )
 
   return(outInfo)
 }
 
-#' @title xQTLdownload_eqtlExp
-#' @description download normalized expression of gene for a eQTL pair.
+#' @title Download normalized expression of gene for a eQTL pair.
+#' @description
 #'
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
-#' @param gene A gene symbol or a gencode id (versioned).
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -1113,14 +1298,14 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 }
 
 
-#' @title xQTLdownload_sqtlExp
+#' @title Download normalized expression of intron for a sQTL pair.
 #' @description
-#'  download normalized expression of intron for a sQTL pair.
-#' @param variantName A character string. like dbsnp ID or variant id in GTEx.
+#'
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
-#' @param variantType A character string. "auto", "snpId" or "variantId". Default: "auto".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -1252,13 +1437,13 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
   return(expData)
 }
 
-#' @title xQTLdownload_ld
-#' @description download linkage disequilibrium data of the variants associated with this gene.
+#' @title Download linkage disequilibrium data of the variants associated with this gene.
+#' @description
 #'
-#' @param gene A gene symbol, gencode id (versioned), or a charater string of gene type.
-#' @param geneType  A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId A character string. Options: "gtex_v8" (default), "gtex_v7".
-#' @param recordPerChunk A integer value (1-500). number of records fetched per request (default: 100).
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType  (character) "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param recordPerChunk (integer) number of records fetched per request (default: 100).
 #' @import data.table
 #' @import stringr
 #' @import utils
@@ -1356,14 +1541,14 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 }
 
 
-#' @title xQTLdownload_egene
-#' @description download eGenes (eQTL Genes).
-#'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results may be filtered by tissue.
-#' @param gene  A charater string of gene symbol, gencode id (versioned).
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param recordPerChunk A integer value (1-200). number of records fetched per request (default: 200).
+#' @title Download details of eGenes (eQTL Genes) for a specified gene or a tissue.
+#' @description
+#'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results can be filtered by tissue.
+#' @param gene  (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @import data.table
 #' @import stringr
 #' @import utils
@@ -1489,14 +1674,14 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 }
 
 
-#' @title xQTLdownload_sgene
-#' @description download sGenes (sQTL Genes).
+#' @title Download details of sGenes (sQTL Genes) for a specified gene or a tissue.
+#' @description
 #'  sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
-#' @param gene  A charater string of gene symbol, gencode id (versioned). Can be null.
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId A character string. only support "gtex_v8". Default: "gtex_v8".
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param recordPerChunk A integer value (1-2000). number of records fetched per request (default: 2000).
+#' @param gene  (character) gene symbol or gencode id (versioned or unversioned are both supported). Can be null.
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #' @import data.table
 #' @import stringr
 #' @import utils
@@ -1628,14 +1813,14 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 }
 
 
-#' @title xQTLdownload_geneMedExp
-#' @description download genes' median expression in a tissue or across all tissues.
+#' @title Download median expression of all samples for specified genes across tissues.
+#' @description
 #'
-#' @param genes A character vector of gene symbol/gencode ID.
-#' @param geneType A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId "gtex_v7" or "gtex_v8"(default)
-#' @param tissueSiteDetail A character string. Tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
-#' @param recordPerChunk 1-2000. Default: 150.
+#' @param genes (character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param recordPerChunk (integer) number of records fetched per request (default: 150).
 #' @import data.table
 #' @import utils
 #' @import stringr
@@ -1811,11 +1996,12 @@ retrieveLD = function(chr,snp,population){
 #' @param max_count To prevent download failure due to network fluctuations, max number of connection attempts.
 #' @param token Ldlink token, default: "9246d2db7917"
 #'
+#' @export
 #' @return a data.frame
 #'
 #' @examples
 #' # snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
-retrieveLD_LDproxy_old <- function(targetSnp="", population="EUR" , windowSize=500000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){
+retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=500000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){
   # targetSnp="rs3"
   # population="EUR"
   # windowSize=500000

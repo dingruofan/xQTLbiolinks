@@ -2,22 +2,22 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_varId}
 \alias{xQTLquery_varId}
-\title{xQTLquery_varId}
+\title{Query variant in GTEx with variant ID or dbSNP ID}
 \usage{
 xQTLquery_varId(variantName = "", variantType = "auto", datasetId = "gtex_v8")
 }
 \arguments{
-\item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
+\item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
-\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
+\item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A data.table.
 }
 \description{
-query variant with variant ID or SNP ID.
+
 }
 \examples{
 xQTLquery_varId("rs12596338")

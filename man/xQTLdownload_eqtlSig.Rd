@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_eqtlSig}
 \alias{xQTLdownload_eqtlSig}
-\title{xQTLdownload_eqtlSig}
+\title{Download significant eQTL associations of a specified tissue or across all tissues.}
 \usage{
 xQTLdownload_eqtlSig(
   variantName = "",
@@ -14,23 +14,23 @@ xQTLdownload_eqtlSig(
 )
 }
 \arguments{
-\item{variantName}{A character string. like dbsnp ID or variant id in GTEx.}
+\item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
-\item{genes}{A gene symbol or a gencode id (versioned).}
+\item{genes}{(character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
 
-\item{variantType}{A character string. "auto", "snpId" or "variantId". Default: "auto".}
+\item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{geneType}{A character string. "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{A character string. tissue detail can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{datasetId}{A character string. "gtex_v8" or "gtex_v7". Default: "gtex_v8".}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A data.table
 }
 \description{
-download significant eQTL associations of a tissue or across all tissues.
+
 }
 \examples{
 # Download eQTL info for a variant:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_exp}
 \alias{xQTLdownload_exp}
-\title{xQTLdownload_exp}
+\title{Download normalized gene expression at the sample level in a specified tissue.}
 \usage{
 xQTLdownload_exp(
   genes = "",
@@ -15,31 +15,25 @@ xQTLdownload_exp(
 )
 }
 \arguments{
-\item{genes}{Following gene types are supported:
-\itemize{
-\item \strong{Gene symbol}.
+\item{genes}{(character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
 
-A character string or a character vector (case ignored). like: "tp53","naDK","SDF4".
-\item \strong{Gencode/ensemble id} (versioned or unversioned).
-}}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{geneType}{A character string. Types of queried genes. Options: "auto" (default), "geneSymbol" and "gencodeId";}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
 
-\item{tissueSiteDetail}{All tissues' name can be listed with "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{datasetId}{A character string. Options: "gtex_v8" (default), "gtex_v7".}
+\item{toSummarizedExperiment}{a logical value indicating whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.}
 
-\item{toSummarizedExperiment}{whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 80).}
 
-\item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 80).}
-
-\item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
+\item{pathologyNotesCategories}{a logical value indicating whether to return pathologyNotes. Default: FALSE, the pathologyNotes is ignored.}
 }
 \value{
 return a SummarizedExperiment or data.frame object harbing gene expression profiles.
 }
 \description{
-download normalized gene expression at the sample level in a specified tissue.
+
 }
 \examples{
 # Download gene expression with a genecode ID:

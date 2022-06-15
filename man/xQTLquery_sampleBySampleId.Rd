@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_sampleBySampleId}
 \alias{xQTLquery_sampleBySampleId}
-\title{xQTLquery_sampleBySampleId}
+\title{Query sample's details with samples' IDs.}
 \usage{
 xQTLquery_sampleBySampleId(
   sampleIds,
@@ -13,7 +13,7 @@ xQTLquery_sampleBySampleId(
 \arguments{
 \item{sampleIds}{A character vector or a string of sample ID.}
 
-\item{recordPerChunk}{A integer value (1-2000). number of records fetched per request (default: 200).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 
 \item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }
@@ -21,7 +21,7 @@ xQTLquery_sampleBySampleId(
 a data.frame.
 }
 \description{
-query sample's details with samples' IDs.
+
 }
 \examples{
 sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
