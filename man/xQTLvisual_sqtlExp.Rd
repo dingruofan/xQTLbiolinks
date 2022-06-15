@@ -27,7 +27,7 @@ xQTLvisual_sqtlExp(
 A list containing variant detail and expression profile.
 }
 \description{
-
+Boxplot of normalized expression among genotypes for sQTL.
 }
 \examples{
 # sQTL associatons of TP53:

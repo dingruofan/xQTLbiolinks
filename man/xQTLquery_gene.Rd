@@ -51,7 +51,7 @@ A data.table object of queried gene information. including following columns:
 }
 }
 \description{
-
+Query basic information (including name, symbol, position and description, etc. ) of genes.
 }
 \examples{
 # get all protein coding genes and description:

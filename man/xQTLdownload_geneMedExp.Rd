@@ -27,7 +27,7 @@ xQTLdownload_geneMedExp(
 A data.table object.
 }
 \description{
-
+Download median expression of all samples for specified genes across tissues.
 }
 \examples{
 geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")

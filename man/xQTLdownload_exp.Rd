@@ -33,7 +33,7 @@ xQTLdownload_exp(
 return a SummarizedExperiment or a data.table object harbing gene expression profiles and samples' information.
 }
 \description{
-
+Download normalized gene expression at the sample level in a specified tissue.
 }
 \examples{
 # Download gene expression with a genecode ID:

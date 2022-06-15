@@ -42,7 +42,7 @@ xQTLanalyze_coloc(
 A list of coloc result and details.
 }
 \description{
-
+Conduct colocalization analysis with trait genes generated from \code{xQTLanalyze_getTraits}
 }
 \examples{
 # Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/

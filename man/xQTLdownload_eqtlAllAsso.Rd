@@ -49,11 +49,12 @@ geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
 # geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
 
 # Download all associations of SNP rs11568818 in all tissues from all supported studies.
-varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", stydy="")
+varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")
 # Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
 varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
                                     tissueLabel="Muscle - Skeletal")
 
 # Download all associations of MLH1-rs13315355 pair in all tissues from all studies:
 eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")
+
 }

@@ -27,7 +27,7 @@ xQTLquery_sampleByTissue(
 returen a data.table object of samples' information
 }
 \description{
-
+Query sample's details with tissue name
 }
 \examples{
 sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",

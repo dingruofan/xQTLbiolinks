@@ -24,7 +24,7 @@ xQTLvisual_genesExp(
 A ggplot object.
 }
 \description{
-
+Density plot of expression profiles of the gene
 }
 \examples{
 genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",

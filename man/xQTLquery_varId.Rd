@@ -17,7 +17,7 @@ xQTLquery_varId(variantName = "", variantType = "auto", datasetId = "gtex_v8")
 A data.table object.
 }
 \description{
-
+Query variant in GTEx with variant ID or dbSNP ID
 }
 \examples{
 xQTLquery_varId("rs12596338")

@@ -1,6 +1,4 @@
 #' @title Download normalized gene expression at the sample level in a specified tissue.
-#' @description
-#'
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
@@ -240,8 +238,6 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
 
 #' @title Download significant eQTL associations of a specified tissue or across all tissues.
-#' @description
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -403,7 +399,6 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @title Download significant or unsignificant eQTL associations of a tissue or across all tissues
 #' @description
 #'  can be quried with a gene/variant-gene pair.
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported). Can not be null.
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -600,7 +595,6 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #' @title Download summary statistics of eQTL of a specified gene, variant, tissue or study.
 #' @description
 #'  source of all eQTL associations is EBI eQTL category.
-#'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
@@ -625,7 +619,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #' # geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
 #'
 #' # Download all associations of SNP rs11568818 in all tissues from all supported studies.
-#' varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", stydy="")
+#' varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")
 #
 #' # Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
 #' varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
@@ -633,9 +627,10 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #'
 #' # Download all associations of MLH1-rs13315355 pair in all tissues from all studies:
 #' eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")
+#'
 xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
-  . <- geneInfoV19<-NULL
-  variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
+  . <- geneInfoV19 <- pos <- ref<- alt<- tissue<-NULL
+  chrom <- tissue_label <- study_accession <- variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -845,9 +840,13 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
 #' @export
 #'
 #' @examples
-#'
+#' eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr11",
+#'                                          pos_lower=101398614, pos_upper = 101462313,
+#'                                          tissueLabel="Liver",
+#'                                          p_upper=1e-1)
 xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_upper=numeric(0), p_lower=0, p_upper=1.1,  gene="", geneType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
-
+  .<-NULL
+  study_accession <- tissue_label <- gencodeId <- genes <- geneSymbol <- chromosome <- entrezGeneId <- variantId <- pos <- ref <- alt <- tissue <- b37VariantId <- NULL
   ebi_ST <- data.table::copy(ebi_study_tissues)
 
   # check chrome:
@@ -861,13 +860,12 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 
   # check position and pvalue:
   if( length(pos_lower)==1 && length(pos_upper) ==1 && length(p_upper)==1 && length(p_lower)==1 && is.wholenumber(pos_lower) && is.wholenumber(pos_upper) && is.numeric(p_lower) && is.numeric(p_upper)){
-    message()
+    message("== Genome range: ",chrom,":", as.character(as.integer(pos_lower)),"-",as.character(as.integer(pos_upper)))
   }else{
     stop("pos_lower, pos_upper must be the whole numbers, and p_lower, p_upper must be the numeric value.")
   }
   if(pos_upper < pos_lower){stop("pos_upper must greater than pos_lower")}
   if( p_upper < p_lower ){ stop("p_upper must greater than p_lower")}
-
 
 
   # check study:
@@ -937,6 +935,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
     }
   }
 
+  message("== Start fetching associations...", format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
   # url1 <- "https://www.ebi.ac.uk/eqtl/api/chromosomes/11/associations?study=GTEx_V8&gene_id=ENSG00000137673&bp_lower=101798614&bp_upper=103462313&p_upper=1e-1"
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/chromosomes/", chrom, "/associations?links=False",
                  "&bp_lower=",as.character(as.integer(pos_lower)), "&bp_upper=",as.character(as.integer(pos_upper)), "&p_upper=",p_upper, "&p_lower=",p_lower,
@@ -989,7 +988,6 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 #' @title Download significant sQTL associations of a tissue or across all tissues
 #' @description
 #'  Only GTEx v8 is supported.
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -1140,8 +1138,6 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
 }
 
 #' @title Download normalized expression of gene for a eQTL pair.
-#' @description
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -1299,8 +1295,6 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 
 
 #' @title Download normalized expression of intron for a sQTL pair.
-#' @description
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -1438,8 +1432,6 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 }
 
 #' @title Download linkage disequilibrium data of the variants associated with this gene.
-#' @description
-#'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType  (character) "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
@@ -1814,8 +1806,6 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 
 
 #' @title Download median expression of all samples for specified genes across tissues.
-#' @description
-#'
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".

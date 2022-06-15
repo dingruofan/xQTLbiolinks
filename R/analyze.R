@@ -114,8 +114,6 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 }
 
 #' @title Identify trait genes using sentinel SNPs generated from `xQTLanalyze_getSentinelSnp`
-#' @description
-#'
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
@@ -263,8 +261,6 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 
 
 #' @title Conduct colocalization analysis with trait genes generated from `xQTLanalyze_getTraits`
-#' @description
-#'
 #' @param gwasDF A dataframe of gwas.
 #' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
@@ -433,8 +429,6 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 
 
 #' @title Perform tissue-specific expression analysis for genes.
-#' @description
-#'
 #' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param method "SPM" or "entropy"
@@ -511,7 +505,6 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 
 
 #' @title eQTL-specific analysis
-#'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
@@ -526,6 +519,8 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #' @examples
 #' p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="gtex_v8")
 xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="", variantType="auto", binNum=4, study="", population="EUR"){
+  .<-NULL
+  study_accession <- tissue_label <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- LDbins <- logP <- corRP <- NULL
 
   ebi_ST <-copy(ebi_study_tissues)
   if(gene=="" || variantName==""){
@@ -618,10 +613,10 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
 
   assoAllLd <- merge(assoAllLd, assoAllLd[,.(corRP=cor(R2, logP)),by="tissue_label"][order(corRP)], by="tissue_label")
 
-  ggplot(assoAllLd)+
+  p <- ggplot(assoAllLd)+
     geom_tile(aes(x=LDbins, y=reorder(tissue_label, corRP), fill=logP),color = "black")+
     geom_text(aes(x=LDbins, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
-    scale_fill_gradientn(colors = rev(hcl.colors(20, "RdYlGn")))+
+    scale_fill_gradientn(colors = c("#006228", "#097531", "#368939", "#549C3F", "#70AF44", "#8CC148", "#ABD163", "#C7DF7D", "#E0ED97", "#F6F9B1", "#FDF6B6", "#F8E69D", "#F4D27C", "#F0BB55", "#ECA313", "#E88800", "#E36A00", "#DB4500", "#C22C00", "#A51122"))+
     theme_classic()
 
   plot(p)

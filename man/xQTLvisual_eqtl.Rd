@@ -17,7 +17,7 @@ xQTLvisual_eqtl(gene, geneType = "auto", datasetId = "gtex_v8")
 A ggplot object.
 }
 \description{
-
+Box plot with jittered points for showing number and significance of eQTL associations
 }
 \examples{
 xQTLvisual_eqtl("KIF15")

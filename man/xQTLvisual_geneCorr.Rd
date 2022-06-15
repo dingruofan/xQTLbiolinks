@@ -27,7 +27,7 @@ xQTLvisual_geneCorr(
 A ggplot object.
 }
 \description{
-
+Scatter plot for showing the correlation of two genes’ expression.
 }
 \examples{
 gene2 = c("AMOT", "HOXA4")

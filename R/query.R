@@ -1,6 +1,4 @@
 #' @title Query basic information (including name, symbol, position and description, etc. ) of genes.
-#' @description
-#'
 #' @param genes A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
@@ -271,8 +269,6 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 }
 
 #' @title Query sample's details with tissue name
-#' @description
-#'
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
@@ -446,8 +442,6 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 
 
 #' @title Query sample's details with samples' IDs.
-#' @description
-#'
 #' @param sampleIds A character vector or a string of sample ID.
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
@@ -544,8 +538,6 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 
 
 #' @title Fetch details of all genes supported in GTEx.
-#' @description
-#'
 #' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
 #' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #'
@@ -631,8 +623,6 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 
 
 #' @title Query variant in GTEx with variant ID or dbSNP ID
-#' @description
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
@@ -728,8 +718,6 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
 }
 
 #' @title Query varints in GTEx using genome position.
-#' @description
-#'
 #' @param chrom (character) name of chromesome, including chr1-chr22, chrX, chrY.
 #' @param pos An integer array.
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".

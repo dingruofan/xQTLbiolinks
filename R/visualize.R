@@ -1,6 +1,4 @@
 #' @title Boxplot of normalized expression among genotypes for eQTL.
-#' @description
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -160,8 +158,6 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 }
 
 #' @title Boxplot of normalized expression among genotypes for sQTL.
-#' @description
-#'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -500,7 +496,6 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 
 #' @title Dotplot of comparing regional signals between GWAS and xQTL.
 #' @description This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
-#'
 #' @param eqtlDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param gwasDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param highlightSnp Default is the snp that is farthest from the origin of the coordinates.
@@ -747,8 +742,6 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 
 
 #' @title Density plot of expression profiles of the gene
-#' @description
-#'
 #' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
@@ -801,8 +794,6 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 
 
 #' @title Scatter plot for showing the correlation of two genes’ expression.
-#' @description
-#'
 #' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
@@ -855,8 +846,6 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
 
 
 #' @title Box plot with jittered points for showing number and significance of eQTL associations
-#' @description
-#'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
@@ -915,8 +904,6 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 
 
 #' @title Violin plot of distribution of the gene expression profiles among multiple tissues.
-#' @description
-#'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissues A character string or a vector. "All" (default) means that all tissues is included.

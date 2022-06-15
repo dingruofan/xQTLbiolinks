@@ -24,7 +24,7 @@ xQTLdownload_ld(
 A data.table object.
 }
 \description{
-
+Download linkage disequilibrium data of the variants associated with this gene.
 }
 \examples{
 xQTLdownload_ld("TP53" )

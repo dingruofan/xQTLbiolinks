@@ -24,7 +24,7 @@ xQTLquery_varPos(
 A data.table object.
 }
 \description{
-
+Query varints in GTEx using genome position.
 }
 \examples{
 xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")

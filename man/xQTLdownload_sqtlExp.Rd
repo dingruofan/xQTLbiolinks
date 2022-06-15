@@ -27,7 +27,7 @@ xQTLdownload_sqtlExp(
 A data.table object.
 }
 \description{
-
+Download normalized expression of intron for a sQTL pair.
 }
 \examples{
 # Download sQTL expression in different tissues:

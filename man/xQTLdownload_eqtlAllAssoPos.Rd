@@ -48,5 +48,8 @@ A data.table object
 Download summary statistics of eQTL with genome position.
 }
 \examples{
-
+eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr11",
+                                         pos_lower=101398614, pos_upper = 101462313,
+                                         tissueLabel="Liver",
+                                         p_upper=1e-1)
 }

@@ -30,7 +30,7 @@ xQTLdownload_eqtlSig(
 A data.table object.
 }
 \description{
-
+Download significant eQTL associations of a specified tissue or across all tissues.
 }
 \examples{
 # Download eQTL info for a variant:

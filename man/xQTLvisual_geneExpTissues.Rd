@@ -30,7 +30,7 @@ xQTLvisual_geneExpTissues(
 A list containing expression profile and a ggplot object.
 }
 \description{
-
+Violin plot of distribution of the gene expression profiles among multiple tissues.
 }
 \examples{
 # Display gene expression in all tissues.

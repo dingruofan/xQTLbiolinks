@@ -27,7 +27,7 @@ xQTLanalyze_getTraits(
 A data.table object
 }
 \description{
-
+Identify trait genes using sentinel SNPs generated from \code{xQTLanalyze_getSentinelSnp}
 }
 \examples{
 URL1<-"http://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"

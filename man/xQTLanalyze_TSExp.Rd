@@ -24,7 +24,7 @@ xQTLanalyze_TSExp(
 A data.table object.
 }
 \description{
-
+Perform tissue-specific expression analysis for genes.
 }
 \examples{
 TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])

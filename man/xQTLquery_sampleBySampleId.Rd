@@ -21,7 +21,7 @@ xQTLquery_sampleBySampleId(
 a data.table object of samples' information.
 }
 \description{
-
+Query sample's details with samples' IDs.
 }
 \examples{
 sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",

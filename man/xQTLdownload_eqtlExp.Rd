@@ -30,7 +30,7 @@ xQTLdownload_eqtlExp(
 A data.table object.
 }
 \description{
-
+Download normalized expression of gene for a eQTL pair.
 }
 \examples{
 # Download exp with variant-gene pair in different tissues:

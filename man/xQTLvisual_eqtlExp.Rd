@@ -30,7 +30,7 @@ xQTLvisual_eqtlExp(
 A list containing eQTL detail, expression profile and a ggplot object.
 }
 \description{
-
+Boxplot of normalized expression among genotypes for eQTL.
 }
 \examples{
 # EQTL associatons of TP53 in Esophagus - Mucosa:
