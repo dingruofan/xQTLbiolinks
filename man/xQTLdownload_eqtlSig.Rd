@@ -16,7 +16,7 @@ xQTLdownload_eqtlSig(
 \arguments{
 \item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
-\item{genes}{(character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
+\item{genes}{(character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
 
 \item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 

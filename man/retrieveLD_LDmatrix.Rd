@@ -18,7 +18,7 @@ retrieveLD_LDmatrix(snps, pop = "CEU", r2d = "r2", token = NULL, file = FALSE)
 \item{file}{Optional character string naming a path and file for saving results. If file = FALSE, no file will be generated, default = FALSE.}
 }
 \value{
-A data.table object.
+a data.table object
 }
 \description{
 This fucntion is rebuilt from LDlink package.

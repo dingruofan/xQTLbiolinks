@@ -1,7 +1,7 @@
 #' @title Download normalized gene expression at the sample level in a specified tissue.
 #' @description
 #'
-#' @param genes (character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
+#' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
@@ -243,7 +243,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @description
 #'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
-#' @param genes (character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
+#' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
@@ -991,7 +991,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 #'  Only GTEx v8 is supported.
 #'
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
-#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
@@ -1816,7 +1816,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @title Download median expression of all samples for specified genes across tissues.
 #' @description
 #'
-#' @param genes (character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
+#' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
@@ -2048,7 +2048,7 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param file Optional character string naming a path and file for saving results. If file = FALSE, no file will be generated, default = FALSE.
 #'
-#' @return A data.table object.
+#' @return a data.table object
 #' @export
 #'
 #' @examples

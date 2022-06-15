@@ -13,7 +13,7 @@ xQTLdownload_geneMedExp(
 )
 }
 \arguments{
-\item{genes}{(character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
+\item{genes}{(character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 

@@ -749,7 +749,7 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @title Density plot of expression profiles of the gene
 #' @description
 #'
-#' @param genes (character vector) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".

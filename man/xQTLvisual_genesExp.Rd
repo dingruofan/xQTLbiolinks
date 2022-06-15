@@ -12,7 +12,7 @@ xQTLvisual_genesExp(
 )
 }
 \arguments{
-\item{genes}{(character vector) gene symbol or gencode id (versioned or unversioned are both supported).}
+\item{genes}{(character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 

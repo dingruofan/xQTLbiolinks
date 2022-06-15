@@ -15,13 +15,13 @@ xQTLdownload_sqtlSig(
 \arguments{
 \item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
+\item{genes}{(character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).}
+
 \item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
-
-\item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 }
 \value{
 A data.table object.
