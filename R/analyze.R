@@ -306,9 +306,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     }
   }
 
-  ###################### eqtl dataset:
-  ###################### eqtl dataset:
-  eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueSiteDetail=tissueSiteDetail, withB37VariantId = FALSE)
+  # eqtl dataset:
+  eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, withB37VariantId = FALSE)
   eqtlInfo[,position:=.(pos)]
 
   if( !exists("eqtlInfo") || is.null(eqtlInfo)){
