@@ -30,7 +30,7 @@ xQTLdownload_exp(
 \item{pathologyNotesCategories}{a logical value indicating whether to return pathologyNotes. Default: FALSE, the pathologyNotes is ignored.}
 }
 \value{
-return a SummarizedExperiment or data.frame object harbing gene expression profiles.
+return a SummarizedExperiment or a data.table object harbing gene expression profiles and samples' information.
 }
 \description{
 

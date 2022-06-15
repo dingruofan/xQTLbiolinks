@@ -24,7 +24,7 @@ xQTLdownload_sqtlSig(
 \item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 }
 \value{
-A data.table
+A data.table object.
 }
 \description{
 Only GTEx v8 is supported.

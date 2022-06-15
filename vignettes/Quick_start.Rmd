@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ## Before we start
 
 Colocalization analysis can be performed with `xQTLbiolinks` by providing their own GWAS summary statistics data. All we need to prepare include three parts:
@@ -63,7 +62,7 @@ In this example, a data.table object of 16538 (rows) x 5 (cols) is loaded. Five 
 head(gwasDF)
 ```
 
-## Step 2. Filter sentinel snps.
+## Step 2. Seek sentinel snps.
 
 Sentinel SNPs can be detected using `xQTLanalyze_getSentinelSnp` with the arguments `p-value < 5e-8` and `SNP-to-SNP distance > 10e6 bp`. We recommend converting the genome version of the GWAS file to GRCh38 if that is GRCh37 (run with parameter: `genomeVersion="grch37"`; `grch37To38=TRUE`, and package `rtracklayer`is required).
 
@@ -79,7 +78,7 @@ sentinelSnpDF
 
 ## Step 3. Identify trait genes for each sentinel SNPs.
 
-Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter `detectRange`) of sentinel SNPs. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function `xQTLanalyze_getTraits`.
+Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter `detectRange`) of sentinel SNPs. Every gene within 1Mb of sentinel SNPs is searched by fuction `xQTLanalyze_getTraits`. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function `xQTLanalyze_getTraits`.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e6, tissueSiteDetail=tissueSiteDetail)
@@ -92,12 +91,6 @@ traitsAll
 ```
 
 ## Step 4. Conduct colocalization analysis.
-
-Following three steps of colocalization analysis are encapsulated in one function `xQTLanalyze_coloc`:
-
--   Retrieved all associations from EBI eQTL catalogue for a specified gene.
--   Merge the data.frame of GWAS and eQTL by rsid.
--   Perform colocalization analysis using`coloc` package.
 
 **For a single trait gene**, like *CLNK* in above table, colocalization analysis can be performed with:
 
@@ -191,4 +184,4 @@ xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas
 knitr::include_graphics("images/quick_start/xQTLvisual_locusCombine.png")
 ```
 
-For applying `xQTLbiolinks` to a whole case study, please find this [**Document**](https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html).
+For applying `xQTLbiolinks` to a whole case study, please find this [**Document**](articles/Colocalization_analysis_with_xQTLbiolinks.html).

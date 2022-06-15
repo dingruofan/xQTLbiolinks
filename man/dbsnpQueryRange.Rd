@@ -24,7 +24,7 @@ dbsnpQueryRange(
 \item{track}{"snp151Common", "snp150Common" or "snp147Common". Default: "snp151Common".}
 }
 \value{
-A data.table.
+A data.table object.
 }
 \description{
 retrieve snps from dbSNP using coordinate.

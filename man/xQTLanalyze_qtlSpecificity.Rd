@@ -30,7 +30,7 @@ xQTLanalyze_qtlSpecificity(
 \item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.}
 }
 \value{
-a ggplot2 object
+a ggplot2 object.
 }
 \description{
 eQTL-specific analysis

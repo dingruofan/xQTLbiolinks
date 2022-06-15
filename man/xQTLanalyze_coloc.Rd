@@ -39,7 +39,7 @@ xQTLanalyze_coloc(
 \item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
 }
 \value{
-coloc resut
+A list of coloc result and details.
 }
 \description{
 

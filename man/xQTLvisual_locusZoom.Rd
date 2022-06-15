@@ -38,7 +38,7 @@ xQTLvisual_locusZoom(
 \item{snpLD}{A data.frame of LD matirx. Default is null.}
 }
 \value{
-A data.table object and plot.
+A list containing data.table and ggplot object.
 }
 \description{
 This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).

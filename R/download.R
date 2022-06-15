@@ -17,7 +17,7 @@
 #' @importFrom GenomicRanges GRanges
 #' @importFrom   IRanges IRanges
 #' @importFrom GenomeInfoDb Seqinfo
-#' @return return a SummarizedExperiment or data.frame object harbing gene expression profiles.
+#' @return return a SummarizedExperiment or a data.table object harbing gene expression profiles and samples' information.
 #' @export
 #' @examples
 #' # Download gene expression with a genecode ID:
@@ -252,7 +252,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @import curl
 #' @import stringr
 #' @import jsonlite
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -415,7 +415,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @import curl
 #' @import stringr
 #' @import jsonlite
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -611,7 +611,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #' @param withB37VariantId a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.
 #' @import data.table
 #' @import stringr
-#' @return a data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -999,7 +999,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 #' @import curl
 #' @import stringr
 #' @import jsonlite
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1154,7 +1154,7 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @import jsonlite
 #' @import stats
 #' @import tidyr
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #' @examples
 #' # Download exp with variant-gene pair in different tissues:
@@ -1312,7 +1312,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 #' @import jsonlite
 #' @import stats
 #' @import tidyr
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1450,7 +1450,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #' @import curl
 #' @import jsonlite
 #' @import tidyr
-#' @return A data.frame
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1552,7 +1552,7 @@ xQTLdownload_ld <- function(gene = "", geneType="geneSymbol", datasetId = "gtex_
 #' @import data.table
 #' @import stringr
 #' @import utils
-#' @return a data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1685,7 +1685,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @import data.table
 #' @import stringr
 #' @import utils
-#' @return a data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1824,7 +1824,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @import data.table
 #' @import utils
 #' @import stringr
-#' @return A data.frame
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1997,7 +1997,7 @@ retrieveLD = function(chr,snp,population){
 #' @param token Ldlink token, default: "9246d2db7917"
 #'
 #' @export
-#' @return a data.frame
+#' @return A data.table object.
 #'
 #' @examples
 #' # snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
@@ -2048,7 +2048,7 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param file Optional character string naming a path and file for saving results. If file = FALSE, no file will be generated, default = FALSE.
 #'
-#' @return a data frame
+#' @return A data.table object.
 #' @export
 #'
 #' @examples

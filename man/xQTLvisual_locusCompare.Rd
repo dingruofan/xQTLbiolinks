@@ -30,7 +30,7 @@ xQTLvisual_locusCompare(
 \item{snpLD}{A data.frame object of LD matrix. Default is null.}
 }
 \value{
-A ggplot object
+A ggplot object.
 }
 \description{
 This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).

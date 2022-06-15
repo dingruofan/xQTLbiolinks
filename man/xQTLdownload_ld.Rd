@@ -21,7 +21,7 @@ xQTLdownload_ld(
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 100).}
 }
 \value{
-A data.frame
+A data.table object.
 }
 \description{
 

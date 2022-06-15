@@ -173,7 +173,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @import ggrepel
 #' @import curl
 #' @import jsonlite
-#' @return A list of variant detail and expression profile.
+#' @return A list containing variant detail and expression profile.
 #' @export
 #'
 #' @examples
@@ -329,7 +329,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @import ggrepel
 #' @importFrom  cowplot ggdraw draw_label
 #' @import utils
-#' @return A data.table object and plot.
+#' @return A list containing data.table and ggplot object.
 #' @export
 #'
 #' @examples
@@ -513,7 +513,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @import stringr
 #' @import ggrepel
 #' @importFrom  cowplot ggdraw draw_label
-#' @return A ggplot object
+#' @return A ggplot object.
 #' @export
 #'
 #' @examples
@@ -681,7 +681,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @param snpLD A data.frame object of LD matrix. Default is null.
 #' @import data.table
 #' @import stringr
-#' @return A ggplot object
+#' @return A ggplot object.
 #' @export
 #'
 #' @examples
@@ -755,7 +755,7 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import ggpubr
 #' @importFrom SummarizedExperiment assay colData
-#' @return A ggplot object
+#' @return A ggplot object.
 #' @export
 #'
 #' @examples
@@ -809,7 +809,7 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #'
-#' @return A ggplot object
+#' @return A ggplot object.
 #' @export
 #'
 #' @examples
@@ -864,7 +864,7 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
 #' @import stringr
 #' @import ggplot2
 #' @import PupillometryR
-#' @return A ggplot object
+#' @return A ggplot object.
 #' @export
 #'
 #' @examples

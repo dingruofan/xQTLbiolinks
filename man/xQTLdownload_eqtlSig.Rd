@@ -27,7 +27,7 @@ xQTLdownload_eqtlSig(
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
-A data.table
+A data.table object.
 }
 \description{
 

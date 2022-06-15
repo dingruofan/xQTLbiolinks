@@ -24,7 +24,7 @@ xQTLdownload_sgene(
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
 \value{
-a data.table
+A data.table object.
 }
 \description{
 sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.

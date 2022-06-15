@@ -12,7 +12,7 @@ EBIquery_allTerm(term = "genes", termSize = 2000)
 \item{termSize}{Number of fetched term.}
 }
 \value{
-a data.table
+A data.table object.
 }
 \description{
 EBIquery_allTerm

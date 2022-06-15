@@ -12,7 +12,7 @@ xQTLquery_tissue(tissueName = "", datasetId = "gtex_v8")
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
-A data.table
+A data.table object.
 }
 \description{
 Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.

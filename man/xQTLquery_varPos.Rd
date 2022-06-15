@@ -21,7 +21,7 @@ xQTLquery_varPos(
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 }
 \value{
-A data.table.
+A data.table object.
 }
 \description{
 

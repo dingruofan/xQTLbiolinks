@@ -10,7 +10,7 @@ apiAdmin_ping(fetchMethod = "")
 \item{fetchMethod}{fetchMethod.}
 }
 \value{
-A character of fetchContent method.
+A character string of fetchContent method.
 }
 \description{
 test GTEx API server and return download method.

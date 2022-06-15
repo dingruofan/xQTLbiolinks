@@ -12,7 +12,7 @@ xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
 \value{
-A data.table with all genes' information.
+A data.table object of all genes' information.
 }
 \description{
 

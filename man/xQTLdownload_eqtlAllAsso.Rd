@@ -33,7 +33,7 @@ xQTLdownload_eqtlAllAsso(
 \item{withB37VariantId}{a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.}
 }
 \value{
-a data.table
+A data.table object.
 }
 \description{
 source of all eQTL associations is EBI eQTL category.

@@ -24,7 +24,7 @@ xQTLvisual_sqtlExp(
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
-A list of variant detail and expression profile.
+A list containing variant detail and expression profile.
 }
 \description{
 

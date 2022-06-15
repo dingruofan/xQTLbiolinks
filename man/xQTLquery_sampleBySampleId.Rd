@@ -18,7 +18,7 @@ xQTLquery_sampleBySampleId(
 \item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }
 \value{
-a data.frame.
+a data.table object of samples' information.
 }
 \description{
 

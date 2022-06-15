@@ -114,7 +114,7 @@
 <span class="co">#&gt; 6 rs11726285  chr4 10700944 1.47e-08 0.3214</span></code></pre>
 </div>
 <div class="section level2">
-<h2 id="step-2--filter-sentinel-snps-">Step 2. Filter sentinel snps.<a class="anchor" aria-label="anchor" href="#step-2--filter-sentinel-snps-"></a>
+<h2 id="step-2--seek-sentinel-snps-">Step 2. Seek sentinel snps.<a class="anchor" aria-label="anchor" href="#step-2--seek-sentinel-snps-"></a>
 </h2>
 <p>Sentinel SNPs can be detected using <code>xQTLanalyze_getSentinelSnp</code> with the arguments <code>p-value &lt; 5e-8</code> and <code>SNP-to-SNP distance &gt; 10e6 bp</code>. We recommend converting the genome version of the GWAS file to GRCh38 if that is GRCh37 (run with parameter: <code>genomeVersion="grch37"</code>; <code>grch37To38=TRUE</code>, and package <code>rtracklayer</code>is required).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -128,7 +128,7 @@
 <div class="section level2">
 <h2 id="step-3--identify-trait-genes-for-each-sentinel-snps-">Step 3. Identify trait genes for each sentinel SNPs.<a class="anchor" aria-label="anchor" href="#step-3--identify-trait-genes-for-each-sentinel-snps-"></a>
 </h2>
-<p>Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter <code>detectRange</code>) of sentinel SNPs. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function <code>xQTLanalyze_getTraits</code>.</p>
+<p>Trait genes are genes that located in the range of 1Mb (default, can be changed with parameter <code>detectRange</code>) of sentinel SNPs. Every gene within 1Mb of sentinel SNPs is searched by fuction <code>xQTLanalyze_getTraits</code>. Besides, In order to reduce the number of trait genes and thus reduce the running time, we take the overlap of eGenes and trait genes as the final output of the function <code>xQTLanalyze_getTraits</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_getTraits.html">xQTLanalyze_getTraits</a></span><span class="op">(</span><span class="va">sentinelSnpDF</span>, detectRange<span class="op">=</span><span class="fl">1e6</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span></code></pre></div>
 <p>Totally, 3 associations between 3 traits genes and 1 SNPs are detected</p>
@@ -146,12 +146,6 @@
 <div class="section level2">
 <h2 id="step-4--conduct-colocalization-analysis-">Step 4. Conduct colocalization analysis.<a class="anchor" aria-label="anchor" href="#step-4--conduct-colocalization-analysis-"></a>
 </h2>
-<p>Following three steps of colocalization analysis are encapsulated in one function <code>xQTLanalyze_coloc</code>:</p>
-<ul>
-<li>Retrieved all associations from EBI eQTL catalogue for a specified gene.</li>
-<li>Merge the data.frame of GWAS and eQTL by rsid.</li>
-<li>Perform colocalization analysis using<code>coloc</code> package.</li>
-</ul>
 <p><strong>For a single trait gene</strong>, like <em>CLNK</em> in above table, colocalization analysis can be performed with:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="st">"CLNK"</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span> <span class="co"># using gene symbol</span></code></pre></div>
@@ -208,7 +202,7 @@
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>,<span class="st">"chrom"</span>, <span class="st">"position"</span>, <span class="st">"pValue.gwas"</span>, <span class="st">"pValue.eqtl"</span><span class="op">)</span><span class="op">]</span>, 
                         highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></code></pre></div>
 <p><img src="images/quick_start/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
-<p>For applying <code>xQTLbiolinks</code> to a whole case study, please find this <a href="https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html" class="external-link"><strong>Document</strong></a>.</p>
+<p>For applying <code>xQTLbiolinks</code> to a whole case study, please find this <a href="articles/Colocalization_analysis_with_xQTLbiolinks.html"><strong>Document</strong></a>.</p>
 </div>
   </div>
 

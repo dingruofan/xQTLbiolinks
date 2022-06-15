@@ -24,7 +24,7 @@ xQTLdownload_egene(
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 }
 \value{
-a data.table
+A data.table object.
 }
 \description{
 eGenes are genes that have at least one significant cis-eQTL acting upon them. Results can be filtered by tissue.

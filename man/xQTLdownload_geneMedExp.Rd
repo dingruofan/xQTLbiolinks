@@ -24,7 +24,7 @@ xQTLdownload_geneMedExp(
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 150).}
 }
 \value{
-A data.frame
+A data.table object.
 }
 \description{
 

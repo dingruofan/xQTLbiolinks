@@ -20,7 +20,7 @@
 #' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
 #' @param recordPerChunk (integer) number of records fetched per request (default: 150).
 #'
-#' @return A data.table of queried gene information. including following columns:
+#' @return A data.table object of queried gene information. including following columns:
 #' \itemize{
 #'  \item \strong{genes.} Input genes
 #'  \item \strong{geneSymbol.} Gene symbol.
@@ -282,7 +282,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @import utils
 #' @import curl
 #' @import jsonlite
-#' @return returen sample information
+#' @return returen a data.table object of samples' information
 #' @export
 #' @examples
 #' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
@@ -452,7 +452,7 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #'
-#' @return a data.frame.
+#' @return a data.table object of samples' information.
 #' @export
 #'
 #' @examples
@@ -549,7 +549,7 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 #' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
 #' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #'
-#' @return A data.table with all genes' information.
+#' @return A data.table object of all genes' information.
 #' @import utils
 #' @import data.table
 #' @export
@@ -641,7 +641,7 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #' @import stringr
 #' @import jsonlite
 #'
-#' @return A data.table.
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -740,7 +740,7 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
 #' @import jsonlite
 #' @import utils
 #'
-#' @return A data.table.
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -837,7 +837,7 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #'
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -904,7 +904,7 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
 #' @description
 #'  test GTEx API server and return download method.
 #' @param fetchMethod fetchMethod.
-#' @return A character of fetchContent method.
+#' @return A character string of fetchContent method.
 #' @examples
 #' #apiAdmin_ping()
 apiAdmin_ping <- function(fetchMethod=""){
@@ -993,7 +993,7 @@ apiAdmin_ping <- function(fetchMethod=""){
 #' @title Heartbeat to check EBI API server connectivity.
 #' @description
 #'  test EBI API server and return download method.
-#' @return A character of fetchContent method.
+#' @return A character string of fetchContent method.
 #' @examples
 #' # apiEbi_ping()
 apiEbi_ping <- function(){
@@ -1190,7 +1190,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param termStart Start position per request.
 #' @import data.table
 #' @export
-#' @return A data.frame
+#' @return A data.table object.
 #'
 #' @examples
 #' url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
@@ -1268,7 +1268,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #' @import utils
 #' @import curl
 #' @import jsonlite
-#' @return A data.table.
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -1357,7 +1357,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #'
 #' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
 #' @param termSize Number of fetched term.
-#' @return a data.table
+#' @return A data.table object.
 #' @export
 #' @examples
 #' associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
@@ -1416,7 +1416,7 @@ EBIquery_allTerm <- function( term="genes", termSize=2000){
 #' @import data.table
 #' @import stringr
 #' @importFrom BiocGenerics strand
-#' @return a data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples

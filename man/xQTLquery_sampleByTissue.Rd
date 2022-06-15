@@ -24,7 +24,7 @@ xQTLquery_sampleByTissue(
 \item{pathologyNotesCategories}{Default: pathologyNotes info is ignored.}
 }
 \value{
-returen sample information
+returen a data.table object of samples' information
 }
 \description{
 

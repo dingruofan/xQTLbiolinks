@@ -30,7 +30,7 @@ xQTLdownload_eqtl(
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 100).}
 }
 \value{
-A data.table
+A data.table object.
 }
 \description{
 can be quried with a gene/variant-gene pair.

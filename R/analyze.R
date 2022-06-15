@@ -276,7 +276,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param method Now only one "coloc". Package `coloc` is required.
 #'
-#' @return coloc resut
+#' @return A list of coloc result and details.
 #' @export
 #'
 #' @examples
@@ -440,7 +440,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #' @param method "SPM" or "entropy"
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #'
-#' @return A data.table
+#' @return A data.table object.
 #' @export
 #'
 #' @examples
@@ -520,7 +520,7 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #' @param study Studies can be listed using "ebi_study_tissues"
 #' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #'
-#' @return a ggplot2 object
+#' @return a ggplot2 object.
 #' @export
 #'
 #' @examples

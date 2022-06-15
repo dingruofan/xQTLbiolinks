@@ -14,7 +14,7 @@ xQTLvisual_eqtl(gene, geneType = "auto", datasetId = "gtex_v8")
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
-A ggplot object
+A ggplot object.
 }
 \description{
 

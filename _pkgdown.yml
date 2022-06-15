@@ -12,8 +12,8 @@ navbar:
 
 articles:
   - title: "Vignettes"
-    desc: >
-      The following vignettes provide detailed application of the xQTLbiolinks package.
+    desc:
+      We provide a series of vignettes to help users get started with `xQTLbiolinks`. You can also check out ["Function"](reference/index.html) page which contains a full list of functions available.
     contents:
     - Quick_start
     - Colocalization_analysis_with_xQTLbiolinks
@@ -21,7 +21,6 @@ articles:
 
 reference:
 - title: Query
-- subtitle: subtitle of Query
   desc: >
     Functions for query details of gene, variant, sample.
   contents:

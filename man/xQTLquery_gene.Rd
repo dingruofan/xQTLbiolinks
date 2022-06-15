@@ -33,7 +33,7 @@ when "geneType" is "geneCategory", supported "genes" can be listed using functio
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 150).}
 }
 \value{
-A data.table of queried gene information. including following columns:
+A data.table object of queried gene information. including following columns:
 \itemize{
 \item \strong{genes.} Input genes
 \item \strong{geneSymbol.} Gene symbol.

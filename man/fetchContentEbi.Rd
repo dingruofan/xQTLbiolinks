@@ -24,7 +24,7 @@ fetchContentEbi(
 \item{termStart}{Start position per request.}
 }
 \value{
-A data.frame
+A data.table object.
 }
 \description{
 Fetch records from

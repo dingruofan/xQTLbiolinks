@@ -12,7 +12,7 @@ extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "v26")
 \item{genomeVersion}{"v26" (default) or "v19"}
 }
 \value{
-a data.table
+A data.table object.
 }
 \description{
 extract gene infor of specified genome from gencodeGeneInfoAllGranges
