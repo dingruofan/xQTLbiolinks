@@ -184,4 +184,4 @@ xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas
 knitr::include_graphics("images/quick_start/xQTLvisual_locusCombine.png")
 ```
 
-For applying `xQTLbiolinks` to a whole case study, please find this [**Document**](../articles/Colocalization_analysis_with_xQTLbiolinks.html).
+For applying `xQTLbiolinks` to a whole case study, please find this [**Document**](/articles/Colocalization_analysis_with_xQTLbiolinks.html).
