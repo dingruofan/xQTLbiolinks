@@ -26,7 +26,7 @@
 #' @export
 #'
 #' @examples
-#' url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+#' url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
 #' gwasDF <- data.table::fread(url)
 #' gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
 #' sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
@@ -128,7 +128,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @export
 #'
 #' @examples
-#' URL1<-"http://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
+#' URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 #' sentinelSnpDF <- data.table::fread(URL1)
 #' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
 #'                                    genomeVersion="grch37", grch37To38=TRUE)
@@ -266,6 +266,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param genomeVersion "grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param study (character) name of studies can be listed using "ebi_study_tissues"
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
 #' @param gwasSampleNum Sample number of GWAS dataset. Default:50000.
@@ -277,7 +278,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #'
 #' @examples
 #' # Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/
-xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", study="gtex_v8", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- NULL
   . <- NULL
 
@@ -303,7 +304,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   }
 
   # eqtl dataset:
-  eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, withB37VariantId = FALSE)
+  eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, study=study, withB37VariantId = FALSE)
   eqtlInfo[,position:=.(pos)]
 
   if( !exists("eqtlInfo") || is.null(eqtlInfo)){
@@ -503,7 +504,6 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 
 
 
-
 #' @title eQTL-specific analysis
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
@@ -585,7 +585,7 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   }
 
   # cut LD into bins:
-  snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(10+1)) ))
+  snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNum+1)) ))
   snpLD <- snpLD[order(R2)]
 
   message("== Start download associations of QTL...")
@@ -593,10 +593,10 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   for(i in 1:nrow(snpLD)){
     suppressMessages( asso_I <- xQTLdownload_eqtlAllAsso(gene = gene, variantName= snpLD[i,]$SNP_B, study=study, withB37VariantId=FALSE) )
     if( is.null(asso_I) || nrow(asso_I)==0){
-      message("== Num:",i, ", SNP: [",snpLD[i,]$SNP_B,"], got records: ", 0,", Skipped. ", format(Sys.time(), "| %Y-%b-%d %H:%M:%S "))
+      message("== Num:",i,"/",nrow(snpLD), ", SNP: [",snpLD[i,]$SNP_B,"], got records: ", 0,", Skipped. ", format(Sys.time(), "| %Y-%b-%d %H:%M:%S "))
       next()
     }else{
-      message("== Num:",i, "; SNP: [",snpLD[i,]$SNP_B,"]; got records: [", nrow(asso_I),"]; Tissues: [", length(unique(asso_I$tissue_label)),"]; Studies: [", length(unique(asso_I$study_id)), format(Sys.time(), "] | %Y-%b-%d %H:%M:%S "))
+      message("== Num:",i,"/",nrow(snpLD), "; SNP: [",snpLD[i,]$SNP_B,"]; got records: [", nrow(asso_I),"]; Tissues: [", length(unique(asso_I$tissue_label)),"]; Studies: [", length(unique(asso_I$study_id)), format(Sys.time(), "] | %Y-%b-%d %H:%M:%S "))
     }
     asso_I <- asso_I[,.(snpId, pValue, tissue, tissue_label, study_id, qtl_group)]
     assoAll <- rbind(assoAll,asso_I)
@@ -616,8 +616,15 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   p <- ggplot(assoAllLd)+
     geom_tile(aes(x=LDbins, y=reorder(tissue_label, corRP), fill=logP),color = "black")+
     geom_text(aes(x=LDbins, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
-    scale_fill_gradientn(colors = c("#006228", "#097531", "#368939", "#549C3F", "#70AF44", "#8CC148", "#ABD163", "#C7DF7D", "#E0ED97", "#F6F9B1", "#FDF6B6", "#F8E69D", "#F4D27C", "#F0BB55", "#ECA313", "#E88800", "#E36A00", "#DB4500", "#C22C00", "#A51122"))+
-    theme_classic()
+    scale_fill_gradient2(low="grey", high="blue")+
+    # scale_fill_gradientn(colors = c("#006228", "#097531", "#368939", "#549C3F", "#70AF44", "#8CC148", "#ABD163", "#C7DF7D", "#E0ED97", "#F6F9B1", "#FDF6B6", "#F8E69D", "#F4D27C", "#F0BB55", "#ECA313", "#E88800", "#E36A00", "#DB4500", "#C22C00", "#A51122"))+
+    theme_classic()+guides(color="none")+
+    theme(
+      axis.text=element_text(size=rel(1.3)),
+      axis.title = element_text(size=rel(1.3)),
+      legend.position = "none",
+      plot.title = element_text(hjust=0.5)
+    )
 
   plot(p)
   return(p)

@@ -43,7 +43,7 @@ A data.table object.
 Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
 }
 \examples{
-url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
 gwasDF <- data.table::fread(url)
 gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
 sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)

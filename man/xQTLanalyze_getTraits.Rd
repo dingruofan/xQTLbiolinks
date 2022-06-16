@@ -30,7 +30,7 @@ A data.table object
 Identify trait genes using sentinel SNPs generated from \code{xQTLanalyze_getSentinelSnp}
 }
 \examples{
-URL1<-"http://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
+URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 sentinelSnpDF <- data.table::fread(URL1)
 traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
                                    genomeVersion="grch37", grch37To38=TRUE)

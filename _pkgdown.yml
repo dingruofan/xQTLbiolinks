@@ -18,6 +18,7 @@ articles:
     - Quick_start
     - Colocalization_analysis_with_xQTLbiolinks
     - visualization
+    - eQTL_Specificity
 
 reference:
 - title: Query

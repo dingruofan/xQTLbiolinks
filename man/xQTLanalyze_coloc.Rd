@@ -10,6 +10,7 @@ xQTLanalyze_coloc(
   geneType = "auto",
   genomeVersion = "grch38",
   tissueSiteDetail = "",
+  study = "gtex_v8",
   mafThreshold = 0.01,
   population = "EUR",
   gwasSampleNum = 50000,
@@ -27,6 +28,8 @@ xQTLanalyze_coloc(
 \item{genomeVersion}{"grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+
+\item{study}{(character) name of studies can be listed using "ebi_study_tissues"}
 
 \item{mafThreshold}{Cutoff of maf to remove rare variants.}
 

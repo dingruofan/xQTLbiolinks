@@ -96,7 +96,8 @@ knitr::include_graphics("images/visualization/visualization_locusZoom.png")
 eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1",
                                      tissueLabel = "Brain - Cortex")
 p_all <- xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
-p_sub <- xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",                                   posRange="chr6:47.3e6-47.9e6")
+p_sub <- xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
+                              posRange="chr6:47.3e6-47.9e6")
 cowplot::plot_grid(p_all, p_sub, align = "h", ncol = 2)
 ```
 
@@ -105,6 +106,19 @@ knitr::include_graphics("images/visualization/visualization_locusZoom_eQTL1.png"
 ```
 
 
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr6", pos_lower=47.4e6, pos_upper = 47.7e6,  
+                                         tissueLabel = "Brain - Cortex", p_upper=0.1)
+p1 <- xQTLvisual_locusZoom(eqtlAssos[,c("snpId", "chrom", "pos", "pValue")], highlightSnp = "rs34744382")
+eqtlAssos_gene <- xQTLdownload_eqtlAllAssoPos(chrom = "chr6", pos_lower=47.4e6, pos_upper = 47.7e6,  
+                                              gene="RP11-385F7.1",tissueLabel = "Brain - Cortex", p_upper=0.1)
+p2 <- xQTLvisual_locusZoom(eqtlAssos_gene[,c("snpId", "chrom", "pos", "pValue")], highlightSnp = "rs34744382")
+cowplot::plot_grid(p1, p2, align = "h", ncol = 2)
+```
+
+```{r, visualization_locusZoom_eQTLpos.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
+knitr::include_graphics("images/visualization/visualization_locusZoom_eQTLpos.png")
+```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 library(data.table)

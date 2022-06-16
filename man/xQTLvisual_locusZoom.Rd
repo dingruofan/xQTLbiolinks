@@ -46,13 +46,13 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
 \examples{
 # For GWAS dataset:
 library(data.table)
-gwasDF <- fread("http://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
+gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 xQTLvisual_locusZoom(gwasDF)
 # Zoom in:
 xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 
 # For eQTL of a gene of interest:
-eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex",
+eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueLabel = "Brain - Cortex",
                                      withB37VariantId=FALSE)
 xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
 # Zoom in:

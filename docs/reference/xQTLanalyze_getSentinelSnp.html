@@ -90,7 +90,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">url</span><span class="op">&lt;-</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">url</span><span class="op">&lt;-</span><span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"</span>
 <span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
 <span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chr</span>, <span class="va">position</span>, <span class="va">P</span>, <span class="va">maf</span><span class="op">)</span><span class="op">]</span>
 <span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getSentinelSnp</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span>

@@ -1,0 +1,38 @@
+---
+title: "eQTL_Specificity"
+output: rmarkdown::html_vignette
+date: "2022-06-08"
+vignette: >
+  %\VignetteIndexEntry{eQTL_Specificity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE,
+  progress =FALSE,
+  comment = "#>"
+)
+```
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+library(data.table)
+library(xQTLbiolinks)
+library(stringr)
+```
+
+The lead SNP of a well-colocalized eGene did not always correspond exactly with the lead GWAS SNP in multiple or all colocalized tissues/cells. Still, it always falls in the high LD bin with a strong eQTL significance level, and the significance level increases in higher LD.
+
+In order to easily distinguish whether an eGene is cell-type specific or shared across multiple cell groups, we divided all SNPs that LD-associated with the lead SNP that within 1 Mb into four r2 bins, (0, 0.25], (0.25, 0.5], (0.5, 0.75], and (0.75, 1] according to their LD score. 
+
+We calculated the pearson coefficient with R2 and logP, display the SNP with the smallest p-value in each bin to generate the following eGene association plot across different tissues/cells.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="gtex_v8")
+```
+
+```{r, eqtl_spec.png, fig.align = 'center', out.width = "90%", echo=FALSE}
+knitr::include_graphics("images/eqtl_spec.png", error = FALSE)
+```
+

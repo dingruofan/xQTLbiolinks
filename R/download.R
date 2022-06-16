@@ -943,7 +943,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
                  ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
                  ifelse(study!="", paste0("&study=",study),"")
                  )
-
+  # message(url1)
   gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=recordPerChunk)
   gtexAsooList <- do.call(c, gtexAsoo)
   if(length(gtexAsooList)==0){

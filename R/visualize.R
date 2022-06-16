@@ -331,13 +331,13 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @examples
 #' # For GWAS dataset:
 #' library(data.table)
-#' gwasDF <- fread("http://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
+#' gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 #' xQTLvisual_locusZoom(gwasDF)
 #' # Zoom in:
 #' xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
 #' # For eQTL of a gene of interest:
-#' eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueSiteDetail = "Brain - Cortex",
+#' eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueLabel = "Brain - Cortex",
 #'                                      withB37VariantId=FALSE)
 #' xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
 #' # Zoom in:
@@ -454,6 +454,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     geom_point(aes(x=pos, y=logP, fill=r2Cut,  size=pointShape, shape=pointShape), color="black")+
     scale_size_manual(breaks = c('normal', "highlight"), values =  c(3,3.5)  )+
     scale_shape_manual(breaks = c('normal', "highlight"), values =  c(21,23) )+
+    scale_y_continuous(breaks = seq(0,floor(max(DF$logP))), labels = seq(0,floor(max(DF$logP))), limits = c(0, max(DF$logP)+0.4))+
     # scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
     scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
@@ -513,8 +514,8 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'
 #' @examples
 #' library(data.table)
-#' eqtlDF <-fread("http://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
-#' gwasDF <-fread("http://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+#' eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
+#' gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
 #' xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
   x <- y<- genomeVersion <- NULL
@@ -680,7 +681,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @export
 #'
 #' @examples
-#' u1 <-"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
+#' u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
 #' gwasEqtldata <- data.table::fread(u1)
 #' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){
