@@ -7,3 +7,5 @@
 ^pkgdown$
 ^vignettes$
 ^\.Rhistory
+^doc$
+^Meta$

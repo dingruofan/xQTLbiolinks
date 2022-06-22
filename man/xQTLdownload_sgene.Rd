@@ -19,7 +19,7 @@ xQTLdownload_sgene(
 
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
@@ -33,6 +33,6 @@ sGenes are genes that have at least one significant sQTL acting upon them. Resul
 #sGeneInfoAlltissue <- xQTLdownload_sgene()
 
 sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
-sGeneInfo <- xQTLdownload_sgene("ENSG00000141510.16",  tissueSiteDetail="Lung")
-sGeneInfo <- xQTLdownload_sgene("DDX11", tissueSiteDetail="Artery - Tibial" )
+sGeneInfo <- xQTLdownload_sgene(gene="ENSG00000141510.16",  tissueSiteDetail="Lung")
+sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Artery - Tibial" )
 }

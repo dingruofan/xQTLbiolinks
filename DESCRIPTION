@@ -36,6 +36,7 @@ Imports:
     methods,
     PupillometryR,
     RMySQL,
+    scales,
     stringr (>= 1.4.0),
     SummarizedExperiment (>= 1.4.0),
     tidyr,
@@ -44,6 +45,5 @@ Imports:
 Suggests: 
     coloc,
     knitr,
-    rmarkdown,
     rtracklayer,
     usethis

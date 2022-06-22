@@ -71,7 +71,7 @@
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
+<dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
 <dt>datasetId</dt>
 <dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
 <dt>toSummarizedExperiment</dt>
@@ -102,9 +102,10 @@
                                 tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Coronary"</span>,
                                 pathologyNotesCategories<span class="op">=</span><span class="cn">TRUE</span>,
                                 toSummarizedExperiment<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_exp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tp53"</span>,<span class="st">"naDK"</span>,<span class="st">"SDF4"</span><span class="op">)</span>,
+<span class="co"># Download with versioned and unversioned gencode Id.</span>
+<span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_exp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000141510.16"</span>,<span class="st">"ENSG00000008130.15"</span>,<span class="st">"ENSG00000078808"</span><span class="op">)</span>,
                                 tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Coronary"</span>,
-                                datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
+                                toSummarizedExperiment<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co"># Get proteing-coding genes' expression in Lung:</span>
 <span class="co"># prot &lt;- xQTLquery_gene(genes="protein coding")</span>

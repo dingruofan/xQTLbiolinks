@@ -37,6 +37,8 @@ library(stringr)
 temp1 <- tempfile(fileext=".zip")
 download.file("https://github.com/dingruofan/exampleData/raw/master/env.zip", temp1)
 load(unz(temp1,"env.Rdata"))
+close(file(temp1))
+rm(temp1)
 ```
 
 Download and load an example file of summary statistics dataset (GRCh38). We perform colocalization analysis in `Brain - Cerebellum`.

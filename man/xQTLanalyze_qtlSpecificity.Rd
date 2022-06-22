@@ -25,16 +25,18 @@ xQTLanalyze_qtlSpecificity(
 
 \item{binNum}{A integer value. Number of bins to split values of R2 of LD into homogeneous bins.}
 
-\item{study}{Studies can be listed using "ebi_study_tissues"}
+\item{study}{Studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).}
 
 \item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.}
 }
 \value{
-a ggplot2 object.
+A list containing four data.table objects, including: "snpLD" for LD details of the specified SNP; "assoAllLd" for eQTL details of LD-associated SNPs;  "lm_R2_logP" for liner regression results; "cor_R2_logP" for correlation outputs;
 }
 \description{
 eQTL-specific analysis
 }
 \examples{
-p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="gtex_v8")
+speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
+xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 }

@@ -462,6 +462,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("tidyr")
 # usethis::use_package("BiocGenerics")
 # usethis::use_package("methods")
+# usethis::use_package("scales")
 # usethis::use_package("cowplot", min_version="1.1.1")
 
 #

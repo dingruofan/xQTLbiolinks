@@ -26,7 +26,7 @@ xQTLdownload_eqtlAllAsso(
 
 \item{tissueLabel}{(character) all supported tissues can be listed using "ebi_study_tissues"}
 
-\item{study}{(character) name of studies can be listed using "ebi_study_tissues"}
+\item{study}{(character) name of studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 1000).}
 
@@ -39,14 +39,14 @@ A data.table object.
 source of all eQTL associations is EBI eQTL category.
 }
 \examples{
-# Download all associations of gene TP53 in all tissues from all studies:
-# geneAsso <- xQTLdownload_eqtlAllAsso("TP53", study="")
+# Download all associations of a gene in all tissues from all studies (a time-consuming process):
+# geneAsso <- xQTLdownload_eqtlAllAsso(gene= "TP53", study="")
+
+# Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):
+# geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
 
 # Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:
 geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
-
-# Download associations of gene ATP11B in CD4+ T cell from all supported studies:
-# geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
 
 # Download all associations of SNP rs11568818 in all tissues from all supported studies.
 varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")

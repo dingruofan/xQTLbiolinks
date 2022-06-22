@@ -269,7 +269,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 }
 
 #' @title Query sample's details with tissue name
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
@@ -1058,11 +1058,16 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
     if(isJson){
 
       for (downloadTime in 1:4){
-        if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",3)}
-        if(downloadTime>3){message("=> Your connection is unstable.")}
         # because of the limitation of the length of the url (<2084), so I rebulit the function.
         df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
-        if(!methods::is(df, 'try-error')) break
+        if( !methods::is(df, 'try-error') && exists("url1GetText2Json") ){
+          break()
+        }else if( methods::is(df, 'try-error') && !exists("url1GetText2Json") && downloadTime>3 ){
+          message("No data fetched...")
+          return(NULL)
+        }
+        if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",3)}
+        if(downloadTime>3){message("=> Your connection is unstable.")}
       }
 
       # url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE)
@@ -1111,7 +1116,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
           message("No data fetched, please check your input.")
           return(NULL)
         }
-        file.remove(tmpFile)
+        rm(url1GetText)
         return(url1GetText2Json)
       }else{
         stop("File download error.")
@@ -1122,6 +1127,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       # closeAllConnections()
       return(url1GetText)
     }
+    close(file(tmpFile))
+    if(file.exists(tmpFile)){ file.remove(tmpFile) }
   }else if( method == "curl"){
     url1Get <- curl::curl_fetch_memory(url1)
     url1GetText <- rawToChar(url1Get$content)

@@ -71,7 +71,7 @@
 <dt>datasetId</dt>
 <dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
 <dt>tissueSiteDetail</dt>
-<dd><p>(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"</p></dd>
+<dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
 <dt>recordPerChunk</dt>
 <dd><p>(integer) number of records fetched per request (default: 2000).</p></dd>
 </dl></div>
@@ -85,8 +85,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co">#sGeneInfoAlltissue &lt;- xQTLdownload_sgene()</span>
 
 <span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span>, recordPerChunk<span class="op">=</span><span class="fl">2000</span><span class="op">)</span>
-<span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span><span class="st">"ENSG00000141510.16"</span>,  tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
-<span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span><span class="st">"DDX11"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Tibial"</span> <span class="op">)</span>
+<span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000141510.16"</span>,  tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
+<span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"DDX11"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Tibial"</span> <span class="op">)</span>
 </code></pre></div>
     </div>
   </div>

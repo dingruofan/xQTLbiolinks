@@ -77,18 +77,22 @@
 <dt>binNum</dt>
 <dd><p>A integer value. Number of bins to split values of R2 of LD into homogeneous bins.</p></dd>
 <dt>study</dt>
-<dd><p>Studies can be listed using "ebi_study_tissues"</p></dd>
+<dd><p>Studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).</p></dd>
 <dt>population</dt>
 <dd><p>(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a ggplot2 object.</p>
+    <p>A list containing four data.table objects, including: "snpLD" for LD details of the specified SNP; "assoAllLd" for eQTL details for LD-associated SNPs;  "lm_R2_logP" for liner regression results; "cor_R2_logP" for correlation outputs;</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_qtlSpecificity</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_qtlSpecificity</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
+<span class="fu"><a href="xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span>
+<span class="fu"><a href="xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span>
+<span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_qtlSpecificity</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"PPP1R14A"</span>, variantName<span class="op">=</span><span class="st">"rs4802297"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
+
 </code></pre></div>
     </div>
   </div>

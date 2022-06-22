@@ -307,7 +307,6 @@ NULL
 #'   \item{study_accession}{A character vector}
 #'   \item{tissue_label}{A character vector}
 #'   \item{tissue}{A character vector}
-#'   \item{tissueType}{A character vector}
 #' }
 #' @source \url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api} or EBIquery_allTerm
 NULL

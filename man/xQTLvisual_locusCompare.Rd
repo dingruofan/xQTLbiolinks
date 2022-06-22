@@ -37,7 +37,9 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
 }
 \examples{
 library(data.table)
+# load data:
 eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
 gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+# visualize:
 xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 }

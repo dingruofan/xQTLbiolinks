@@ -3,7 +3,7 @@
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
@@ -152,7 +152,6 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
         plot.title = element_text(hjust=0.5)
       )+
       geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
-    print(p)
   }
   return(list(eqtl=eqtlInfo, exp=genoLable, p=p))
 }
@@ -161,7 +160,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
@@ -169,11 +168,10 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @import ggrepel
 #' @import curl
 #' @import jsonlite
-#' @return A list containing variant detail and expression profile.
+#' @return A list containing variant detail, expression profile and a ggplot object.
 #' @export
 #'
 #' @examples
-#' # sQTL associatons of TP53:
 #' expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
 #'           phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
 #'           tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
@@ -292,11 +290,9 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
         plot.title = element_text(hjust=0.5)
       )+
       geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label= labelPvalue))
-
-    print(p)
   }
 
-  return(list(varInfo=varInfo, exp=genoLable))
+  return(list(varInfo=varInfo, exp=genoLable, p=p))
 }
 
 
@@ -331,6 +327,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @examples
 #' # For GWAS dataset:
 #' library(data.table)
+#' # load data:
 #' gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
 #' xQTLvisual_locusZoom(gwasDF)
 #' # Zoom in:
@@ -479,7 +476,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
       legend_box = data.frame(x = 0.2, y = seq(0.8, 0.6, -0.05))
     }
 
-    p <- ggdraw(p) +
+    p <- cowplot::ggdraw(p) +
       geom_rect(data = legend_box,
                 aes(xmin = x, xmax = x + 0.05, ymin = y, ymax = y + 0.05),
                 color = "black",
@@ -514,8 +511,10 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #'
 #' @examples
 #' library(data.table)
+#' # load data:
 #' eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
 #' gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+#' # visualize:
 #' xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
   x <- y<- genomeVersion <- NULL
@@ -637,7 +636,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
         legend_box = data.frame(x = 0.2, y = seq(0.8, 0.6, -0.05))
       }
 
-      p = ggdraw(p) +
+      p = cowplot::ggdraw(p) +
         geom_rect(data = legend_box,
                   aes(xmin = x, xmax = x + 0.05, ymin = y, ymax = y + 0.05),
                   color = "black",
@@ -681,6 +680,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @export
 #'
 #' @examples
+#' # load data:
 #' u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
 #' gwasEqtldata <- data.table::fread(u1)
 #' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
@@ -745,7 +745,7 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @title Density plot of expression profiles of the gene
 #' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import ggpubr
 #' @importFrom SummarizedExperiment assay colData
@@ -798,9 +798,11 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
-#'
+#' @import data.table
+#' @import stringr
+#' @import ggpubr
 #' @return A ggplot object.
 #' @export
 #'
@@ -1020,3 +1022,152 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
   print(p1)
   return(list(expProfiles=expProfiles, plot=p1))
 }
+
+
+
+#' @title Visualization of QTL specificity among multiple cells/tissues.
+#'
+#' @param specificityDT A data.table object from the function `xQTLanalyze_qtlSpecificity`
+#' @param outPlot (character) options: "heatmap" (default) and "regression".
+#' @param binNum (numeric) number of LD bins for heatmap plot. Default:4.
+#' @param topTissues (numeric) number of top tissues that sorted with slope increasingly to visualize for regression plot. Default: 5
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @importFrom ggrepel geom_label_repel
+#' @importFrom scales hue_pal
+#' @importFrom cowplot plot_grid
+#'
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
+#' # please see function `xQTLanalyze_qtlSpecificity`
+xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4, topTissues=5){
+
+  # extract variable:
+  snpLD <- specificityDT[['snpLD']]
+  assoAllLd <- specificityDT[['assoAllLd']]
+  cor_R2_logP <- specificityDT[['cor_R2_logP']]
+  lm_R2_logP <- specificityDT[['lm_R2_logP']]
+
+  data.table::setDT(snpLD)
+  data.table::setDT(assoAllLd)
+  data.table::setDT(cor_R2_logP)
+  data.table::setDT(lm_R2_logP)
+
+
+  # recut LD into bins:
+  snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNum+1)) ))
+  snpLD <- snpLD[order(R2)]
+  snpLD$LDorder <- 1:nrow(snpLD)
+  assoAllLd <- merge(snpLD[,.(snpId=SNP_B, LDbins)], assoAllLd, by="snpId")
+
+  # cor:
+  # cor_R2_logP$corRPcut <- as.character( cut(abs(cor_R2_logP$corRP), breaks = seq(0,1,length.out=101)) )
+  assoAllLd <- merge(cor_R2_logP, assoAllLd , by="tissue_label")[order(-corRP)]
+
+
+  # Retain max pvalue in each bin:
+  minP_f <- function(x){  data.table(tissue_label=x[1,]$tissue_label, corPR=x[1,]$corRP, LDbins= x[1,]$LDbins, logP_minMax=max(x$logP_minMax) )  }
+  heatmapDT <- assoAllLd[,minP_f(.SD), by=c("LDbins", "tissue_label")]
+  # fill NA bins:
+  heatmapDT_allComb <- data.table::as.data.table(expand.grid(LDbins = unique(heatmapDT$LDbins), tissue_label =unique(heatmapDT$tissue_label) ))
+  heatmapDT_allComb <- merge(heatmapDT_allComb, heatmapDT, by=c("LDbins", "tissue_label"), all.x = TRUE)
+  heatmapDT_allComb <- merge(heatmapDT_allComb, data.table(LDbins=unique(snpLD$LDbins), ID=1:length(unique(snpLD$LDbins))), by="LDbins", all.x=TRUE)
+  rm(heatmapDT)
+
+  if(outPlot == "heatmap"){
+    p1 <- ggplot(heatmapDT_allComb)+
+      geom_tile(aes(x=ID, y=reorder(tissue_label, corPR), fill=logP_minMax), color="#595959")+
+      scale_x_continuous(breaks = unique(heatmapDT_allComb$ID), labels = unique(heatmapDT_allComb$LDbins))+
+      # geom_text(aes(x=LDorder, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
+      # scale_fill_gradient2(low="grey", mid="orange", high="red")+
+      scale_fill_gradientn(colors= colorRampPalette(c("#fcffe6", "#95de64", "#5976ba"))(length(unique(heatmapDT_allComb$logP_minMax))) )+
+      theme_classic()+
+      xlab("LD bins")+
+      # guides(color="none")+
+      theme(
+        axis.text.x=element_text(size=rel(1.5), angle = 30, hjust=1, vjust=1),
+        axis.text.y=element_text(size=rel(1.5)),
+        axis.title.x = element_text(size=rel(1.5)),
+        axis.title.y = element_blank(),
+        panel.grid.minor = element_line(colour="grey", size=0.5),
+        legend.position = "top",
+        legend.box="horizontal",
+        legend.key.width = unit(0.06, "npc"),
+        plot.title = element_text(hjust=0.5),
+        plot.margin=unit(c(0.3,0,0.3,0.3),"cm")
+      )+
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("Min-max normailzed  ",-log["10"],"P",sep="")) ))
+
+
+     p2 <-ggplot(heatmapDT_allComb)+
+      geom_tile(aes(x=1, y=reorder(tissue_label, corPR), fill=corPR),color = "black")+
+      scale_x_continuous(breaks = c(1), labels = "Correlation")+
+      # breaks = seq(-1,1, length.out=5), labels = seq(-1,1, length.out=5),
+      scale_fill_gradientn(  colors= c("#40a9ff", "white", "#de82a7"))+
+      xlab("")+
+      theme_minimal()+
+      theme(
+        legend.position = "top",
+        legend.box="horizontal",
+        legend.key.width = unit(0.06, "npc"),
+        plot.title = element_text(hjust=0.5),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=rel(1.5), angle = 30, hjust=1, vjust=1),
+        panel.grid.major = element_blank(),
+        plot.margin=unit(c(0.3,1,0.3,0.3),"cm")
+          )+
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = "Correlation coefficient" ))
+
+    p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(12,1.5))
+    return(p3)
+  }
+
+  # lm:
+  # lm_R2_logP$colorP=colorRampPalette(c("#096dd9", "#f5f5f5", "#cf1322"))( length(unique(assoAllLd$tissue_label)) )
+  lm_R2_logP$colorP <- c(  rep("#d9d9d9", nrow(lm_R2_logP)-topTissues), scales::hue_pal()(topTissues))
+  regDT <- merge(lm_R2_logP, assoAllLd , by="tissue_label")[order(-slope)]
+  regDT$tissue_label <- factor(regDT$tissue_label, levels = lm_R2_logP$tissue_label)
+  lm_R2_logP$lineSize= 3^((seq(0.5,35,length.out=nrow(lm_R2_logP)))/10)/10
+
+  # top tissues with max(+) and min(-) slopes for plot:
+  lm_R2_logP_top <- rbind(na.omit(lm_R2_logP[slope>0][order(-slope)][1:topTissues,]) )
+  lm_R2_logP_top <- cbind( lm_R2_logP_top, na.omit(rbind( na.omit(lm_R2_logP_top[slope>0][,.(x= 0.99, y=0.99*slope+intercept)]) )) )
+  lm_R2_logP_top$tissue_slope <- paste0(lm_R2_logP_top$tissue_label, " (", round(lm_R2_logP_top$slope,2), ")")
+
+
+  if(outPlot=="regression"){
+     p <- ggplot()+
+      # geom_point(aes(x=R2, y=logP_minMax, color=tissue_label))+
+      geom_smooth(data=regDT, aes(x=R2, y=logP_minMax, color=tissue_label,size= tissue_label), method = "lm",se = FALSE)+
+      scale_size_manual( breaks=lm_R2_logP$tissue_label, values = lm_R2_logP$lineSize )+
+      scale_color_manual( breaks=lm_R2_logP$tissue_label, values =  lm_R2_logP$color )+
+      scale_y_continuous( breaks=seq(0,1,0.2), labels = c("0.0",seq(0.2,0.8,0.2),"1.0") )+
+      # scale_x_continuous(limits = c(0,1))+
+      theme_classic()+
+      ylab(expression(paste("Min-max normalized  ",-log[10],"P",sep="")))+
+      xlab(expression(R^2))+
+      # expand_limits(x=c(0.2, 1.8))+
+      theme(
+        legend.position = "none",
+        axis.text = element_text(size=rel(1.4)),
+        axis.title = element_text(size=rel(1.5)),
+        # plot.margin = margin(0,4,0,0, "cm")
+      )+
+      # geom_point(data=lm_R2_logP_top, x=0.99,aes(y= intercept+slope*0.99), color="black")+
+      geom_label_repel(data=lm_R2_logP_top,
+                       aes(x=x, y= y, label=tissue_slope),
+                       nudge_x = -0.1,
+                       segment.colour="grey", segment.size = 0.5,
+                       # arrow = arrow(length = unit(0.01, "npc")),
+                       box.padding = 1, max.overlaps=10)
+
+     return(p)
+  }else{
+    stop("\"outPlot\" can only be choosen from \"heatmap\" and \"regression\" ")
+  }
+}
+

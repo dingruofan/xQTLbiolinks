@@ -19,7 +19,7 @@ xQTLdownload_sqtlExp(
 
 \item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }

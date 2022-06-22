@@ -116,7 +116,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @title Identify trait genes using sentinel SNPs generated from `xQTLanalyze_getSentinelSnp`
 #' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
 #' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
 #' @import data.table
@@ -265,7 +265,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param genomeVersion "grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param study (character) name of studies can be listed using "ebi_study_tissues"
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
@@ -510,14 +510,17 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param binNum A integer value. Number of bins to split values of R2 of LD into homogeneous bins.
-#' @param study Studies can be listed using "ebi_study_tissues"
+#' @param study Studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).
 #' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
-#'
-#' @return a ggplot2 object.
+#' @import data.table
+#' @import stringr
+#' @return A list containing four data.table objects, including: "snpLD" for LD details of the specified SNP; "assoAllLd" for eQTL details of LD-associated SNPs;  "lm_R2_logP" for liner regression results; "cor_R2_logP" for correlation outputs;
 #' @export
 #'
 #' @examples
-#' p <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="gtex_v8")
+#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+#' xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
+#' xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="", variantType="auto", binNum=4, study="", population="EUR"){
   .<-NULL
   study_accession <- tissue_label <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- LDbins <- logP <- corRP <- NULL
@@ -573,20 +576,45 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
 
   # variant detail:
   variantInfo <- xQTLquery_varId(variantName, variantType = variantType)
+  if( (!exists("variantInfo")) || nrow(variantInfo)==0){
+    stop("Variant [",variantName,"] is not exists in GTEx, please check your input.")
+  }
+  if(nrow(variantInfo)>1){
+    variantInfo <- variantInfo[1,]
+  }
 
   # fetch LD:
   message("== Retrieve LD information of SNP: [",variantInfo$snpId,"]...")
   try(snpLD <- retrieveLD(variantInfo$chromosome, variantInfo$snpId, population))
-  # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+  # try(snpLD <- retrieveLD_LDproxy(targetSnp= variantInfo$snpId, population = population,  windowSize = 500000,genomeVersion = "grch38", token="9246d2db7917") )
+  #
+  if(nrow(snpLD)<1){
+    stop("No LD found for variant: [", variantInfo$snpId, "]")
+  }
   data.table::setDT(snpLD)
 
-  if(nrow(snpLD)<1){
-    stop("No LD found!")
-  }
+  # remove variants don't exist in GTEx.
+  # chrom_snp <- stringr::str_split(snpLD[1,]$Coord, ":")[[1]][1]
+  # snpLD$pos <- as.numeric(unlist(lapply(snpLD$Coord, function(x){ stringr::str_split(x,":")[[1]][2] })))
+  # a<- xQTLquery_varPos(chrom = chrom_snp, pos = snpLD$pos, datasetId = "gtex_v8")
 
-  # cut LD into bins:
-  snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNum+1)) ))
-  snpLD <- snpLD[order(R2)]
+  # 从LD 0-1的10个区间随机选10个突变进行作图：
+  # snpLD <- snpLD[,.(SNP_A= variantInfo$snpId, SNP_B=RS_Number, R2)]
+  # # cut LD into 10 bins
+  # binNumForSample_tmp <- 10
+  # varNumForSample_tmp <- 10
+  # snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNumForSample_tmp+1)) ))
+  # set.seed(1)
+  # snpLDForSample_tmp <- as.data.frame(tapply( 1:nrow(snpLD), snpLD$LDbins, function(x){ if(length(x)<=varNumForSample_tmp){return(x)}else{ return(sample(x, varNumForSample_tmp, replace = FALSE)) } }))
+  # names(snpLDForSample_tmp) <- "ID"
+  # snpLDForSample_tmp$LDbins <- rownames(snpLDForSample_tmp)
+  # data.table::setDT(snpLDForSample_tmp)
+  # #
+  # snpLD <- snpLD[do.call(c,snpLDForSample_tmp$ID),-c("LDbins")][order(R2)]
+  # rm(binNumForSample_tmp, varNumForSample_tmp, snpLDForSample_tmp)
+
+  # 如果突变不在 GTEx中则直接过滤掉
+
 
   message("== Start download associations of QTL...")
   assoAll <- data.table()
@@ -598,37 +626,28 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
     }else{
       message("== Num:",i,"/",nrow(snpLD), "; SNP: [",snpLD[i,]$SNP_B,"]; got records: [", nrow(asso_I),"]; Tissues: [", length(unique(asso_I$tissue_label)),"]; Studies: [", length(unique(asso_I$study_id)), format(Sys.time(), "] | %Y-%b-%d %H:%M:%S "))
     }
-    asso_I <- asso_I[,.(snpId, pValue, tissue, tissue_label, study_id, qtl_group)]
+    asso_I <- asso_I[,.(snpId, pValue, beta, tissue, tissue_label, study_id, qtl_group)]
     assoAll <- rbind(assoAll,asso_I)
     rm(asso_I)
   }
   # Retain min pvalue in each tissue_label-study, due to the duplication induced by qtl_group.
   assoAll <- assoAll[,.SD[which.min(pValue),], by=c("tissue", "tissue_label", "study_id", "qtl_group", "snpId")]
-  assoAllLd <- merge(snpLD[,.(snpId=SNP_B, LDbins, R2)], assoAll, by="snpId")
+  assoAllLd <- merge(snpLD[,.(snpId=SNP_B, R2)], assoAll, by="snpId")
   assoAllLd$logP <- ifelse(assoAllLd$pValue==0, 0, (-log(assoAllLd$pValue,10)))
-  # Retain min/max pvalue in each bin:
-  minP_f <- function(x){ x[logP==max(x$logP),][1,] }
-  assoAllLd <- assoAllLd[,minP_f(.SD), by=c("LDbins", "tissue", "tissue_label", "study_id", "qtl_group")]
-  # assoAllLd <- merge(assoAllLd, ebi_ST[,.(tissueLabel=tissue_label, tissue)], by="tissue")
+  # scale logP by tissue group:
+  assoAllLd <- assoAllLd[,.(snpId, R2, beta, logP, logP_minMax=(logP-min(logP))/(max(logP)-min(logP))),by="tissue_label"]
 
-  assoAllLd <- merge(assoAllLd, assoAllLd[,.(corRP=cor(R2, logP)),by="tissue_label"][order(corRP)], by="tissue_label")
 
-  p <- ggplot(assoAllLd)+
-    geom_tile(aes(x=LDbins, y=reorder(tissue_label, corRP), fill=logP),color = "black")+
-    geom_text(aes(x=LDbins, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
-    scale_fill_gradient2(low="grey", high="blue")+
-    # scale_fill_gradientn(colors = c("#006228", "#097531", "#368939", "#549C3F", "#70AF44", "#8CC148", "#ABD163", "#C7DF7D", "#E0ED97", "#F6F9B1", "#FDF6B6", "#F8E69D", "#F4D27C", "#F0BB55", "#ECA313", "#E88800", "#E36A00", "#DB4500", "#C22C00", "#A51122"))+
-    theme_classic()+guides(color="none")+
-    theme(
-      axis.text=element_text(size=rel(1.3)),
-      axis.title = element_text(size=rel(1.3)),
-      legend.position = "none",
-      plot.title = element_text(hjust=0.5)
-    )
+  # lm:
+  lm_f <- function(DT){
+    lm_tmp <- lm(logP_minMax~R2,DT);
+    return( data.table(slope=lm_tmp$coefficients['R2'], intercept= lm_tmp$coefficients['(Intercept)']) )}
+  lm_R2_logP <- assoAllLd[,lm_f(.SD), by="tissue_label"][order(slope)]
 
-  plot(p)
-  return(p)
+  # cor:
+  cor_R2_logP <- assoAllLd[,.(corRP=cor(R2, logP_minMax)),by="tissue_label"][order(corRP)]
 
+  return(list(snpLD=snpLD, assoAllLd=assoAllLd, lm_R2_logP=lm_R2_logP, cor_R2_logP= cor_R2_logP))
 }
 
 

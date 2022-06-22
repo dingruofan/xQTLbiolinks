@@ -78,7 +78,7 @@
 <dt>tissueLabel</dt>
 <dd><p>(character) all supported tissues can be listed using "ebi_study_tissues"</p></dd>
 <dt>study</dt>
-<dd><p>(character) name of studies can be listed using "ebi_study_tissues"</p></dd>
+<dd><p>(character) name of studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).</p></dd>
 <dt>recordPerChunk</dt>
 <dd><p>(integer) number of records fetched per request (default: 1000).</p></dd>
 <dt>withB37VariantId</dt>
@@ -91,14 +91,14 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download all associations of gene TP53 in all tissues from all studies:</span>
-<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso("TP53", study="")</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download all associations of a gene in all tissues from all studies (a time-consuming process):</span>
+<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene= "TP53", study="")</span>
+
+<span class="co"># Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):</span>
+<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")</span>
 
 <span class="co"># Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:</span>
 <span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span><span class="st">"ATP11B"</span>, tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span>
-
-<span class="co"># Download associations of gene ATP11B in CD4+ T cell from all supported studies:</span>
-<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")</span>
 
 <span class="co"># Download all associations of SNP rs11568818 in all tissues from all supported studies.</span>
 <span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>

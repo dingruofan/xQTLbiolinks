@@ -19,7 +19,7 @@ xQTLdownload_exp(
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
@@ -50,9 +50,10 @@ expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
                                 tissueSiteDetail="Artery - Coronary",
                                 pathologyNotesCategories=TRUE,
                                 toSummarizedExperiment=FALSE)
-expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
+# Download with versioned and unversioned gencode Id.
+expProfiles <- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),
                                 tissueSiteDetail="Artery - Coronary",
-                                datasetId="gtex_v7")
+                                toSummarizedExperiment=FALSE)
 
 # Get proteing-coding genes' expression in Lung:
 # prot <- xQTLquery_gene(genes="protein coding")

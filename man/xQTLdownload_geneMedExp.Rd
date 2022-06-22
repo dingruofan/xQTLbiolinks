@@ -19,7 +19,7 @@ xQTLdownload_geneMedExp(
 
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 150).}
 }

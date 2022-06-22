@@ -4,7 +4,7 @@
 
 xQTLbiolinks consists of tailored functions that can be grouped into four modules: **Query**, **Download**, **Analyze** and **Visualization**.
 
-Instructions, documentation, and tutorials can be found at [here](https://dingruofan.github.io/xQTLbiolinks/index.html).
+Instructions, documentation, and tutorials can be found at [**here**](https://dingruofan.github.io/xQTLbiolinks/index.html).
 
 <img src="https://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/Overview.png" alt="Overview" width=100% height=100% />
 

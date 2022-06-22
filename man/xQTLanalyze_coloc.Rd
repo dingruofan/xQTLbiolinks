@@ -27,7 +27,7 @@ xQTLanalyze_coloc(
 
 \item{genomeVersion}{"grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.}
 
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{study}{(character) name of studies can be listed using "ebi_study_tissues"}
 

@@ -13,7 +13,7 @@ xQTLquery_sampleByTissue(
 )
 }
 \arguments{
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{dataType}{A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".}
 

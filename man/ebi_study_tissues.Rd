@@ -10,7 +10,6 @@ A Data.table
 \item{study_accession}{A character vector}
 \item{tissue_label}{A character vector}
 \item{tissue}{A character vector}
-\item{tissueType}{A character vector}
 }
 }
 \source{

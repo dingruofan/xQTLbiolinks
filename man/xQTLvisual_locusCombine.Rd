@@ -43,6 +43,7 @@ A ggplot object.
 This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 }
 \examples{
+# load data:
 u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
 gwasEqtldata <- data.table::fread(u1)
 xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")

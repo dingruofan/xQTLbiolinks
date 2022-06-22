@@ -17,27 +17,20 @@ articles:
     contents:
     - Quick_start
     - Colocalization_analysis_with_xQTLbiolinks
-    - visualization
     - eQTL_Specificity
+    - visualization
+
 
 reference:
 - title: Query
-  desc: >
-    Functions for query details of gene, variant, sample.
   contents:
   - starts_with("xQTLquery_")
 - title: Download
-  desc: >
-    Functions for download eQTL, sQTL and expression of GTEx
   contents:
   - starts_with("xQTLdownload_")
 - title: visualization
-  desc: >
-    Functions for visualization
   contents:
   - starts_with("xQTLvisual_")
 - title: Analyze
-  desc: >
-    Functions for analyses
   contents:
   - starts_with("xQTLanalyze_")
