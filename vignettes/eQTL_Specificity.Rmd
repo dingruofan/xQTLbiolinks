@@ -56,22 +56,23 @@ The output contains four data.table objects, including: "snpLD" for LD details o
 names(speDT)
 ```
 
-To visualize the significiance across degree, the function `xQTLvisual_qtlSpecificity` is provided, and two plot method is available: heatmap and regression,
+To visualize the significiance across degree, the function `xQTLvisual_qtlSpecificity` is developed, and two plot methods is available: heatmap and regression.
 
- All SNPs that LD-associated with the specified SNP are devided into four R2 bins, (0, 0.25], (0.25, 0.5], (0.5, 0.75], and (0.75, 1] according to their LD score, display the SNP with the smallest p-value in each bin to generate the following eGene association plot across different tissues/cells.
+For heatmap, All SNPs that LD-associated with the specified SNP are devided into four (default) R2 bins, (0, 0.25], (0.25, 0.5], (0.5, 0.75], and (0.75, 1] according to their LD score, then display the SNP with the smallest p-value in each bin across different tissues/cells. Note: p-value are min-max normailized after being taken the logarithm using base 10.
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
 ```
 
-```{r, heatmap_MMP7.png, fig.align = 'center', out.width = "85%", echo=FALSE}
+```{r, heatmap_MMP7.png, fig.align = 'center', out.width = "65%", echo=FALSE}
 knitr::include_graphics("images/eqtl_specificity/heatmap_MMP7.png")
 ```
 
+For regression, Top 5 (default) tissues with the largest values of slope are displayed with different color, the other are grey, X-axis indicates R2, and y -axis indicates p-value are min-max normailized after being taken the logarithm using base 10. Numbers in brackets of labels indicate slope.
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 ```
 
-```{r, regression_MMP7.png, fig.align = 'center', out.width = "85%", echo=FALSE}
+```{r, regression_MMP7.png, fig.align = 'center', out.width = "65%", echo=FALSE}
 knitr::include_graphics("images/eqtl_specificity/regression_MMP7.png")
 ```
 
