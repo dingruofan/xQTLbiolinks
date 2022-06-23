@@ -1,5 +1,5 @@
 ---
-title: "eQTL Specificity analysis"
+title: "Tissue/cell-type specific eQTL analysis"
 output: rmarkdown::html_vignette
 date: "2022-06-08"
 vignette: >
