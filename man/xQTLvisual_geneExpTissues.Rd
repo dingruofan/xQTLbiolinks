@@ -37,11 +37,11 @@ Violin plot of distribution of the gene expression profiles among multiple tissu
 # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
 
 # Display gene expression in specified tissues.
-geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
+# geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
 
 # Display gene expression in log scale in specified tissues.
-geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
+# geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
 
 # Display gene expression in whole tissue.
-geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
+# geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
 }

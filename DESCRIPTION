@@ -1,6 +1,6 @@
 Package: xQTLbiolinks
-Title: xQTLbiolinks: an R package for integrative analysis of QTL data
-Version: 0.1.0
+Title: An R Package for Integrative Analysis of Quantitative Trait Locus Data
+Version: 1.0.0
 Authors@R: c(
     person(given = "Ruofan", family = "Ding",        email = "dingruofan1@foxmail.com",   role  = c("aut", "cre")),
     person(given = "Xudong", family = "Zou",        email = "zouxd@szbl.ac.cn",   role  = c("aut","ctb")),
@@ -8,7 +8,8 @@ Authors@R: c(
     person(given = "Gao", family = "Wang",        email = "wang.gao@columbia.edu",   role  = c("aut","ctb")),
     person(given = "Lei", family = "Li",        email = "lei.li@szbl.ac.cn",   role  = c("aut","ctb", "cph"))
 	)
-Description: 1.to facilitate querying of basic information of gene, variant and samples in the process of GTEx data analysis. 2.to allow the user to download a specific version of the data, including expression profile, multiple molecular QTL data. 3.to display data with vivid plots. 4.to provide standard analyses and advanced integrative analyses, like tissue specific expression analysis and colocalization analysis.
+Description: User can query, download, and visualize of molecular quantitative trait locus and gene expression data from public resources through the application programming interface.
+URL: https://github.com/dingruofan/xQTLbiolinks
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -27,19 +28,16 @@ Imports:
     GenomeInfoDb,
     GenomicRanges,
     ggplot2 (>= 3.3.6),
-    ggpubr,
     ggrepel,
     ggridges,
     httr,
     IRanges,
     jsonlite (>= 1.7.2),
-    methods,
     PupillometryR,
     RMySQL,
     scales,
     stringr (>= 1.4.0),
     SummarizedExperiment (>= 1.4.0),
-    tidyr,
     utils (>= 4.0.3),
     viridis
 Suggests: 

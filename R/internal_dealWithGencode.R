@@ -452,18 +452,16 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("RMySQL")
 # usethis::use_package("DBI") # in RMySQL
 # usethis::use_package("PupillometryR")
-# usethis::use_package("ggpubr")
 # usethis::use_package("ggridges")
 # usethis::use_package("viridis")
 # usethis::use_package("GenomeInfoDb") # in GenomicRanges
 # usethis::use_package("IRanges") # in GenomicRanges
 # usethis::use_package("ggrepel") # in ggpubr
 # usethis::use_package("GenomicRanges") # in SummarizedExperiment
-# usethis::use_package("tidyr")
 # usethis::use_package("BiocGenerics")
-# usethis::use_package("methods")
-# usethis::use_package("scales")
 # usethis::use_package("cowplot", min_version="1.1.1")
+# usethis::use_package("scales")
+
 
 #
 # # suggest:

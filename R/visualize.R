@@ -16,11 +16,11 @@
 #'
 #' @examples
 #' # EQTL associatons of TP53 in Esophagus - Mucosa:
-#' expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
-#' expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
+#' # expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")
+#' # expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")
 #'
 #' # EQTL associatons of IRF5:
-#' expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
+#' #expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
 xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
 
@@ -326,20 +326,20 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #'
 #' @examples
 #' # For GWAS dataset:
-#' library(data.table)
+#' # library(data.table)
 #' # load data:
-#' gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
-#' xQTLvisual_locusZoom(gwasDF)
+#' # gwasDF <- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")
+#' # xQTLvisual_locusZoom(gwasDF)
 #' # Zoom in:
-#' xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
+#' # xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")
 #'
-#' # For eQTL of a gene of interest:
-#' eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueLabel = "Brain - Cortex",
-#'                                      withB37VariantId=FALSE)
-#' xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
+#' # For eQTL of a gene of interest (time-consuming):
+#' # eqtlAsso <- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueLabel = "Brain - Cortex",
+#' #                                      withB37VariantId=FALSE)
+#' # xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )
 #' # Zoom in:
-#' xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
-#'                      posRange="chr6:47.3e6-47.9e6")
+#' # xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
+#' #                      posRange="chr6:47.3e6-47.9e6")
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   chrom <- x <- y<- RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
@@ -510,12 +510,12 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @export
 #'
 #' @examples
-#' library(data.table)
+#' # library(data.table)
 #' # load data:
-#' eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
-#' gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+#' # eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
+#' # gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
 #' # visualize:
-#' xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
+#' # xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
   x <- y<- genomeVersion <- NULL
 
@@ -681,7 +681,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #'
 #' @examples
 #' # load data:
-#' u1 <-"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
+#' u1 <-"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
 #' gwasEqtldata <- data.table::fread(u1)
 #' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){
@@ -747,21 +747,23 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
-#' @import ggpubr
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
 #' @importFrom SummarizedExperiment assay colData
 #' @return A ggplot object.
 #' @export
 #'
 #' @examples
-#' genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",
-#'            "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
-#' xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
+#' # genes <- c("FNDC8", "S100Z", "AQP6", "AMOT", "C3orf38", "FOXL1", "COX11",
+#' #            "FCN3", "DDX58", "CFI", "MS4A18", "NUDT13", "HOXA4", "VSX1")
+#' # xQTLvisual_genesExp(genes, tissueSiteDetail="Lung")
 #'
-#' genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15",
-#'            "ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12",
-#'            "ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
-#'            "ENSG00000197576.13","ENSG00000100987.14")
-#' xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
+#' # genes <- c("ENSG00000073598.5","ENSG00000171643.13","ENSG00000086159.12","ENSG00000126016.15",
+#' #            "ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12",
+#' #            "ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
+#' #            "ENSG00000197576.13","ENSG00000100987.14")
+#' # xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", datasetId="gtex_v8"){
   `..density..`<-geneSymbol <- NULL
 
@@ -794,57 +796,57 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 }
 
 
-#' @title Scatter plot for showing the correlation of two genes’ expression.
-#' @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
-#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
-#' @import data.table
-#' @import stringr
-#' @import ggpubr
-#' @return A ggplot object.
-#' @export
-#'
-#' @examples
-#' gene2 = c("AMOT", "HOXA4")
-#' xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
-#' xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
-xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
-  geneSymbol <- NULL
-
-  # Automatically determine the type of variable:
-  if(geneType=="auto"){
-    if( all(unlist(lapply(gene2, function(g){ str_detect(g, "^ENSG") }))) ){
-      geneType <- "gencodeId"
-    }else{
-      geneType <- "geneSymbol"
-    }
-  }
-
-  #
-  expProfiles <- xQTLdownload_exp(genes=gene2, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
-  expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
-  expData2 <- as.data.frame(t(expData[geneSymbol %in% gene2][,-c("geneSymbol")]))
-  colnames(expData2) <- gene2
-
-
-  corP <- cor.test(unlist(expData2[,1]), unlist(expData2[,2]))
-  message("pearson correlation coefficient: ", corP$estimate," Pvalue: ",corP$p.value)
-
-  sampleInfo <- as.data.table(colData(expProfiles))
-  expData2 <- cbind(sampleInfo[rownames(expData2), on="sampleId"][,c("sampleId", groupBy),with=FALSE], expData2)
-  expData2 <- na.omit(expData2)
-
-  p <- ggpubr::ggscatterhist(expData2, x=gene2[1], y=gene2[2],
-                shape = 21, color = groupBy, fill=groupBy,
-                margin.plot="density",
-                margin.params = list(fill=groupBy, color="black", size=0.2),
-                legend = c(0.9,0.15),
-                ggtheme = theme_minimal())
-  print(p)
-  return(p)
-}
+# @title Scatter plot for showing the correlation of two genes’ expression.
+# @param gene2 Gene symbol or gencode ID of two genes. Default: gene symbol.
+# @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+# @param groupBy Default:sex, can be choosen from pathologyNotesCategories, like: pathologyNotesCategories.mastopathy, pathologyNotesCategories.mastopathy.metaplasia.
+# @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
+# @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
+# @import data.table
+# @import stringr
+# @import ggpubr
+# @return A ggplot object.
+# @export
+#
+# @examples
+# gene2 = c("AMOT", "HOXA4")
+# xQTLvisual_geneCorr(gene2,tissueSiteDetail="Liver")
+# xQTLvisual_geneCorr(gene2,groupBy="pathologyNotesCategories.congestion",tissueSiteDetail="Lung")
+# xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = "", groupBy="sex", datasetId="gtex_v8"){
+#   geneSymbol <- NULL
+#
+#   # Automatically determine the type of variable:
+#   if(geneType=="auto"){
+#     if( all(unlist(lapply(gene2, function(g){ str_detect(g, "^ENSG") }))) ){
+#       geneType <- "gencodeId"
+#     }else{
+#       geneType <- "geneSymbol"
+#     }
+#   }
+#
+#   #
+#   expProfiles <- xQTLdownload_exp(genes=gene2, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE, pathologyNotesCategories = TRUE)
+#   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), assay(expProfiles) ))
+#   expData2 <- as.data.frame(t(expData[geneSymbol %in% gene2][,-c("geneSymbol")]))
+#   colnames(expData2) <- gene2
+#
+#
+#   corP <- cor.test(unlist(expData2[,1]), unlist(expData2[,2]))
+#   message("pearson correlation coefficient: ", corP$estimate," Pvalue: ",corP$p.value)
+#
+#   sampleInfo <- as.data.table(colData(expProfiles))
+#   expData2 <- cbind(sampleInfo[rownames(expData2), on="sampleId"][,c("sampleId", groupBy),with=FALSE], expData2)
+#   expData2 <- na.omit(expData2)
+#
+#   p <- ggpubr::ggscatterhist(expData2, x=gene2[1], y=gene2[2],
+#                 shape = 21, color = groupBy, fill=groupBy,
+#                 margin.plot="density",
+#                 margin.params = list(fill=groupBy, color="black", size=0.2),
+#                 legend = c(0.9,0.15),
+#                 ggtheme = theme_minimal())
+#   print(p)
+#   return(p)
+# }
 
 
 
@@ -860,8 +862,8 @@ xQTLvisual_geneCorr <- function(gene2="", geneType="auto", tissueSiteDetail = ""
 #' @export
 #'
 #' @examples
-#' xQTLvisual_eqtl("KIF15")
-#' xQTLvisual_eqtl("MLH1")
+#' # xQTLvisual_eqtl("KIF15")
+#' # xQTLvisual_eqtl("MLH1")
 xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
   variantId <- tissueSiteDetail <- pValue <- logP <- NULL
   . <- NULL
@@ -922,13 +924,13 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #' # geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
 #'
 #' # Display gene expression in specified tissues.
-#' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
+#' # geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
 #'
 #' # Display gene expression in log scale in specified tissues.
-#' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
+#' # geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)
 #'
 #' # Display gene expression in whole tissue.
-#' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
+#' # geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)
 xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", datasetId="gtex_v8", log10y=FALSE, toTissueSite=FALSE){
   colorHex <- tissueSite <- expTPM <- NULL
   .<-NULL
@@ -1034,8 +1036,8 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
-#' @importFrom ggrepel geom_label_repel
 #' @importFrom scales hue_pal
+#' @importFrom ggrepel geom_label_repel
 #' @importFrom cowplot plot_grid
 #'
 #' @return A ggplot object
@@ -1045,6 +1047,8 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
 #' # please see function `xQTLanalyze_qtlSpecificity`
 xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4, topTissues=5){
 
+  . <- NULL
+  R2 <- SNP_B <- LDbins <- corRP <- ID <- tissue_label <- corPR <- logP_minMax <- colorRampPalette <- hue_pal <- slope <- intercept <- y <- x <- tissue_slope <- NULL
   # extract variable:
   snpLD <- specificityDT[['snpLD']]
   assoAllLd <- specificityDT[['assoAllLd']]
@@ -1137,7 +1141,6 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
   lm_R2_logP_top <- rbind(na.omit(lm_R2_logP[slope>0][order(-slope)][1:topTissues,]) )
   lm_R2_logP_top <- cbind( lm_R2_logP_top, na.omit(rbind( na.omit(lm_R2_logP_top[slope>0][,.(x= 0.99, y=0.99*slope+intercept)]) )) )
   lm_R2_logP_top$tissue_slope <- paste0(lm_R2_logP_top$tissue_label, " (", round(lm_R2_logP_top$slope,2), ")")
-
 
   if(outPlot=="regression"){
      p <- ggplot()+

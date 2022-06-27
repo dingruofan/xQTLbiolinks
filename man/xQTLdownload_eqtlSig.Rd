@@ -35,25 +35,25 @@ Download significant eQTL associations of a specified tissue or across all tissu
 \examples{
 # Download eQTL info for a variant:
 xQTLdownload_eqtlSig("rs201327123")
-xQTLdownload_eqtlSig("chr1_14677_G_A_b38")
-xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7")
-xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7",
-                     tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+# xQTLdownload_eqtlSig("chr1_14677_G_A_b38")
+# xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7")
+# xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7",
+#                     tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 
 # Download eQTL association according to all tissues with genome location:
-varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
-xQTLdownload_eqtlSig(variantName=varInfo$snpId)
+# varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+# xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 
 # Download eQTL info for gene:
-xQTLdownload_eqtlSig(genes="ATAD3B")
-xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
-xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
-xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
-                     tissueSiteDetail="Thyroid" )
+# xQTLdownload_eqtlSig(genes="ATAD3B")
+# xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
+# xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
+# xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
+#                      tissueSiteDetail="Thyroid" )
 
 # Download eQTL info for a variant-gene pair:
-xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
-xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v7")
-xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
-                     genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
+# xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
+# xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v7")
+# xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
+#                      genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
 }

@@ -32,16 +32,16 @@ Only GTEx v8 is supported.
 \examples{
 # Download sQTL detail with rsid:
 xQTLdownload_sqtlSig(variantName="rs201327123")
-xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
-xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
+# xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
+# xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
 
 # Download sQTL detail with gene symbol and gencode ID:
-xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
-xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))
-xQTLdownload_sqtlSig(genes=c("ENSG00000141510.16","ENSG00000076242.14"))
+# xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
+# xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))
+# xQTLdownload_sqtlSig(genes=c("ENSG00000141510.16","ENSG00000076242.14"))
 
 # Download sQTL detail with the variant-genes pair:
-xQTLdownload_sqtlSig(variantName="rs1987191",genes="ATAD3B")
-xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
-xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")
+# xQTLdownload_sqtlSig(variantName="rs1987191",genes="ATAD3B")
+# xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
+#xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")
 }

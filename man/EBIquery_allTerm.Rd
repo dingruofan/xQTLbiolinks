@@ -18,14 +18,14 @@ A data.table object.
 EBIquery_allTerm
 }
 \examples{
-associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+# associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
 # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
 studies <- EBIquery_allTerm("studies")
 tissues <- EBIquery_allTerm("tissues")
 
 # fetch tissue-study mapping relationships
-tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
+# tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
 
-qtl_groups <- EBIquery_allTerm("qtl_groups")
+# qtl_groups <- EBIquery_allTerm("qtl_groups")
 # geneList <- EBIquery_allTerm("genes")
 }

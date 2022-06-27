@@ -1,6 +1,6 @@
-### xQTLbiolinks: a R package aims to query, download, visualize and perform colocalization analyses between xQTL data and GWAS signals
+### xQTLbiolinks: An R package aims to query, download, visualize and perform colocalization analyses between xQTL data and GWAS signals
 
-**`xQTLbiolinks`** is a well-developed R package that enables users-customized query, extraction, and visualization of **molecular QTLs** (eQTLs and sQTLs) and **gene expression** data from public resources (e.g., GTEx) through the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/).
+**`xQTLbiolinks`** is a well-developed R package that enables users-customized query, extraction, and visualization of **molecular QTLs** (eQTLs and sQTLs) and **gene expression** data from public resources (e.g., GTEx) through the application programming interface (API) of [GTEx](https://gtexportal.org/home/api-docs/index.html) and [eQTL Catalogue](https://www.ebi.ac.uk/eqtl/api-docs/).
 
 xQTLbiolinks consists of tailored functions that can be grouped into four modules: **Query**, **Download**, **Analyze** and **Visualization**.
 
@@ -13,7 +13,7 @@ Instructions, documentation, and tutorials can be found at [**here**](https://di
 1. `xQTLbiolinks` has been successfully installed on Mac OS X, Linux, and Windows, using the `remotes` package to install directly from GitHub with command `remotes::install_github("dingruofan/xQTLbiolinks")`. Check more details in section "Installation" below.
 2. Find the [**Full document**](https://dingruofan.github.io/xQTLbiolinks/articles/Quick_start.html) for a quick application of colocalization analysis with xQTLbiolinks.
 3. Go through a whole [**Case study**](https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html) of detection of casual vairants and genes in prostate cancer using `xQTLbiolinks`.
-4. Then walk through these vignettes to learn more about xQTLbiolinks: [**Function Instruction**](https://dingruofan.github.io/xQTLbiolinks/reference/index.html) and [**Visualization of expression and xQTL**](https://github.com/dingruofan/xQTLbiolinks/wiki/Visualization-of-expression-and-xQTL).
+4. Then walk through these vignettes to learn more about xQTLbiolinks: [**Function Instruction**](https://dingruofan.github.io/xQTLbiolinks/reference/index.html) and [**Visualization of expression and xQTL**](https://dingruofan.github.io/xQTLbiolinks/articles/visualization.html).
 
 ### Citation
 If you find the xQTLbiolinks package or any of the source code in this repository useful for your work, please cite:

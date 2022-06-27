@@ -30,6 +30,6 @@ A data.table object.
 Fetch records from
 }
 \examples{
-url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
-gtexAsoo <- fetchContentEbi(url1)
+# url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
+# gtexAsoo <- fetchContentEbi(url1)
 }

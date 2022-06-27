@@ -36,10 +36,10 @@ A ggplot object.
 This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 }
 \examples{
-library(data.table)
+# library(data.table)
 # load data:
-eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
-gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
+# eqtlDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt")
+# gwasDF <-fread("https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt")
 # visualize:
-xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
+# xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 }

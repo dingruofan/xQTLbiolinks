@@ -284,8 +284,8 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
 #'                                        pathologyNotesCategories=TRUE  )
 #'
-#' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
-#'                                        datasetId="gtex_v8",pathologyNotesCategories=TRUE )
+#' # sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
+#' #                                        datasetId="gtex_v8",pathologyNotesCategories=TRUE )
 #'
 #' sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala", "RNASEQ","gtex_v8", 200 )
 xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
@@ -1026,7 +1026,6 @@ apiEbi_ping <- function(){
 #' @import jsonlite
 #' @import stringr
 #' @import data.table
-#' @importFrom methods is
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
@@ -1060,9 +1059,10 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       for (downloadTime in 1:4){
         # because of the limitation of the length of the url (<2084), so I rebulit the function.
         df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
-        if( !methods::is(df, 'try-error') && exists("url1GetText2Json") ){
+        # methods::is(df, 'try-error')
+        if( !(inherits(df, "try-error")) && exists("url1GetText2Json") ){
           break()
-        }else if( methods::is(df, 'try-error') && !exists("url1GetText2Json") && downloadTime>3 ){
+        }else if( (inherits(df, "try-error")) && !exists("url1GetText2Json") && downloadTime>3 ){
           message("No data fetched...")
           return(NULL)
         }
@@ -1101,7 +1101,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",3)}
       if(downloadTime>3){message("=> Your connection is unstable.")}
       df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
-      if(!is(df, 'try-error')) break
+      if(!(inherits(df, "try-error"))) break
     }
     # suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE ))
     if(isJson){
@@ -1188,8 +1188,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @return A data.table object.
 #'
 #' @examples
-#' url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
-#' gtexAsoo <- fetchContentEbi(url1)
+#' # url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
+#' # gtexAsoo <- fetchContentEbi(url1)
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
   # downloadMethod="auto"
@@ -1211,8 +1211,8 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
     urlGot <- url1
     contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
     embeddedList <- c(embeddedList,contentGot[[1]])
-    embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
-    contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+    embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
+    contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
     message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
 
   # 这个API 有点问题，如果fetch 多个组织的结果，如果该组织剩下不足1000，就会将剩下的附加到这次fetch，导致 _links 里没有next，进而终止检索，所以再没有 next后，额外再fetch一次，如果有next则继续。
@@ -1228,14 +1228,14 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
       }else if( length(contentGot$`_embedded`$associations)==0 ){
         # is.null( contentGot$`_links` $`next`$href)
         embeddedList <- c(embeddedList,contentGot[[1]])
-        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
-        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
+        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
         message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
         break()
       }else{
         embeddedList <- c(embeddedList,contentGot[[1]])
-        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} })))
-        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(class(x)=="data.frame"){return(nrow(x))}else{ return(length(x))} }))
+        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
+        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
         message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
         termStart <- termStart+as.integer(contentGotCount)
       }
@@ -1355,15 +1355,15 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @return A data.table object.
 #' @export
 #' @examples
-#' associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+#' # associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
 #' # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
 #' studies <- EBIquery_allTerm("studies")
 #' tissues <- EBIquery_allTerm("tissues")
 #'
 #' # fetch tissue-study mapping relationships
-#' tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
+#' # tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
 #'
-#' qtl_groups <- EBIquery_allTerm("qtl_groups")
+#' # qtl_groups <- EBIquery_allTerm("qtl_groups")
 #' # geneList <- EBIquery_allTerm("genes")
 EBIquery_allTerm <- function( term="genes", termSize=2000){
   bestFetchMethod <- apiEbi_ping()

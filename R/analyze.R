@@ -26,10 +26,10 @@
 #' @export
 #'
 #' @examples
-#' url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
-#' gwasDF <- data.table::fread(url)
-#' gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
-#' sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
+#' # url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+#' # gwasDF <- data.table::fread(url)
+#' # gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
+#' # sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
   position <- pValue <- maf <- rsid <- chr <- NULL
   .<-NULL
@@ -128,10 +128,11 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @export
 #'
 #' @examples
-#' URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
-#' sentinelSnpDF <- data.table::fread(URL1)
-#' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
-#'                                    genomeVersion="grch37", grch37To38=TRUE)
+#' # (time-consuming)
+#' # URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
+#' # sentinelSnpDF <- data.table::fread(URL1)
+#' # traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
+#' #                                    genomeVersion="grch37", grch37To38=TRUE)
 xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDetail="", genomeVersion="grch38", grch37To38=FALSE){
   rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
   . <-genes <- geneSymbol <- gencodeId <- geneType <- description<- NULL
@@ -439,7 +440,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #' @export
 #'
 #' @examples
-#' TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])
+#' TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:5])
 #' # xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){
   gencodeId <- geneSymbol <-.<-NULL
@@ -518,11 +519,11 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #' @export
 #'
 #' @examples
-#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
-#' xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
-#' xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
+#' # speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+#' # xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
+#' # xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="", variantType="auto", binNum=4, study="", population="EUR"){
-  .<-NULL
+  .<- slope <- logP_minMax <- NULL
   study_accession <- tissue_label <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- LDbins <- logP <- corRP <- NULL
 
   ebi_ST <-copy(ebi_study_tissues)

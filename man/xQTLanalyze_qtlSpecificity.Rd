@@ -36,7 +36,7 @@ A list containing four data.table objects, including: "snpLD" for LD details of 
 eQTL-specific analysis
 }
 \examples{
-speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
-xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
-xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
+# speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+# xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
+# xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 }

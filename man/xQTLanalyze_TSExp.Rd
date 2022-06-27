@@ -27,6 +27,6 @@ A data.table object.
 Perform tissue-specific expression analysis for genes.
 }
 \examples{
-TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:20])
+TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:5])
 # xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )
 }
