@@ -17,6 +17,7 @@ Instructions, documentation, and tutorials can be found at [**here**](https://di
 
 ### Citation
 If you find the xQTLbiolinks package or any of the source code in this repository useful for your work, please cite:
+
 >Ruofan Ding, Xudong Zou, Yangmei Qin, Gao Wang, Lei Li. **xQTLbiolinks: an R/Bioconductor package for integrative analysis of xQTL data.** (submitted)
 
 Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518055, China
