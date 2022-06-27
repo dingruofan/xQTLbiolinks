@@ -32,9 +32,15 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -44,7 +50,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Download summary statistics of eQTL of a specified gene, variant, tissue or study.</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/download.R" class="external-link"><code>R/download.R</code></a></small>
     <div class="hidden name"><code>xQTLdownload_eqtlAllAsso.Rd</code></div>
     </div>
 
@@ -91,24 +97,24 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download all associations of a gene in all tissues from all studies (a time-consuming process):</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Note: time-consuming:</span>
+<span class="co"># Download all associations of a gene in all tissues from all studies (a time-consuming process):</span>
 <span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene= "TP53", study="")</span>
 
 <span class="co"># Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):</span>
 <span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")</span>
 
 <span class="co"># Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:</span>
-<span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span><span class="st">"ATP11B"</span>, tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span>
+<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")</span>
 
 <span class="co"># Download all associations of SNP rs11568818 in all tissues from all supported studies.</span>
-<span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
+<span class="co"># varAsso &lt;- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")</span>
 <span class="co"># Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:</span>
-<span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_102530930_T_C_b38"</span>,
-                                    tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span>
+<span class="co"># varAsso &lt;- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",</span>
+<span class="co">#                                     tissueLabel="Muscle - Skeletal")</span>
 
 <span class="co"># Download all associations of MLH1-rs13315355 pair in all tissues from all studies:</span>
-<span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MLH1"</span>, variantName <span class="op">=</span> <span class="st">"rs13315355"</span>, study <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
-
+<span class="co"># eqtlAsso &lt;- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")</span>
 </code></pre></div>
     </div>
   </div>

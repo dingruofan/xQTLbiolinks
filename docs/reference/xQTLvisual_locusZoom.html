@@ -32,9 +32,15 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -44,7 +50,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/visualize.R" class="external-link"><code>R/visualize.R</code></a></small>
     <div class="hidden name"><code>xQTLvisual_locusZoom.Rd</code></div>
     </div>
 
@@ -93,20 +99,20 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># For GWAS dataset:</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
+<span class="co"># library(data.table)</span>
 <span class="co"># load data:</span>
-<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span>
-<span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span>
+<span class="co"># gwasDF &lt;- fread("https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt")</span>
+<span class="co"># xQTLvisual_locusZoom(gwasDF)</span>
 <span class="co"># Zoom in:</span>
-<span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">gwasDF</span>, posRange<span class="op">=</span><span class="st">"chr6:4.7e7-4.8e7"</span>, population <span class="op">=</span><span class="st">"EUR"</span><span class="op">)</span>
+<span class="co"># xQTLvisual_locusZoom(gwasDF, posRange="chr6:4.7e7-4.8e7", population ="EUR")</span>
 
-<span class="co"># For eQTL of a gene of interest:</span>
-<span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span><span class="st">"RP11-385F7.1"</span>, tissueLabel <span class="op">=</span> <span class="st">"Brain - Cortex"</span>,
-                                     withB37VariantId<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
-<span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"snpId"</span>, <span class="st">"chrom"</span>, <span class="st">"pos"</span>, <span class="st">"pValue"</span><span class="op">)</span><span class="op">]</span>, highlightSnp<span class="op">=</span><span class="st">"rs4711878"</span> <span class="op">)</span>
+<span class="co"># For eQTL of a gene of interest (time-consuming):</span>
+<span class="co"># eqtlAsso &lt;- xQTLdownload_eqtlAllAsso("RP11-385F7.1", tissueLabel = "Brain - Cortex",</span>
+<span class="co">#                                      withB37VariantId=FALSE)</span>
+<span class="co"># xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878" )</span>
 <span class="co"># Zoom in:</span>
-<span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"snpId"</span>, <span class="st">"chrom"</span>, <span class="st">"pos"</span>, <span class="st">"pValue"</span><span class="op">)</span><span class="op">]</span>, highlightSnp<span class="op">=</span><span class="st">"rs4711878"</span>,
-                     posRange<span class="op">=</span><span class="st">"chr6:47.3e6-47.9e6"</span><span class="op">)</span>
+<span class="co"># xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",</span>
+<span class="co">#                      posRange="chr6:47.3e6-47.9e6")</span>
 </code></pre></div>
     </div>
   </div>

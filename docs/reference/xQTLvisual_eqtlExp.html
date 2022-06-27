@@ -32,9 +32,15 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -44,7 +50,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Boxplot of normalized expression among genotypes for eQTL.</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/visualize.R" class="external-link"><code>R/visualize.R</code></a></small>
     <div class="hidden name"><code>xQTLvisual_eqtlExp.Rd</code></div>
     </div>
 
@@ -86,11 +92,11 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># EQTL associatons of TP53 in Esophagus - Mucosa:</span>
-<span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
-<span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
+<span class="co"># expEqtl &lt;- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Liver")</span>
+<span class="co"># expEqtl &lt;- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53", tissueSiteDetail="Lung")</span>
 
 <span class="co"># EQTL associatons of IRF5:</span>
-<span class="va">expEqtl</span><span class="op">&lt;-</span><span class="fu">xQTLvisual_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs3778754"</span>,gene <span class="op">=</span><span class="st">"IRF5"</span>,tissueSiteDetail<span class="op">=</span><span class="st">"Whole Blood"</span><span class="op">)</span>
+<span class="co">#expEqtl&lt;-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")</span>
 </code></pre></div>
     </div>
   </div>

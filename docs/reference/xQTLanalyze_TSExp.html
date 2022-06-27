@@ -32,9 +32,15 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -44,7 +50,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform tissue-specific expression analysis for genes.</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/analyze.R" class="external-link"><code>R/analyze.R</code></a></small>
     <div class="hidden name"><code>xQTLanalyze_TSExp.Rd</code></div>
     </div>
 
@@ -79,7 +85,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">TSgene</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_TSExp</span><span class="op">(</span><span class="fu"><a href="extractGeneInfo.html">extractGeneInfo</a></span><span class="op">(</span><span class="va">gencodeGeneInfoAllGranges</span><span class="op">)</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">TSgene</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_TSExp</span><span class="op">(</span><span class="fu"><a href="extractGeneInfo.html">extractGeneInfo</a></span><span class="op">(</span><span class="va">gencodeGeneInfoAllGranges</span><span class="op">)</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span>
 <span class="co"># xQTLvisual_geneExpTissues( TSgene[order(-DPM)][1,]$geneSymbol )</span>
 </code></pre></div>
     </div>

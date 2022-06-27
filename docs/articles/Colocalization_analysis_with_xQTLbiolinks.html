@@ -49,10 +49,17 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -69,7 +76,7 @@
             
             <h4 data-toc-skip class="date">2022-06-08</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/vignettes/Colocalization_analysis_with_xQTLbiolinks.Rmd" class="external-link"><code>vignettes/Colocalization_analysis_with_xQTLbiolinks.Rmd</code></a></small>
       <div class="hidden name"><code>Colocalization_analysis_with_xQTLbiolinks.Rmd</code></div>
 
     </div>
@@ -170,7 +177,7 @@
   <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">colocResult</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> <span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">colocResultAll</span>, <span class="va">colocResult</span><span class="op">)</span><span class="op">}</span>
   <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"== %Y-%b-%d %H:%M:%S "</span><span class="op">)</span>,<span class="st">" == Id:"</span>,<span class="va">i</span>,<span class="st">"/"</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">)</span>,<span class="st">" == Gene:"</span>,<span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p>In this case, we invoke the funciton <code>coloc.abf</code> from package <code>coloc</code> to estimate the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:<span class="citation">(<a href="#ref-zheng2021" role="doc-biblioref"><strong>zheng2021?</strong></a>)</span></p>
+<p>In this case, we invoke the funciton <code>coloc.abf</code> from package <code>coloc</code> to estimate the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:</p>
 <ul>
 <li>H0 : neither trait has a genetic association in the region</li>
 <li>H1: only trait 1 has a genetic association in the region</li>
@@ -197,7 +204,7 @@
 <span class="co">#&gt; 6:  ENSG00000174567.7</span></code></pre>
 <p>To save time and go through this case as soon as possible, you can get the above result directly with:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-4-visualization-of-the-results-">Step 4: Visualization of the results.<a class="anchor" aria-label="anchor" href="#step-4-visualization-of-the-results-"></a>
@@ -281,18 +288,18 @@
 <p>Five retained fields are required:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gwasEqtldata</span></code></pre></div>
-<pre><code><span class="co">#&gt;             rsid chrom  position pValue.gwas pValue.eqtl</span>
-<span class="co">#&gt;    1:  rs1004352    11 101777151   0.1901000    0.175397</span>
-<span class="co">#&gt;    2: rs10047467    11 101761011   0.4854000    0.870120</span>
-<span class="co">#&gt;    3: rs10047477    11 101696584   0.0791000    0.570213</span>
-<span class="co">#&gt;    4: rs10047501    11 101696582   0.0755500    0.570213</span>
-<span class="co">#&gt;    5:  rs1006330    11 101626601   0.0564300    0.715533</span>
-<span class="co">#&gt;   ---                                                   </span>
-<span class="co">#&gt; 7530:   rs996999    11 102667063   0.7268000    0.309526</span>
-<span class="co">#&gt; 7531:   rs998379    11 101587510   0.8520000    0.156798</span>
-<span class="co">#&gt; 7532:  rs9988826    11 101673906   0.7874000    0.117728</span>
-<span class="co">#&gt; 7533:  rs9988861    11 101438758   0.0006782    0.404080</span>
-<span class="co">#&gt; 7534:  rs9988919    11 102876923   0.2217000    0.020295</span></code></pre>
+<pre><code><span class="co">#&gt;             rsid chrom position pValue.gwas pValue.eqtl</span>
+<span class="co">#&gt;    1: rs10000104  chr4 10190142      0.2830   0.4986640</span>
+<span class="co">#&gt;    2: rs10000248  chr4 10720872      0.0359   0.6089460</span>
+<span class="co">#&gt;    3: rs10000318  chr4 11613397      0.5810   0.3734920</span>
+<span class="co">#&gt;    4: rs10000369  chr4 11234631      0.0453   0.6642180</span>
+<span class="co">#&gt;    5: rs10000399  chr4 11595842      0.2370   0.0948472</span>
+<span class="co">#&gt;   ---                                                  </span>
+<span class="co">#&gt; 8007:  rs9999345  chr4 10895379      0.0861   0.0100352</span>
+<span class="co">#&gt; 8008:  rs9999470  chr4 10315399      0.2300   0.0700527</span>
+<span class="co">#&gt; 8009:  rs9999523  chr4 11410463      0.9930   0.2258890</span>
+<span class="co">#&gt; 8010:  rs9999669  chr4 10852509      0.2470   0.0441530</span>
+<span class="co">#&gt; 8011:  rs9999767  chr4 10127270      0.8730   0.1902930</span></code></pre>
 <p>Visualization of p-value distribution and comparison of the signals of GWAS and eQTL:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCompare.html">xQTLvisual_locusCompare</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, 

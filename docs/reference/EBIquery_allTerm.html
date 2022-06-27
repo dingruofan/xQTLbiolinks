@@ -32,9 +32,15 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -44,7 +50,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>EBIquery_allTerm</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/query.R" class="external-link"><code>R/query.R</code></a></small>
     <div class="hidden name"><code>EBIquery_allTerm.Rd</code></div>
     </div>
 
@@ -70,15 +76,15 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">associations</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"associations"</span>,termSize<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># associations &lt;- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))</span>
 <span class="co"># molecular_phenotypes &lt;- EBIquery_allTerm("molecular_phenotypes", termSize=2000)</span>
 <span class="va">studies</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"studies"</span><span class="op">)</span>
 <span class="va">tissues</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"tissues"</span><span class="op">)</span>
 
 <span class="co"># fetch tissue-study mapping relationships</span>
-<span class="va">tissue_S</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"tissues/"</span>, <span class="st">"UBER_0002046"</span>,<span class="st">"/studies"</span> <span class="op">)</span><span class="op">)</span>
+<span class="co"># tissue_S &lt;- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))</span>
 
-<span class="va">qtl_groups</span> <span class="op">&lt;-</span> <span class="fu">EBIquery_allTerm</span><span class="op">(</span><span class="st">"qtl_groups"</span><span class="op">)</span>
+<span class="co"># qtl_groups &lt;- EBIquery_allTerm("qtl_groups")</span>
 <span class="co"># geneList &lt;- EBIquery_allTerm("genes")</span>
 </code></pre></div>
     </div>

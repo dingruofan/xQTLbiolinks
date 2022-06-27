@@ -32,9 +32,15 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
-  <a href="../articles/visualization.html">Visualization</a>
+  <a href="../articles/Visualization.html">Visualization</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -44,7 +50,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Download normalized expression of gene for a eQTL pair.</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/download.R" class="external-link"><code>R/download.R</code></a></small>
     <div class="hidden name"><code>xQTLdownload_eqtlExp.Rd</code></div>
     </div>
 
@@ -87,17 +93,17 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download exp with variant-gene pair in different tissues:</span>
 <span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"ATAD3B"</span>,
-                     tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
+<span class="co"># xQTLdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B",</span>
+<span class="co">#                     tissueSiteDetail="Lung", datasetId="gtex_v8")</span>
 
 <span class="co"># Download exp in gtex v7:</span>
-<span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs140894808"</span>,gene<span class="op">=</span><span class="st">"ATAD3B"</span>,
-                     tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Visceral (Omentum)"</span>,
-                     datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
+<span class="co"># xQTLdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B",</span>
+<span class="co">#                      tissueSiteDetail="Adipose - Visceral (Omentum)",</span>
+<span class="co">#                      datasetId="gtex_v7")</span>
 
 <span class="co"># Download expression using variant ID and gencode ID.</span>
-<span class="fu">xQTLdownload_eqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_14677_G_A_b38"</span>,gene<span class="op">=</span><span class="st">"ENSG00000228463.9"</span>,
-                    tissueSiteDetail<span class="op">=</span><span class="st">"Stomach"</span><span class="op">)</span>
+<span class="co"># xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",</span>
+<span class="co">#                      tissueSiteDetail="Stomach")</span>
 </code></pre></div>
     </div>
   </div>
