@@ -43,17 +43,12 @@
 #' @export
 #'
 #' @examples
-#' # get all protein coding genes and description:
-#' # protein_coding <- xQTLquery_gene(genes="protein coding")
-#' # get all miRNA and description:
-#' # miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
-#'
-#' # hg38 test:
+#' # query gene of gencode version v26/hg38
 #' geneInfo <- xQTLquery_gene("TP53")
 #' geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
 #' geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 #'
-#' # hg19 test:
+#' # query gene of gencode version v19/hg19
 #' geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
 #' geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
@@ -281,13 +276,8 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @return returen a data.table object of samples' information
 #' @export
 #' @examples
-#' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", datasetId="gtex_v8",
-#'                                        pathologyNotesCategories=TRUE  )
-#'
-#' # sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="All", dataType="RNASEQ",
-#' #                                        datasetId="gtex_v8",pathologyNotesCategories=TRUE )
-#'
-#' sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala", "RNASEQ","gtex_v8", 200 )
+#' sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala" )
+#' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", pathologyNotesCategories=TRUE)
 xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
   .<-NULL
@@ -540,14 +530,9 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 #' @title Fetch details of all genes supported in GTEx.
 #' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
 #' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
-#'
-#' @return A data.table object of all genes' information.
 #' @import utils
 #' @import data.table
-#' @export
-#' @examples
-#' # Fetch all genes. This will take several minutes:
-#' # allGenes <- xQTLquery_geneAll()
+#' @return A data.table object of all genes' information.
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
@@ -893,8 +878,6 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
 #'  test GTEx API server and return download method.
 #' @param fetchMethod fetchMethod.
 #' @return A character string of fetchContent method.
-#' @examples
-#' #apiAdmin_ping()
 apiAdmin_ping <- function(fetchMethod=""){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 
@@ -982,8 +965,6 @@ apiAdmin_ping <- function(fetchMethod=""){
 #' @description
 #'  test EBI API server and return download method.
 #' @return A character string of fetchContent method.
-#' @examples
-#' # apiEbi_ping()
 apiEbi_ping <- function(){
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
   fetchMethod = c("fromJSON","curl", "download","GET")
@@ -1029,11 +1010,6 @@ apiEbi_ping <- function(){
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
 #' @return A json object.
-#' @export
-#'
-#' @examples
-#' url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-#' fetchContent(url1, method="fromJSON")
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
   # if( method == "GetWithHeader"){
   #   mycookie <- ''
@@ -1184,12 +1160,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
 #' @import data.table
-#' @export
 #' @return A data.table object.
-#'
-#' @examples
-#' # url1<-"https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000057/associations?gene_id=ENSG00000141510"
-#' # gtexAsoo <- fetchContentEbi(url1)
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
   # downloadMethod="auto"
@@ -1355,16 +1326,28 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #' @return A data.table object.
 #' @export
 #' @examples
-#' # associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
-#' # molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
+#' \donttest{
+#' # Fetch associatons:
+#' associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+#'
+#' # fetch molecular_phenotypes:
+#' molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=10)
+#'
+#' # fetch studies:
 #' studies <- EBIquery_allTerm("studies")
+#'
+#' # fetch tissues:
 #' tissues <- EBIquery_allTerm("tissues")
 #'
 #' # fetch tissue-study mapping relationships
-#' # tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
+#' tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
 #'
-#' # qtl_groups <- EBIquery_allTerm("qtl_groups")
-#' # geneList <- EBIquery_allTerm("genes")
+#' # fetch qtl groups:
+#' qtl_groups <- EBIquery_allTerm("qtl_groups")
+#'
+#' # Fetch genes:
+#' geneList <- EBIquery_allTerm("genes", termSize=10)
+#' }
 EBIquery_allTerm <- function( term="genes", termSize=2000){
   bestFetchMethod <- apiEbi_ping()
   if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){

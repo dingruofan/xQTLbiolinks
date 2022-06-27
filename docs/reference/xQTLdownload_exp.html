@@ -94,29 +94,27 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download gene expression with a genecode ID:</span>
-<span class="co"># expProfiles &lt;- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+<span class="co"># Download gene expression with a genecode ID:</span>
+<span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_exp</span><span class="op">(</span><span class="st">"ENSG00000210195.2"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
 
 <span class="co"># extract expression profile from SummarizedExperiment object:</span>
-<span class="co"># expDT &lt;- SummarizedExperiment::assay(expProfiles)</span>
+<span class="va">expDT</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">expProfiles</span><span class="op">)</span>
 
 <span class="co"># extract samples' detail from SummarizedExperiment object:</span>
-<span class="co"># sampleDT &lt;- SummarizedExperiment::colData(expProfiles)</span>
+<span class="va">sampleDT</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">expProfiles</span><span class="op">)</span>
 
 <span class="co"># Download gene expression profiles of multiple genes:</span>
-<span class="co"># expProfiles &lt;- xQTLdownload_exp(c("tp53","naDK","SDF4"),</span>
-<span class="co">#                                 tissueSiteDetail="Artery - Coronary",</span>
-<span class="co">#                                 pathologyNotesCategories=TRUE,</span>
-<span class="co">#                                toSummarizedExperiment=FALSE)</span>
-<span class="co"># Download with versioned and unversioned gencode Id.</span>
-<span class="co"># expProfiles &lt;- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),</span>
-<span class="co">#                                tissueSiteDetail="Artery - Coronary",</span>
-<span class="co">#                                toSummarizedExperiment=FALSE)</span>
+<span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_exp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tp53"</span>,<span class="st">"naDK"</span>,<span class="st">"SDF4"</span><span class="op">)</span>,
+                                tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Coronary"</span>,
+                                pathologyNotesCategories<span class="op">=</span><span class="cn">TRUE</span>,
+                                toSummarizedExperiment<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 
-<span class="co"># Get proteing-coding genes' expression in Lung:</span>
-<span class="co"># prot &lt;- xQTLquery_gene(genes="protein coding")</span>
-<span class="co"># proTexp &lt;- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",</span>
-<span class="co">#                             toSummarizedExperiment=FALSE)</span>
+<span class="co"># Download with versioned and unversioned gencode Id.</span>
+<span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_exp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000141510.16"</span>,<span class="st">"ENSG00000008130.15"</span>,<span class="st">"ENSG00000078808"</span><span class="op">)</span>,
+                               tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Coronary"</span>,
+                               toSummarizedExperiment<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

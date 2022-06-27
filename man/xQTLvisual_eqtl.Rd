@@ -20,6 +20,7 @@ A ggplot object.
 Box plot with jittered points for showing number and significance of eQTL associations
 }
 \examples{
-# xQTLvisual_eqtl("KIF15")
-# xQTLvisual_eqtl("MLH1")
+\donttest{
+xQTLvisual_eqtl("KIF15")
+}
 }

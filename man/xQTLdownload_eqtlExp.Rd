@@ -33,17 +33,12 @@ A data.table object.
 Download normalized expression of gene for a eQTL pair.
 }
 \examples{
+\donttest{
 # Download exp with variant-gene pair in different tissues:
 xQTLdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
-# xQTLdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B",
-#                     tissueSiteDetail="Lung", datasetId="gtex_v8")
-
-# Download exp in gtex v7:
-# xQTLdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B",
-#                      tissueSiteDetail="Adipose - Visceral (Omentum)",
-#                      datasetId="gtex_v7")
 
 # Download expression using variant ID and gencode ID.
-# xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
-#                      tissueSiteDetail="Stomach")
+xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
+                     tissueSiteDetail="Stomach")
+}
 }

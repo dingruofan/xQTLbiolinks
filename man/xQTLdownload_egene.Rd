@@ -9,7 +9,7 @@ xQTLdownload_egene(
   geneType = "auto",
   datasetId = "gtex_v8",
   tissueSiteDetail = "",
-  recordPerChunk = 200
+  recordPerChunk = 2000
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ xQTLdownload_egene(
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
-\item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
+\item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
 \value{
 A data.table object.
@@ -30,8 +30,9 @@ A data.table object.
 eGenes are genes that have at least one significant cis-eQTL acting upon them. Results can be filtered by tissue.
 }
 \examples{
-# eGeneInfoAlltissue <- xQTLdownload_egene()
-#eGeneInfo <- xQTLdownload_egene("TP53")
-#eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7",tissueSiteDetail="Artery - Tibial")
+\donttest{
+eGeneInfo <- xQTLdownload_egene("TP53")
+eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
+eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7",tissueSiteDetail="Artery - Tibial")
+}
 }

@@ -48,5 +48,10 @@ A list of coloc result and details.
 Conduct colocalization analysis with trait genes generated from \code{xQTLanalyze_getTraits}
 }
 \examples{
-# Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/
+\donttest{
+url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"
+gwasDF <- fread(url1)
+output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "CLNK",
+                            tissueSiteDetail="Brain - Cerebellum")
+}
 }

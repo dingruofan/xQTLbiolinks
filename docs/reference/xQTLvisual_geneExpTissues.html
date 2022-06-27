@@ -91,17 +91,10 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Display gene expression in all tissues.</span>
-<span class="co"># geneExpTissues &lt;- xQTLvisual_geneExpTissues("TP53")</span>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
 <span class="co"># Display gene expression in specified tissues.</span>
-<span class="co"># geneExpTissues &lt;- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))</span>
-
-<span class="co"># Display gene expression in log scale in specified tissues.</span>
-<span class="co"># geneExpTissues &lt;- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", log10y=TRUE)</span>
-
-<span class="co"># Display gene expression in whole tissue.</span>
-<span class="co"># geneExpTissues &lt;- xQTLvisual_geneExpTissues("TP53", tissues="Blood Vessel", toTissueSite=TRUE)</span>
+<span class="va">geneExpTissues</span> <span class="op">&lt;-</span> <span class="fu">xQTLvisual_geneExpTissues</span><span class="op">(</span><span class="st">"TP53"</span>, tissues<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lung"</span>, <span class="st">"Brain"</span>,<span class="st">"Ovary"</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

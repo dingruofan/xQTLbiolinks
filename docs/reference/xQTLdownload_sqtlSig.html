@@ -88,20 +88,19 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download sQTL detail with rsid:</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+<span class="co"># Download sQTL details with rsid:</span>
 <span class="fu">xQTLdownload_sqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs201327123"</span><span class="op">)</span>
-<span class="co"># xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")</span>
-<span class="co"># xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")</span>
+<span class="fu">xQTLdownload_sqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_14677_G_A_b38"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Whole Blood"</span><span class="op">)</span>
 
-<span class="co"># Download sQTL detail with gene symbol and gencode ID:</span>
-<span class="co"># xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )</span>
-<span class="co"># xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))</span>
-<span class="co"># xQTLdownload_sqtlSig(genes=c("ENSG00000141510.16","ENSG00000076242.14"))</span>
+<span class="co"># Download sQTL details with gene symbol and gencode ID:</span>
+<span class="fu">xQTLdownload_sqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="st">"ENSG00000141510.16"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span> <span class="op">)</span>
+<span class="fu">xQTLdownload_sqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ATAD3B"</span>, <span class="st">"MLH1"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># Download sQTL detail with the variant-genes pair:</span>
-<span class="co"># xQTLdownload_sqtlSig(variantName="rs1987191",genes="ATAD3B")</span>
-<span class="co"># xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))</span>
-<span class="co">#xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")</span>
+<span class="co"># Download sQTL details with the variant-genes pair:</span>
+<span class="fu">xQTLdownload_sqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs201327123"</span>, genes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WASH7P"</span>,<span class="st">"RP11-206L10.2"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">xQTLdownload_sqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr17_7465085_A_G_b38"</span>, genes<span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

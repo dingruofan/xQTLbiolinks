@@ -94,9 +94,11 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># speDT &lt;- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")</span>
-<span class="co"># xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")</span>
-<span class="co"># xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+<span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_qtlSpecificity</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
+<span class="fu"><a href="xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span>
+<span class="fu"><a href="xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

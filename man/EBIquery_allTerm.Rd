@@ -18,14 +18,26 @@ A data.table object.
 EBIquery_allTerm
 }
 \examples{
-# associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
-# molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=2000)
+\donttest{
+# Fetch associatons:
+associations <- data.table::rbindlist(EBIquery_allTerm("associations",termSize=0))
+
+# fetch molecular_phenotypes:
+molecular_phenotypes <- EBIquery_allTerm("molecular_phenotypes", termSize=10)
+
+# fetch studies:
 studies <- EBIquery_allTerm("studies")
+
+# fetch tissues:
 tissues <- EBIquery_allTerm("tissues")
 
 # fetch tissue-study mapping relationships
-# tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
+tissue_S <- EBIquery_allTerm( paste0("tissues/", "UBER_0002046","/studies" ))
 
-# qtl_groups <- EBIquery_allTerm("qtl_groups")
-# geneList <- EBIquery_allTerm("genes")
+# fetch qtl groups:
+qtl_groups <- EBIquery_allTerm("qtl_groups")
+
+# Fetch genes:
+geneList <- EBIquery_allTerm("genes", termSize=10)
+}
 }

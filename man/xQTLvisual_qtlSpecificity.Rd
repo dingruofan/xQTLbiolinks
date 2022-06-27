@@ -27,5 +27,9 @@ A ggplot object
 Visualization of QTL specificity among multiple cells/tissues.
 }
 \examples{
-# please see function `xQTLanalyze_qtlSpecificity`
+\donttest{
+speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
+xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
+}
 }

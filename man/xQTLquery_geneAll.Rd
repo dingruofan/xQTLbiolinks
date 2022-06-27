@@ -17,7 +17,3 @@ A data.table object of all genes' information.
 \description{
 Fetch details of all genes supported in GTEx.
 }
-\examples{
-# Fetch all genes. This will take several minutes:
-# allGenes <- xQTLquery_geneAll()
-}

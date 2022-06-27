@@ -106,7 +106,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Please see see vignette: https://dingruofan.github.io/xQTLbiolinks/articles/</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+<span class="va">url1</span> <span class="op">&lt;-</span> <span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"</span>
+<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">fread</span><span class="op">(</span><span class="va">url1</span><span class="op">)</span>
+<span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_coloc</span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF</span>, traitGene<span class="op">=</span> <span class="st">"CLNK"</span>,
+                            tissueSiteDetail<span class="op">=</span><span class="st">"Brain - Cerebellum"</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

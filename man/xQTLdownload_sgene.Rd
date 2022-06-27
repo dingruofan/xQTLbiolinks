@@ -30,9 +30,8 @@ A data.table object.
 sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 }
 \examples{
-#sGeneInfoAlltissue <- xQTLdownload_sgene()
-
-# sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
-# sGeneInfo <- xQTLdownload_sgene(gene="ENSG00000141510.16",  tissueSiteDetail="Lung")
-# sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Artery - Tibial" )
+\donttest{
+sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver")
+sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Liver" )
+}
 }

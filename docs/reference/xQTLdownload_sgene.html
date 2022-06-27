@@ -88,11 +88,10 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co">#sGeneInfoAlltissue &lt;- xQTLdownload_sgene()</span>
-
-<span class="co"># sGeneInfo &lt;- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)</span>
-<span class="co"># sGeneInfo &lt;- xQTLdownload_sgene(gene="ENSG00000141510.16",  tissueSiteDetail="Lung")</span>
-<span class="co"># sGeneInfo &lt;- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Artery - Tibial" )</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
+<span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
+<span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_sgene</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"DDX11"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span> <span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

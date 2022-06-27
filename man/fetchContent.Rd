@@ -21,7 +21,3 @@ A json object.
 \description{
 Fetch data using url by three methods
 }
-\examples{
-url1 <- "https://gtexportal.org/rest/v1/admin/ping"
-fetchContent(url1, method="fromJSON")
-}

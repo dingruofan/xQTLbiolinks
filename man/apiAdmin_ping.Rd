@@ -15,6 +15,3 @@ A character string of fetchContent method.
 \description{
 test GTEx API server and return download method.
 }
-\examples{
-#apiAdmin_ping()
-}

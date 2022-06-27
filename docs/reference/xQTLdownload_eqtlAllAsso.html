@@ -97,24 +97,10 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Note: time-consuming:</span>
-<span class="co"># Download all associations of a gene in all tissues from all studies (a time-consuming process):</span>
-<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene= "TP53", study="")</span>
-
-<span class="co"># Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):</span>
-<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")</span>
-
-<span class="co"># Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:</span>
-<span class="co"># geneAsso &lt;- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")</span>
-
-<span class="co"># Download all associations of SNP rs11568818 in all tissues from all supported studies.</span>
-<span class="co"># varAsso &lt;- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")</span>
-<span class="co"># Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:</span>
-<span class="co"># varAsso &lt;- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",</span>
-<span class="co">#                                     tissueLabel="Muscle - Skeletal")</span>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
 <span class="co"># Download all associations of MLH1-rs13315355 pair in all tissues from all studies:</span>
-<span class="co"># eqtlAsso &lt;- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")</span>
+<span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MLH1"</span>, variantName <span class="op">=</span> <span class="st">"rs13315355"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
+<span class="co"># }</span>
 </code></pre></div>
     </div>
   </div>

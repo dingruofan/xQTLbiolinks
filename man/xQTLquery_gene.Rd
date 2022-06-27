@@ -54,17 +54,12 @@ A data.table object of queried gene information. including following columns:
 Query basic information (including name, symbol, position and description, etc. ) of genes.
 }
 \examples{
-# get all protein coding genes and description:
-# protein_coding <- xQTLquery_gene(genes="protein coding")
-# get all miRNA and description:
-# miRNA <- xQTLquery_gene(genes="miRNA", geneType="geneCategory", "v19")
-
-# hg38 test:
+# query gene of gencode version v26/hg38
 geneInfo <- xQTLquery_gene("TP53")
 geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
 geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 
-# hg19 test:
+# query gene of gencode version v19/hg19
 geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
 geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
 }

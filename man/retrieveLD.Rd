@@ -13,6 +13,9 @@ retrieveLD(chr, snp, population)
 
 \item{population}{(string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.}
 }
+\value{
+A data.frame object.
+}
 \description{
 SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
 For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.

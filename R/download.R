@@ -18,29 +18,27 @@
 #' @return return a SummarizedExperiment or a data.table object harbing gene expression profiles and samples' information.
 #' @export
 #' @examples
+#' \donttest{
 #' # Download gene expression with a genecode ID:
-#' # expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")
+#' expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")
 #'
 #' # extract expression profile from SummarizedExperiment object:
-#' # expDT <- SummarizedExperiment::assay(expProfiles)
+#' expDT <- SummarizedExperiment::assay(expProfiles)
 #'
 #' # extract samples' detail from SummarizedExperiment object:
-#' # sampleDT <- SummarizedExperiment::colData(expProfiles)
+#' sampleDT <- SummarizedExperiment::colData(expProfiles)
 #'
 #' # Download gene expression profiles of multiple genes:
-#' # expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
-#' #                                 tissueSiteDetail="Artery - Coronary",
-#' #                                 pathologyNotesCategories=TRUE,
-#' #                                toSummarizedExperiment=FALSE)
-#' # Download with versioned and unversioned gencode Id.
-#' # expProfiles <- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),
-#' #                                tissueSiteDetail="Artery - Coronary",
-#' #                                toSummarizedExperiment=FALSE)
+#' expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
+#'                                 tissueSiteDetail="Artery - Coronary",
+#'                                 pathologyNotesCategories=TRUE,
+#'                                 toSummarizedExperiment=FALSE)
 #'
-#' # Get proteing-coding genes' expression in Lung:
-#' # prot <- xQTLquery_gene(genes="protein coding")
-#' # proTexp <- xQTLdownload_exp(proT$geneSymbol, tissueSiteDetail="Lung",
-#' #                             toSummarizedExperiment=FALSE)
+#' # Download with versioned and unversioned gencode Id.
+#' expProfiles <- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),
+#'                                tissueSiteDetail="Artery - Coronary",
+#'                                toSummarizedExperiment=FALSE)
+#' }
 xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=80, pathologyNotesCategories=FALSE  ){
   gencodeId <- chromosome <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
@@ -253,29 +251,31 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' # Download eQTL info for a variant:
 #' xQTLdownload_eqtlSig("rs201327123")
-#' # xQTLdownload_eqtlSig("chr1_14677_G_A_b38")
-#' # xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7")
-#' # xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7",
-#' #                     tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+#' xQTLdownload_eqtlSig("chr1_14677_G_A_b38")
+#' xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7")
+#' xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7",
+#'                     tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #'
 #' # Download eQTL association according to all tissues with genome location:
-#' # varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
-#' # xQTLdownload_eqtlSig(variantName=varInfo$snpId)
+#' varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+#' xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 #'
 #' # Download eQTL info for gene:
-#' # xQTLdownload_eqtlSig(genes="ATAD3B")
-#' # xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
-#' # xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
-#' # xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
-#' #                      tissueSiteDetail="Thyroid" )
+#' xQTLdownload_eqtlSig(genes="ATAD3B")
+#' xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
+#' xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
+#' xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
+#'                      tissueSiteDetail="Thyroid" )
 #'
 #' # Download eQTL info for a variant-gene pair:
-#' # xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
-#' # xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v7")
-#' # xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
-#' #                      genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
+#' xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
+#' xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v7")
+#' xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
+#'                      genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
+#' }
 xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
   variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- NULL
   .<-NULL
@@ -415,26 +415,22 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' # Download eQTL info with a gene symbol:
-#' # eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
-#' # eqtlInfo <- xQTLdownload_eqtl(gene="ATAD3B", datasetId="gtex_v7")
+#' eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
 #'
-#' # Use unversioned gencode ID in GTEx V7:
-#' # eqtl_v7 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v7")
 #' # Use unversioned gencode ID in GTEx V8:
-#' # eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
+#' eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
 #'
 #' # In a specific tissue:
-#' # xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
-#' #                   datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
+#' xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
+#'                   datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
 #'
 #' # Download eQTL info with a variant-gene pair:
-#' # xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
-#' # xQTLdownload_eqtl(variantName="rs11657498",gene="TP53", datasetId="gtex_v7")
-#' # xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
-#' #                   tissueSiteDetail="Kidney - Cortex")
-#' # xQTLdownload_eqtl(variantName="17_7492388_G_A_b37",gene="TP53",
-#' #                   tissueSiteDetail="Uterus",  datasetId="gtex_v7")
+#' xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+#' xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
+#'                   tissueSiteDetail="Kidney - Cortex")
+#' }
 xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
   pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- mValue <- NULL
   .<-NULL
@@ -610,25 +606,10 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
 #' @export
 #'
 #' @examples
-#' # Note: time-consuming:
-#' # Download all associations of a gene in all tissues from all studies (a time-consuming process):
-#' # geneAsso <- xQTLdownload_eqtlAllAsso(gene= "TP53", study="")
-#'
-#' # Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):
-#' # geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
-#'
-#' # Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:
-#' # geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
-#'
-#' # Download all associations of SNP rs11568818 in all tissues from all supported studies.
-#' # varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")
-#
-#' # Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
-#' # varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
-#' #                                     tissueLabel="Muscle - Skeletal")
-#'
+#' \donttest{
 #' # Download all associations of MLH1-rs13315355 pair in all tissues from all studies:
-#' # eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study = "")
+#' eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study="")
+#' }
 xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
   . <- geneInfoV19 <- pos <- ref<- alt<- tissue<-NULL
   chrom <- tissue_label <- study_accession <- variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
@@ -858,10 +839,12 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
 #' @export
 #'
 #' @examples
-#' # eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr11",
-#' #                                         pos_lower=101398614, pos_upper = 101462313,
-#' #                                         tissueLabel="Brain - Cerebellar Hemisphere",
-#' #                                         p_upper=1e-1)
+#' \donttest{
+#' eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr11",
+#'                                         pos_lower=101398614, pos_upper = 101402313,
+#'                                         tissueLabel="Brain - Cerebellar Hemisphere",
+#'                                         p_upper=1e-1)
+#' }
 xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_upper=numeric(0), p_lower=0, p_upper=1.1,  gene="", geneType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
   .<-NULL
   study_accession <- tissue_label <- gencodeId <- genes <- geneSymbol <- chromosome <- entrezGeneId <- variantId <- pos <- ref <- alt <- tissue <- b37VariantId <- NULL
@@ -1033,20 +1016,19 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 #' @export
 #'
 #' @examples
-#' # Download sQTL detail with rsid:
+#' \donttest{
+#' # Download sQTL details with rsid:
 #' xQTLdownload_sqtlSig(variantName="rs201327123")
-#' # xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38")
-#' # xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
+#' xQTLdownload_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
 #'
-#' # Download sQTL detail with gene symbol and gencode ID:
-#' # xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
-#' # xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))
-#' # xQTLdownload_sqtlSig(genes=c("ENSG00000141510.16","ENSG00000076242.14"))
+#' # Download sQTL details with gene symbol and gencode ID:
+#' xQTLdownload_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
+#' xQTLdownload_sqtlSig(genes=c("ATAD3B", "MLH1"))
 #'
-#' # Download sQTL detail with the variant-genes pair:
-#' # xQTLdownload_sqtlSig(variantName="rs1987191",genes="ATAD3B")
-#' # xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
-#' #xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")
+#' # Download sQTL details with the variant-genes pair:
+#' xQTLdownload_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
+#' xQTLdownload_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", tissueSiteDetail="Lung")
+#' }
 xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", geneType="auto", tissueSiteDetail="" ){
   .<-NULL
   variantId <- snpId <- gencodeId <- geneSymbol <- phenotypeId <- pValue <- nes <- NULL
@@ -1184,19 +1166,14 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @return A data.table object.
 #' @export
 #' @examples
+#' \donttest{
 #' # Download exp with variant-gene pair in different tissues:
 #' xQTLdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
-#' # xQTLdownload_eqtlExp(variantName="rs1641513",gene="ATAD3B",
-#' #                     tissueSiteDetail="Lung", datasetId="gtex_v8")
-#'
-#' # Download exp in gtex v7:
-#' # xQTLdownload_eqtlExp(variantName="rs140894808",gene="ATAD3B",
-#' #                      tissueSiteDetail="Adipose - Visceral (Omentum)",
-#' #                      datasetId="gtex_v7")
 #'
 #' # Download expression using variant ID and gencode ID.
-#' # xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
-#' #                      tissueSiteDetail="Stomach")
+#' xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
+#'                      tissueSiteDetail="Stomach")
+#' }
 xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
   gencodeGenetype <- chromosome <-gencodeId <-NULL
   .<-NULL
@@ -1470,7 +1447,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param recordPerChunk (integer) number of records fetched per request (default: 200).
+#' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #' @import data.table
 #' @import stringr
 #' @import utils
@@ -1478,11 +1455,12 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #' @export
 #'
 #' @examples
-#' # eGeneInfoAlltissue <- xQTLdownload_egene()
-#' #eGeneInfo <- xQTLdownload_egene("TP53")
-#' #eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#' #eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7",tissueSiteDetail="Artery - Tibial")
-xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=200){
+#' \donttest{
+#' eGeneInfo <- xQTLdownload_egene("TP53")
+#' eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
+#' eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7",tissueSiteDetail="Artery - Tibial")
+#' }
+xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="DDX11"
@@ -1611,11 +1589,10 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @export
 #'
 #' @examples
-#' #sGeneInfoAlltissue <- xQTLdownload_sgene()
-#'
-#' # sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Lung", recordPerChunk=2000)
-#' # sGeneInfo <- xQTLdownload_sgene(gene="ENSG00000141510.16",  tissueSiteDetail="Lung")
-#' # sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Artery - Tibial" )
+#' \donttest{
+#' sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver")
+#' sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Liver" )
+#' }
 xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
   phenotypeId <- nPhenotypes <- .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
@@ -1869,6 +1846,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v
 #' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @import RMySQL
 #' @import DBI
+#' @return A data.frame object.
 #' @export
 #' @examples
 #' ld <- retrieveLD('6', 'rs9349379', 'AFR')
@@ -1906,146 +1884,8 @@ retrieveLD = function(chr, snp, population){
   return(res)
 }
 
-#' @title Retrive SNP pairwise LD from LDlink database
-#'
-#' @param targetSnp target SNP, support dbSNP IP.
-#' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
-#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
-#' @param method The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader", or "GET".
-#' @param genomeVersion "grch38"(default) or "grch37".
-#' @param max_count To prevent download failure due to network fluctuations, max number of connection attempts.
-#' @param token Ldlink token, default: "9246d2db7917"
-#'
-#' @export
-#' @return A data.table object.
-#'
-#' @examples
-#' # snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
-retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=500000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){
-  # targetSnp="rs3"
-  # population="EUR"
-  # windowSize=500000
-  # genomeVersion="grch38"
-  # max_count=3
-  # token="9246d2db7917"
-
-  # get LD information:
-  s_count<-1
-  max_count<- 3
-
-  while( !exists("snpLDtmp") && s_count<=max_count ){
-    message("=== Geting LD info for SNP: ",targetSnp,"; trying ",s_count,"/",max_count,".")
-    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",targetSnp,
-                   "&pop=",population,
-                   "&r2_d=","r2",
-                   "&window=",as.character(as.integer(windowSize)),
-                   "&genome_build=",genomeVersion,
-                   "&token=", token)
-    # message(url1)
-    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
-    try( snpLDtmp <- fetchContent(url1, method=method, isJson=FALSE) )
-    if( exists("snpLDtmp") && ncol(snpLDtmp)<=1 ){
-      rm(snpLDtmp)
-    }else{
-      message("=== Done!")
-    }
-    s_count <- s_count+1
-  }
-  if(!exists("snpLDtmp") ){
-    return( NULL )
-  }else{
-    return(snpLDtmp)
-  }
-}
 
 
 
-#' @title fetch matrix of pairwise linkage disequilibrium statistics.
-#' @description This fucntion is rebuilt from LDlink package.
-#' @param snps list of between 2 - 1,000 variants, using an rsID or chromosome coordinate (e.g. "chr7:24966446")
-#' @param pop a 1000 Genomes Project population, (e.g. YRI or CEU), multiple allowed, default = "CEU". All supported can be listed with LDlinkR::list_pop()
-#' @param r2d r2d, either "r2" for LD R2 or "d" for LD D', default = "r2"
-#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
-#' @param file Optional character string naming a path and file for saving results. If file = FALSE, no file will be generated, default = FALSE.
-#'
-#' @return a data.table object
-#' @export
-#'
-#' @examples
-#' ldMat <- retrieveLD_LDmatrix(c("rs12202891", "rs10807323",
-#'                              "rs9381401", "rs2026458", "rs150503442"),
-#'                               pop="CEU", token="9246d2db7917")
-retrieveLD_LDmatrix <- function(snps, pop = "CEU", r2d = "r2", token = NULL,  file = FALSE) {
-  LD_config <- list(ldmatrix_url = "https://ldlink.nci.nih.gov/LDlinkRest/ldmatrix",
-                    avail_pop = c("YRI", "LWK", "GWD",
-                                  "MSL", "ESN", "ASW", "ACB",
-                                  "MXL", "PUR", "CLM", "PEL",
-                                  "CHB", "JPT", "CHS", "CDX",
-                                  "KHV", "CEU", "TSI", "FIN",
-                                  "GBR", "IBS", "GIH", "PJL",
-                                  "BEB", "STU", "ITU", "ALL",
-                                  "AFR", "AMR", "EAS", "EUR",
-                                  "SAS"), avail_ld = c("r2", "d"))
-  url <- LD_config[["ldmatrix_url"]]
-  avail_pop <- LD_config[["avail_pop"]]
-  avail_ld <- LD_config[["avail_ld"]]
-  file <- as.character(file)
-  rsid_pattern <- "^rs\\d{1,}"
-  chr_coord_pattern <- "(^chr)(\\d{1,2}|X|x|Y|y):(\\d{1,9})$"
-  if (!(length(snps) > 1) & (length(snps) <= 1000)) {
-    stop("Input is between 2 to 1000 variants.")
-  }
-  for (i in 1:length(snps)) {
-    if (!((grepl(rsid_pattern, snps[i], ignore.case = TRUE)) |
-          (grepl(chr_coord_pattern, snps[i], ignore.case = TRUE)))) {
-      stop(paste("Invalid query format for variant: ",
-                 snps[i], ".", sep = ""))
-    }
-  }
-  if (!(all(pop %in% avail_pop))) {
-    stop("Not a valid population code.")
-  }
-  if (!(r2d %in% avail_ld)) {
-    stop("Not a valid r2d.  Enter 'r2' or 'd'.")
-  }
-  if (is.null(token)) {
-    stop("Enter valid access token. Please register using the LDlink API Access tab: https://ldlink.nci.nih.gov/?tab=apiaccess")
-  }
-  if (!(is.character(file) | file == FALSE)) {
-    stop("Invalid input for file option.")
-  }
-  snps_to_upload <- paste(unlist(snps), collapse = "\n")
-  pop_to_upload <- paste(unlist(pop), collapse = "+")
-  jsonbody <- list(snps = snps_to_upload, pop = pop_to_upload,
-                   r2_d = r2d)
-  url_str <- paste(url, "?", "&token=", token,
-                   sep = "")
-  # message(url_str)
-  if (httr::http_error(url)) {
-    message("The LDlink server is down or not accessible. Please try again later.")
-    return(NULL)
-  }
-  else {
-    message("\nLDlink server is working...\n")
-  }
-  raw_out <- httr::POST(url = url_str, body = jsonbody, encode = "json")
-  httr::stop_for_status(raw_out)
-  data_out <- read.delim(textConnection(httr::content(raw_out,
-                                                      "text", encoding = "UTF-8")), header = T,
-                         sep = "\t")
-  if (grepl("error", data_out[2, 1])) {
-    stop(data_out[2, 1])
-  }
-  if (file == FALSE) {
-    return(data_out)
-  }
-  else if (is.character(file)) {
-    print(data_out)
-    write.table(data_out, file = file, quote = F, row.names = F,
-                sep = "\t")
-    cat(paste("\nFile saved to ", file, ".",
-              sep = ""))
-    return(data_out)
-  }
-}
+
 

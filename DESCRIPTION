@@ -10,6 +10,8 @@ Authors@R: c(
 	)
 Description: User can query, download, and visualize of molecular quantitative trait locus and gene expression data from public resources through the application programming interface.
 URL: https://github.com/dingruofan/xQTLbiolinks
+BugReports: https://github.com/dingruofan/xQTLbiolinks/issues
+https:<https://gtexportal.org/home/api-docs/index.html>
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

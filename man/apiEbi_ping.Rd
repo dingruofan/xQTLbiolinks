@@ -12,6 +12,3 @@ A character string of fetchContent method.
 \description{
 test EBI API server and return download method.
 }
-\examples{
-# apiEbi_ping()
-}
