@@ -7,7 +7,7 @@
 xQTLquery_tissue(tissueName = "", datasetId = "gtex_v8")
 }
 \arguments{
-\item{tissueName}{Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from "tissueSiteDetailGTExv8" or "tissueSiteDetailGTExv7"}
+\item{tissueName}{Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
