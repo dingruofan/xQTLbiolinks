@@ -19,7 +19,8 @@ knitr::opts_chunk$set(
 
 Some visual examples are provided in this vignette, including example data, code, and figures.
 
-**Visualilzation** of eQTL, sQTL, gene expression across tissues.
+**Visualilzation** of eQTL, sQTL, gene expression across tissues. 
+
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtl("KIF15")
