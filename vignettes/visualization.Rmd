@@ -3,7 +3,7 @@ title: "Visualization using xQTLbiolinks"
 date: "2022-06-08"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Visualization}
+  %\VignetteIndexEntry{visualization}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 lang: en-US

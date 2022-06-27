@@ -7,7 +7,7 @@ navbar:
     - text: "Functions"
       href: reference/index.html
     - text: "Visualization"
-      href: articles/Visualization.html
+      href: articles/visualization.html
 
 
 articles:
@@ -18,7 +18,7 @@ articles:
     - Quick_start
     - Colocalization_analysis_with_xQTLbiolinks
     - eQTL_Specificity
-    - Visualization
+    - visualization
 
 
 reference:
