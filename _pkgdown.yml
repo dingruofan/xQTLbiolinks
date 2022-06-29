@@ -8,6 +8,9 @@ navbar:
       href: reference/index.html
     - text: "Visualization"
       href: articles/visualization.html
+    - text: "News"
+      href: news/index.html
+
 
 
 articles:
@@ -34,3 +37,11 @@ reference:
 - title: Analyze
   contents:
   - starts_with("xQTLanalyze_")
+
+
+news:
+ releases:
+ - text: "xQLTbiolinks 1.0.0"
+   href: https://github.com/dingruofan/xQTLbiolinks
+ cran_dates: false
+

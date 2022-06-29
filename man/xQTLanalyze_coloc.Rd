@@ -50,7 +50,7 @@ Conduct colocalization analysis with trait genes generated from \code{xQTLanalyz
 \examples{
 \donttest{
 url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"
-gwasDF <- fread(url1)
+gwasDF <- data.table::fread(url1)
 output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "CLNK",
                             tissueSiteDetail="Brain - Cerebellum")
 }

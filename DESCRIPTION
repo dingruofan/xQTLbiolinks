@@ -1,5 +1,5 @@
 Package: xQTLbiolinks
-Title: An R Package for Integrative Analysis of Quantitative Trait Locus Data
+Title: An R Package for Integrative Analysis of Quantitative Trait Locus Data of 'GTEx'
 Version: 1.0.0
 Authors@R: c(
     person(given = "Ruofan", family = "Ding",        email = "dingruofan1@foxmail.com",   role  = c("aut", "cre")),
@@ -8,10 +8,9 @@ Authors@R: c(
     person(given = "Gao", family = "Wang",        email = "wang.gao@columbia.edu",   role  = c("aut","ctb")),
     person(given = "Lei", family = "Li",        email = "lei.li@szbl.ac.cn",   role  = c("aut","ctb", "cph"))
 	)
-Description: User can query, download, and visualize of molecular quantitative trait locus and gene expression data from public resources through the application programming interface.
+Description: User can query, download, and visualize of molecular quantitative trait locus and gene expression data from public resources through the application programming interface <https://gtexportal.org/home/api-docs/index.html> of 'GTEx'. 
 URL: https://github.com/dingruofan/xQTLbiolinks
 BugReports: https://github.com/dingruofan/xQTLbiolinks/issues
-https:<https://gtexportal.org/home/api-docs/index.html>
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
