@@ -13,7 +13,7 @@ xQTLanalyze_getTraits(
 )
 }
 \arguments{
-\item{sentinelSnpDF}{A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".}
+\item{sentinelSnpDF}{A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", seven columns are required, including "rsid", "chr", "position", "pValue", "maf", "beta" and "se".}
 
 \item{detectRange}{A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp}
 

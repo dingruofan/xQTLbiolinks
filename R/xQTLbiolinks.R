@@ -215,6 +215,8 @@ NULL
 #'   \item{position}{A integer vector}
 #'   \item{pValue}{A numeric vector}
 #'   \item{maf}{A numeric vector}
+#'   \item{beta}{A numeric vector}
+#'   \item{se}{A numeric vector}
 #' }
 #' @source \url{http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz}
 NULL
@@ -232,6 +234,8 @@ NULL
 #'   \item{position}{A integer vector}
 #'   \item{pValue}{A numeric vector}
 #'   \item{maf}{A numeric vector}
+#'   \item{beta}{A numeric vector}
+#'   \item{se}{A numeric vector}
 #' }
 #' @source xQTLanalyze_getSentinelSnp
 NULL
@@ -266,13 +270,35 @@ NULL
 #' @name example_Coloc_colocResultAll
 #' @format A Data.table
 #' \describe{
+#'   \item{traitGene}{A character vector}
 #'   \item{nsnps}{A character vector}
 #'   \item{PP.H0.abf}{A numeric vector}
 #'   \item{PP.H1.abf}{A numeric vector}
 #'   \item{PP.H2.abf}{A numeric vector}
 #'   \item{PP.H3.abf}{A numeric vector}
 #'   \item{PP.H4.abf}{A numeric vector}
+#'   \item{candidate_snp}{A character vector}
+#'   \item{hypr_posterior}{A numeric vector}
+#'   \item{hypr_regional_prob}{A numeric vector}
+#'   \item{hypr_candidate_snp}{A character vector}
+#'   \item{hypr_posterior_explainedBySnp}{A numeric vector}
+#' }
+#' @source xQTLanalyze_coloc
+NULL
+
+#' @title data for vignette
+#' @description
+#'  head 5 rows of hyprcoloc results from xQTLanalyze_coloc
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_hyprcolocResultAll
+#' @format A Data.table
+#' \describe{
 #'   \item{traitGene}{A character vector}
+#'   \item{posterior_prob}{A numeric vector}
+#'   \item{regional_prob}{A numeric vector}
+#'   \item{candidate_snp}{A character vector}
+#'   \item{posterior_explained_by_snp}{A numeric vector}
 #' }
 #' @source xQTLanalyze_coloc
 NULL
@@ -285,13 +311,19 @@ NULL
 #' @name example_Coloc_colocResultsig
 #' @format A Data.table
 #' \describe{
+#'   \item{traitGene}{A character vector}
 #'   \item{nsnps}{A character vector}
 #'   \item{PP.H0.abf}{A numeric vector}
 #'   \item{PP.H1.abf}{A numeric vector}
 #'   \item{PP.H2.abf}{A numeric vector}
 #'   \item{PP.H3.abf}{A numeric vector}
 #'   \item{PP.H4.abf}{A numeric vector}
-#'   \item{traitGene}{A character vector}
+#'   \item{candidate_snp}{A character vector}
+#'   \item{SNP.PP.H4}{A numeric vector}
+#'   \item{hypr_posterior}{A numeric vector}
+#'   \item{hypr_regional_prob}{A numeric vector}
+#'   \item{hypr_candidate_snp}{A character vector}
+#'   \item{hypr_posterior_explainedBySnp}{A numeric vector}
 #' }
 #' @source xQTLanalyze_coloc
 NULL
@@ -324,5 +356,5 @@ utils::globalVariables("example_Coloc_sentinelSNP")
 utils::globalVariables("example_Coloc_traitsAll")
 utils::globalVariables("example_Coloc_colocResultAll")
 utils::globalVariables("example_Coloc_colocResultsig")
-
+utils::globalVariables("example_Coloc_hyprcolocResultAll")
 

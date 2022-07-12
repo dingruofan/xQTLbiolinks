@@ -150,6 +150,11 @@
 <code class="sourceCode R"><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></code></pre></div>
 <p><img src="images/visualization/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_qtlSpecificity.html">xQTLanalyze_qtlSpecificity</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"FLOT1"</span>, variantName<span class="op">=</span><span class="st">"rs3130356"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
+<span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/eQTLspecificity.png" width="90%" style="display: block; margin: auto;"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

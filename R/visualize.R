@@ -449,7 +449,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     geom_point(aes(x=pos, y=logP, fill=r2Cut,  size=pointShape, shape=pointShape), color="black")+
     scale_size_manual(breaks = c('normal', "highlight"), values =  c(3,3.5)  )+
     scale_shape_manual(breaks = c('normal', "highlight"), values =  c(21,23) )+
-    scale_y_continuous(breaks = seq(0,floor(max(DF$logP))), labels = seq(0,floor(max(DF$logP))), limits = c(0, max(DF$logP)+0.4))+
+    scale_y_continuous(breaks = seq(0,floor(max(DF$logP)),by=ifelse(floor(max(DF$logP))<5, 1, 5)), labels = seq(0,floor(max(DF$logP)), by=ifelse(floor(max(DF$logP))<5, 1, 5)), limits = c(0, max(DF$logP)+0.4))+
     # scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
     scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
@@ -458,7 +458,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     xlab( xLab )+
     ylab( yLab )+
     theme_classic()+
-    theme(axis.text=element_text(size=rel(1.5), color = "black"),
+    theme(axis.text=element_text(size=rel(1.3), color = "black"),
           axis.title=element_text(size=rel(1.4), color = "black"),
           plot.title = element_text(hjust=0.5),
           legend.position = "none"
@@ -619,7 +619,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
       xlab( xLab )+
       ylab( yLab )+
       theme_classic()+
-      theme(axis.text=element_text(size=rel(1.5), color = "black"),
+      theme(axis.text=element_text(size=rel(1.3), color = "black"),
             axis.title=element_text(size=rel(1.5),color = "black"),
             plot.title = element_text(hjust=0.5),
             legend.title = element_text(size=rel(1.3)),
@@ -957,7 +957,8 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
             axis.text.y = element_text(size=rel(1.1)),
             axis.title.x = element_blank(),
             axis.title.y = element_text(size=rel(1.2)),
-            legend.position = "none"
+            legend.position = "none",
+            plot.margin=unit(c(0.3,2,0.3,0.3),"cm")
       )
   }
   if(log10y){
@@ -1054,9 +1055,10 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
       guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("Min-max normailzed  ",-log["10"],"P",sep="")) ))
 
 
-     p2 <-ggplot(heatmapDT_allComb)+
+     p2 <- ggplot(heatmapDT_allComb)+
       geom_tile(aes(x=1, y=reorder(tissue_label, corPR), fill=corPR),color = "black")+
       scale_x_continuous(breaks = c(1), labels = "Correlation")+
+      geom_text(aes(x=1, y=reorder(tissue_label, corPR),label = round(heatmapDT_allComb$corPR,2)), color="#595959")+
       # breaks = seq(-1,1, length.out=5), labels = seq(-1,1, length.out=5),
       scale_fill_gradientn(  colors= c("#40a9ff", "white", "#de82a7"))+
       xlab("")+
@@ -1074,7 +1076,7 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
           )+
       guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = "Correlation coefficient" ))
 
-    p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(12,1.5))
+    p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(12,2))
     return(p3)
   }
 

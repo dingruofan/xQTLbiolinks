@@ -35,12 +35,12 @@ library(stringr)
 
 Prostate cancer is one of the most common cancers in men. Prostate cancer pathogenesis involves both heritable and environmental factors. The molecular events involved in the development or progression of prostate cancer are still unclear. In this example, we aim to figure out the causal variants and genes assocaited with prostate cancer, and to uncover potential molecular mechanisms of regulation.
 
-For data preparation, we download summary statistics dataset of a GWAS study ([GCST006085](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz)) of prostate cancer from GWAS category and load the dataset in R with `data.table` package. Correspondingly, we chose tissue `Porstate` for study. We retain the variants with dbSNP id (start with `rs`), and a data.table object named `gwasDF` of 13,498,990 (rows) x 5 (cols) is loaded.
+For data preparation, we download summary statistics dataset of a GWAS study ([GCST006085](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz)) of prostate cancer from GWAS category and load the dataset in R with `data.table` package. Correspondingly, we chose tissue `Prostate` for study. We retain the variants with dbSNP id (start with `rs`), and a data.table object named `gwasDF` of 13,498,990 (rows) x 7 (cols) is loaded.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 gwasDF <- fread("29892016-GCST006085-EFO_0001663-build37.f.tsv.gz")
 # extract columns.
-gwasDF<- gwasDF[str_detect(variant_id, "^rs"),.(rsid=variant_id, chrom=chromosome, position= base_pair_location, pValue=p_value, AF=effect_allele_frequency)]
+gwasDF<- gwasDF[str_detect(variant_id, "^rs"),.(rsid=variant_id, chrom=chromosome, position= base_pair_location, pValue=p_value, AF=effect_allele_frequency, beta, se= standard_error)]
 # tissue:
 tissueSiteDetail="Prostate"
 ```
@@ -97,19 +97,19 @@ Following three steps of colocalization analysis are encapsulated in one functio
 
 1.  Retrieved all associations from EBI eQTL catalogue for a specified gene.
 2.  Merge the data.frame of GWAS and eQTL by rsid.
-3.  Perform colocalization analysis using coloc package.
+3.  Perform colocalization analysis using `coloc` and `hyprcoloc` methods.
 
 For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several hours):
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 genesAll<- unique(traitsAll$gencodeId)
 colocResultAll <- data.table()
-#
+# 162 575 error
 for(i in 1:length(genesAll)){
   colocResult <- xQTLanalyze_coloc(gwasDF, 
-                                   genomeVersion = "grch37", 
-                                   genesAll[i], tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary
-  if(!is.null(colocResult)){ colocResultAll <- rbind(colocResultAll, colocResult)}
+                                   genomeVersion = "grch37", method="Both",
+                                   genesAll[i], tissueSiteDetail=tissueSiteDetail)
+  if(!is.null(colocResult)){ colocResultAll <- rbind(colocResultAll, colocResult$colocOut)}
   message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i,"/",length(genesAll)," == Gene:",genesAll[i])
 }
 ```
@@ -118,7 +118,8 @@ for(i in 1:length(genesAll)){
 colocResultAll <- example_Coloc_colocResultAll
 ```
 
-In this case, we invoke the funciton `coloc.abf` from package `coloc` to estimate the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:
+
+In this case, we invoke two methods to conduct colocalization analysis, (1). `coloc` that estimates the posterior support of variants for each hypothesis: H0,H1,H2,H3,H4:
 
 -   H0 : neither trait has a genetic association in the region
 -   H1: only trait 1 has a genetic association in the region
@@ -126,11 +127,31 @@ In this case, we invoke the funciton `coloc.abf` from package `coloc` to estimat
 -   H3: both traits are associated, but with different causal variants
 -   H4: both traits are associated and share a single causal variant
 
-Output is a data.table that combined all results of `coloc_Out_summary` of all genes. The posterior probability of variants to each hypothesis (H0-H4) are listed in `colocResultAll`:
+and (2). `hyprcoloc` that calculates the posterior probability that all traits share a causal variant.
+
+Output is a data.table object that combined all results of `colocOut` of all genes. 
 
 ```{r, eval=TRUE}
 head(colocResultAll)
 ```
+
+We can see that the two methodologies' outcomes are quite consistent. With a threshold of 0.75 for `coloc` and 0.5 for `hyprcoloc`, a total of 24 colocalized genes are shared.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+library(VennDiagram)
+T <- venn.diagram( list(colocOut = colocResultAll[PP.H4.abf>=0.75]$traitGene, 
+                   hyprcolocOut = colocResultAll[hypr_posterior>=0.5]$traitGene),
+                   filename = NULL,lwd=1,lty=1, width = 8000, height = 10000,
+                   fill=c('#ff7a45','#597ef7'), col=c('red','blue'), cat.col=c('red','blue'),
+                   main.cex = 0.45, sub.cex= 0.1,
+                   disable.logging = TRUE)
+grid.draw(T)
+```
+
+```{r, venn_coloc_hyprcoloc, fig.align = 'center', out.width = "30%", echo=FALSE}
+knitr::include_graphics("images/prostate/venn_coloc_hyprcoloc.png", error = FALSE)
+```
+
 
 To save time and go through this case as soon as possible, you can get the above result directly with:
 
@@ -140,17 +161,17 @@ colocResultAll <- fread("https://raw.githubusercontent.com/dingruofan/exampleDat
 
 ## Step 4: Visualization of the results.
 
-We considered colocalization tests with a posterior probability of hypothesis 4 (PPH4.ABF) ≥ 0.75 as having strong or moderate evidence for colocalization.
+We considered colocalization tests with a posterior probability of hypothesis 4 (PPH4.ABF) > 0.75 & hypr_posterior > 0.5 as having strong or moderate evidence for colocalization.
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 colocResultsig <- example_Coloc_colocResultsig
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-colocResultsig <- colocResultAll[PP.H4.abf>0.75][order(-PP.H4.abf)]
+colocResultsig <- colocResultAll[PP.H4.abf>0.75 & hypr_posterior>0.5][order(-PP.H4.abf)]
 ```
 
-There are 27 trait genes that are associated and share a single causal variant:
+There are 24 trait genes that are associated and share a single causal variant:
 
 ```{r, eval=TRUE}
 head(colocResultsig)
@@ -165,7 +186,7 @@ outGenes <- xQTLquery_gene(colocResultsig$traitGene)
 Add the value of PPH4 for each gene, and remove non-protein-coding genes:
 
 ```{r, eval=TRUE}
-outGenes <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf)], 
+outGenes <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf, candidate_snp, SNP.PP.H4, hypr_posterior)], 
                   outGenes[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
 outGenes <- outGenes[geneType =="protein coding"]
 ```
@@ -187,7 +208,7 @@ knitr::include_graphics("images/prostate/prostate_geneExpInOneTissue.png", error
 
 
 
-Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis [@RefSeq]. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 [@zhang2017]. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer [@tregunna2020].
+Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` & `hypr_posterior=0.9993` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis [@RefSeq]. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 [@zhang2017]. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer [@tregunna2020].
 
 Expression of MMP7 in multiple tissues can be plotted with `xQTLvisual_geneExpTissues`:
 
@@ -286,9 +307,9 @@ knitr::include_graphics("images/prostate/prostate_eQTL_exp.png")
 
 ## Extension: Integrative analysis with external packages or tools
 
-To gain insight into the function of trait genes with high PPH4, and explore the potential regulatory mechanism of the prostate cancer, we can conduct exploratory analysis, like co-expression analysis, and gene ontology enrichment analyses.
+To gain insight into the function of trait genes with higher PPH4, and explore the potential regulatory mechanism of the prostate cancer, we can conduct exploratory analysis, like co-expression analysis, and gene ontology enrichment analyses.
 
-First we download expression profiles of the genes with higher value of PPH4 (>0.75) in prostate.
+First we download expression profiles of the genes with higher value of PPH4 (>0.75) & hypr_posterior (>0.5) in prostate.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 expMat <- xQTLdownload_exp(outGenes$gencodeId, tissueSiteDetail=tissueSiteDetail, toSummarizedExperiment =FALSE)
@@ -297,7 +318,7 @@ expMat <- xQTLdownload_exp(outGenes$gencodeId, tissueSiteDetail=tissueSiteDetail
 Pearson coefficient can be calculated with the expression matrix for each gene:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-corDT <- cor(t(expMat[,-1:-6]))
+corDT <- cor(t(expMat[,-1:-7]))
 colnames(corDT) <- outGenes$geneSymbol
 rownames(corDT) <- outGenes$geneSymbol
 ```
@@ -321,6 +342,7 @@ R package `clusterProfiler` is used for gene functional annotation:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 library(clusterProfiler)
+library(org.Hs.eg.db)
 ego <- enrichGO(gene = as.character(outGenes$entrezGeneId),
                 OrgDb = org.Hs.eg.db,
                 ont= "BP",
@@ -333,6 +355,6 @@ dotplot(ego, showCategory=15)
 knitr::include_graphics("images/prostate/prostate_Go.png")
 ```
 
-Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighten the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate [@abidi2018]. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.
+Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighted the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate [@abidi2018]. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.
 
 ## References

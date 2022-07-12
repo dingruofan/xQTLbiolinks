@@ -73,14 +73,15 @@
   population <span class="op">=</span> <span class="st">"EUR"</span>,
   gwasSampleNum <span class="op">=</span> <span class="fl">50000</span>,
   method <span class="op">=</span> <span class="st">"coloc"</span>,
-  token <span class="op">=</span> <span class="st">"9246d2db7917"</span>
+  token <span class="op">=</span> <span class="st">"9246d2db7917"</span>,
+  bb.alg <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gwasDF</dt>
-<dd><p>A dataframe of gwas.</p></dd>
+<dd><p>A data.frame or data.table objectof gwas.</p></dd>
 <dt>traitGene</dt>
 <dd><p>A gene symbol or a gencode id (versioned).</p></dd>
 <dt>geneType</dt>
@@ -98,9 +99,11 @@
 <dt>gwasSampleNum</dt>
 <dd><p>Sample number of GWAS dataset. Default:50000.</p></dd>
 <dt>method</dt>
-<dd><p>Now only one "coloc". Package <code>coloc</code> is required.</p></dd>
+<dd><p>(character) options: "coloc"(default) or "hyprcoloc". Package <code>coloc</code> or <code>hyprcoloc</code> is required.</p></dd>
 <dt>token</dt>
 <dd><p>LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess</p></dd>
+<dt>bb.alg</dt>
+<dd><p>For <code>hyprcoloc</code>, branch and bound algorithm: TRUE, employ BB algorithm; FALSE, do not. Default: FALSE.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -110,10 +113,10 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="va">url1</span> <span class="op">&lt;-</span> <span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"</span>
+<span class="va">url1</span> <span class="op">&lt;-</span> <span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"</span>
 <span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url1</span><span class="op">)</span>
-<span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_coloc</span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF</span>, traitGene<span class="op">=</span> <span class="st">"CLNK"</span>,
-                            tissueSiteDetail<span class="op">=</span><span class="st">"Brain - Cerebellum"</span><span class="op">)</span>
+<span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_coloc</span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF</span>, traitGene<span class="op">=</span> <span class="st">"MMP7"</span>, method<span class="op">=</span><span class="st">"Both"</span>,
+                            tissueSiteDetail<span class="op">=</span><span class="st">"Prostate"</span><span class="op">)</span>
 <span class="co"># }</span>
 </code></pre></div>
     </div>

@@ -24,7 +24,11 @@ xQTLanalyze_getSentinelSnp(
 
 \verb{Col 4}. "P-value" (numeric).
 
-\verb{Col 5}. "MAF" (numeric). Allel frequency.}
+\verb{Col 5}. "MAF" (numeric). Allel frequency.
+
+\verb{Col 6}. "beta" (numeric). effect size.
+
+\verb{Col 7}. "se" (numeric). standard error.}
 
 \item{pValueThreshold}{Cutoff of gwas p-value. Default: 5e-8}
 
@@ -44,9 +48,9 @@ Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 
 }
 \examples{
 \donttest{
-url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
 gwasDF <- data.table::fread(url)
-gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
+gwasDF <- gwasDF[, .(rsid, chr, position, P, maf, beta, se)]
 sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 }
 }

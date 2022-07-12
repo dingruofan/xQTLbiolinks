@@ -12,6 +12,11 @@
 #'  `Col 4`. "P-value" (numeric).
 #'
 #'  `Col 5`. "MAF" (numeric). Allel frequency.
+#'
+#'  `Col 6`. "beta" (numeric). effect size.
+#'
+#'  `Col 7`. "se" (numeric). standard error.
+#'
 #' @param pValueThreshold Cutoff of gwas p-value. Default: 5e-8
 #' @param centerRange SNP-to-SNP distance. Default:1e6
 #' @param mafThreshold Cutoff of maf to remove rare variants.
@@ -27,19 +32,19 @@
 #'
 #' @examples
 #' \donttest{
-#' url<-"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+#' url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
 #' gwasDF <- data.table::fread(url)
-#' gwasDF <- gwasDF[, .(rsid, chr, position, P, maf)]
+#' gwasDF <- gwasDF[, .(rsid, chr, position, P, maf, beta, se)]
 #' sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
 #' }
 xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange=1e6, mafThreshold = 0.01, genomeVersion="grch38", grch37To38 = FALSE){
-  position <- pValue <- maf <- rsid <- chr <- NULL
+  position <- pValue <- maf <- rsid <- chr <- se <- NULL
   .<-NULL
   # Detect gene with sentinal SNP:
-  gwasDF <- gwasDF[,1:5]
+  gwasDF <- gwasDF[,1:7]
   data.table::setDT(gwasDF)
   message("== Preparing GWAS dataset... ")
-  names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf")
+  names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf", "beta", "se")
   gwasDF <- na.omit(gwasDF)
   # chromosome revise：
   if( !str_detect(gwasDF[1,]$chr, regex("^chr")) ){
@@ -47,7 +52,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
   }
 
   # convert variable class:
-  gwasDF[,c("position", "pValue", "maf")] <- gwasDF[,.(position=as.numeric(position), pValue=as.numeric(pValue), maf=as.numeric(maf))]
+  gwasDF[,c("position", "pValue", "maf", "beta", "se")] <- gwasDF[,.(position=as.numeric(position), pValue=as.numeric(pValue), maf=as.numeric(maf), beta=as.numeric(beta), se=as.numeric(se))]
 
   # MAF filter:
   gwasDF <- gwasDF[maf > mafThreshold & maf<1,]
@@ -72,14 +77,14 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
     gwasRanges <- GenomicRanges::GRanges(gwasDF$chr,
                                          IRanges::IRanges(gwasDF$position, gwasDF$position),
                                          strand= "*",
-                                         gwasDF[,.(rsid, maf, pValue)]
+                                         gwasDF[,.(rsid, maf, pValue, beta, se)]
     )
     gwasRanges_hg38 <- unlist(rtracklayer::liftOver(gwasRanges, ch))
     # retain the SNPs located in chromosome 1:22
     gwasRanges_hg38 <- gwasRanges_hg38[which(as.character(GenomeInfoDb::seqnames(gwasRanges_hg38)) %in% paste0("chr", 1:22)),]
-    gwasDF <- cbind(data.table(rsid = gwasRanges_hg38$rsid, maf=gwasRanges_hg38$maf, pValue=gwasRanges_hg38$pValue),
+    gwasDF <- cbind(data.table(rsid = gwasRanges_hg38$rsid, maf=gwasRanges_hg38$maf, pValue=gwasRanges_hg38$pValue, beta = gwasRanges_hg38$beta, se = gwasRanges_hg38$se),
                     data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(gwasRanges_hg38)), position=as.data.table(IRanges::ranges(gwasRanges_hg38))$start ))
-    gwasDF <- gwasDF[,.(rsid, chr, position, pValue, maf)]
+    gwasDF <- gwasDF[,.(rsid, chr, position, pValue, maf, beta, se)]
     message("== ",length(gwasRanges_hg38),"/",nrow(gwasDF)," left.")
     rm(gwasRanges, gwasRanges_hg38)
   }else if(genomeVersion =="grch37" & !grch37To38){
@@ -116,7 +121,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 }
 
 #' @title Identify trait genes using sentinel SNPs generated from `xQTLanalyze_getSentinelSnp`
-#' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", five columns are required, including "rsid", "chr", "position", "pValue", and "maf".
+#' @param sentinelSnpDF A data.table. Better be the results from the function "xQTLanalyze_getSentinelSnp", seven columns are required, including "rsid", "chr", "position", "pValue", "maf", "beta" and "se".
 #' @param detectRange A integer value. Trait genes that harbor sentinel SNPs located in the 1kb range upstream and downstream of gene. Default: 1e6 bp
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
@@ -265,7 +270,8 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 
 
 #' @title Conduct colocalization analysis with trait genes generated from `xQTLanalyze_getTraits`
-#' @param gwasDF A dataframe of gwas.
+#' @param gwasDF A data.frame or data.table objectof gwas.
+#'
 #' @param traitGene A gene symbol or a gencode id (versioned).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param genomeVersion "grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.
@@ -275,20 +281,21 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
 #' @param gwasSampleNum Sample number of GWAS dataset. Default:50000.
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
-#' @param method Now only one "coloc". Package `coloc` is required.
+#' @param method (character) options: "coloc"(default) or "hyprcoloc". Package `coloc` or `hyprcoloc` is required.
+#' @param bb.alg For `hyprcoloc`, branch and bound algorithm: TRUE, employ BB algorithm; FALSE, do not. Default: FALSE.
 #'
 #' @return A list of coloc result and details.
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"
+#' url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
 #' gwasDF <- data.table::fread(url1)
-#' output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "CLNK",
-#'                             tissueSiteDetail="Brain - Cerebellum")
+#' output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "MMP7", method="Both",
+#'                             tissueSiteDetail="Prostate")
 #' }
-xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", study="gtex_v8", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917"){
-  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- NULL
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", study="gtex_v8", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917", bb.alg=FALSE){
+  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- se.eqtl <- se.gwas <-SNP.PP.H4 <- beta.eqtl <- beta.gwas <- posterior_prob <- regional_prob <-candidate_snp <- posterior_explained_by_snp  <- NULL
   . <- NULL
 
   # tissueSiteDetail="Brain - Cortex"
@@ -299,8 +306,17 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   population <- ""
   token <- ""
 
-  if(!requireNamespace("coloc")){
+  if(method == "method" && !requireNamespace("coloc")){
     stop("please install package \"coloc\" with install.packages(\"coloc\").")
+  }
+
+  if(method == "hyprcoloc" && !requireNamespace("hyprcoloc")){
+    stop("please install package \"hyprcoloc\" with devtools::install_github(\"cnfoley/hyprcoloc\").")
+  }
+
+  if(method == "Both"){
+    if( !requireNamespace("coloc") ){ stop("please install package \"coloc\" with install.packages(\"coloc\").") }
+    if( !requireNamespace("hyprcoloc") ){ stop("please install package \"hyprcoloc\" with devtools::install_github(\"cnfoley/hyprcoloc\").") }
   }
 
   # Automatically determine the type of variable:
@@ -314,13 +330,13 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 
   # eqtl dataset:
   eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, study=study, withB37VariantId = FALSE)
-  eqtlInfo[,position:=.(pos)]
 
   if( !exists("eqtlInfo") || is.null(eqtlInfo)){
     message(i," | gene", traitGene, "has no eqtl associations, next!")
     message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
     return(NULL)
   }
+  eqtlInfo[,position:=.(pos)]
 
   # chromosome:
   P_chrom <- paste0("chr",eqtlInfo[1,]$chrom)
@@ -336,21 +352,19 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     return(NULL)
   }
 
-
-
   message("Data processing...")
 
   ##################### gwas dataset:
-  gwasDF <- gwasDF[,1:5]
+  gwasDF <- gwasDF[,1:7]
   data.table::setDT(gwasDF)
-  names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf")
+  names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf", "beta", "se")
   # gwas subset:
   gwasDF <- na.omit(gwasDF)
 
   p_chrom_tmp <- ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"),P_chrom, stringr::str_remove(P_chrom, "chr"))
   gwasDF <- gwasDF[chr==p_chrom_tmp,]
   # convert variable class:
-  gwasDF[,c("position", "pValue", "maf"):=.(as.numeric(position), as.numeric(pValue), as.numeric(maf))]
+  gwasDF[,c("position", "pValue", "maf", "beta", "se"):=.(as.numeric(position), as.numeric(pValue), as.numeric(maf), as.numeric(beta), as.numeric(se))]
   # MAF filter:
   gwasDF <- gwasDF[maf > mafThreshold & maf<1,]
   # 去重：
@@ -379,62 +393,91 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     dataRanges <- GenomicRanges::GRanges(gwasDF$chr,
                                          IRanges::IRanges(gwasDF$position, gwasDF$position),
                                          strand= "*",
-                                         gwasDF[,.(rsid, maf, pValue)]
+                                         gwasDF[,.(rsid, maf, pValue, beta, se)]
     )
     dataRanges_hg38 <- unlist(rtracklayer::liftOver(dataRanges, ch))
     # retain the SNPs located in chromosome 1:22
     dataRanges_hg38 <- dataRanges_hg38[which(as.character(GenomeInfoDb::seqnames(dataRanges_hg38)) %in% paste0("chr", 1:22)),]
     message("== ",length(dataRanges_hg38),"/",nrow(gwasDF)," (",round(length(dataRanges_hg38)/nrow(gwasDF)*100,2),"%)"," left.")
-    gwasDFnew <- cbind(data.table(rsid = dataRanges_hg38$rsid, maf=dataRanges_hg38$maf, pValue=dataRanges_hg38$pValue),
+    gwasDFnew <- cbind(data.table::data.table(rsid = dataRanges_hg38$rsid, maf=dataRanges_hg38$maf, pValue=dataRanges_hg38$pValue, beta=dataRanges_hg38$beta, se=dataRanges_hg38$se),
                        data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(dataRanges_hg38)), position=as.data.table(IRanges::ranges(dataRanges_hg38))$start ))
-    gwasDF <- gwasDFnew[chr==P_chrom,.(rsid, chr, position, pValue, maf)]
+    gwasDF <- gwasDFnew[chr==P_chrom,.(rsid, chr, position, pValue, maf, beta, se)]
     rm(dataRanges, dataRanges_hg38, gwasDFnew)
   }
 
 
   #
   tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
-  # centerSnp <- gwasEqtldata[which.min(gwasEqtldata$pValue.gwas),]
-  # centerSnp <- xQTLquery_varId(sentinelSnp, variantType = variantType)
-  # if(nrow(centerSnp)==0 ){
-  #   centerSnp <- gwasDF[which.min(gwasDF$pValue),]
-  #   gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$pos-(colocRange)) & position<=(centerSnp$pos+(colocRange)),][order(position)]
-  # }
-  # if( colocRange==0 ){
-  #   gwasEqtlInfo <- gwasEqtldata[order(position)]
-  # }else {
-  #   gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$pos-(colocRange)) & position<=(centerSnp$pos+(colocRange)),][order(position)]
-  # }
-  # if(nrow(gwasEqtlInfo)==0){
-  #   centerSnp <- gwasDF[which.min(gwasDF$pValue),]
-  #   gwasEqtlInfo <- gwasEqtldata[position>=(centerSnp$pos-(colocRange)) & position<=(centerSnp$pos+(colocRange)),][order(position)]
-  # }
+  gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position,beta, se)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
+  gwasEqtlInfo <- gwasEqtlInfo[se.eqtl !=0 & se.gwas !=0, ]
+
   if(nrow(gwasEqtlInfo)==0){
     message("No shared variants between eQTL and GWAS, please check your input!.")
     return(NULL)
   }
   message("== Start the colocalization analysis of gene [", traitGene,"]")
-  if(suppressMessages(!requireNamespace("coloc"))){
-    message("Package [coloc] is not installed! please install [coloc] with following: ")
-    message("---------")
-    message('\"if (!require("BiocManager", quietly = TRUE)); install.packages(\"coloc\")')
-    message("---------")
+
+  if(method=="coloc"){
+    message("== Using method: coloc")
+    # 防止 check_dataset 中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
+    suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
+                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+    coloc_Out_results <- as.data.table(coloc_Out$results)
+    # coloc_Out_results$gene <- traitGenes[i]
+    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary$traitGene <- traitGene
+    coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
+    coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
+    message("== Done")
+
+    print(coloc_Out_summary)
+    # coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
+
+    return(list(coloc_Out_summary=coloc_Out_summary, gwasEqtlInfo=gwasEqtlInfo))
+  }else if( method=="hyprcoloc" ){
+    message("== Using method: hyprcoloc")
+    # construct beta matrix and se matrix:
+    betasMat <- as.matrix(gwasEqtlInfo[,.( eqtl=beta.eqtl, gwas=beta.gwas)])
+    rownames(betasMat) <- gwasEqtlInfo$rsid
+    sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
+    rownames(sesMat) <- gwasEqtlInfo$rsid
+    res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=bb.alg);
+    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary$traitGene <- traitGene
+    hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.(traitGene, posterior_prob, regional_prob, candidate_snp, posterior_explained_by_snp)]
+    message(hyprcoloc_Out_summary)
+    message("== Done")
+
+    return(list(hyprcoloc_Out_summary=hyprcoloc_Out_summary, gwasEqtlInfo=gwasEqtlInfo))
+  }else if( method=="Both"){
+    message("== Using methods: coloc AND hyprcoloc.")
+    # coloc:
+    suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
+                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+    coloc_Out_results <- as.data.table(coloc_Out$results)
+    # coloc_Out_results$gene <- traitGenes[i]
+    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary$traitGene <- traitGene
+    coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
+    coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
+    # print(coloc_Out_summary)
+
+    message("")
+    # hyprcoloc:
+    betasMat <- as.matrix(gwasEqtlInfo[,.( eqtl=beta.eqtl, gwas=beta.gwas)])
+    rownames(betasMat) <- gwasEqtlInfo$rsid
+    sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
+    rownames(sesMat) <- gwasEqtlInfo$rsid
+    res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=FALSE);
+    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary$traitGene <- traitGene
+    hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.(traitGene, hypr_posterior=posterior_prob, hypr_regional_prob=regional_prob, hypr_candidate_snp=candidate_snp, hypr_posterior_explainedBySnp=posterior_explained_by_snp)]
+    colocOut <- merge(coloc_Out_summary, hyprcoloc_Out_summary, by="traitGene" )
+    print(colocOut)
+
+    message("== Done")
+    return(list(colocOut=colocOut, gwasEqtlInfo=gwasEqtlInfo))
   }
-  # 只选择中心附近的 Num snp 进行分析：
-  # 防止 check_dataset中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
-  suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
-                                                 dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
-  coloc_Out_results <- as.data.table(coloc_Out$results)
-  # coloc_Out_results$gene <- traitGenes[i]
-  coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
-  coloc_Out_summary$traitGene <- traitGene
-  message("== Done")
-
-  print(coloc_Out_summary)
-  # coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
-
-  return(list(coloc_Out_summary=coloc_Out_summary,coloc_Out_results=coloc_Out_results, gwasEqtlInfo=gwasEqtlInfo))
 }
 
 
@@ -596,12 +639,14 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   # fetch LD:
   message("== Retrieve LD information of SNP: [",variantInfo$snpId,"]...")
   try(snpLD <- retrieveLD(variantInfo$chromosome, variantInfo$snpId, population))
+  data.table::setDT(snpLD)
+  snpLD <- snpLD[which(stringr::str_detect(SNP_B, stringr::regex("^rs"))), ]
   # try(snpLD <- retrieveLD_LDproxy(targetSnp= variantInfo$snpId, population = population,  windowSize = 500000,genomeVersion = "grch38", token="9246d2db7917") )
   #
   if(nrow(snpLD)<1){
     stop("No LD found for variant: [", variantInfo$snpId, "]")
   }
-  data.table::setDT(snpLD)
+  message("== Number of LD-associated variants: ", nrow(snpLD))
 
   # remove variants don't exist in GTEx.
   # chrom_snp <- stringr::str_split(snpLD[1,]$Coord, ":")[[1]][1]
@@ -611,19 +656,20 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   # 从LD 0-1的10个区间随机选10个突变进行作图：
   # snpLD <- snpLD[,.(SNP_A= variantInfo$snpId, SNP_B=RS_Number, R2)]
   # # cut LD into 10 bins
-  # binNumForSample_tmp <- 10
-  # varNumForSample_tmp <- 10
-  # snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNumForSample_tmp+1)) ))
-  # set.seed(1)
-  # snpLDForSample_tmp <- as.data.frame(tapply( 1:nrow(snpLD), snpLD$LDbins, function(x){ if(length(x)<=varNumForSample_tmp){return(x)}else{ return(sample(x, varNumForSample_tmp, replace = FALSE)) } }))
-  # names(snpLDForSample_tmp) <- "ID"
-  # snpLDForSample_tmp$LDbins <- rownames(snpLDForSample_tmp)
-  # data.table::setDT(snpLDForSample_tmp)
-  # #
-  # snpLD <- snpLD[do.call(c,snpLDForSample_tmp$ID),-c("LDbins")][order(R2)]
-  # rm(binNumForSample_tmp, varNumForSample_tmp, snpLDForSample_tmp)
-
-  # 如果突变不在 GTEx中则直接过滤掉
+  if( nrow(snpLD)>100){
+    message("== Select by bins")
+    binNumForSample_tmp <- 10
+    varNumForSample_tmp <- 10
+    snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNumForSample_tmp+1)) ))
+    set.seed(1)
+    snpLDForSample_tmp <- as.data.frame(tapply( 1:nrow(snpLD), snpLD$LDbins, function(x){ if(length(x)<=varNumForSample_tmp){return(x)}else{ return(sample(x, varNumForSample_tmp, replace = FALSE)) } }))
+    names(snpLDForSample_tmp) <- "ID"
+    snpLDForSample_tmp$LDbins <- rownames(snpLDForSample_tmp)
+    data.table::setDT(snpLDForSample_tmp)
+    # #
+    snpLD <- snpLD[do.call(c,snpLDForSample_tmp$ID),-c("LDbins")][order(R2)]
+    rm(binNumForSample_tmp, varNumForSample_tmp, snpLDForSample_tmp)
+  }
 
 
   message("== Start download associations of QTL...")

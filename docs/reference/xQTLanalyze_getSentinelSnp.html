@@ -80,7 +80,9 @@
 <p><code>Col 2</code>. "chromosome" (character), one of the chromosome from chr1-chr22.</p>
 <p><code>Col 3</code>. "postion" (integer), genome position of snp.</p>
 <p><code>Col 4</code>. "P-value" (numeric).</p>
-<p><code>Col 5</code>. "MAF" (numeric). Allel frequency.</p></dd>
+<p><code>Col 5</code>. "MAF" (numeric). Allel frequency.</p>
+<p><code>Col 6</code>. "beta" (numeric). effect size.</p>
+<p><code>Col 7</code>. "se" (numeric). standard error.</p></dd>
 <dt>pValueThreshold</dt>
 <dd><p>Cutoff of gwas p-value. Default: 5e-8</p></dd>
 <dt>centerRange</dt>
@@ -100,9 +102,9 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="va">url</span><span class="op">&lt;-</span><span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"</span>
+<span class="va">url</span><span class="op">&lt;-</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"</span>
 <span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chr</span>, <span class="va">position</span>, <span class="va">P</span>, <span class="va">maf</span><span class="op">)</span><span class="op">]</span>
+<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chr</span>, <span class="va">position</span>, <span class="va">P</span>, <span class="va">maf</span>, <span class="va">beta</span>, <span class="va">se</span><span class="op">)</span><span class="op">]</span>
 <span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getSentinelSnp</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span>
 <span class="co"># }</span>
 </code></pre></div>

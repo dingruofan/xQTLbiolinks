@@ -15,11 +15,12 @@ xQTLanalyze_coloc(
   population = "EUR",
   gwasSampleNum = 50000,
   method = "coloc",
-  token = "9246d2db7917"
+  token = "9246d2db7917",
+  bb.alg = FALSE
 )
 }
 \arguments{
-\item{gwasDF}{A dataframe of gwas.}
+\item{gwasDF}{A data.frame or data.table objectof gwas.}
 
 \item{traitGene}{A gene symbol or a gencode id (versioned).}
 
@@ -37,9 +38,11 @@ xQTLanalyze_coloc(
 
 \item{gwasSampleNum}{Sample number of GWAS dataset. Default:50000.}
 
-\item{method}{Now only one "coloc". Package \code{coloc} is required.}
+\item{method}{(character) options: "coloc"(default) or "hyprcoloc". Package \code{coloc} or \code{hyprcoloc} is required.}
 
 \item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
+
+\item{bb.alg}{For \code{hyprcoloc}, branch and bound algorithm: TRUE, employ BB algorithm; FALSE, do not. Default: FALSE.}
 }
 \value{
 A list of coloc result and details.
@@ -49,9 +52,9 @@ Conduct colocalization analysis with trait genes generated from \code{xQTLanalyz
 }
 \examples{
 \donttest{
-url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"
+url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
 gwasDF <- data.table::fread(url1)
-output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "CLNK",
-                            tissueSiteDetail="Brain - Cerebellum")
+output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "MMP7", method="Both",
+                            tissueSiteDetail="Prostate")
 }
 }

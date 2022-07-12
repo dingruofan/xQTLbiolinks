@@ -60,6 +60,10 @@ In this example, a data.table object of 16538 (rows) x 5 (cols) is loaded. Five 
 
 `Col 5`. "MAF" (numeric). Allel frequency;
 
+`Col 6`. "beta" (numeric). effect size.
+
+`Col 7`. "se" (numeric). standard error.
+
 ```{r, eval=TRUE}
 head(gwasDF)
 ```
@@ -94,7 +98,7 @@ traitsAll
 
 ## Step 4. Conduct colocalization analysis.
 
-**For a single trait gene**, like *CLNK* in above table, colocalization analysis can be performed with:
+**For a single trait gene**, like *CLNK* in above table, colocalization analysis (using `coloc` method) can be performed with:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 output <- xQTLanalyze_coloc(gwasDF, "CLNK", tissueSiteDetail=tissueSiteDetail) # using gene symbol
@@ -106,11 +110,11 @@ output <- xQTLanalyze_coloc(gwasDF, "CLNK", tissueSiteDetail=tissueSiteDetail) #
 output$coloc_Out_summary
 ```
 
-**For multiple trait genes**, a for loop or lapply function can be used to get all genes' outputs.
+**For multiple trait genes**, a for loop or lapply function can be used to get all genes' outputs (using both `coloc` and `hyprcoloc` methods).
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 outputs <- rbindlist(lapply( unique(traitsAll$gencodeId), function(x){ # using gencode ID.
-           xQTLanalyze_coloc(gwasDF, x, tissueSiteDetail=tissueSiteDetail)$coloc_Out_summary }))
+           xQTLanalyze_coloc(gwasDF, x, tissueSiteDetail=tissueSiteDetail, method = "Both")$colocOut }))
 ```
 
 *outputs* is a data.table that combined all results of *coloc_Out_summary* of all genes.
@@ -121,7 +125,7 @@ outputs
 
 ## Step 5. Visualization of the results.
 
-For the potential casual gene (***ENSG00000187323.11***, PP4=**0.9937**), We merge the variants of GWAS and eQTL by rsid.
+For the potential casual gene ***ENSG00000109684.14*** (PP4=**0.9937** & hypr_posterior=**0.9793**) with candidate SNP ***rs13120565*** (SNP.PP.H4=**0.5328849** & hypr_posterior_explainedBySnp=**0.4747**), We merge the variants of GWAS and eQTL by rsid.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000109684.14", 
@@ -134,7 +138,7 @@ Visualization of p-value distribution and comparison of the signals of GWAS and 
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], 
-                       gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
+                        gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
 ```
 
 
@@ -164,7 +168,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)],
 knitr::include_graphics("images/quick_start/eqtl_legendF.png")
 ```
 
-Violin plot of normalized exprssion of eQTL:
+Violin plot of normalized exprssion of eQTL (rs13120565-ENSG00000187323.11):
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtlExp("rs13120565", "ENSG00000109684.14", tissueSiteDetail = tissueSiteDetail)

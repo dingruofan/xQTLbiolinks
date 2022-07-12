@@ -7,13 +7,19 @@
 \format{
 A Data.table
 \describe{
+\item{traitGene}{A character vector}
 \item{nsnps}{A character vector}
 \item{PP.H0.abf}{A numeric vector}
 \item{PP.H1.abf}{A numeric vector}
 \item{PP.H2.abf}{A numeric vector}
 \item{PP.H3.abf}{A numeric vector}
 \item{PP.H4.abf}{A numeric vector}
-\item{traitGene}{A character vector}
+\item{candidate_snp}{A character vector}
+\item{SNP.PP.H4}{A numeric vector}
+\item{hypr_posterior}{A numeric vector}
+\item{hypr_regional_prob}{A numeric vector}
+\item{hypr_candidate_snp}{A character vector}
+\item{hypr_posterior_explainedBySnp}{A numeric vector}
 }
 }
 \source{

@@ -43,6 +43,7 @@ Imports:
     viridis
 Suggests: 
     coloc,
+    hyprcoloc,
     knitr,
     rtracklayer,
     usethis

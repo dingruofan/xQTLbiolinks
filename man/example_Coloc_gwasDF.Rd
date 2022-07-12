@@ -12,6 +12,8 @@ A Data.table
 \item{position}{A integer vector}
 \item{pValue}{A numeric vector}
 \item{maf}{A numeric vector}
+\item{beta}{A numeric vector}
+\item{se}{A numeric vector}
 }
 }
 \source{

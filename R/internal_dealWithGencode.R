@@ -469,6 +469,7 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("knitr",  type="Suggests")
 # usethis::use_package("rtracklayer",type="Suggests")
 # usethis::use_package("coloc",type="Suggests")
+# usethis::use_package("hyprcoloc",type="Suggests")
 
 
 # usethis::use_package("crayon", min_version = "1.4.1") # message 字体：
