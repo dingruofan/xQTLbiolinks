@@ -41,7 +41,9 @@ reference:
 
 news:
  releases:
+ - text: "xQLTbiolinks 1.1.1"
+   href: https://dingruofan.github.io/xQTLbiolinks/news/index.html#xqtlbiolinks-111
  - text: "xQLTbiolinks 1.0.0"
-   href: https://github.com/dingruofan/xQTLbiolinks
+   href: https://dingruofan.github.io/xQTLbiolinks/news/index.html#xqtlbiolinks-100
  cran_dates: false
 

@@ -1,6 +1,6 @@
 Package: xQTLbiolinks
 Title: An R Package for Integrative Analysis of Quantitative Trait Locus Data of 'GTEx'
-Version: 1.0.0
+Version: 1.1.1
 Authors@R: c(
     person(given = "Ruofan", family = "Ding",        email = "dingruofan1@foxmail.com",   role  = c("aut", "cre")),
     person(given = "Xudong", family = "Zou",        email = "zouxd@szbl.ac.cn",   role  = c("aut","ctb")),
