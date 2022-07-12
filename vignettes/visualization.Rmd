@@ -27,7 +27,7 @@ xQTLvisual_eqtl("KIF15")
 ```
 
 ```{r, xQTLvisual_eqtl.png, fig.align = 'center', out.width = "70%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/xQTLvisual_eqtl.png")
+# knitr::include_graphics("images/visualization/xQTLvisual_eqtl.png")
 ```
 
 
@@ -37,7 +37,7 @@ knitr::include_graphics("images/visualization/xQTLvisual_eqtl.png")
 ```
 
 ```{r, xQTLvisual_genesExp.png, fig.align = 'center', out.width = "70%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/xQTLvisual_genesExp.png")
+# knitr::include_graphics("images/visualization/xQTLvisual_genesExp.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -45,7 +45,7 @@ geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","O
 ```
 
 ```{r, visualization_tissueExp.png, fig.align = 'center', out.width = "70%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/visualization_tissueExp.png")
+# knitr::include_graphics("images/visualization/visualization_tissueExp.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -53,7 +53,7 @@ geneExpTissues <- xQTLvisual_geneExpTissues("TP53")
 ```
 
 ```{r, geneExpTissues.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/geneExpTissues.png")
+# knitr::include_graphics("images/visualization/geneExpTissues.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -62,7 +62,7 @@ expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
 ```
 
 ```{r, xQTLvisual_eqtlExp.png, fig.align = 'center', out.width = "30%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/xQTLvisual_eqtlExp.png")
+# knitr::include_graphics("images/visualization/xQTLvisual_eqtlExp.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -72,7 +72,7 @@ expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="
 ```
 
 ```{r, xQTLvisual_sqtlExp.png, fig.align = 'center', out.width = "30%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/xQTLvisual_sqtlExp.png")
+# knitr::include_graphics("images/visualization/xQTLvisual_sqtlExp.png")
 ```
 
 
@@ -87,7 +87,7 @@ cowplot::plot_grid(p_all, p_sub, align = "h", ncol = 2)
 ```
 
 ```{r, visualization_locusZoom.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/visualization_locusZoom.png")
+# knitr::include_graphics("images/visualization/visualization_locusZoom.png")
 ```
 
 
@@ -103,7 +103,7 @@ cowplot::plot_grid(p_all, p_sub, align = "h", ncol = 2)
 ```
 
 ```{r, visualization_locusZoom_eQTL1.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/visualization_locusZoom_eQTL1.png")
+# knitr::include_graphics("images/visualization/visualization_locusZoom_eQTL1.png")
 ```
 
 
@@ -118,7 +118,7 @@ cowplot::plot_grid(p1, p2, align = "h", ncol = 2)
 ```
 
 ```{r, visualization_locusZoom_eQTLpos.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/visualization_locusZoom_eQTLpos.png")
+# knitr::include_graphics("images/visualization/visualization_locusZoom_eQTLpos.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -129,7 +129,7 @@ xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 ```
 
 ```{r, visualization_locusCompare.png, fig.align = 'center', out.width = "50%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/visualization_locusCompare.png")
+# knitr::include_graphics("images/visualization/visualization_locusCompare.png")
 ```
 
 
@@ -139,7 +139,7 @@ xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 ```
 
 ```{r, xQTLvisual_locusCombine.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/xQTLvisual_locusCombine.png")
+# knitr::include_graphics("images/visualization/xQTLvisual_locusCombine.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -149,6 +149,6 @@ xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 ```
 
 ```{r, xQTL_visual_eQTLspecificity.png, fig.align = 'center', out.width = "90%", fig.cap = "", echo=FALSE}
-knitr::include_graphics("images/visualization/eQTLspecificity.png")
+# knitr::include_graphics("images/visualization/eQTLspecificity.png")
 ```
 
