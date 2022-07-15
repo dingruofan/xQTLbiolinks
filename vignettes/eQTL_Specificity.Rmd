@@ -63,7 +63,7 @@ xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
 ```
 
 ```{r, heatmap_MMP7.png, fig.align = 'center', out.width = "65%", echo=FALSE}
-# knitr::include_graphics("images/eqtl_specificity/heatmap_MMP7.png")
+knitr::include_graphics("images/eqtl_specificity/heatmap_MMP7.png")
 ```
 
 For regression, Top 5 (default) tissues with the largest values of slope are displayed with different color, the other are grey, X-axis indicates R2, and y -axis indicates p-value are min-max normailized after being taken the logarithm using base 10. Numbers in brackets of labels indicate slope.
@@ -72,6 +72,6 @@ xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 ```
 
 ```{r, regression_MMP7.png, fig.align = 'center', out.width = "65%", echo=FALSE}
-# knitr::include_graphics("images/eqtl_specificity/regression_MMP7.png")
+knitr::include_graphics("images/eqtl_specificity/regression_MMP7.png")
 ```
 

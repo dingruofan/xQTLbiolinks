@@ -2,7 +2,7 @@
 
 ## Major changes
 
-* Add new method for colocalization analysis:'hyprcoloc'.
+* Add new method for colocalization analysis: 'hyprcoloc'.
 
 ## Minor improvements and bug fixes
 
@@ -13,5 +13,5 @@
 
 ## First version relsased
 
-* Can be installed from [Github](https://github.com/dingruofan/xQTLbiolinks) or [CRAN](https://cran.r-project.org/web/packages/xQTLbiolinks/index.html) alternatively.
+* Can be installed from [Github](https://github.com/dingruofan/xQTLbiolinks) or [CRAN](https://CRAN.R-project.org/package=xQTLbiolinks) alternatively.
 

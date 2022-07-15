@@ -223,6 +223,7 @@
                    main.cex <span class="op">=</span> <span class="fl">0.45</span>, sub.cex<span class="op">=</span> <span class="fl">0.1</span>,
                    disable.logging <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="cn">T</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/venn_coloc_hyprcoloc.png" width="30%" style="display: block; margin: auto;"></p>
 <p>To save time and go through this case as soon as possible, you can get the above result directly with:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt"</span><span class="op">)</span></code></pre></div>
@@ -316,13 +317,16 @@
 <p>Ridgeline plot can be used to compare the expressions among these genes:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_genesExp.html">xQTLvisual_genesExp</a></span><span class="op">(</span><span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_geneExpInOneTissue.png" width="50%" style="display: block; margin: auto;"></p>
 <p>Trait gene <strong><code>MMP7</code></strong> that with the highest <code>PPH4.ABF=0.9978</code> &amp; <code>hypr_posterior=0.9993</code> encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis <span class="citation">(<a href="#ref-RefSeq" role="doc-biblioref"><span>“RefSeq,”</span> n.d.</a>)</span>. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 <span class="citation">(<a href="#ref-zhang2017" role="doc-biblioref">Zhang et al. 2017</a>)</span>. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer <span class="citation">(<a href="#ref-tregunna2020" role="doc-biblioref">Tregunna 2020</a>)</span>.</p>
 <p>Expression of MMP7 in multiple tissues can be plotted with <code>xQTLvisual_geneExpTissues</code>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geneExpTissues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_geneExpTissues.html">xQTLvisual_geneExpTissues</a></span><span class="op">(</span><span class="st">"MMP7"</span>, log10y <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_exp_multissues.png" width="90%" style="display: block; margin: auto;"></p>
 <p>The number and significance of eQTLs in distinguished tissues are capable of showing a tissue-specific effect or a ubiquitous effect. The function <code>xQTLvisual_eqtl</code> can be used to indicate whether the gene is widely regulation in various tissues.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_eqtl.html">xQTLvisual_eqtl</a></span><span class="op">(</span><span class="st">"MMP7"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_eqtlTissues.png" width="90%" style="display: block; margin: auto;"></p>
 <p>Besides, we provide functions <code>xQTLvisual_locusCompare</code> and <code>xQTLvisual_locusZoom</code> to visualize the colocalization between the GWAS and the eQTL dataset for a specified gene, we take the gene <code>MMP7</code> as an example:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Download all eQTL associations of gene  MMP7 in prostate:</span>
@@ -349,18 +353,23 @@
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCompare.html">xQTLvisual_locusCompare</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, 
                         <span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend_position <span class="op">=</span> <span class="st">"bottomright"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_locuscompare.png" width="50%" style="display: block; margin: auto;"></p>
 <p>Locuszoom plot of GWAS signals:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_locuszoom_gwas.png" width="50%" style="display: block; margin: auto;"></p>
 <p>Locuszoom plot of eQTL signals:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_locuszoom_eqtl.png" width="50%" style="display: block; margin: auto;"></p>
 <p>We can also combine locuscompare and locuszoom plot using function <code>xQTLvisual_locusCombine</code>:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>,<span class="st">"chrom"</span>, <span class="st">"position"</span>, <span class="st">"pValue.gwas"</span>, <span class="st">"pValue.eqtl"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_combined.png" width="90%" style="display: block; margin: auto;"></p>
 <p>From the above figures, we can see that the SNP <code>rs11568818</code> is potential causal variant, and we can use a violin plot to show the normalized effect size of it:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_eqtlExp.html">xQTLvisual_eqtlExp</a></span><span class="op">(</span><span class="st">"rs11568818"</span>, <span class="st">"MMP7"</span>, tissueSiteDetail <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_eQTL_exp.png" width="40%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="extension-integrative-analysis-with-external-packages-or-tools">Extension: Integrative analysis with external packages or tools<a class="anchor" aria-label="anchor" href="#extension-integrative-analysis-with-external-packages-or-tools"></a>
@@ -382,6 +391,7 @@
          order <span class="op">=</span> <span class="st">"hclust"</span>,
          addCoef.col <span class="op">=</span> <span class="st">"#ff0099"</span>, 
          number.cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> </code></pre></div>
+<p><img src="images/prostate/prostate_cor.png" width="90%" style="display: block; margin: auto;"></p>
 <p>R package <code>clusterProfiler</code> is used for gene functional annotation:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/biomedical-knowledge-mining-book/" class="external-link">clusterProfiler</a></span><span class="op">)</span>
@@ -392,6 +402,7 @@
                 pAdjustMethod <span class="op">=</span><span class="st">"none"</span>,
                 readable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/enrichplot/man/dotplot.html" class="external-link">dotplot</a></span><span class="op">(</span><span class="va">ego</span>, showCategory<span class="op">=</span><span class="fl">15</span><span class="op">)</span></code></pre></div>
+<p><img src="images/prostate/prostate_Go.png" width="80%" style="display: block; margin: auto;"></p>
 <p>Viral-related GO terms are enriched in above analysis, including <code>"viral life cycle"</code>, <code>"positive regulation of viral life cycle"</code> and <code>"positive regulation of viral process"</code>. Previous studies have highlighted the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate <span class="citation">(<a href="#ref-abidi2018" role="doc-biblioref">Abidi et al. 2018</a>)</span>. However, the causal variants’ genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.</p>
 </div>
 <div class="section level2 unnumbered">

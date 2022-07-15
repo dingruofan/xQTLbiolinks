@@ -90,20 +90,26 @@
 <p><strong>Visualilzation</strong> of eQTL, sQTL, gene expression across tissues.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_eqtl.html">xQTLvisual_eqtl</a></span><span class="op">(</span><span class="st">"KIF15"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/xQTLvisual_eqtl.png" width="70%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"> <span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FNDC8"</span>, <span class="st">"S100Z"</span>, <span class="st">"AQP6"</span>, <span class="st">"AMOT"</span>, <span class="st">"C3orf38"</span>, <span class="st">"FOXL1"</span>, <span class="st">"COX11"</span>, <span class="st">"FCN3"</span>, <span class="st">"DDX58"</span>, <span class="st">"CFI"</span>, <span class="st">"MS4A18"</span>, <span class="st">"NUDT13"</span>, <span class="st">"HOXA4"</span>, <span class="st">"VSX1"</span><span class="op">)</span>
  <span class="fu"><a href="../reference/xQTLvisual_genesExp.html">xQTLvisual_genesExp</a></span><span class="op">(</span><span class="va">genes</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/xQTLvisual_genesExp.png" width="70%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geneExpTissues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_geneExpTissues.html">xQTLvisual_geneExpTissues</a></span><span class="op">(</span><span class="st">"TP53"</span>, tissues<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lung"</span>, <span class="st">"Brain"</span>,<span class="st">"Ovary"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/visualization_tissueExp.png" width="70%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geneExpTissues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_geneExpTissues.html">xQTLvisual_geneExpTissues</a></span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/geneExpTissues.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_eqtlExp.html">xQTLvisual_eqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>,
                               tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/xQTLvisual_eqtlExp.png" width="30%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">expSqtl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_sqtlExp.html">xQTLvisual_sqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_66561248_T_C_b38"</span>,variantType<span class="op">=</span><span class="st">"variantId"</span>,
                               phenotypeId <span class="op">=</span><span class="st">"chr11:66348070:66353455:clu_8500:ENSG00000255468.6"</span>,
                               tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/xQTLvisual_sqtlExp.png" width="30%" style="display: block; margin: auto;"></p>
 <blockquote>
 <p>LocusZoom plot for <strong>GWAS</strong> dataset:</p>
 </blockquote>
@@ -113,6 +119,7 @@
 <span class="va">p_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span>
 <span class="va">p_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasDF</span>, posRange<span class="op">=</span><span class="st">"chr6:4.7e7-4.8e7"</span>, population <span class="op">=</span><span class="st">"EUR"</span><span class="op">)</span>
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p_all</span>, <span class="va">p_sub</span>, align <span class="op">=</span> <span class="st">"h"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/visualization_locusZoom.png" width="90%" style="display: block; margin: auto;"></p>
 <blockquote>
 <p>LocusZoom plot for <strong>eQTL</strong> signals of a gene of interest:</p>
 </blockquote>
@@ -123,6 +130,7 @@
 <span class="va">p_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"snpId"</span>, <span class="st">"chrom"</span>, <span class="st">"pos"</span>, <span class="st">"pValue"</span><span class="op">)</span><span class="op">]</span>, highlightSnp<span class="op">=</span><span class="st">"rs4711878"</span>,
                               posRange<span class="op">=</span><span class="st">"chr6:47.3e6-47.9e6"</span><span class="op">)</span>
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p_all</span>, <span class="va">p_sub</span>, align <span class="op">=</span> <span class="st">"h"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/visualization_locusZoom_eQTL1.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">eqtlAssos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAssoPos.html">xQTLdownload_eqtlAllAssoPos</a></span><span class="op">(</span>chrom <span class="op">=</span> <span class="st">"chr6"</span>, pos_lower<span class="op">=</span><span class="fl">47.4e6</span>, pos_upper <span class="op">=</span> <span class="fl">47.7e6</span>,  
                                          tissueLabel <span class="op">=</span> <span class="st">"Brain - Cortex"</span>, p_upper<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span>
@@ -131,18 +139,22 @@
                                               gene<span class="op">=</span><span class="st">"RP11-385F7.1"</span>,tissueLabel <span class="op">=</span> <span class="st">"Brain - Cortex"</span>, p_upper<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span>
 <span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">eqtlAssos_gene</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"snpId"</span>, <span class="st">"chrom"</span>, <span class="st">"pos"</span>, <span class="st">"pValue"</span><span class="op">)</span><span class="op">]</span>, highlightSnp <span class="op">=</span> <span class="st">"rs34744382"</span><span class="op">)</span>
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, align <span class="op">=</span> <span class="st">"h"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/visualization_locusZoom_eQTLpos.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
 <span class="va">eqtlDF</span> <span class="op">&lt;-</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt"</span><span class="op">)</span>
 <span class="va">gwasDF</span> <span class="op">&lt;-</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xQTLvisual_locusCompare.html">xQTLvisual_locusCompare</a></span><span class="op">(</span> <span class="va">eqtlDF</span>, <span class="va">gwasDF</span>, legend_position<span class="op">=</span><span class="st">"topleft"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/visualization_locusCompare.png" width="50%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_qtlSpecificity.html">xQTLanalyze_qtlSpecificity</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"FLOT1"</span>, variantName<span class="op">=</span><span class="st">"rs3130356"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/eQTLspecificity.png" width="90%" style="display: block; margin: auto;"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
