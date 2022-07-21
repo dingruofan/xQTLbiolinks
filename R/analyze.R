@@ -421,7 +421,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     message("== Using method: coloc")
     # 防止 check_dataset 中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
     suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
-                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=ifelse(is.na(sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), 300, sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
     coloc_Out_results <- as.data.table(coloc_Out$results)
     # coloc_Out_results$gene <- traitGenes[i]
     coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
@@ -453,7 +453,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     message("== Using methods: coloc AND hyprcoloc.")
     # coloc:
     suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
-                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=ifelse(is.na(sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), 300, sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
     coloc_Out_results <- as.data.table(coloc_Out$results)
     # coloc_Out_results$gene <- traitGenes[i]
     coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
