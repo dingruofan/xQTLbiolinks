@@ -990,7 +990,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
 #'
 #' @examples
 #' \donttest{
-#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="GTEx_V8")
 #' xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
 #' xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 #' }
@@ -1022,7 +1022,7 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
 
 
   # Retain max pvalue in each bin:
-  minP_f <- function(x){  data.table(tissue_label=x[1,]$tissue_label, corPR=x[1,]$corRP, LDbins= x[1,]$LDbins, logP_minMax=max(x$logP_minMax) )  }
+  minP_f <- function(x){  data.table(tissue_label=x[1,]$tissue_label, corPR=x[1,]$corRP, logCorP=x[1,]$logCorP, LDbins= x[1,]$LDbins, logP_minMax=max(x$logP_minMax) )  }
   heatmapDT <- assoAllLd[,minP_f(.SD), by=c("LDbins", "tissue_label")]
   # fill NA bins:
   heatmapDT_allComb <- data.table::as.data.table(expand.grid(LDbins = unique(heatmapDT$LDbins), tissue_label =unique(heatmapDT$tissue_label) ))
@@ -1056,11 +1056,14 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
 
 
      p2 <- ggplot(heatmapDT_allComb)+
-      geom_tile(aes(x=1, y=reorder(tissue_label, corPR), fill=corPR),color = "black")+
+      geom_tile(aes(x=1, y=reorder(tissue_label, logCorP), fill=logCorP),color = "black")+
       scale_x_continuous(breaks = c(1), labels = "Correlation")+
-      geom_text(aes(x=1, y=reorder(tissue_label, corPR),label = round(heatmapDT_allComb$corPR,2)), color="#595959")+
+      geom_text(aes(x=1, y=reorder(tissue_label, logCorP),label = round(heatmapDT_allComb$logCorP,2)), color="#595959")+
       # breaks = seq(-1,1, length.out=5), labels = seq(-1,1, length.out=5),
-      scale_fill_gradientn(  colors= c("#40a9ff", "white", "#de82a7"))+
+      # scale_fill_gradientn(colors= c("#40a9ff", "white", "#de82a7"), )+
+      scale_fill_gradient2(  low="#40a9ff", high="#de82a7", mid="white",breaks=c(min(heatmapDT_allComb$logCorP), 2, max(heatmapDT_allComb$logCorP)),
+                             labels= c(round(min(heatmapDT_allComb$logCorP),2), 2, round(max(heatmapDT_allComb$logCorP),2)))+
+      # scale_fill_gradientn(  colours =  c(colorRampPalette(c("#40a9ff", "white"))(nrow(heatmapDT_allComb[logCorP<=2])), colorRampPalette(c("white", "#de82a7"))(nrow(heatmapDT_allComb[logCorP>2]))) )+
       xlab("")+
       theme_minimal()+
       theme(
@@ -1079,6 +1082,7 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
     p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(12,2))
     return(p3)
   }
+
 
   # lm:
   # lm_R2_logP$colorP=colorRampPalette(c("#096dd9", "#f5f5f5", "#cf1322"))( length(unique(assoAllLd$tissue_label)) )

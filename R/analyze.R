@@ -701,7 +701,8 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   lm_R2_logP <- assoAllLd[,lm_f(.SD), by="tissue_label"][order(slope)]
 
   # cor:
-  cor_R2_logP <- assoAllLd[,.(corRP=cor(R2, logP_minMax)),by="tissue_label"][order(corRP)]
+  cor_R2_logP <- assoAllLd[,.(corRP=cor(R2, logP_minMax), corPvalue=cor.test(R2, logP_minMax)$p.value),by="tissue_label"][order(corRP)]
+  cor_R2_logP$logCorP <- log10( cor_R2_logP$corPvalue)*(-1)
 
   return(list(snpLD=snpLD, assoAllLd=assoAllLd, lm_R2_logP=lm_R2_logP, cor_R2_logP= cor_R2_logP))
 }
