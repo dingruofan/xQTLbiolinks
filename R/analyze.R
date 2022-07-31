@@ -571,6 +571,7 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #' @examples
 #' \donttest{
 #' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="GTEx_V8")
+#' # speDT <- xQTLanalyze_qtlSpecificity(gene="FLOT1", variantName="rs3130356", study="")
 #' xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
 #' xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 #' }
@@ -696,7 +697,7 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
 
   # Hypothesis testing
   ebi_ST <- merge(ebi_ST[!duplicated(tissue_label)], unique(assoAllLd[,.(tissue_label)]), by="tissue_label")
-  ebi_ST$pValue_eQTL <- NA
+  ebi_ST$pValue_eQTL <- 1
   for( i in 1:nrow(ebi_ST)){
     geneAsso_i <- xQTLdownload_eqtlAllAsso(gene=gene, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)[order(pos)]
     assoAllLd_i <- geneAsso_i[snpId %in% assoAllLd[tissue_label==ebi_ST[i,]$tissue_label,]$snpId,.(snpId, pos, pValue)]
@@ -707,20 +708,27 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
       tmp$snpPanel <- assoAllLd_i[snp_j,]$snpPanel
       return(tmp)
     }))
-    assoControl$R2 <- NA
     #
     asso_i <- rbind(assoAllLd_i[,-c("R2")], assoControl)
     asso_i <- merge(asso_i,  assoAllLd_i[,.(snpPanel,R2)], by="snpPanel")
     set.seed(521)
-    message("==> Start calculating p-value:")
+    message("==> Start calculating p-value in ",ebi_ST[i,]$tissue_label, "; ",i,"/",nrow(ebi_ST))
     corValues <- unlist(lapply(1:1000, function(x){
       if(x %% 100 ==0){ message("==> Complete ",x/10,"%")}
       sampleSnps <- rbindlist(lapply(unique(asso_i$snpPanel), function(xx){ a=asso_i[snpPanel==xx];a[sample(1:nrow(a),1),] }))
       return(cor(sampleSnps$R2, -log10(sampleSnps$pValue)))
     }))
     corReal <- cor(assoAllLd_i$R2, -log10(assoAllLd_i$pValue))
-    ebi_ST[i, "pValue_eQTL"] <- (length(which(corReal>corValues))+1)/1000
+    ebi_ST[i, "pValue_eQTL"] <- 1-(length(which(corReal>corValues)))/1001
   }
+  saveRDS(ebi_ST,"../ebi_ST.rds")
+  # query eQTL in each tissue:
+  eQTLs <- data.table()
+  for( i in 1:nrow(ebi_ST)){
+    eQTL_i <- xQTLdownload_eqtlAllAsso(gene=gene, variantName = variantName, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)[order(pos)]
+    eQTLs <- rbind(eQTLs, eQTL_i)
+  }
+  tissueTest <- merge(ebi_ST, eQTLs[,.(tissue_label,study_accession=study_id, pValue)], by=c("tissue_label", "study_accession"))
 
   # lm:
   lm_f <- function(DT){
@@ -732,7 +740,7 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   cor_R2_logP <- assoAllLd[,.(corRP=cor(R2, logP_minMax), corPvalue=cor.test(R2, logP_minMax)$p.value),by="tissue_label"][order(corRP)]
   cor_R2_logP$logCorP <- log10( cor_R2_logP$corPvalue)*(-1)
 
-  return(list(snpLD=snpLD, assoAllLd=assoAllLd, lm_R2_logP=lm_R2_logP, cor_R2_logP= cor_R2_logP))
+  return(list(snpLD=snpLD, assoAllLd=assoAllLd, lm_R2_logP=lm_R2_logP, cor_R2_logP= cor_R2_logP, tissueTest=tissueTest))
 }
 
 
