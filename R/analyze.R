@@ -570,7 +570,7 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #'
 #' @examples
 #' \donttest{
-#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="GTEx_V8")
 #' xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
 #' xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 #' }
@@ -578,7 +578,7 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   .<- slope <- logP_minMax <- NULL
   study_accession <- tissue_label <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- LDbins <- logP <- corRP <- NULL
 
-  ebi_ST <-copy(ebi_study_tissues)
+  ebi_ST <- data.table::copy(ebi_study_tissues)
   if(gene=="" || variantName==""){
     stop("gene and variant can not be null!")
   }
@@ -693,6 +693,34 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
   # scale logP by tissue group:
   assoAllLd <- assoAllLd[,.(snpId, R2, beta, logP, logP_minMax=(logP-min(logP))/(max(logP)-min(logP))),by="tissue_label"]
 
+
+  # Hypothesis testing
+  ebi_ST <- merge(ebi_ST[!duplicated(tissue_label)], unique(assoAllLd[,.(tissue_label)]), by="tissue_label")
+  ebi_ST$pValue_eQTL <- NA
+  for( i in 1:nrow(ebi_ST)){
+    geneAsso_i <- xQTLdownload_eqtlAllAsso(gene=gene, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)[order(pos)]
+    assoAllLd_i <- geneAsso_i[snpId %in% assoAllLd[tissue_label==ebi_ST[i,]$tissue_label,]$snpId,.(snpId, pos, pValue)]
+    assoAllLd_i <- merge(assoAllLd_i, snpLD[,.(snpId=SNP_B,R2)], by="snpId", sort=FALSE)
+    assoAllLd_i$snpPanel <- paste0("s",1:nrow(assoAllLd_i))
+    assoControl <- rbindlist(lapply(1:nrow(assoAllLd_i), function(snp_j){
+      tmp <- geneAsso_i[data.table(ID=1:nrow(geneAsso_i), pos = geneAsso_i$pos, diff=abs(geneAsso_i$pos-assoAllLd_i[snp_j,]$pos))[diff!=0][order(diff)][1:5,]$ID,.(snpId, pos, pValue)]
+      tmp$snpPanel <- assoAllLd_i[snp_j,]$snpPanel
+      return(tmp)
+    }))
+    assoControl$R2 <- NA
+    #
+    asso_i <- rbind(assoAllLd_i[,-c("R2")], assoControl)
+    asso_i <- merge(asso_i,  assoAllLd_i[,.(snpPanel,R2)], by="snpPanel")
+    set.seed(521)
+    message("==> Start calculating p-value:")
+    corValues <- unlist(lapply(1:1000, function(x){
+      if(x %% 100 ==0){ message("==> Complete ",x/10,"%")}
+      sampleSnps <- rbindlist(lapply(unique(asso_i$snpPanel), function(xx){ a=asso_i[snpPanel==xx];a[sample(1:nrow(a),1),] }))
+      return(cor(sampleSnps$R2, -log10(sampleSnps$pValue)))
+    }))
+    corReal <- cor(assoAllLd_i$R2, -log10(assoAllLd_i$pValue))
+    ebi_ST[i, "pValue_eQTL"] <- (length(which(corReal>corValues))+1)/1000
+  }
 
   # lm:
   lm_f <- function(DT){
