@@ -1003,12 +1003,15 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
   assoAllLd <- specificityDT[['assoAllLd']]
   cor_R2_logP <- specificityDT[['cor_R2_logP']]
   lm_R2_logP <- specificityDT[['lm_R2_logP']]
+  tissueTest <- specificityDT[['tissueTest']]
 
   data.table::setDT(snpLD)
   data.table::setDT(assoAllLd)
   data.table::setDT(cor_R2_logP)
   data.table::setDT(lm_R2_logP)
+  data.table::setDT(tissueTest)
 
+  tissueTest$LogPTissue <-(-log10(tissueTest$pValue_eQTL))
 
   # recut LD into bins:
   snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNum+1)) ))
@@ -1028,11 +1031,13 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
   heatmapDT_allComb <- data.table::as.data.table(expand.grid(LDbins = unique(heatmapDT$LDbins), tissue_label =unique(heatmapDT$tissue_label) ))
   heatmapDT_allComb <- merge(heatmapDT_allComb, heatmapDT, by=c("LDbins", "tissue_label"), all.x = TRUE)
   heatmapDT_allComb <- merge(heatmapDT_allComb, data.table(LDbins=unique(snpLD$LDbins), ID=1:length(unique(snpLD$LDbins))), by="LDbins", all.x=TRUE)
+  heatmapDT_allComb <- merge(heatmapDT_allComb, tissueTest[,.(tissue_label, LogPTissue)], by="tissue_label", sort=FALSE)
+  heatmapDT_allComb <- heatmapDT_allComb[LogPTissue>2]
   rm(heatmapDT)
 
   if(outPlot == "heatmap"){
     p1 <- ggplot(heatmapDT_allComb)+
-      geom_tile(aes(x=ID, y=reorder(tissue_label, corPR), fill=logP_minMax), color="#595959")+
+      geom_tile(aes(x=ID, y=reorder(tissue_label, LogPTissue), fill=logP_minMax), color="#595959")+
       scale_x_continuous(breaks = unique(heatmapDT_allComb$ID), labels = unique(heatmapDT_allComb$LDbins))+
       # geom_text(aes(x=LDorder, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
       # scale_fill_gradient2(low="grey", mid="orange", high="red")+
@@ -1056,13 +1061,13 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
 
 
      p2 <- ggplot(heatmapDT_allComb)+
-      geom_tile(aes(x=1, y=reorder(tissue_label, logCorP), fill=logCorP),color = "black")+
-      scale_x_continuous(breaks = c(1), labels = "Correlation")+
-      geom_text(aes(x=1, y=reorder(tissue_label, logCorP),label = round(heatmapDT_allComb$logCorP,2)), color="#595959")+
+      geom_tile(aes(x=1, y=reorder(tissue_label, LogPTissue), fill=LogPTissue),color = "black")+
+      scale_x_continuous(breaks = c(1), labels = "")+
+      geom_text(aes(x=1, y=reorder(tissue_label, LogPTissue),label = round(heatmapDT_allComb$LogPTissue,2)), color="#595959")+
       # breaks = seq(-1,1, length.out=5), labels = seq(-1,1, length.out=5),
-      # scale_fill_gradientn(colors= c("#40a9ff", "white", "#de82a7"), )+
-      scale_fill_gradient2(  low="#40a9ff", high="#de82a7", mid="white",breaks=c(min(heatmapDT_allComb$logCorP), 2, max(heatmapDT_allComb$logCorP)),
-                             labels= c(round(min(heatmapDT_allComb$logCorP),2), 2, round(max(heatmapDT_allComb$logCorP),2)))+
+      scale_fill_gradientn(colors= c("#f4ffb8", "#ffd666", "#de82a7"), )+
+      # scale_fill_gradient2(  low="white", high="#de82a7",breaks=seq(round(min(heatmapDT_allComb$LogPTissue),1),round(max(heatmapDT_allComb$LogPTissue),1), by=0.5),
+                             # labels= seq(round(min(heatmapDT_allComb$LogPTissue),1),round(max(heatmapDT_allComb$LogPTissue),1), by=0.5))+
       # scale_fill_gradientn(  colours =  c(colorRampPalette(c("#40a9ff", "white"))(nrow(heatmapDT_allComb[logCorP<=2])), colorRampPalette(c("white", "#de82a7"))(nrow(heatmapDT_allComb[logCorP>2]))) )+
       xlab("")+
       theme_minimal()+
@@ -1077,7 +1082,7 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
         panel.grid.major = element_blank(),
         plot.margin=unit(c(0.3,1,0.3,0.3),"cm")
           )+
-      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = "Correlation coefficient" ))
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("",-log[10],"P",sep="")) ))
 
     p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(12,2))
     return(p3)
