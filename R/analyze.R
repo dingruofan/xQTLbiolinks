@@ -303,6 +303,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   # genomeVersion="grch37"
   # gwasSampleNum=50000
   # mafThreshold=0.01
+  # https://stackoverflow.com/questions/66849936/make-cran-r-package-suggest-github-r-package
   population <- ""
   token <- ""
 
@@ -311,12 +312,12 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   }
 
   if(method == "hyprcoloc" && !requireNamespace("hyprcoloc")){
-    stop("please install package \"hyprcoloc\" with devtools::install_github(\"cnfoley/hyprcoloc\").")
+    stop("please install package \"hyprcoloc\".")
   }
 
   if(method == "Both"){
     if( !requireNamespace("coloc") ){ stop("please install package \"coloc\" with install.packages(\"coloc\").") }
-    if( !requireNamespace("hyprcoloc") ){ stop("please install package \"hyprcoloc\" with devtools::install_github(\"cnfoley/hyprcoloc\").") }
+    if( !requireNamespace("hyprcoloc") ){ stop("please install package \"hyprcoloc\".") }
   }
 
   # Automatically determine the type of variable:
@@ -577,7 +578,7 @@ xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="g
 #' }
 xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="", variantType="auto", binNum=4, study="", population="EUR"){
   .<- slope <- logP_minMax <- NULL
-  study_accession <- tissue_label <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- LDbins <- logP <- corRP <- NULL
+  study_accession <- tissue_label <- pos <- snpPanel <- variantId <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- LDbins <- logP <- corRP <- NULL
 
   ebi_ST <- data.table::copy(ebi_study_tissues)
   if(gene=="" || variantName==""){
@@ -696,10 +697,15 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
 
 
   # Hypothesis testing
-  ebi_ST <- merge(ebi_ST[!duplicated(tissue_label)], unique(assoAllLd[,.(tissue_label)]), by="tissue_label")
+  ebi_ST <- merge(ebi_ST[!duplicated(tissue_label)],unique(assoAll[,.(tissue_label, study_id)])[!duplicated(tissue_label)], by="tissue_label")
   ebi_ST$pValue_eQTL <- 1
-  for( i in 1:nrow(ebi_ST)){
-    geneAsso_i <- xQTLdownload_eqtlAllAsso(gene=gene, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)[order(pos)]
+  for( i in 7:nrow(ebi_ST)){
+    geneAsso_i <- xQTLdownload_eqtlAllAsso(gene=gene, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_id)
+    if(!exists("geneAsso_i") ||is.null(geneAsso_i)|| nrow(geneAsso_i)==0){
+      next()
+    }else{
+      geneAsso_i <- geneAsso_i[order(pos)]
+    }
     assoAllLd_i <- geneAsso_i[snpId %in% assoAllLd[tissue_label==ebi_ST[i,]$tissue_label,]$snpId,.(snpId, pos, pValue)]
     assoAllLd_i <- merge(assoAllLd_i, snpLD[,.(snpId=SNP_B,R2)], by="snpId", sort=FALSE)
     assoAllLd_i$snpPanel <- paste0("s",1:nrow(assoAllLd_i))
@@ -721,11 +727,16 @@ xQTLanalyze_qtlSpecificity <- function(gene="", geneType="auto", variantName="",
     corReal <- cor(assoAllLd_i$R2, -log10(assoAllLd_i$pValue))
     ebi_ST[i, "pValue_eQTL"] <- 1-(length(which(corReal>corValues)))/1001
   }
-  saveRDS(ebi_ST,"../ebi_ST.rds")
+  # saveRDS(ebi_ST,"../ebi_ST_FLOT1.rds")
   # query eQTL in each tissue:
   eQTLs <- data.table()
   for( i in 1:nrow(ebi_ST)){
-    eQTL_i <- xQTLdownload_eqtlAllAsso(gene=gene, variantName = variantName, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)[order(pos)]
+    eQTL_i <- xQTLdownload_eqtlAllAsso(gene=gene, variantName = variantName, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)
+    if(!exists("eQTL_i") ||is.null(eQTL_i)|| nrow(eQTL_i)==0){
+      next()
+    }else{
+      eQTL_i <- eQTL_i[,.(variantId, snpId, pos, tissue_label, study_id, pValue)]
+    }
     eQTLs <- rbind(eQTLs, eQTL_i)
   }
   tissueTest <- merge(ebi_ST, eQTLs[,.(tissue_label,study_accession=study_id, pValue)], by=c("tissue_label", "study_accession"))

@@ -38,6 +38,7 @@ eQTL-specific analysis
 \examples{
 \donttest{
 speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="GTEx_V8")
+# speDT <- xQTLanalyze_qtlSpecificity(gene="FLOT1", variantName="rs3130356", study="")
 xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
 xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
 }

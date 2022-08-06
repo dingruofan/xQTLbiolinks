@@ -830,7 +830,22 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
   return(gtexAsooDT)
 }
 
-
+# genes <- c("MLH1", "TP53")
+# variantNames <- c("rs6767538", "rs78378222")
+# xQTLdownload_eqtlAllAssoPar <- function(genes="", geneType="auto", variantNames="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE, threadsN=2){
+#   if(all(genes=="") & all(variantNames=="")){
+#     stop("Genes and variants can not be null.")
+#   }
+#   geneVarGrid <- data.table::as.data.table(expand.grid(gene=genes, variantName=variantNames, stringsAsFactors =FALSE))
+#   cl <- parallel::makeCluster(threadsN)
+#   parallel::clusterExport(cl=cl, c('geneVarGrid', 'study', 'geneType', 'variantType','tissueLabel', 'study', 'recordPerChunk', 'withB37VariantId', 'xQTLdownload_eqtlAllAsso', 'ebi_study_tissues'))
+#   # parallel::clusterEvalQ(cl, {library(xQTLbiolinks)})
+#   a <- parallel::parLapply(cl, 1:nrow(geneVarGrid), function(x){
+#     eqtlAsso <- xQTLdownload_eqtlAllAsso(gene=geneVarGrid[x]$gene, geneType=geneType, variantName = geneVarGrid[x]$variantName, variantType=variantType, tissueLabel=tissueLabel, study=study,recordPerChunk=recordPerChunk, withB37VariantId=withB37VariantId)
+#     return(eqtlAsso)
+#   })
+#   parallel::stopCluster(cl)
+# }
 
 #' @title Download summary statistics of eQTL with genome position.
 #'

@@ -997,7 +997,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
 xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4, topTissues=5){
 
   . <- NULL
-  R2 <- SNP_B <- LDbins <- corRP <- ID <- tissue_label <- corPR <- logP_minMax <- colorRampPalette <- hue_pal <- slope <- intercept <- y <- x <- tissue_slope <- NULL
+  R2 <- SNP_B <- LDbins <- corRP <- ID  <- LogPTissue <- tissue_label <- corPR <- logP_minMax <- colorRampPalette <- hue_pal <- slope <- intercept <- y <- x <- tissue_slope <- NULL
   # extract variable:
   snpLD <- specificityDT[['snpLD']]
   assoAllLd <- specificityDT[['assoAllLd']]

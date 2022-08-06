@@ -1177,7 +1177,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
   # }
 
   embeddedList <- list()
-  # Don't append size and start.
+  # If do not append size and start.
   if( termSize ==0 ){
     urlGot <- url1
     contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
@@ -1188,7 +1188,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 
   # 这个API 有点问题，如果fetch 多个组织的结果，如果该组织剩下不足1000，就会将剩下的附加到这次fetch，导致 _links 里没有next，进而终止检索，所以再没有 next后，额外再fetch一次，如果有next则继续。
   }else if(termSize > 0){
-    for(i in 1:1000000){
+    for(i in 1:99999999){
       urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
                        "size=",as.integer(termSize),
                        "&start=",as.integer(termStart))
@@ -1220,6 +1220,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
     return(NULL)
   }
 }
+
 
 
 #' @title retrieve snps from dbSNP using coordinate.
