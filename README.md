@@ -41,7 +41,7 @@ BiocManager::install("SummarizedExperiment")
 
 ``` r
 # This command should automatically install any missing dependencies that are available from CRAN
-install.package("xQTLbiolinks")
+install.packages("xQTLbiolinks")
 
 # Or install from github.
 if(!require("remotes")){install.packages("remotes")}

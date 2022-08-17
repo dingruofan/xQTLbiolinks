@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+A disease target gene discovery framework is provided to detect susceptible genes and causal variants, which consists of two modules, including **colocalization analysis** and **tissue propensity analysis**.
+
 ## Before we start
 
 Colocalization analysis can be performed with `xQTLbiolinks` by providing their own GWAS summary statistics data. All we need to prepare include three parts:
@@ -190,4 +192,34 @@ xQTLvisual_locusCombine(gwasEqtldata[,c("rsid","chrom", "position", "pValue.gwas
 knitr::include_graphics("images/quick_start/xQTLvisual_locusCombine.png")
 ```
 
+Colocalized loci should show a general pattern where SNPs in high LD will show strong associations with expression levels of the colocalized gene, and the eQTL associations will weaken for SNPs in lower LD. This pattern of the eQTL varies among different tissues / cell-types, the strength of which indicates the power of the regulatory effect of the variant. We can easily distinguish this patten using **Tissue Propensity Analysis**, and uncover the tissue / cell-type that the variant can play the most significant regulatory role in.
+
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+propensityRes <- xQTLanalyze_propensity( gene="ENSG00000109684.14", variantName="rs13120565", 
+                                         tissueLabels = c("Brain - Cerebellar Hemisphere", 
+                                         "Brain - Cerebellum", "Treg memory", "Colon - Transverse", 
+                                         "CD4+ T cell", "Kidney - Cortex", "Uterus", "Esophagus - Mucosa", "LCL") )
+```
+
+A p-value<0.05 that calculated via permutation test indicates there exists a significant correlation between the correlation coefficient of LD and eQTL significance.
+
+
+```{r, eval=TRUE}
+propensityRes$tissuePropensity
+```
+
+using a heatmap plot to visualize the result:
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_qtlPropensity(propensityRes)
+```
+
+```{r, propensity.png, fig.align = 'center', out.width = "70%", echo=FALSE}
+knitr::include_graphics("images/quick_start/propensity.png")
+```
+
 For applying `xQTLbiolinks` to a whole case study, please find this [**Document**](https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html).
+
+
+
+

@@ -29,8 +29,3 @@ A data.table object.
 \description{
 retrieve snps from dbSNP using coordinate.
 }
-\examples{
-snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-                           endPos=50000, genomeBuild="GRCh38/hg38",
-                           track="snp151Common" )
-}

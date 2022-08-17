@@ -54,7 +54,6 @@ Conduct colocalization analysis with trait genes generated from \code{xQTLanalyz
 \donttest{
 url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
 gwasDF <- data.table::fread(url1)
-output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "MMP7", method="Both",
-                            tissueSiteDetail="Prostate")
+output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "MMP7", tissueSiteDetail="Prostate")
 }
 }

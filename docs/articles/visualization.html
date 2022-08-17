@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -151,10 +151,9 @@
 <span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></code></pre></div>
 <p><img src="images/visualization/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_qtlSpecificity.html">xQTLanalyze_qtlSpecificity</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"FLOT1"</span>, variantName<span class="op">=</span><span class="st">"rs3130356"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
-<span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span></code></pre></div>
-<p><img src="images/visualization/eQTLspecificity.png" width="90%" style="display: block; margin: auto;"></p>
+<code class="sourceCode R"><span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_propensity.html">xQTLanalyze_propensity</a></span><span class="op">(</span> gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"TwinsUK"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/xQTLvisual_qtlPropensity.html">xQTLvisual_qtlPropensity</a></span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span></code></pre></div>
+<p><img src="images/visualization/eQTLspecificity.png" width="70%" style="display: block; margin: auto;"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

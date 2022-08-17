@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dingruofan/xQTLbiolinks" class="external-link">xQTLbiolinks</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></code></pre></div>
-<p>In order to easily distinguish whether an eQTL is tissue/cell-type specific or shared across multiple tissue/cell groups, the function <code>xQTLanalyze_qtlSpecificity</code> is developed. For a given gene-variant eQTL pair, following five steps are executed sequentially in the function:</p>
+<p>In order to easily distinguish whether an eQTL is tissue/cell-type specific or shared across multiple tissue/cell groups, the function <code>xQTLanalyze_propensity</code> is developed. For a given gene-variant eQTL pair, following five steps are executed sequentially in the function:</p>
 <ol style="list-style-type: decimal">
 <li><p>Retrieve R2 of linkage disequilibrium between the specified variant and the variants around it.</p></li>
 <li><p>Fetch the eQTL associations of the specified gene for above LD-associated variants among multiple tissue/cells in all studies (default).</p></li>
@@ -101,20 +101,17 @@
 <p>After above steps, the function generate the outputs of “correlation coefficient” and “slope” for each tissue to uncover the trend of eQTL significance across LD degree. A greater value of “correlation coefficient” or “slope” suggests a more tissue/cell-type-specific pattern of the eQTL.</p>
 <p>Here, we take an example of eQTL of a pair of “MMP7”-“rs11568818”.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">speDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_qtlSpecificity.html">xQTLanalyze_qtlSpecificity</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_propensity.html">xQTLanalyze_propensity</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span></code></pre></div>
 <p>The output contains four data.table objects, including: “snpLD” for LD details of the specified SNP; “assoAllLd” for eQTL details of LD-associated SNPs; “lm_R2_logP” for liner regression results; “cor_R2_logP” for correlation outputs;</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">speDT</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">#&gt; [1] "snpLD"       "assoAllLd"   "lm_R2_logP"  "cor_R2_logP"</span></code></pre>
-<p>To visualize the significiance across degree, the function <code>xQTLvisual_qtlSpecificity</code> is developed, and two plot methods is available: heatmap and regression.</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">#&gt; [1] "snpLD"            "tissuePropensity" "cor_R2_logP"      "lm_R2_logP"      </span>
+<span class="co">#&gt; [5] "assoAllLd"</span></code></pre>
+<p>To visualize the significance across degree, the function <code>xQTLvisual_qtlPropensity</code> is developed, and two plot methods is available: heatmap and regression.</p>
 <p>For heatmap, All SNPs that LD-associated with the specified SNP are devided into four (default) R2 bins, (0, 0.25], (0.25, 0.5], (0.5, 0.75], and (0.75, 1] according to their LD score, then display the SNP with the smallest p-value in each bin across different tissues/cells. Note: p-value are min-max normailized after being taken the logarithm using base 10.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_qtlPropensity.html">xQTLvisual_qtlPropensity</a></span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span></code></pre></div>
 <p><img src="images/eqtl_specificity/heatmap_MMP7.png" width="65%" style="display: block; margin: auto;"></p>
-<p>For regression, Top 5 (default) tissues with the largest values of slope are displayed with different color, the other are grey, X-axis indicates R2, and y -axis indicates p-value are min-max normailized after being taken the logarithm using base 10. Numbers in brackets of labels indicate slope.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_qtlSpecificity.html">xQTLvisual_qtlSpecificity</a></span><span class="op">(</span><span class="va">speDT</span>, outPlot <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span></code></pre></div>
-<p><img src="images/eqtl_specificity/regression_MMP7.png" width="65%" style="display: block; margin: auto;"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

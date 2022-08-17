@@ -33,6 +33,5 @@ eGenes are genes that have at least one significant cis-eQTL acting upon them. R
 \donttest{
 eGeneInfo <- xQTLdownload_egene("TP53")
 eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
-eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7",tissueSiteDetail="Artery - Tibial")
 }
 }

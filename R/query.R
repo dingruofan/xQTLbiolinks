@@ -1236,12 +1236,6 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #' @import curl
 #' @import jsonlite
 #' @return A data.table object.
-#' @export
-#'
-#' @examples
-#' snpInfo <- dbsnpQueryRange(chrom="chr1", startPos=1,
-#'                            endPos=50000, genomeBuild="GRCh38/hg38",
-#'                            track="snp151Common" )
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
   # url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
   # chrom="chr1"

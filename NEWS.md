@@ -1,3 +1,9 @@
+# xQTLbiolinks 1.3.1
+
+## Major changes
+
+* Add new analysis module **Tissue propensity analysis**, can be called with `xQTLanalyze_propensity` and visualized with `xQTLvisual_qtlPropensity`
+
 # xQTLbiolinks 1.1.1
 
 ## Major changes

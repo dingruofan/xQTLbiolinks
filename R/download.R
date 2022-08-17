@@ -659,7 +659,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
   # check study-tissue:
   if( length(study) ==1 && length(tissueLabel)==1 && study!="" && tissueLabel!=""){
     if(nrow( ebi_ST[study_accession == study & tissue_label==tissueLabel])==1){
-      message("== Study [",study,"] -- Tissue label [",tissueLabel,"] corrected mapped..")
+      message("== Study [",study,"] -- Tissue label [",tissueLabel,"] correctly mapped..")
     }else{
       message("ID\tstudy\ttissueLabel")
       for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
@@ -924,7 +924,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
   # check study-tissue:
   if( length(study) ==1 && length(tissueLabel)==1 && study!="" && tissueLabel!=""){
     if(nrow( ebi_ST[study_accession == study & tissue_label==tissueLabel])==1){
-      message("== Study [",study,"] -- Tissue label [",tissueLabel,"] corrected mapped..")
+      message("== Study [",study,"] -- Tissue label [",tissueLabel,"] correctly mapped..")
     }else{
       message("ID\tstudy\ttissueLabel")
       for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
@@ -1486,7 +1486,6 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #' \donttest{
 #' eGeneInfo <- xQTLdownload_egene("TP53")
 #' eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
-#' eGeneInfo <- xQTLdownload_egene("DDX11", datasetId="gtex_v7",tissueSiteDetail="Artery - Tibial")
 #' }
 xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
   .<-NULL

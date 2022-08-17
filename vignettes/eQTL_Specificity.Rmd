@@ -23,7 +23,7 @@ library(stringr)
 ```
 
 
-In order to easily distinguish whether an eQTL is tissue/cell-type specific or shared across multiple tissue/cell groups, the function `xQTLanalyze_qtlSpecificity` is developed. For a given gene-variant eQTL pair, following five steps are executed sequentially in the function: 
+In order to easily distinguish whether an eQTL is tissue/cell-type specific or shared across multiple tissue/cell groups, the function `xQTLanalyze_propensity` is developed. For a given gene-variant eQTL pair, following five steps are executed sequentially in the function: 
 
 1. Retrieve R2 of linkage disequilibrium between the specified variant and the variants around it.
 
@@ -39,7 +39,7 @@ After above steps, the function generate the outputs of "correlation coefficient
 
 Here, we take an example of eQTL of a pair of "MMP7"-"rs11568818".
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="")
+propensityRes <- xQTLanalyze_propensity(gene="MMP7", variantName="rs11568818", study="")
 ```
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
@@ -52,26 +52,18 @@ rm(temp1)
 
 The output contains four data.table objects, including: "snpLD" for LD details of the specified SNP; "assoAllLd" for eQTL details of LD-associated SNPs;  "lm_R2_logP" for liner regression results; "cor_R2_logP" for correlation outputs;
 ```{r, message=FALSE, warning=FALSE, eval=TRUE}
-names(speDT)
+names(propensityRes)
 ```
 
-To visualize the significiance across degree, the function `xQTLvisual_qtlSpecificity` is developed, and two plot methods is available: heatmap and regression.
+To visualize the significance across degree, the function `xQTLvisual_qtlPropensity` is developed, and two plot methods is available: heatmap and regression.
 
 For heatmap, All SNPs that LD-associated with the specified SNP are devided into four (default) R2 bins, (0, 0.25], (0.25, 0.5], (0.5, 0.75], and (0.75, 1] according to their LD score, then display the SNP with the smallest p-value in each bin across different tissues/cells. Note: p-value are min-max normailized after being taken the logarithm using base 10.
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
+xQTLvisual_qtlPropensity(propensityRes)
 ```
 
 ```{r, heatmap_MMP7.png, fig.align = 'center', out.width = "65%", echo=FALSE}
 knitr::include_graphics("images/eqtl_specificity/heatmap_MMP7.png")
 ```
 
-For regression, Top 5 (default) tissues with the largest values of slope are displayed with different color, the other are grey, X-axis indicates R2, and y -axis indicates p-value are min-max normailized after being taken the logarithm using base 10. Numbers in brackets of labels indicate slope.
-```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
-```
-
-```{r, regression_MMP7.png, fig.align = 'center', out.width = "65%", echo=FALSE}
-knitr::include_graphics("images/eqtl_specificity/regression_MMP7.png")
-```
 

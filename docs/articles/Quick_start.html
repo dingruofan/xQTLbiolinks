@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -86,6 +86,7 @@
 
     
     
+<p>A disease target gene discovery framework is provided to detect susceptible genes and causal variants, which consists of two modules, including <strong>colocalization analysis</strong> and <strong>tissue propensity analysis</strong>.</p>
 <div class="section level2">
 <h2 id="before-we-start">Before we start<a class="anchor" aria-label="anchor" href="#before-we-start"></a>
 </h2>
@@ -220,6 +221,39 @@
 <code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>,<span class="st">"chrom"</span>, <span class="st">"position"</span>, <span class="st">"pValue.gwas"</span>, <span class="st">"pValue.eqtl"</span><span class="op">)</span><span class="op">]</span>, 
                         highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></code></pre></div>
 <p><img src="images/quick_start/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
+<p>Colocalized loci should show a general pattern where SNPs in high LD will show strong associations with expression levels of the colocalized gene, and the eQTL associations will weaken for SNPs in lower LD. This pattern of the eQTL varies among different tissues / cell-types, the strength of which indicates the power of the regulatory effect of the variant. We can easily distinguish this patten using <strong>Tissue Propensity Analysis</strong>, and uncover the tissue / cell-type that the variant can play the most significant regulatory role in.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_propensity.html">xQTLanalyze_propensity</a></span><span class="op">(</span> gene<span class="op">=</span><span class="st">"ENSG00000109684.14"</span>, variantName<span class="op">=</span><span class="st">"rs13120565"</span>, 
+                                         tissueLabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Brain - Cerebellar Hemisphere"</span>, 
+                                         <span class="st">"Brain - Cerebellum"</span>, <span class="st">"Treg memory"</span>, <span class="st">"Colon - Transverse"</span>, 
+                                         <span class="st">"CD4+ T cell"</span>, <span class="st">"Kidney - Cortex"</span>, <span class="st">"Uterus"</span>, <span class="st">"Esophagus - Mucosa"</span>, <span class="st">"LCL"</span><span class="op">)</span> <span class="op">)</span></code></pre></div>
+<p>A p-value&lt;0.05 that calculated via permutation test indicates there exists a significant correlation between the correlation coefficient of LD and eQTL significance.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">propensityRes</span><span class="op">$</span><span class="va">tissuePropensity</span></code></pre></div>
+<pre><code><span class="co">#&gt;                    tissue_label study_accession       tissue pValue_eQTL</span>
+<span class="co">#&gt; 1 Brain - Cerebellar Hemisphere         GTEx_V8 UBER_0002037 2.34596e-06</span>
+<span class="co">#&gt; 2                   Treg memory  Schmiedel_2018   CL_0002678 2.25235e-05</span>
+<span class="co">#&gt; 3               Kidney - Cortex         GTEx_V8 UBER_0001225 1.36117e-01</span>
+<span class="co">#&gt; 4                           LCL         GENCORD  EFO_0005292 5.85962e-01</span>
+<span class="co">#&gt; 5            Esophagus - Mucosa         GTEx_V8 UBER_0006920 7.95494e-01</span>
+<span class="co">#&gt; 6                        Uterus         GTEx_V8 UBER_0000995 9.78559e-01</span>
+<span class="co">#&gt; 7                   CD4+ T cell       BLUEPRINT   CL_0000624 8.51989e-01</span>
+<span class="co">#&gt; 8            Colon - Transverse         GTEx_V8 UBER_0001157 7.02369e-01</span>
+<span class="co">#&gt; 9            Brain - Cerebellum         GTEx_V8 UBER_0002037 1.37779e-13</span>
+<span class="co">#&gt;   pValue_propensity</span>
+<span class="co">#&gt; 1       0.000999001</span>
+<span class="co">#&gt; 2       0.027972028</span>
+<span class="co">#&gt; 3       0.606393606</span>
+<span class="co">#&gt; 4       1.000000000</span>
+<span class="co">#&gt; 5       0.950049950</span>
+<span class="co">#&gt; 6       0.716283716</span>
+<span class="co">#&gt; 7       0.381618382</span>
+<span class="co">#&gt; 8       0.244755245</span>
+<span class="co">#&gt; 9       0.000999001</span></code></pre>
+<p>using a heatmap plot to visualize the result:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/xQTLvisual_qtlPropensity.html">xQTLvisual_qtlPropensity</a></span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span></code></pre></div>
+<p><img src="images/quick_start/propensity.png" width="70%" style="display: block; margin: auto;"></p>
 <p>For applying <code>xQTLbiolinks</code> to a whole case study, please find this <a href="https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html" class="external-link"><strong>Document</strong></a>.</p>
 </div>
   </div>

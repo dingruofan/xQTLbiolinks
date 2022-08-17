@@ -974,10 +974,8 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
 
 #' @title Visualization of QTL specificity among multiple cells/tissues.
 #'
-#' @param specificityDT A data.table object from the function `xQTLanalyze_qtlSpecificity`
-#' @param outPlot (character) options: "heatmap" (default) and "regression".
-#' @param binNum (numeric) number of LD bins for heatmap plot. Default:4.
-#' @param topTissues (numeric) number of top tissues that sorted with slope increasingly to visualize for regression plot. Default: 5
+#' @param propensityRes A data.table object from the function `xQTLanalyze_propensity`
+#' @param P_cutoff (numeric) cutoff of the p-value of tissue propensity. Default: 1
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -990,28 +988,35 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
 #'
 #' @examples
 #' \donttest{
-#' speDT <- xQTLanalyze_qtlSpecificity(gene="MMP7", variantName="rs11568818", study="GTEx_V8")
-#' xQTLvisual_qtlSpecificity(speDT, outPlot = "heatmap")
-#' xQTLvisual_qtlSpecificity(speDT, outPlot = "regression")
+#' propensityRes <- xQTLanalyze_propensity( gene="MMP7", variantName="rs11568818", study="TwinsUK")
+#' xQTLvisual_qtlPropensity(propensityRes)
 #' }
-xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4, topTissues=5){
+xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 
   . <- NULL
-  R2 <- SNP_B <- LDbins <- corRP <- ID  <- LogPTissue <- tissue_label <- corPR <- logP_minMax <- colorRampPalette <- hue_pal <- slope <- intercept <- y <- x <- tissue_slope <- NULL
+  R2 <- SNP_B <- LDbins <- corRP <- ID  <- LogPpropensity <- tissue_label <- corPR <- logP_minMax <- colorRampPalette <- hue_pal <- slope <- intercept <- y <- x <- tissue_slope <- NULL
+  pValue_propensity <- regDT <- lm_R2_logP_top <- label_Propensity <- NULL
+
+  binNum <- 4
+  outPlot="heatmap"
+
   # extract variable:
-  snpLD <- specificityDT[['snpLD']]
-  assoAllLd <- specificityDT[['assoAllLd']]
-  cor_R2_logP <- specificityDT[['cor_R2_logP']]
-  lm_R2_logP <- specificityDT[['lm_R2_logP']]
-  tissueTest <- specificityDT[['tissueTest']]
+  snpLD <- propensityRes[['snpLD']]
+  assoAllLd <- propensityRes[['assoAllLd']]
+  cor_R2_logP <- propensityRes[['cor_R2_logP']]
+  lm_R2_logP <- propensityRes[['lm_R2_logP']]
+  tissuePropensity <- propensityRes[['tissuePropensity']]
+
 
   data.table::setDT(snpLD)
   data.table::setDT(assoAllLd)
   data.table::setDT(cor_R2_logP)
   data.table::setDT(lm_R2_logP)
-  data.table::setDT(tissueTest)
+  data.table::setDT(tissuePropensity)
 
-  tissueTest$LogPTissue <-(-log10(tissueTest$pValue_eQTL))
+  tissuePropensity <- na.omit(tissuePropensity)
+  tissuePropensity$LogPpropensity <-(-log10(tissuePropensity$pValue_propensity))
+  topTissues <- nrow(tissuePropensity[pValue_propensity <= P_cutoff])
 
   # recut LD into bins:
   snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNum+1)) ))
@@ -1031,13 +1036,16 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
   heatmapDT_allComb <- data.table::as.data.table(expand.grid(LDbins = unique(heatmapDT$LDbins), tissue_label =unique(heatmapDT$tissue_label) ))
   heatmapDT_allComb <- merge(heatmapDT_allComb, heatmapDT, by=c("LDbins", "tissue_label"), all.x = TRUE)
   heatmapDT_allComb <- merge(heatmapDT_allComb, data.table(LDbins=unique(snpLD$LDbins), ID=1:length(unique(snpLD$LDbins))), by="LDbins", all.x=TRUE)
-  heatmapDT_allComb <- merge(heatmapDT_allComb, tissueTest[,.(tissue_label, LogPTissue)], by="tissue_label", sort=FALSE)
-  heatmapDT_allComb <- heatmapDT_allComb[LogPTissue>2]
+  heatmapDT_allComb <- merge(heatmapDT_allComb, tissuePropensity[,.(tissue_label, LogPpropensity)], by="tissue_label", sort=FALSE)
+  heatmapDT_allComb <- heatmapDT_allComb[LogPpropensity>=log(P_cutoff,10)*-1]
+  if(nrow(heatmapDT_allComb)==0){
+    stop("Please reset your p-value cutoff to include more data.")
+  }
   rm(heatmapDT)
 
   if(outPlot == "heatmap"){
     p1 <- ggplot(heatmapDT_allComb)+
-      geom_tile(aes(x=ID, y=reorder(tissue_label, LogPTissue), fill=logP_minMax), color="#595959")+
+      geom_tile(aes(x=ID, y=reorder(tissue_label, LogPpropensity), fill=logP_minMax), color="#595959")+
       scale_x_continuous(breaks = unique(heatmapDT_allComb$ID), labels = unique(heatmapDT_allComb$LDbins))+
       # geom_text(aes(x=LDorder, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
       # scale_fill_gradient2(low="grey", mid="orange", high="red")+
@@ -1057,18 +1065,16 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
         plot.title = element_text(hjust=0.5),
         plot.margin=unit(c(0.3,0,0.3,0.3),"cm")
       )+
-      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("Min-max normailzed  ",-log["10"],"P",sep="")) ))
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("Normailzed  ",-log["10"],P[QTL],sep="")) ))
 
 
      p2 <- ggplot(heatmapDT_allComb)+
-      geom_tile(aes(x=1, y=reorder(tissue_label, LogPTissue), fill=LogPTissue),color = "black")+
-      scale_x_continuous(breaks = c(1), labels = "")+
-      geom_text(aes(x=1, y=reorder(tissue_label, LogPTissue),label = round(heatmapDT_allComb$LogPTissue,2)), color="#595959")+
+      geom_tile(aes(x=1, y=reorder(tissue_label, LogPpropensity), fill=LogPpropensity),color = "black")+
+      scale_x_continuous(breaks = c(1), labels = "Propensity")+
+      # geom_text(aes(x=1, y=reorder(tissue_label, LogPpropensity),label = round(heatmapDT_allComb$LogPpropensity,2)), color="#595959")+
       # breaks = seq(-1,1, length.out=5), labels = seq(-1,1, length.out=5),
-      scale_fill_gradientn(colors= c("#f4ffb8", "#ffd666", "#de82a7"), )+
-      # scale_fill_gradient2(  low="white", high="#de82a7",breaks=seq(round(min(heatmapDT_allComb$LogPTissue),1),round(max(heatmapDT_allComb$LogPTissue),1), by=0.5),
-                             # labels= seq(round(min(heatmapDT_allComb$LogPTissue),1),round(max(heatmapDT_allComb$LogPTissue),1), by=0.5))+
-      # scale_fill_gradientn(  colours =  c(colorRampPalette(c("#40a9ff", "white"))(nrow(heatmapDT_allComb[logCorP<=2])), colorRampPalette(c("white", "#de82a7"))(nrow(heatmapDT_allComb[logCorP>2]))) )+
+      # scale_fill_gradientn(colors= c("#66bfdf", "white", "#ea5a5a") )+
+      scale_fill_gradient2(low= "#03b1f0", mid="#f6ffed", high="#ea5a5a", midpoint = log(0.05,10)*(-1))+
       xlab("")+
       theme_minimal()+
       theme(
@@ -1082,54 +1088,57 @@ xQTLvisual_qtlSpecificity <- function(specificityDT, outPlot="heatmap", binNum=4
         panel.grid.major = element_blank(),
         plot.margin=unit(c(0.3,1,0.3,0.3),"cm")
           )+
-      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("",-log[10],"P",sep="")) ))
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("     ",-log[10],P[propensity],sep="")) ))
 
-    p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(12,2))
+    p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 3, rel_widths = c(12,2,1))
     return(p3)
   }
 
 
   # lm:
   # lm_R2_logP$colorP=colorRampPalette(c("#096dd9", "#f5f5f5", "#cf1322"))( length(unique(assoAllLd$tissue_label)) )
-  lm_R2_logP$colorP <- c(  rep("#d9d9d9", nrow(lm_R2_logP)-topTissues), scales::hue_pal()(topTissues))
-  regDT <- merge(lm_R2_logP, assoAllLd , by="tissue_label")[order(-slope)]
-  regDT$tissue_label <- factor(regDT$tissue_label, levels = lm_R2_logP$tissue_label)
-  lm_R2_logP$lineSize= 3^((seq(0.5,35,length.out=nrow(lm_R2_logP)))/10)/10
+  # lm_R2_logP$colorP <- c(  rep("#d9d9d9", nrow(lm_R2_logP)-topTissues), scales::hue_pal()(topTissues))
+  # regDT <- merge(lm_R2_logP, assoAllLd , by="tissue_label")[order(-slope)]
+  # regDT$tissue_label <- factor(regDT$tissue_label, levels = lm_R2_logP$tissue_label)
+  # lm_R2_logP$lineSize= 3^((seq(0.5,35,length.out=nrow(lm_R2_logP)))/10)/10
+  #
+  # # top tissues with max(+) and min(-) slopes for plot:
+  # lm_R2_logP_top <- rbind(na.omit(lm_R2_logP[slope>0][order(-slope)][1:topTissues,]) )
+  # lm_R2_logP_top <- cbind( lm_R2_logP_top, na.omit(rbind( na.omit(lm_R2_logP_top[slope>0][,.(x= 0.99, y=0.99*slope+intercept)]) )) )
+  # lm_R2_logP_top$tissue_slope <- paste0(lm_R2_logP_top$tissue_label, " (", round(lm_R2_logP_top$slope,2), ")")
+  # lm_R2_logP_top <- merge(lm_R2_logP_top, tissuePropensity[,.(tissue_label, LogPpropensity)], by="tissue_label", sort=FALSE)
+  # lm_R2_logP_top$label_Propensity <- paste0(lm_R2_logP_top$tissue_label, " (", round(lm_R2_logP_top$LogPpropensity,2), ")")
 
-  # top tissues with max(+) and min(-) slopes for plot:
-  lm_R2_logP_top <- rbind(na.omit(lm_R2_logP[slope>0][order(-slope)][1:topTissues,]) )
-  lm_R2_logP_top <- cbind( lm_R2_logP_top, na.omit(rbind( na.omit(lm_R2_logP_top[slope>0][,.(x= 0.99, y=0.99*slope+intercept)]) )) )
-  lm_R2_logP_top$tissue_slope <- paste0(lm_R2_logP_top$tissue_label, " (", round(lm_R2_logP_top$slope,2), ")")
-
-  if(outPlot=="regression"){
-     p <- ggplot()+
-      # geom_point(aes(x=R2, y=logP_minMax, color=tissue_label))+
-      geom_smooth(data=regDT, aes(x=R2, y=logP_minMax, color=tissue_label,size= tissue_label), method = "lm",se = FALSE)+
-      scale_size_manual( breaks=lm_R2_logP$tissue_label, values = lm_R2_logP$lineSize )+
-      scale_color_manual( breaks=lm_R2_logP$tissue_label, values =  lm_R2_logP$color )+
-      scale_y_continuous( breaks=seq(0,1,0.2), labels = c("0.0",seq(0.2,0.8,0.2),"1.0") )+
-      # scale_x_continuous(limits = c(0,1))+
-      theme_classic()+
-      ylab(expression(paste("Min-max normalized  ",-log[10],"P",sep="")))+
-      xlab(expression(R^2))+
-      # expand_limits(x=c(0.2, 1.8))+
-      theme(
-        legend.position = "none",
-        axis.text = element_text(size=rel(1.4)),
-        axis.title = element_text(size=rel(1.5)),
-        # plot.margin = margin(0,4,0,0, "cm")
-      )+
-      # geom_point(data=lm_R2_logP_top, x=0.99,aes(y= intercept+slope*0.99), color="black")+
-      geom_label_repel(data=lm_R2_logP_top,
-                       aes(x=x, y= y, label=tissue_slope),
-                       nudge_x = -0.1,
-                       segment.colour="grey", segment.size = 0.5,
-                       # arrow = arrow(length = unit(0.01, "npc")),
-                       box.padding = 1, max.overlaps=10)
-
-     return(p)
-  }else{
-    stop("\"outPlot\" can only be choosen from \"heatmap\" and \"regression\" ")
-  }
+  # if(outPlot=="regression"){
+    # message("Next time update")
+     # p <- ggplot()+
+     #  # geom_point(aes(x=R2, y=logP_minMax, color=tissue_label))+
+     #  geom_smooth(data=regDT, aes(x=R2, y=logP_minMax, color=tissue_label,size= tissue_label), method = "lm",se = FALSE)+
+     #  scale_size_manual( breaks=lm_R2_logP$tissue_label, values = lm_R2_logP$lineSize )+
+     #  scale_color_manual( breaks=lm_R2_logP$tissue_label, values =  lm_R2_logP$color )+
+     #  scale_y_continuous( breaks=seq(0,1,0.2), labels = c("0.0",seq(0.2,0.8,0.2),"1.0") )+
+     #  # scale_x_continuous(limits = c(0,1))+
+     #  theme_classic()+
+     #  ylab(expression(paste("Min-max normalized  ",-log[10],"P",sep="")))+
+     #  xlab(expression(R^2))+
+     #  # expand_limits(x=c(0.2, 1.8))+
+     #  theme(
+     #    legend.position = "none",
+     #    axis.text = element_text(size=rel(1.4)),
+     #    axis.title = element_text(size=rel(1.5)),
+     #    # plot.margin = margin(0,4,0,0, "cm")
+     #  )+
+     #  # geom_point(data=lm_R2_logP_top, x=0.99,aes(y= intercept+slope*0.99), color="black")+
+     #  geom_label_repel(data=lm_R2_logP_top,
+     #                   aes(x=x, y= y, label=label_Propensity),
+     #                   nudge_x = -0.1,
+     #                   segment.colour="grey", segment.size = 0.5,
+     #                   # arrow = arrow(length = unit(0.01, "npc")),
+     #                   box.padding = 1, max.overlaps=10)
+     #
+     # return(p)
+  # }else{
+    # stop("\"outPlot\" can only be choosen from \"heatmap\" and \"regression\" ")
+  # }
 }
 

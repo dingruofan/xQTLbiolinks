@@ -118,6 +118,9 @@
     <loc>/reference/xQTLanalyze_getTraits.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLanalyze_propensity.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLanalyze_qtlSpecificity.html</loc>
   </url>
   <url>
@@ -206,6 +209,9 @@
   </url>
   <url>
     <loc>/reference/xQTLvisual_locusZoom.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_qtlPropensity.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLvisual_qtlSpecificity.html</loc>
