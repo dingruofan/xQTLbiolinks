@@ -267,8 +267,6 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' xQTLdownload_eqtlSig(genes="ATAD3B")
 #' xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
 #' xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
-#' xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
-#'                      tissueSiteDetail="Thyroid" )
 #'
 #' # Download eQTL info for a variant-gene pair:
 #' xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
@@ -423,8 +421,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
 #'
 #' # In a specific tissue:
-#' xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
-#'                   datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
+#' xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",  tissueSiteDetail="Thyroid" )
 #'
 #' # Download eQTL info with a variant-gene pair:
 #' xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
@@ -534,7 +531,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
     }
   }
 
-  # url1 <- "https://gtexportal.org/rest/v1/association/metasoft?gencodeId=ENSG00000141510.11&datasetId=gtex_v7"
+  # url1 <- "https://gtexportal.org/rest/v1/association/metasoft?gencodeId=ENSG00000141510.16&datasetId=gtex_v8"
   message("== Querying eQTL associations from API server:")
   ########## construct url for sig association
   url1 <- paste0("https://gtexportal.org/rest/v1/association/metasoft?",

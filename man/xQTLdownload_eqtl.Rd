@@ -44,8 +44,7 @@ eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
 eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
 
 # In a specific tissue:
-xQTLdownload_eqtl(gene="ENSG00000141510.11", geneType="gencodeId",
-                  datasetId="gtex_v7", tissueSiteDetail="Thyroid" )
+xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",  tissueSiteDetail="Thyroid" )
 
 # Download eQTL info with a variant-gene pair:
 xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")

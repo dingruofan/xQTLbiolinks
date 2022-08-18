@@ -1030,7 +1030,7 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 
 
   # Retain max pvalue in each bin:
-  minP_f <- function(x){  data.table(tissue_label=x[1,]$tissue_label, corPR=x[1,]$corRP, logCorP=x[1,]$logCorP, LDbins= x[1,]$LDbins, logP_minMax=max(x$logP_minMax) )  }
+  minP_f <- function(x){  data.table::data.table(tissue_label=x[1,]$tissue_label, corPR=x[1,]$corRP, logCorP=x[1,]$logCorP, LDbins= x[1,]$LDbins, logP_minMax=max(x$logP_minMax) )  }
   heatmapDT <- assoAllLd[,minP_f(.SD), by=c("LDbins", "tissue_label")]
   # fill NA bins:
   heatmapDT_allComb <- data.table::as.data.table(expand.grid(LDbins = unique(heatmapDT$LDbins), tissue_label =unique(heatmapDT$tissue_label) ))
@@ -1042,10 +1042,11 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
     stop("Please reset your p-value cutoff to include more data.")
   }
   rm(heatmapDT)
+  heatmapDT_allComb$tissue_label <- factor(heatmapDT_allComb$tissue_label, levels = unique(heatmapDT_allComb[order(LogPpropensity,corPR)]$tissue_label))
 
   if(outPlot == "heatmap"){
     p1 <- ggplot(heatmapDT_allComb)+
-      geom_tile(aes(x=ID, y=reorder(tissue_label, LogPpropensity), fill=logP_minMax), color="#595959")+
+      geom_tile(aes(x=ID, y=tissue_label, fill=logP_minMax), color="#595959")+
       scale_x_continuous(breaks = unique(heatmapDT_allComb$ID), labels = unique(heatmapDT_allComb$LDbins))+
       # geom_text(aes(x=LDorder, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
       # scale_fill_gradient2(low="grey", mid="orange", high="red")+

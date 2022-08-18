@@ -49,8 +49,6 @@ xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 xQTLdownload_eqtlSig(genes="ATAD3B")
 xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
 xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
-xQTLdownload_eqtlSig(genes="ENSG00000141510.11", datasetId="gtex_v7",
-                     tissueSiteDetail="Thyroid" )
 
 # Download eQTL info for a variant-gene pair:
 xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")

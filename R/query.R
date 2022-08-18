@@ -50,7 +50,7 @@
 #'
 #' # query gene of gencode version v19/hg19
 #' geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
-#' geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
+#' geneInfo <- xQTLquery_gene(c("ENSG00000141510.16","ENSG00000008130.15"))
 xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL

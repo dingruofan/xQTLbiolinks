@@ -61,5 +61,5 @@ geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 
 # query gene of gencode version v19/hg19
 geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
-geneInfo <- xQTLquery_gene(c("ENSG00000141510.11","ENSG00000008130.11"), gencodeVersion="v19")
+geneInfo <- xQTLquery_gene(c("ENSG00000141510.16","ENSG00000008130.15"))
 }
