@@ -9,7 +9,8 @@ xQTLanalyze_getTraits(
   detectRange = 1e+06,
   tissueSiteDetail = "",
   genomeVersion = "grch38",
-  grch37To38 = FALSE
+  grch37To38 = FALSE,
+  overlapWithEGene = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ xQTLanalyze_getTraits(
 \item{genomeVersion}{"grch38" or "grch37". Default: "grch38"}
 
 \item{grch37To38}{TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package \code{rtracklayer} is required.}
+
+\item{overlapWithEGene}{take the intersection with eGenes. Default:TRUE}
 }
 \value{
 A data.table object
