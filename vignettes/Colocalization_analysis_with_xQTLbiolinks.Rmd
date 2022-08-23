@@ -102,9 +102,10 @@ Following three steps of colocalization analysis are encapsulated in one functio
 For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several hours):
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+# All genes:
 genesAll<- unique(traitsAll$gencodeId)
+# A data.table to save results:
 colocResultAll <- data.table()
-# 162 575 error
 for(i in 1:length(genesAll)){
   colocResult <- xQTLanalyze_coloc(gwasDF, 
                                    genomeVersion = "grch37", method="Both",

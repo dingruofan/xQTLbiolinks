@@ -336,6 +336,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
     return(NULL)
   }
+  # 如果有有多个 qtl_group, 只保留第一个。
+  eqtlInfo <- eqtlInfo[ qtl_group ==eqtlInfo[1,]$qtl_group,]
   eqtlInfo[,position:=.(pos)]
 
   # chromosome:
