@@ -310,7 +310,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
   population <- ""
   token <- ""
 
-  if(method == "method" && !requireNamespace("coloc")){
+  if(method == "coloc" && !requireNamespace("coloc")){
     stop("please install package \"coloc\" with install.packages(\"coloc\").")
   }
 
