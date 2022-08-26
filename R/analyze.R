@@ -694,7 +694,6 @@ xQTLanalyze_propensity <- function(gene="", geneType="auto", variantName="", var
     binNumForSample_tmp <- 10
     varNumForSample_tmp <- 10
     snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNumForSample_tmp+1)) ))
-    set.seed(1)
     snpLDForSample_tmp <- as.data.frame(tapply( 1:nrow(snpLD), snpLD$LDbins, function(x){ if(length(x)<=varNumForSample_tmp){return(x)}else{ return(sample(x, varNumForSample_tmp, replace = FALSE)) } }))
     names(snpLDForSample_tmp) <- "ID"
     snpLDForSample_tmp$LDbins <- rownames(snpLDForSample_tmp)
@@ -740,7 +739,6 @@ xQTLanalyze_propensity <- function(gene="", geneType="auto", variantName="", var
     asso_i <- rbind(assoAllLd_i[,-c("R2")], assoControl)
     asso_i <- merge(asso_i,  assoAllLd_i[,.(snpPanel,R2)], by="snpPanel")
     message("==> Start calculating p-value in ",ebi_ST[i,]$tissue_label, "; ",i,"/",nrow(ebi_ST))
-    set.seed(521)
     corValues <- unlist(lapply(1:1000, function(x){
       if(x %% 100 ==0){ message("==> Complete ",x/10,"% in tissue: ",  ebi_ST[i,]$tissue_label ," (",i,"/",nrow(ebi_ST),")")}
       sampleSnps <- rbindlist(lapply(unique(asso_i$snpPanel), function(xx){ a=asso_i[snpPanel==xx];a[sample(1:nrow(a),1),] }))
