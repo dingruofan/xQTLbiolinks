@@ -487,6 +487,149 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 }
 
 
+#' @title conduct colocalization analysis with your own data
+#'
+#' @param gwasDF data.frame or data.table, required cols: rsid, chrom, position, pValue, maf, beta, se
+#' @param qtlDF data.frame or data.table, required cols:  rsid, chrom, position, pValue, maf, beta, se
+#' @param mafThreshold 0.01
+#' @param gwasSampleNum 50000
+#' @param qtlSampleNum 10000
+#' @param method "coloc", "hyprcoloc", and "Both"
+#' @param bb.alg TRUE
+#'
+#' @return A list
+#' @export
+xQTLanalyze_coloc_local <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNum=50000, qtlSampleNum=10000, method="coloc", bb.alg=FALSE){
+  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- se.eqtl <- se.gwas <-SNP.PP.H4 <- beta.eqtl <- beta.gwas <- posterior_prob <- regional_prob <-candidate_snp <- posterior_explained_by_snp  <- NULL
+  . <- NULL
+
+
+  if(method == "coloc" && !requireNamespace("coloc")){
+    stop("please install package \"coloc\" with install.packages(\"coloc\").")
+  }
+
+  if(method == "hyprcoloc" && !requireNamespace("hyprcoloc")){
+    stop("please install package \"hyprcoloc\".")
+  }
+
+  if(method == "Both"){
+    if( !requireNamespace("coloc") ){ stop("please install package \"coloc\" with install.packages(\"coloc\").") }
+    if( !requireNamespace("hyprcoloc") ){ stop("please install package \"hyprcoloc\".") }
+  }
+
+
+  # eqtl dataset:
+  names(qtlDF) <- c("rsid", "chrom",  "position", "pValue", "maf", "beta", "se")
+  # chromosome:
+  P_chrom <- paste0("chr",qtlDF[1,]$chrom)
+
+  eqtlInfo <- qtlDF[,.(rsid,chrom, maf=as.numeric(maf), beta=as.numeric(beta), se=as.numeric(se), pValue=as.numeric(pValue), position=as.numeric(position))]
+
+  eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
+  # 去重：
+  eqtlInfo <- eqtlInfo[order(rsid, pValue)][!duplicated(rsid)]
+
+  if(nrow(eqtlInfo)==0){
+    message("Number of eQTL association is <1")
+    return(NULL)
+  }
+
+  message("Data processing...")
+
+  ##################### gwas dataset:
+  gwasDF <- gwasDF[,1:7]
+  data.table::setDT(gwasDF)
+  names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf", "beta", "se")
+  # gwas subset:
+  gwasDF <- na.omit(gwasDF)
+
+  p_chrom_tmp <- ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"),P_chrom, stringr::str_remove(P_chrom, "chr"))
+  gwasDF <- gwasDF[chr==p_chrom_tmp,]
+  # convert variable class:
+  gwasDF[,c("position", "pValue", "maf", "beta", "se"):=.(as.numeric(position), as.numeric(pValue), as.numeric(maf), as.numeric(beta), as.numeric(se))]
+  # MAF filter:
+  gwasDF <- gwasDF[maf > mafThreshold & maf<1,]
+  # 去重：
+  gwasDF <- gwasDF[order(rsid, pValue)][!duplicated(rsid)]
+  # retain SNPs with rs id:
+  gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
+
+  message(nrow(gwasDF))
+  # chromosome revise：
+  if( !stringr::str_detect(gwasDF[1,]$chr, stringr::regex("^chr")) ){
+    gwasDF$chr <- paste0("chr", gwasDF$chr)
+  }
+
+
+  #
+  gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position,beta, se)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
+  gwasEqtlInfo <- gwasEqtlInfo[se.eqtl !=0 & se.gwas !=0, ]
+
+  if(nrow(gwasEqtlInfo)==0){
+    message("No shared variants between eQTL and GWAS, please check your input!.")
+    return(NULL)
+  }
+  message("== Start the colocalization analysis")
+
+  if(method=="coloc"){
+    message("== Using method: coloc")
+    # 防止 check_dataset 中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
+    suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
+                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=qtlSampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+    coloc_Out_results <- as.data.table(coloc_Out$results)
+    # coloc_Out_results$gene <- traitGenes[i]
+    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
+    coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
+    message("== Done")
+
+    print(coloc_Out_summary)
+    # coloc_Out_summary$pearsonCoor <- cor(-log(gwasEqtlInfo$pValue.gwas, 10),-log(gwasEqtlInfo$pValue.eqtl, 10), method = "pearson")
+
+    return(list(coloc_Out_summary=coloc_Out_summary, gwasEqtlInfo=gwasEqtlInfo))
+  }else if( method=="hyprcoloc" ){
+    message("== Using method: hyprcoloc")
+    # construct beta matrix and se matrix:
+    betasMat <- as.matrix(gwasEqtlInfo[,.( eqtl=beta.eqtl, gwas=beta.gwas)])
+    rownames(betasMat) <- gwasEqtlInfo$rsid
+    sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
+    rownames(sesMat) <- gwasEqtlInfo$rsid
+    res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=bb.alg);
+    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.(posterior_prob, regional_prob, candidate_snp, posterior_explained_by_snp)]
+    message(hyprcoloc_Out_summary)
+    message("== Done")
+
+    return(list(hyprcoloc_Out_summary=hyprcoloc_Out_summary, gwasEqtlInfo=gwasEqtlInfo))
+  }else if( method=="Both"){
+    message("== Using methods: coloc AND hyprcoloc.")
+    # coloc:
+    suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
+                                                   dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=qtlSampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
+    coloc_Out_results <- as.data.table(coloc_Out$results)
+    # coloc_Out_results$gene <- traitGenes[i]
+    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
+    coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
+    # print(coloc_Out_summary)
+
+    message("")
+    # hyprcoloc:
+    betasMat <- as.matrix(gwasEqtlInfo[,.( eqtl=beta.eqtl, gwas=beta.gwas)])
+    rownames(betasMat) <- gwasEqtlInfo$rsid
+    sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
+    rownames(sesMat) <- gwasEqtlInfo$rsid
+    res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=FALSE);
+    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.( hypr_posterior=posterior_prob, hypr_regional_prob=regional_prob, hypr_candidate_snp=candidate_snp, hypr_posterior_explainedBySnp=posterior_explained_by_snp)]
+    colocOut <- cbind(coloc_Out_summary, hyprcoloc_Out_summary )
+    print(colocOut)
+
+    message("== Done")
+    return(list(colocOut=colocOut, gwasEqtlInfo=gwasEqtlInfo))
+  }
+}
+
 #' @title Perform tissue-specific expression analysis for genes.
 #' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
