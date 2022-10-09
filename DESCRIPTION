@@ -20,6 +20,7 @@ Depends:
     R (>= 4.00)
 VignetteBuilder:
     knitr
+Additional_repositories: https://dingruofan.github.io/drat
 Imports: 
     BiocGenerics,
     cowplot (>= 1.1.1),
@@ -43,8 +44,10 @@ Imports:
     viridis
 Suggests: 
     coloc,
+    GenomicFeatures,
     hyprcoloc,
     knitr,
     rtracklayer,
-    usethis
-Additional_repositories: https://dingruofan.github.io/drat
+    TxDb.Hsapiens.UCSC.hg38.knownGene,
+    usethis,
+    VariantAnnotation

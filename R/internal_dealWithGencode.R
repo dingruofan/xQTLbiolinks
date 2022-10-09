@@ -470,6 +470,10 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("rtracklayer",type="Suggests")
 # usethis::use_package("coloc",type="Suggests")
 # usethis::use_package("hyprcoloc",type="Suggests")
+# usethis::use_package("GenomicFeatures", type="Suggests")
+# usethis::use_package("VariantAnnotation", type="Suggests")
+# usethis::use_package("TxDb.Hsapiens.UCSC.hg38.knownGene", type="Suggests")
+
 
 
 # usethis::use_package("crayon", min_version = "1.4.1") # message 字体：
