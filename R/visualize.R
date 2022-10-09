@@ -1143,3 +1143,175 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
   # }
 }
 
+
+#' @title Visualizing annotated variants
+#'
+#' @param snpHits A data.table object from result of xQTLanalyze_anno
+#' @param pValueBy Cut step of pvlaue. Defaults: 5
+#' @param plotType "point", "bar", or "pie"
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' snpInfo <- fread(url1, sep="\t")
+#' snpHits <- xQTLanalyze_anno(snpInfo)
+#' xQTLvisual_anno(snpHits, plotType="pie")
+#' }
+xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
+
+  typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","cds","utr3","utr5","tfCluster","spliceSite","ingergenic"),
+                         Type = c("CPG island", "Enhancer", "Promoter", "Exon", "CDS", "3'UTR", "5'UTR", "TF cluster", "Splice site", "Intergenic"))
+
+  snpHits$logP <- log(snpHits$pValue, base=10)*(-1)
+  snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
+  snpHits$cutP <- cut(snpHits$logP,breaks= ceiling(seq(0,max(snpHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
+
+  if(plotType=="point"){
+    snpHitsCount <- snpHits[,.(Num=nrow(.SD)), by= c("cutP", "type")]
+    snpHitsCount <- merge(snpHitsCount, typeLabel, by="type")
+    # plot:
+    p1 <- ggplot(snpHitsCount)+
+      geom_point(aes(x=cutP,y=Num,fill=Type,shape=Type),size=rel(3.8))+
+      geom_line(aes(x=cutP,y=Num,color=Type,group=Type,linetype=Type),size=rel(1.2))+
+      scale_y_log10(breaks=10^c(0:floor(log(max(snpHitsCount$Num),10))), labels= as.character(as.integer(10^c(0:floor(log(max(snpHitsCount$Num),10))))) )+
+      scale_shape_manual(values= c(0,1,2,5,6,21,22,23,24,25)[1:length(unique(snpHitsCount$Type))] )+
+      theme_classic()+
+      xlab(expression(-log["10"]("p-value")))+
+      ylab("Number of variants")+
+      theme(
+        axis.text.x = element_text(size = rel(1.3), angle=30, hjust=1, vjust=1),
+        axis.text.y =element_text(size=rel(1.3)),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_blank(), #设置面板网格
+        panel.grid.major.y = element_line(size = 0.5),
+        panel.grid.minor.x = element_blank(),
+        axis.title=element_text(size=rel(1.3)),
+        legend.title = element_text(face="bold",size=rel(1.1)),
+        legend.text = element_text(size=rel(1.1)),
+        legend.position = c(0.874,0.8),
+        legend.margin = margin(0.1,0.1,0.1,0.1,"cm"),
+        legend.background = element_rect(fill="white",
+                                         size=0.5, linetype="solid",colour ="black")
+      )
+    print(p1)
+    return(p1)
+  }
+  if(plotType=="bar"){
+    snpHitsCount <- snpHits[,.(Num=nrow(.SD)), by= c("cutP", "type")]
+    snpHitsCount$Num <- as.numeric(snpHitsCount$Num)
+    snpHitsCount[Num==1, "Num"] <- 1.1
+    snpHitsCount <- merge(snpHitsCount, typeLabel, by="type")
+    snpHitsCount$Type <- factor(snpHitsCount$Type, levels = snpHitsCount[,.(NumSum=sum(Num)),by=c("Type")][order(-NumSum)]$Type)
+
+    # a <- randomcoloR::distinctColorPalette(length(unique(snpHitsCount$Type)))
+    # a <- randomcoloR::randomColor(length(unique(snpHitsCount$Type)))
+    p1 <- ggplot(snpHitsCount, aes(x = cutP ,y = Num,fill=Type)) +
+      geom_bar(stat = "identity",position =position_dodge(0.9), width = 0.7, alpha=1)+
+      scale_y_log10( breaks=c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))), labels= as.character((c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))))) )+
+      scale_fill_manual( breaks=as.character(unique(snpHitsCount$Type)), values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHitsCount$Type)))])+
+      theme_classic()+
+      theme(axis.text.x = element_text(size=rel(1.3)),
+            axis.text.y = element_text(size=rel(1.3)),
+            axis.title = element_text(size=rel(1.4)),
+            legend.title = element_text(face="bold",size=rel(1.1)),
+            legend.text = element_text(size=rel(1.1)),
+            legend.position = c(0.874,0.8)
+      )+
+      xlab(expression(-log["10"]("p-value")))+
+      ylab("Number of variants")+coord_flip()
+    plot(p1)
+    return(p1)
+  }
+  if(plotType=="pie"){
+    snpHitsCount <- snpHits[,.(Num=nrow(.SD)), by= c("type")]
+    snpHitsCount <- merge(snpHitsCount, typeLabel, by="type")
+    snpHitsCount$Type <- factor(snpHitsCount$Type, levels = snpHitsCount[,.(NumSum=sum(Num)),by=c("Type")][order(-NumSum)]$Type)
+    snpHitsCount$prop <- round(snpHitsCount$Num/(sum(snpHitsCount$Num))*100,2)
+    snpHitsCount <- snpHitsCount[order(-prop)]
+    snpHitsCount$legendLabel=paste(snpHitsCount$Type," (",snpHitsCount$prop,"%",")", sep="")
+
+    p1 <- ggplot(snpHitsCount, aes(x = "" ,y = prop, fill = Type)) +
+      geom_bar(stat = "identity", width=3, alpha=1 )+
+      scale_fill_manual( breaks=as.character(unique(snpHitsCount$Type)),
+                         labels=snpHitsCount$legendLabel,
+                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHitsCount$Type)))])+
+      # geom_text(aes(y = prop/3 + c(0, cumsum(prop)[-length(prop)]),label = prop), size=5)+
+      theme_bw()+
+      theme(
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        panel.grid=element_blank(),
+        axis.ticks = element_blank(),
+        plot.title=element_text(size=14, face="bold")
+      )+
+      labs(title="")+
+      # guides(fill="none")+
+    coord_polar(theta = "y", start=0)
+    plot(p1)
+    return(p1)
+  }
+}
+
+
+#' @title Visualizing enriched variants
+#'
+#' @param enrichHits A data.table object from result of xQTLanalyze_enrich
+#' @param pValueBy Cut step of pvlaue. Defaults: 5
+#' @param plotType "point", or "density"
+#'
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' snpInfo <- fread(url1, sep="\t")
+#' enrichHits <- xQTLanalyze_enrich(snpInfo, enrichElement="TF")
+#' xQTLvisual_enrich(enrichHits, plotType="boxplot")
+#' }
+xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
+  enrichHits$logP <- log(enrichHits$pValue, base=10)*(-1)
+  enrichHits$logP <- ifelse(enrichHits$logP==0, 1e-6, enrichHits$logP)
+  enrichHits$cutP <- cut(enrichHits$logP,breaks= ceiling(seq(0,max(enrichHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
+  enrichHits[dist==0,"dist"]<-1
+
+  if(plotType=="boxplot"){
+    p1 <- ggplot(enrichHits)+
+      geom_boxplot(aes(x=cutP,y=dist,fill=cutP))+
+      scale_y_log10(breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))) )+
+      theme_bw()+
+      xlab(expression(-log["10"]("p-value")))+
+      ylab(paste("Distance",sep=""))+
+      theme(axis.text.x = element_text(size = rel(1.3), angle=30, hjust=1, vjust=1),
+            axis.text.y = element_text(size=rel(1.3)),
+            axis.title = element_text(size=rel(1.4)),
+            legend.position = "right",
+            legend.title = element_blank(),
+            legend.background = element_rect(fill="white",
+                                             size=0.5, linetype="solid",
+                                             colour ="white")
+      )
+    print(p1)
+    return(p1)
+  }else if(plotType=="density"){
+    p1 <- ggplot(enrichHits, aes(x=dist))+
+      geom_density(aes(color=cutP,fill=cutP),alpha=0.3)+ #添加密度图层
+      scale_x_log10(limits = c(1,(max(enrichHits$dist)+100)),breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))))+
+      xlab("Distance")+
+      ylab("density")+
+      theme_bw()+
+      theme(
+        axis.text = element_text(size=rel(1.1)),
+        axis.title = element_text(size=rel(1.2)),
+        panel.grid = element_blank()
+      ) #+ scale_x_log10()
+    print(p1)
+    return(p1)
+  }
+}
+
+
