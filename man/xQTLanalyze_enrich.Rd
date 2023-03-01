@@ -16,7 +16,7 @@ xQTLanalyze_enrich(
 
 \item{genomeVersion}{"hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.}
 
-\item{enrichElement}{"Promoter", "Enhaner" or "TF".}
+\item{enrichElement}{"Promoter", "Enhancer" or "TF".}
 
 \item{distLimit}{Defaults: 1e6}
 }
@@ -28,8 +28,8 @@ variant enrichment analysis
 }
 \examples{
 \donttest{
-url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
-snpInfo <- fread(url1, sep="\t")
-enrichHits <- xQTLanalyze_enrich(snpInfo)
+url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+snpInfo <- data.table::fread(url1, sep="\t")
+enrichHits <- xQTLanalyze_enrich(snpInfo,enrichElement="Enhancer")
 }
 }

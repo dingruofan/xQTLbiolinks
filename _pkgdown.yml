@@ -28,9 +28,12 @@ reference:
 - title: Query
   contents:
   - starts_with("xQTLquery_")
+  - starts_with("EBIquery_allTerm")
+  - starts_with("extractGeneInfo")
 - title: Download
   contents:
   - starts_with("xQTLdownload_")
+  - starts_with("retrieveLD")
 - title: Visualize
   contents:
   - starts_with("xQTLvisual_")

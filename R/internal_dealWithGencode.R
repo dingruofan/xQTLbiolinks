@@ -432,8 +432,6 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("DBI", min_version = "1.1.1") # in RMySQL
 # usethis::use_package("PupillometryR", min_version = "0.0.4")
 # usethis::use_package("ggpubr", min_version = "0.4.0")
-# usethis::use_package("ggridges", min_version = "0.5.3")
-# usethis::use_package("viridis", min_version = "0.6.2")
 # usethis::use_package("GenomeInfoDb", min_version = "1.24.2") # in GenomicRanges
 # usethis::use_package("IRanges", min_version = "2.22.2") # in GenomicRanges
 # usethis::use_package("ggrepel", min_version = "0.9.1") # in ggpubr
@@ -451,7 +449,6 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("httr")
 # usethis::use_package("RMySQL")
 # usethis::use_package("DBI") # in RMySQL
-# usethis::use_package("PupillometryR")
 # usethis::use_package("ggridges")
 # usethis::use_package("viridis")
 # usethis::use_package("GenomeInfoDb") # in GenomicRanges
@@ -461,7 +458,10 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("BiocGenerics")
 # usethis::use_package("cowplot", min_version="1.1.1")
 # usethis::use_package("scales")
-
+# usethis::use_package("GenomicFeatures")
+# usethis::use_package("VariantAnnotation")
+# usethis::use_package("TxDb.Hsapiens.UCSC.hg38.knownGene")
+# usethis::use_package("viridis", type="Suggests")
 
 #
 # # suggest:
@@ -470,9 +470,8 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("rtracklayer",type="Suggests")
 # usethis::use_package("coloc",type="Suggests")
 # usethis::use_package("hyprcoloc",type="Suggests")
-# usethis::use_package("GenomicFeatures", type="Suggests")
-# usethis::use_package("VariantAnnotation", type="Suggests")
-# usethis::use_package("TxDb.Hsapiens.UCSC.hg38.knownGene", type="Suggests")
+# usethis::use_package("PupillometryR")
+# usethis::use_package("ggridges", type="Suggests")
 
 
 

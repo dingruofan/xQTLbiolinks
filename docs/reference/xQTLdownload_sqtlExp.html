@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,45 +62,50 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>
-  variantName <span class="op">=</span> <span class="st">""</span>,
-  phenotypeId <span class="op">=</span> <span class="st">""</span>,
-  variantType <span class="op">=</span> <span class="st">"auto"</span>,
-  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,
-  datasetId <span class="op">=</span> <span class="st">"gtex_v8"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span></span>
+<span>  variantName <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  phenotypeId <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  variantType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  tissueSiteDetail <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>variantName</dt>
 <dd><p>(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".</p></dd>
+
+
 <dt>phenotypeId</dt>
 <dd><p>A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"</p></dd>
+
+
 <dt>variantType</dt>
 <dd><p>(character) options: "auto", "snpId" or "variantId". Default: "auto".</p></dd>
+
+
 <dt>tissueSiteDetail</dt>
 <dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
-<dt>datasetId</dt>
-<dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># Download sQTL expression in different tissues:</span>
-<span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1450891501"</span>,
-                     phenotypeId<span class="op">=</span><span class="st">"chr1:497299:498399:clu_54863:ENSG00000239906.1"</span>,
-                     tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
-
-<span class="co"># Dowload sQTL expression using variant ID.</span>
-<span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1259424_T_C_b38"</span>,
-                     phenotypeId<span class="op">=</span><span class="st">" chr1:1487914:1489204:clu_52051:ENSG00000160072.19"</span>,
-                     tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Subcutaneous"</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># Download sQTL expression in different tissues:</span></span>
+<span><span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1450891501"</span>,</span>
+<span>                     phenotypeId<span class="op">=</span><span class="st">"chr1:497299:498399:clu_54863:ENSG00000239906.1"</span>,</span>
+<span>                     tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Dowload sQTL expression using variant ID.</span></span>
+<span><span class="fu">xQTLdownload_sqtlExp</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1259424_T_C_b38"</span>,</span>
+<span>                     phenotypeId<span class="op">=</span><span class="st">" chr1:1487914:1489204:clu_52051:ENSG00000160072.19"</span>,</span>
+<span>                     tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Subcutaneous"</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -114,7 +119,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

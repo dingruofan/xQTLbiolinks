@@ -8,8 +8,7 @@ xQTLvisual_sqtlExp(
   variantName = "",
   phenotypeId = "",
   variantType = "auto",
-  tissueSiteDetail = "",
-  datasetId = "gtex_v8"
+  tissueSiteDetail = ""
 )
 }
 \arguments{
@@ -20,8 +19,6 @@ xQTLvisual_sqtlExp(
 \item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A list containing variant detail, expression profile and a ggplot object.

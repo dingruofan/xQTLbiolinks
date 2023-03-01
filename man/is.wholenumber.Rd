@@ -17,3 +17,4 @@ TRUE or FALSE
 \description{
 determine whether is a whole number:
 }
+\keyword{internal}

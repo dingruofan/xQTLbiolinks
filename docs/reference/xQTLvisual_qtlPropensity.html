@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,28 +62,32 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLvisual_qtlPropensity</span><span class="op">(</span><span class="va">propensityRes</span>, P_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_qtlPropensity</span><span class="op">(</span><span class="va">propensityRes</span>, P_cutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>propensityRes</dt>
 <dd><p>A data.table object from the function <code>xQTLanalyze_propensity</code></p></dd>
+
+
 <dt>P_cutoff</dt>
 <dd><p>(numeric) cutoff of the p-value of tissue propensity. Default: 1</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A ggplot object</p>
+    
+
+<p>A ggplot object</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="xQTLanalyze_propensity.html">xQTLanalyze_propensity</a></span><span class="op">(</span> gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"TwinsUK"</span><span class="op">)</span>
-<span class="fu">xQTLvisual_qtlPropensity</span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="xQTLanalyze_propensity.html">xQTLanalyze_propensity</a></span><span class="op">(</span> gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"TwinsUK"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_qtlPropensity</span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -97,7 +101,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

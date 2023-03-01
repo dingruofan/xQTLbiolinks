@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,64 +62,67 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>
-  variantName <span class="op">=</span> <span class="st">""</span>,
-  genes <span class="op">=</span> <span class="st">""</span>,
-  variantType <span class="op">=</span> <span class="st">"auto"</span>,
-  geneType <span class="op">=</span> <span class="st">"auto"</span>,
-  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,
-  datasetId <span class="op">=</span> <span class="st">"gtex_v8"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span></span>
+<span>  variantName <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  genes <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  variantType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  geneType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  tissueSiteDetail <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>variantName</dt>
 <dd><p>(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".</p></dd>
+
+
 <dt>genes</dt>
 <dd><p>(character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).</p></dd>
+
+
 <dt>variantType</dt>
 <dd><p>(character) options: "auto", "snpId" or "variantId". Default: "auto".</p></dd>
+
+
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
+
+
 <dt>tissueSiteDetail</dt>
 <dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
-<dt>datasetId</dt>
-<dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="co"># Download eQTL info for a variant:</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"rs201327123"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"chr1_14677_G_A_b38"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"11_66328719_T_C_b37"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"11_66328719_T_C_b37"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span>,
-                    tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span>
-
-<span class="co"># Download eQTL association according to all tissues with genome location:</span>
-<span class="va">varInfo</span> <span class="op">&lt;-</span>  <span class="fu"><a href="xQTLquery_varPos.html">xQTLquery_varPos</a></span><span class="op">(</span>chrom<span class="op">=</span><span class="st">"chr1"</span>, pos<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1102708</span><span class="op">)</span>,<span class="st">"gtex_v8"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="va">varInfo</span><span class="op">$</span><span class="va">snpId</span><span class="op">)</span>
-
-<span class="co"># Download eQTL info for gene:</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="st">"ATAD3B"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP53"</span>, <span class="st">"SLC35E2B"</span><span class="op">)</span>, tissueSiteDetail<span class="op">=</span> <span class="st">"Brain - Cerebellum"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="st">"ENSG00000141510.16"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="st">"ENSG00000141510.11"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span>,
-                     tissueSiteDetail<span class="op">=</span><span class="st">"Thyroid"</span> <span class="op">)</span>
-
-<span class="co"># Download eQTL info for a variant-gene pair:</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>, genes<span class="op">=</span><span class="st">"TP53"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>, genes<span class="op">=</span><span class="st">"TP53"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1667948_A_G_b38"</span>,
-                     genes<span class="op">=</span><span class="st">"SLC35E2B"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Kidney - Cortex"</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="co"># Download eQTL info for a variant:</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"rs201327123"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"chr1_14677_G_A_b38"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span><span class="st">"chr1_14677_G_A_b38"</span>,</span>
+<span>                    tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download eQTL association according to all tissues with genome location:</span></span>
+<span><span class="va">varInfo</span> <span class="op">&lt;-</span>  <span class="fu"><a href="xQTLquery_varPos.html">xQTLquery_varPos</a></span><span class="op">(</span>chrom<span class="op">=</span><span class="st">"chr1"</span>, pos<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1102708</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="va">varInfo</span><span class="op">$</span><span class="va">snpId</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download eQTL info for gene:</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="st">"ATAD3B"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP53"</span>, <span class="st">"SLC35E2B"</span><span class="op">)</span>, tissueSiteDetail<span class="op">=</span> <span class="st">"Brain - Cerebellum"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>genes<span class="op">=</span><span class="st">"ENSG00000141510.16"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download eQTL info for a variant-gene pair:</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>, genes<span class="op">=</span><span class="st">"TP53"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtlSig</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1667948_A_G_b38"</span>,</span>
+<span>                     genes<span class="op">=</span><span class="st">"SLC35E2B"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Kidney - Cortex"</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -133,7 +136,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

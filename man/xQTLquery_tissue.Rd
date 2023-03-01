@@ -4,12 +4,10 @@
 \alias{xQTLquery_tissue}
 \title{Fetch all details of a specified tissue or all tissues}
 \usage{
-xQTLquery_tissue(tissueName = "", datasetId = "gtex_v8")
+xQTLquery_tissue(tissueName = "")
 }
 \arguments{
 \item{tissueName}{Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A data.table object.
@@ -18,6 +16,7 @@ A data.table object.
 Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 }
 \examples{
-tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
-BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
+tissueAll <- xQTLquery_tissue() # fetch all tissues
+Brain <- xQTLquery_tissue("Brain")
+Brains <- xQTLquery_tissue("Brain - Hippocampus")
 }

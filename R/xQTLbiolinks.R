@@ -4,6 +4,7 @@
 #'
 #' @docType package
 #' @name xQTLbiolinks
+#' @keywords internal
 NULL
 
 #' @title  Tissue name and tissue id mapping of GTEx V8.

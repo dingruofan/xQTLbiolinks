@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,61 +62,77 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>
-  gene <span class="op">=</span> <span class="st">""</span>,
-  geneType <span class="op">=</span> <span class="st">"auto"</span>,
-  variantName <span class="op">=</span> <span class="st">""</span>,
-  variantType <span class="op">=</span> <span class="st">"auto"</span>,
-  tissueLabel <span class="op">=</span> <span class="st">""</span>,
-  study <span class="op">=</span> <span class="st">"gtex_v8"</span>,
-  recordPerChunk <span class="op">=</span> <span class="fl">1000</span>,
-  withB37VariantId <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span></span>
+<span>  gene <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  geneType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  variantName <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  variantType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  tissueLabel <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  study <span class="op">=</span> <span class="st">"gtex_v8"</span>,</span>
+<span>  recordPerChunk <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  withB37VariantId <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gene</dt>
 <dd><p>(character) gene symbol or gencode id (versioned or unversioned are both supported).</p></dd>
+
+
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
+
+
 <dt>variantName</dt>
 <dd><p>(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".</p></dd>
+
+
 <dt>variantType</dt>
 <dd><p>(character) options: "auto", "snpId" or "variantId". Default: "auto".</p></dd>
+
+
 <dt>tissueLabel</dt>
 <dd><p>(character) all supported tissues can be listed using "ebi_study_tissues"</p></dd>
+
+
 <dt>study</dt>
 <dd><p>(character) name of studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).</p></dd>
+
+
 <dt>recordPerChunk</dt>
 <dd><p>(integer) number of records fetched per request (default: 1000).</p></dd>
+
+
 <dt>withB37VariantId</dt>
 <dd><p>a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="co"># Download all associations of MLH1-rs13315355 pair in all tissues from all studies:</span>
-<span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MLH1"</span>, variantName <span class="op">=</span> <span class="st">"rs13315355"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
-
-<span class="co"># Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):</span>
-<span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>,tissueLabel <span class="op">=</span> <span class="st">"CD4+ T cell"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
-
-<span class="co"># Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:</span>
-<span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span><span class="st">"ATP11B"</span>, tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span>
-
-<span class="co"># Download all associations of SNP rs11568818 in all tissues from all supported studies.</span>
-<span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span>
-<span class="co"># Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:</span>
-<span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_102530930_T_C_b38"</span>,
-                                    tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="co"># Download all associations of MLH1-rs13315355 pair in all tissues from all studies:</span></span>
+<span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MLH1"</span>, variantName <span class="op">=</span> <span class="st">"rs13315355"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download associations of gene ATP11B in CD4+ T cell from all supported studies(time-consuming):</span></span>
+<span><span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>,tissueLabel <span class="op">=</span> <span class="st">"CD4+ T cell"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:</span></span>
+<span><span class="va">geneAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span><span class="st">"ATP11B"</span>, tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download all associations of SNP rs11568818 in all tissues from all supported studies.</span></span>
+<span><span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
+<span><span class="co"># Download associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:</span></span>
+<span><span class="va">varAsso</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtlAllAsso</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_102530930_T_C_b38"</span>,</span>
+<span>                                    tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -130,7 +146,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

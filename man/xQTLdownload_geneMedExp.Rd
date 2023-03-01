@@ -7,7 +7,6 @@
 xQTLdownload_geneMedExp(
   genes = "",
   geneType = "auto",
-  datasetId = "gtex_v8",
   tissueSiteDetail = "",
   recordPerChunk = 150
 )
@@ -16,8 +15,6 @@ xQTLdownload_geneMedExp(
 \item{genes}{(character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 

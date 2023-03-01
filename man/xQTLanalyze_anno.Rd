@@ -19,8 +19,8 @@ annotate variants with genome positon
 }
 \examples{
 \donttest{
-url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
-snpInfo <- fread(url1, sep="\t")
+url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+snpInfo <- data.table::fread(url1, sep="\t")
 snpHits <- xQTLanalyze_anno(snpInfo)
 }
 }

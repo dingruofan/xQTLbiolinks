@@ -8,7 +8,6 @@ xQTLvisual_geneExpTissues(
   gene = "",
   geneType = "auto",
   tissues = "All",
-  datasetId = "gtex_v8",
   log10y = FALSE,
   toTissueSite = FALSE
 )
@@ -19,8 +18,6 @@ xQTLvisual_geneExpTissues(
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissues}{A character string or a vector. "All" (default) means that all tissues is included.}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{log10y}{Display values of expression in log scale. Default: FALSE.}
 

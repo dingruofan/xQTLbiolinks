@@ -8,7 +8,6 @@ xQTLdownload_exp(
   genes = "",
   geneType = "auto",
   tissueSiteDetail = "Liver",
-  datasetId = "gtex_v8",
   toSummarizedExperiment = TRUE,
   recordPerChunk = 80,
   pathologyNotesCategories = FALSE
@@ -20,8 +19,6 @@ xQTLdownload_exp(
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{toSummarizedExperiment}{a logical value indicating whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.}
 

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,14 +62,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLvisual_locusCombine</span><span class="op">(</span>
-  <span class="va">gwasEqtldata</span>,
-  posRange <span class="op">=</span> <span class="st">""</span>,
-  population <span class="op">=</span> <span class="st">"EUR"</span>,
-  highlightSnp <span class="op">=</span> <span class="st">""</span>,
-  legend_position <span class="op">=</span> <span class="st">"bottomright"</span>,
-  snpLD <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_locusCombine</span><span class="op">(</span></span>
+<span>  <span class="va">gwasEqtldata</span>,</span>
+<span>  posRange <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  population <span class="op">=</span> <span class="st">"EUR"</span>,</span>
+<span>  highlightSnp <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  legend_position <span class="op">=</span> <span class="st">"bottomright"</span>,</span>
+<span>  snpLD <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,29 +81,41 @@
 <p><code>Col 3</code>. "postion" (integer), genome position of snp.</p>
 <p><code>Col 4</code>. "P-value" (numeric) of GWAS signals.</p>
 <p><code>Col 5</code>. "P-value" (numeric) of eQTL signals.</p></dd>
+
+
 <dt>posRange</dt>
 <dd><p>Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.</p></dd>
+
+
 <dt>population</dt>
 <dd><p>One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.</p></dd>
+
+
 <dt>highlightSnp</dt>
 <dd><p>Default is the snp that with lowest p-value.</p></dd>
+
+
 <dt>legend_position</dt>
 <dd><p>(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.</p></dd>
+
+
 <dt>snpLD</dt>
 <dd><p>A data.frame object of LD matrix. Default is null.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A ggplot object.</p>
+    
+
+<p>A ggplot object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># load data:</span>
-<span class="va">u1</span> <span class="op">&lt;-</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"</span>
-<span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">u1</span><span class="op">)</span>
-<span class="fu">xQTLvisual_locusCombine</span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># load data:</span></span>
+<span><span class="va">u1</span> <span class="op">&lt;-</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"</span></span>
+<span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">u1</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_locusCombine</span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -117,7 +129,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

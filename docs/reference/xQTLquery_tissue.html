@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,26 +62,27 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLquery_tissue</span><span class="op">(</span>tissueName <span class="op">=</span> <span class="st">""</span>, datasetId <span class="op">=</span> <span class="st">"gtex_v8"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLquery_tissue</span><span class="op">(</span>tissueName <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>tissueName</dt>
 <dd><p>Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
-<dt>datasetId</dt>
-<dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">tissueAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_tissue</span><span class="op">(</span>datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
-<span class="va">BrainInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_tissue</span><span class="op">(</span><span class="st">"Brain"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v7"</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">tissueAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_tissue</span><span class="op">(</span><span class="op">)</span> <span class="co"># fetch all tissues</span></span>
+<span><span class="va">Brain</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_tissue</span><span class="op">(</span><span class="st">"Brain"</span><span class="op">)</span></span>
+<span><span class="va">Brains</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_tissue</span><span class="op">(</span><span class="st">"Brain - Hippocampus"</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -95,7 +96,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

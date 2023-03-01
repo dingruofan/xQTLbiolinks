@@ -11,7 +11,7 @@ xQTLvisual_enrich(enrichHits, pValueBy = 5, plotType = "boxplot")
 
 \item{pValueBy}{Cut step of pvlaue. Defaults: 5}
 
-\item{plotType}{"point", or "density"}
+\item{plotType}{"boxplot", or "density"}
 }
 \value{
 A ggplot object
@@ -24,6 +24,6 @@ Visualizing enriched variants
 url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
 enrichHits <- xQTLanalyze_enrich(snpInfo, enrichElement="TF")
-xQTLvisual_enrich(enrichHits, plotType="boxplot")
+xQTLvisual_enrich(enrichHits, plotType="density")
 }
 }

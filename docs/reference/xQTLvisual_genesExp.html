@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,44 +62,43 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span>
-  <span class="va">genes</span>,
-  geneType <span class="op">=</span> <span class="st">"auto"</span>,
-  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,
-  datasetId <span class="op">=</span> <span class="st">"gtex_v8"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType <span class="op">=</span> <span class="st">"auto"</span>, tissueSiteDetail <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>genes</dt>
 <dd><p>(character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).</p></dd>
+
+
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
+
+
 <dt>tissueSiteDetail</dt>
 <dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
-<dt>datasetId</dt>
-<dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A ggplot object.</p>
+    
+
+<p>A ggplot object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FNDC8"</span>, <span class="st">"S100Z"</span>, <span class="st">"AQP6"</span>, <span class="st">"AMOT"</span>, <span class="st">"C3orf38"</span>, <span class="st">"FOXL1"</span>, <span class="st">"COX11"</span>,
-           <span class="st">"FCN3"</span>, <span class="st">"DDX58"</span>, <span class="st">"CFI"</span>, <span class="st">"MS4A18"</span>, <span class="st">"NUDT13"</span>, <span class="st">"HOXA4"</span>, <span class="st">"VSX1"</span><span class="op">)</span>
-<span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span>
-
-<span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000073598.5"</span>,<span class="st">"ENSG00000171643.13"</span>,<span class="st">"ENSG00000086159.12"</span>,<span class="st">"ENSG00000126016.15"</span>,
-           <span class="st">"ENSG00000179021.9"</span>,<span class="st">"ENSG00000176678.5"</span>,<span class="st">"ENSG00000166260.10"</span>,<span class="st">"ENSG00000142748.12"</span>,
-           <span class="st">"ENSG00000107201.9"</span>,<span class="st">"ENSG00000205403.12"</span>,<span class="st">"ENSG00000214782.7"</span>,<span class="st">"ENSG00000166321.13"</span>,
-           <span class="st">"ENSG00000197576.13"</span>,<span class="st">"ENSG00000100987.14"</span><span class="op">)</span>
-<span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FNDC8"</span>, <span class="st">"S100Z"</span>, <span class="st">"AQP6"</span>, <span class="st">"AMOT"</span>, <span class="st">"C3orf38"</span>, <span class="st">"FOXL1"</span>, <span class="st">"COX11"</span>,</span>
+<span>           <span class="st">"FCN3"</span>, <span class="st">"DDX58"</span>, <span class="st">"CFI"</span>, <span class="st">"MS4A18"</span>, <span class="st">"NUDT13"</span>, <span class="st">"HOXA4"</span>, <span class="st">"VSX1"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000073598.5"</span>,<span class="st">"ENSG00000171643.13"</span>,<span class="st">"ENSG00000086159.12"</span>,<span class="st">"ENSG00000126016.15"</span>,</span>
+<span>           <span class="st">"ENSG00000179021.9"</span>,<span class="st">"ENSG00000176678.5"</span>,<span class="st">"ENSG00000166260.10"</span>,<span class="st">"ENSG00000142748.12"</span>,</span>
+<span>           <span class="st">"ENSG00000107201.9"</span>,<span class="st">"ENSG00000205403.12"</span>,<span class="st">"ENSG00000214782.7"</span>,<span class="st">"ENSG00000166321.13"</span>,</span>
+<span>           <span class="st">"ENSG00000197576.13"</span>,<span class="st">"ENSG00000100987.14"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -113,7 +112,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

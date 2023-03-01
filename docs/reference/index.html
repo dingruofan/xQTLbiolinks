@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -87,6 +87,14 @@
           <p><code><a href="xQTLquery_varPos.html">xQTLquery_varPos()</a></code> </p>
         </td>
         <td><p>Query varints in GTEx using genome position.</p></td>
+      </tr><tr><td>
+          <p><code><a href="EBIquery_allTerm.html">EBIquery_allTerm()</a></code> </p>
+        </td>
+        <td><p>EBIquery_allTerm</p></td>
+      </tr><tr><td>
+          <p><code><a href="extractGeneInfo.html">extractGeneInfo()</a></code> </p>
+        </td>
+        <td><p>extract gene infor of specified genome from gencodeGeneInfoAllGranges</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="download">Download <a href="#download" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -135,11 +143,27 @@
           <p><code><a href="xQTLdownload_sqtlSig.html">xQTLdownload_sqtlSig()</a></code> </p>
         </td>
         <td><p>Download significant sQTL associations of a tissue or across all tissues</p></td>
+      </tr><tr><td>
+          <p><code><a href="retrieveLD.html">retrieveLD()</a></code> </p>
+        </td>
+        <td><p>Retrive SNP pairwise LD from locuscompare database.</p></td>
+      </tr><tr><td>
+          <p><code><a href="retrieveLD_LDproxy.html">retrieveLD_LDproxy()</a></code> </p>
+        </td>
+        <td><p>Retrive SNP pairwise LD from LDlink database</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="visualize">Visualize <a href="#visualize" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="xQTLvisual_anno.html">xQTLvisual_anno()</a></code> </p>
+        </td>
+        <td><p>Visualizing annotated variants</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLvisual_enrich.html">xQTLvisual_enrich()</a></code> </p>
+        </td>
+        <td><p>Visualizing enriched variants</p></td>
+      </tr><tr><td>
           <p><code><a href="xQTLvisual_eqtl.html">xQTLvisual_eqtl()</a></code> </p>
         </td>
         <td><p>Box plot with jittered points for showing number and significance of eQTL associations</p></td>
@@ -168,6 +192,14 @@
         </td>
         <td><p>Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics</p></td>
       </tr><tr><td>
+          <p><code><a href="xQTLvisual_PNPlot.html">xQTLvisual_PNPlot()</a></code> </p>
+        </td>
+        <td><p>P-N plot</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLvisual_qqPlot.html">xQTLvisual_qqPlot()</a></code> </p>
+        </td>
+        <td><p>plot quantile-quantile plot with pvalue</p></td>
+      </tr><tr><td>
           <p><code><a href="xQTLvisual_qtlPropensity.html">xQTLvisual_qtlPropensity()</a></code> </p>
         </td>
         <td><p>Visualization of QTL specificity among multiple cells/tissues.</p></td>
@@ -180,9 +212,25 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="xQTLanalyze_anno.html">xQTLanalyze_anno()</a></code> </p>
+        </td>
+        <td><p>annotate variants with genome positon</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_calLambda.html">xQTLanalyze_calLambda()</a></code> </p>
+        </td>
+        <td><p>calculate genomic control inflation factor</p></td>
+      </tr><tr><td>
           <p><code><a href="xQTLanalyze_coloc.html">xQTLanalyze_coloc()</a></code> </p>
         </td>
         <td><p>Conduct colocalization analysis with trait genes generated from <code>xQTLanalyze_getTraits</code></p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_coloc_diy.html">xQTLanalyze_coloc_diy()</a></code> </p>
+        </td>
+        <td><p>conduct colocalization analysis with customized QTL data</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_enrich.html">xQTLanalyze_enrich()</a></code> </p>
+        </td>
+        <td><p>variant enrichment analysis</p></td>
       </tr><tr><td>
           <p><code><a href="xQTLanalyze_getSentinelSnp.html">xQTLanalyze_getSentinelSnp()</a></code> </p>
         </td>
@@ -195,10 +243,6 @@
           <p><code><a href="xQTLanalyze_propensity.html">xQTLanalyze_propensity()</a></code> </p>
         </td>
         <td><p>eQTL-specific analysis</p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_TSExp.html">xQTLanalyze_TSExp()</a></code> </p>
-        </td>
-        <td><p>Perform tissue-specific expression analysis for genes.</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -212,7 +256,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

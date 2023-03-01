@@ -15,7 +15,6 @@
 #' }
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #'
-#' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
 #' @param recordPerChunk (integer) number of records fetched per request (default: 150).
 #'
 #' @return A data.table object of queried gene information. including following columns:
@@ -47,17 +46,14 @@
 #' geneInfo <- xQTLquery_gene("TP53")
 #' geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
 #' geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
-#'
-#' # query gene of gencode version v19/hg19
-#' geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
-#' geneInfo <- xQTLquery_gene(c("ENSG00000141510.16","ENSG00000008130.15"))
-xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", recordPerChunk=150){
+xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
   page_tmp <- 0
   pageSize_tmp <- recordPerChunk
   cutNum <- recordPerChunk
   genomeBuild="GRCh38/hg38"
+  gencodeVersion="v26"
 
   # check genes
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
@@ -266,7 +262,6 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @title Query sample's details with tissue name
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #' @import data.table
@@ -278,11 +273,12 @@ xQTLquery_gene <- function(genes="", geneType="auto", gencodeVersion="v26", reco
 #' @examples
 #' sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala" )
 #' sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", pathologyNotesCategories=TRUE)
-xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", datasetId="gtex_v8", recordPerChunk=200, pathologyNotesCategories=FALSE ){
+xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ", recordPerChunk=200, pathologyNotesCategories=FALSE ){
   sampleId <- sex <- ageBracket <- pathologyNotes <- hardyScale <- NULL
   .<-NULL
   page_tmp <- 0
   pageSize_tmp <- as.integer(recordPerChunk)
+  datasetId="gtex_v8"
 
   ########## parameter check: tissueSiteDetail
   if( is.null(datasetId) ||  any(is.na(datasetId)) ){
@@ -610,7 +606,6 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #' @title Query variant in GTEx with variant ID or dbSNP ID
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import curl
 #' @import stringr
@@ -621,10 +616,9 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 #'
 #' @examples
 #' xQTLquery_varId("rs12596338")
-#' xQTLquery_varId("rs12596338", datasetId="gtex_v7")
 #' xQTLquery_varId("chr11_66561248_T_C_b38")
-#' xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
-xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_v8"){
+xQTLquery_varId <- function(variantName="", variantType="auto"){
+  datasetId="gtex_v8"
   ########## parameter check: variantName
   if(is.null(variantName) ||  any(is.na(variantName)) ){
     stop("Parameter \"variantName\" can not be NULL or NA!")
@@ -705,7 +699,6 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
 #' @title Query varints in GTEx using genome position.
 #' @param chrom (character) name of chromesome, including chr1-chr22, chrX, chrY.
 #' @param pos An integer array.
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @import data.table
 #' @import curl
@@ -717,11 +710,10 @@ xQTLquery_varId <- function(variantName="", variantType="auto", datasetId="gtex_
 #' @export
 #'
 #' @examples
-#' xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
-#' xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
-#' xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
-xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", recordPerChunk=200){
+#' xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739))
+xQTLquery_varPos <- function(chrom="", pos=numeric(0), recordPerChunk=200){
   .<-NULL
+  datasetId="gtex_v8"
   ########## parameter check: variantName
   if(is.null(chrom) ||  any(is.na(chrom)) ){
     stop("Parameter \"chrom\" can not be NULL or NA!")
@@ -808,15 +800,16 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), datasetId="gtex_v8", reco
 #' @description
 #'  Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 #' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #'
 #' @return A data.table object.
 #' @export
 #'
 #' @examples
-#' tissueAll <- xQTLquery_tissue(datasetId="gtex_v7")
-#' BrainInfo <- xQTLquery_tissue("Brain", datasetId="gtex_v7")
-xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
+#' tissueAll <- xQTLquery_tissue() # fetch all tissues
+#' Brain <- xQTLquery_tissue("Brain")
+#' Brains <- xQTLquery_tissue("Brain - Hippocampus")
+xQTLquery_tissue <- function(tissueName=""){
+  datasetId="gtex_v8"
   if(datasetId != "gtex_v8" && datasetId != "gtex_v7"){
     stop("\"datasetId\" must be choosen from \"gtex_v8\" or \"gtex_v7\"")
   }
@@ -878,6 +871,7 @@ xQTLquery_tissue <- function(tissueName="", datasetId="gtex_v8"){
 #'  test GTEx API server and return download method.
 #' @param fetchMethod fetchMethod.
 #' @return A character string of fetchContent method.
+#' @keywords internal
 apiAdmin_ping <- function(fetchMethod=""){
   url1 <- "https://gtexportal.org/rest/v1/admin/ping"
 
@@ -964,6 +958,7 @@ apiAdmin_ping <- function(fetchMethod=""){
 #' @title Heartbeat to check EBI API server connectivity.
 #' @description
 #'  test EBI API server and return download method.
+#' @keywords internal
 #' @return A character string of fetchContent method.
 apiEbi_ping <- function(){
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
@@ -1009,6 +1004,7 @@ apiEbi_ping <- function(){
 #' @import data.table
 #' @importFrom curl curl_fetch_memory
 #' @importFrom httr GET
+#' @keywords internal
 #' @return A json object.
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
   # if( method == "GetWithHeader"){
@@ -1075,7 +1071,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
     # Retry for-loop R loop if error
     for (downloadTime in 1:4){
       if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",3)}
-      if(downloadTime>3){message("=> Your connection is unstable.")}
+      if(downloadTime>3){message("=> Your connection is unstable, please download  in brower directly using following url: ")
+        message(url1)}
       df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
       if(!(inherits(df, "try-error"))) break
     }
@@ -1160,6 +1157,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
 #' @import data.table
+#' @keywords internal
 #' @return A data.table object.
 fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
   # method="curl"
@@ -1235,6 +1233,7 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
 #' @import utils
 #' @import curl
 #' @import jsonlite
+#' @keywords internal
 #' @return A data.table object.
 dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh38/hg38", track="snp151Common" ){
   # url1<-"https://api.genome.ucsc.edu/getData/track?genome=hg38;track=snp151Common;chrom=chr1;start=1;end=1000000"
@@ -1308,6 +1307,7 @@ dbsnpQueryRange <- function(chrom="", startPos=-1, endPos=-1, genomeBuild="GRCh3
 #'
 #' @param x A number
 #' @param tol Don't change
+#' @keywords internal
 #' @return TRUE or FALSE
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
   abs(x - round(x)) < tol
@@ -1415,4 +1415,54 @@ extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="v26"){
 
 
 
+#' @title Retrive SNP pairwise LD from LDlink database
+#'
+#' @param targetSnp target SNP, support dbSNP IP.
+#' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
+#' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
+#' @param method The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader", or "GET".
+#' @param genomeVersion "grch38"(default) or "grch37".
+#' @param max_count To prevent download failure due to network fluctuations, max number of connection attempts.
+#' @param token Ldlink token, default: "9246d2db7917"
+#'
+#' @export
+#' @return A data.table object.
+#'
+#' @examples
+#' # snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
+retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000, method="download", genomeVersion="grch38", max_count=3, token="9246d2db7917"){
+  # targetSnp="rs3"
+  # population="EUR"
+  # windowSize=500000
+  # genomeVersion="grch38"
+  # max_count=3
+  # token="9246d2db7917"
 
+  # get LD information:
+  s_count<-1
+  max_count<- 3
+
+  while( !exists("snpLDtmp") && s_count<=max_count ){
+    message("=== Geting LD info for SNP: ",targetSnp,"; trying ",s_count,"/",max_count,".")
+    url1 <- paste0("https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=",targetSnp,
+                   "&pop=",population,
+                   "&r2_d=","r2",
+                   "&window=",as.character(as.integer(windowSize)),
+                   "&genome_build=",genomeVersion,
+                   "&token=", token)
+    # message(url1)
+    # url1 <- "https://ldlink.nci.nih.gov/LDlinkRest/ldproxy?var=rs3&pop=MXL&r2_d=r2&window=100000&genome_build=grch38&token=9246d2db7917"
+    try( snpLDtmp <- fetchContent(url1, method=method, isJson=FALSE) )
+    if( exists("snpLDtmp") && ncol(snpLDtmp)<=1 ){
+      rm(snpLDtmp)
+    }else{
+      message("=== Done!")
+    }
+    s_count <- s_count+1
+  }
+  if(!exists("snpLDtmp") ){
+    return( NULL )
+  }else{
+    return(snpLDtmp)
+  }
+}

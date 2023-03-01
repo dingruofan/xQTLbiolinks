@@ -7,7 +7,6 @@
 xQTLquery_sampleByTissue(
   tissueSiteDetail = "Liver",
   dataType = "RNASEQ",
-  datasetId = "gtex_v8",
   recordPerChunk = 200,
   pathologyNotesCategories = FALSE
 )
@@ -16,8 +15,6 @@ xQTLquery_sampleByTissue(
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{dataType}{A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 

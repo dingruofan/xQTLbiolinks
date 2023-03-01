@@ -29,3 +29,4 @@ A data.table object.
 \description{
 retrieve snps from dbSNP using coordinate.
 }
+\keyword{internal}

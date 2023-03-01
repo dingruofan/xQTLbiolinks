@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -33,6 +33,9 @@
 </li>
 <li>
   <a href="../articles/visualization.html">Visualization</a>
+</li>
+<li>
+  <a href="../news/index.html">News</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/dingruofan/xQTLbiolinks/" class="external-link">
@@ -50,7 +53,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Retrive SNP pairwise LD from LDlink database</h1>
-    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/download.R" class="external-link"><code>R/download.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/R/query.R" class="external-link"><code>R/query.R</code></a></small>
     <div class="hidden name"><code>retrieveLD_LDproxy.Rd</code></div>
     </div>
 
@@ -59,43 +62,57 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">retrieveLD_LDproxy</span><span class="op">(</span>
-  targetSnp <span class="op">=</span> <span class="st">""</span>,
-  population <span class="op">=</span> <span class="st">"EUR"</span>,
-  windowSize <span class="op">=</span> <span class="fl">5e+05</span>,
-  method <span class="op">=</span> <span class="st">"download"</span>,
-  genomeVersion <span class="op">=</span> <span class="st">"grch38"</span>,
-  max_count <span class="op">=</span> <span class="fl">3</span>,
-  token <span class="op">=</span> <span class="st">"9246d2db7917"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">retrieveLD_LDproxy</span><span class="op">(</span></span>
+<span>  targetSnp <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  population <span class="op">=</span> <span class="st">"EUR"</span>,</span>
+<span>  windowSize <span class="op">=</span> <span class="fl">50000</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"download"</span>,</span>
+<span>  genomeVersion <span class="op">=</span> <span class="st">"grch38"</span>,</span>
+<span>  max_count <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  token <span class="op">=</span> <span class="st">"9246d2db7917"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>targetSnp</dt>
 <dd><p>target SNP, support dbSNP IP.</p></dd>
+
+
 <dt>population</dt>
 <dd><p>Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()</p></dd>
+
+
 <dt>windowSize</dt>
 <dd><p>Window around the highlighted snp for querying linkage disequilibrium information. Default:500000</p></dd>
+
+
 <dt>method</dt>
 <dd><p>The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader", or "GET".</p></dd>
+
+
 <dt>genomeVersion</dt>
 <dd><p>"grch38"(default) or "grch37".</p></dd>
+
+
 <dt>max_count</dt>
 <dd><p>To prevent download failure due to network fluctuations, max number of connection attempts.</p></dd>
+
+
 <dt>token</dt>
 <dd><p>Ldlink token, default: "9246d2db7917"</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># snpLD &lt;- retrieveLD_LDproxy("rs3", windowSize=5000)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># snpLD &lt;- retrieveLD_LDproxy("rs3", windowSize=5000)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -109,7 +126,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

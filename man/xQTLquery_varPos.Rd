@@ -4,19 +4,12 @@
 \alias{xQTLquery_varPos}
 \title{Query varints in GTEx using genome position.}
 \usage{
-xQTLquery_varPos(
-  chrom = "",
-  pos = numeric(0),
-  datasetId = "gtex_v8",
-  recordPerChunk = 200
-)
+xQTLquery_varPos(chrom = "", pos = numeric(0), recordPerChunk = 200)
 }
 \arguments{
 \item{chrom}{(character) name of chromesome, including chr1-chr22, chrX, chrY.}
 
 \item{pos}{An integer array.}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 }
@@ -27,7 +20,5 @@ A data.table object.
 Query varints in GTEx using genome position.
 }
 \examples{
-xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739),"gtex_v8")
-xQTLquery_varPos(chrom="1", pos=c(1038088,1041119),"gtex_v7")
-xQTLquery_varPos("1", c(1246438, 1211944, 1148100),"gtex_v7")
+xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739))
 }

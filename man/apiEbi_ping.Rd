@@ -12,3 +12,4 @@ A character string of fetchContent method.
 \description{
 test EBI API server and return download method.
 }
+\keyword{internal}

@@ -10,7 +10,6 @@ xQTLdownload_eqtl(
   variantType = "auto",
   geneType = "auto",
   tissueSiteDetail = "",
-  datasetId = "gtex_v8",
   recordPerChunk = 100
 )
 }
@@ -24,8 +23,6 @@ xQTLdownload_eqtl(
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 100).}
 }
@@ -41,13 +38,13 @@ can be quried with a gene/variant-gene pair.
 eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
 
 # Use unversioned gencode ID in GTEx V8:
-eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
+eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510")
 
 # In a specific tissue:
 xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",  tissueSiteDetail="Thyroid" )
 
 # Download eQTL info with a variant-gene pair:
-xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+xQTLdownload_eqtl(variantName="rs1641513",gene="TP53")
 xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
                   tissueSiteDetail="Kidney - Cortex")
 }

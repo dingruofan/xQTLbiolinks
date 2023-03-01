@@ -109,7 +109,19 @@
     <loc>/reference/tissueSiteDetailGTExv8.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLanalyze_anno.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLanalyze_calLambda.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLanalyze_coloc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLanalyze_coloc_diy.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLanalyze_enrich.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLanalyze_getSentinelSnp.html</loc>
@@ -187,6 +199,12 @@
     <loc>/reference/xQTLquery_varPos.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLvisual_anno.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_enrich.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLvisual_eqtl.html</loc>
   </url>
   <url>
@@ -209,6 +227,12 @@
   </url>
   <url>
     <loc>/reference/xQTLvisual_locusZoom.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_PNPlot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_qqPlot.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLvisual_qtlPropensity.html</loc>

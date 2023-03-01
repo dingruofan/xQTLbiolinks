@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,62 +62,86 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLanalyze_coloc</span><span class="op">(</span>
-  <span class="va">gwasDF</span>,
-  <span class="va">traitGene</span>,
-  geneType <span class="op">=</span> <span class="st">"auto"</span>,
-  genomeVersion <span class="op">=</span> <span class="st">"grch38"</span>,
-  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,
-  study <span class="op">=</span> <span class="st">"gtex_v8"</span>,
-  mafThreshold <span class="op">=</span> <span class="fl">0.01</span>,
-  population <span class="op">=</span> <span class="st">"EUR"</span>,
-  gwasSampleNum <span class="op">=</span> <span class="fl">50000</span>,
-  method <span class="op">=</span> <span class="st">"coloc"</span>,
-  token <span class="op">=</span> <span class="st">"9246d2db7917"</span>,
-  bb.alg <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLanalyze_coloc</span><span class="op">(</span></span>
+<span>  <span class="va">gwasDF</span>,</span>
+<span>  <span class="va">traitGene</span>,</span>
+<span>  geneType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  genomeVersion <span class="op">=</span> <span class="st">"grch38"</span>,</span>
+<span>  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  study <span class="op">=</span> <span class="st">"gtex_v8"</span>,</span>
+<span>  mafThreshold <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  population <span class="op">=</span> <span class="st">"EUR"</span>,</span>
+<span>  gwasSampleNum <span class="op">=</span> <span class="fl">50000</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"coloc"</span>,</span>
+<span>  token <span class="op">=</span> <span class="st">"9246d2db7917"</span>,</span>
+<span>  bb.alg <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gwasDF</dt>
 <dd><p>A data.frame or data.table objectof gwas.</p></dd>
+
+
 <dt>traitGene</dt>
 <dd><p>A gene symbol or a gencode id (versioned).</p></dd>
+
+
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
+
+
 <dt>genomeVersion</dt>
 <dd><p>"grch38" (default) or "grch37". Note: grch37 will be converted to grch38 automatically.</p></dd>
+
+
 <dt>tissueSiteDetail</dt>
 <dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
+
+
 <dt>study</dt>
 <dd><p>(character) name of studies can be listed using "ebi_study_tissues"</p></dd>
+
+
 <dt>mafThreshold</dt>
 <dd><p>Cutoff of maf to remove rare variants.</p></dd>
+
+
 <dt>population</dt>
 <dd><p>Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"</p></dd>
+
+
 <dt>gwasSampleNum</dt>
 <dd><p>Sample number of GWAS dataset. Default:50000.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>(character) options: "coloc"(default) or "hyprcoloc". Package <code>coloc</code> or <code>hyprcoloc</code> is required.</p></dd>
+
+
 <dt>token</dt>
 <dd><p>LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess</p></dd>
+
+
 <dt>bb.alg</dt>
 <dd><p>For <code>hyprcoloc</code>, branch and bound algorithm: TRUE, employ BB algorithm; FALSE, do not. Default: FALSE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of coloc result and details.</p>
+    
+
+<p>A list of coloc result and details.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="va">url1</span> <span class="op">&lt;-</span> <span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"</span>
-<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url1</span><span class="op">)</span>
-<span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_coloc</span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF</span>, traitGene<span class="op">=</span> <span class="st">"MMP7"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Prostate"</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="va">url1</span> <span class="op">&lt;-</span> <span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url1</span><span class="op">)</span></span>
+<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_coloc</span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF</span>, traitGene<span class="op">=</span> <span class="st">"MMP7"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Prostate"</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -131,7 +155,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

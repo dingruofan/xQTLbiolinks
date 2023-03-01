@@ -24,6 +24,6 @@ Visualizing annotated variants
 url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
 snpHits <- xQTLanalyze_anno(snpInfo)
-xQTLvisual_anno(snpHits, plotType="pie")
+xQTLvisual_anno(snpHits, plotType="point")
 }
 }

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,31 +62,42 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dbsnpQueryRange</span><span class="op">(</span>
-  chrom <span class="op">=</span> <span class="st">""</span>,
-  startPos <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
-  endPos <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
-  genomeBuild <span class="op">=</span> <span class="st">"GRCh38/hg38"</span>,
-  track <span class="op">=</span> <span class="st">"snp151Common"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dbsnpQueryRange</span><span class="op">(</span></span>
+<span>  chrom <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  startPos <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
+<span>  endPos <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
+<span>  genomeBuild <span class="op">=</span> <span class="st">"GRCh38/hg38"</span>,</span>
+<span>  track <span class="op">=</span> <span class="st">"snp151Common"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>chrom</dt>
 <dd><p>(character) name of chromesome, including chr1-chr22, chrX, chrY.</p></dd>
+
+
 <dt>startPos</dt>
 <dd><p>A positive integer.</p></dd>
+
+
 <dt>endPos</dt>
 <dd><p>A positive integer.</p></dd>
+
+
 <dt>genomeBuild</dt>
 <dd><p>"GRCh38/hg38" or "GRCh38/hg19". Default: "GRCh38/hg38".</p></dd>
+
+
 <dt>track</dt>
 <dd><p>"snp151Common", "snp150Common" or "snp147Common". Default: "snp151Common".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
   </div>
@@ -101,7 +112,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -9,8 +9,7 @@ xQTLvisual_eqtlExp(
   gene = "",
   variantType = "auto",
   geneType = "auto",
-  tissueSiteDetail = "",
-  datasetId = "gtex_v8"
+  tissueSiteDetail = ""
 )
 }
 \arguments{
@@ -23,8 +22,6 @@ xQTLvisual_eqtlExp(
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A list containing eQTL detail, expression profile and a ggplot object.

@@ -7,7 +7,6 @@
 xQTLdownload_egene(
   gene = "",
   geneType = "auto",
-  datasetId = "gtex_v8",
   tissueSiteDetail = "",
   recordPerChunk = 2000
 )
@@ -16,8 +15,6 @@ xQTLdownload_egene(
 \item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 

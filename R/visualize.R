@@ -4,7 +4,6 @@
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -18,9 +17,9 @@
 #' \donttest{
 #' expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
 #' }
-xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
+xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="" ){
   genoLabels <- normExp <- labelNum <- p <- NULL
-
+  datasetId="gtex_v8"
   # library(crayon)
   # cat(green(
   #   'I am a green line ' %+%
@@ -158,7 +157,6 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -172,9 +170,9 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",
 #'           phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
 #'           tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
-xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8" ){
+xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail=""){
   genoLabels <- normExp <-geneType<- labelNum <- p <- NULL
-
+  datasetId="gtex_v8"
   # library(crayon)
   # cat(green(
   #   'I am a green line ' %+%
@@ -210,7 +208,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
   }
 
   # 获得突变信息：
-  varInfo <- xQTLquery_varId(variantName=variantName, variantType=variantType,datasetId="gtex_v8" )
+  varInfo <- xQTLquery_varId(variantName=variantName, variantType=variantType )
 
 
   # check tissueSiteDetail:
@@ -271,7 +269,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
 
   if( requireNamespace("ggplot2") ){
-    p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+    p<- ggplot2::ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
       geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
       geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
       scale_fill_brewer(palette="Dark2") +
@@ -382,10 +380,11 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   if( is.null(snpLD) ){
     message("== Retrieve LD information of SNP: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(DF[order(pValue)][hSnpCount,]$chrom, highlightSnp, population))
-    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population),snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)])
     data.table::setDT(snpLD)
+
   }
-  # snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
+
 
   # Set LD SNP color:
   if( nrow(snpLD)>0 ){
@@ -445,7 +444,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   # xlab:
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
-  p <- ggplot(DF)+
+  p <- ggplot2::ggplot(DF)+
     geom_point(aes(x=pos, y=logP, fill=r2Cut,  size=pointShape, shape=pointShape), color="black")+
     scale_size_manual(breaks = c('normal', "highlight"), values =  c(3,3.5)  )+
     scale_shape_manual(breaks = c('normal', "highlight"), values =  c(21,23) )+
@@ -563,10 +562,11 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
     message(" == Done.")
     message("== Retrieve LD information of SNP: [",highlightSnp,"]...")
     try(snpLD <- retrieveLD(highlightSnpInfo$chromosome, highlightSnp, population))
-    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population), snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)])
     data.table::setDT(snpLD)
+
   }
-  # snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)]
+
 
   # Set LD SNP color:
   if( nrow(snpLD)>0 ){
@@ -713,20 +713,20 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
   if(highlightSnp ==""){
     highlightSnp <- DF[order(-distance)][hSnpCount,]$rsid
     message("== Highlighted SNP: [",highlightSnp,"]...")
-    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+    # highlightSnpInfo <- xQTLquery_varId(highlightSnp)
   }else{
     message("== Highlighted SNP: [",highlightSnp,"]")
-    highlightSnpInfo <- xQTLquery_varId(highlightSnp)
+    # highlightSnpInfo <- xQTLquery_varId(highlightSnp)
   }
 
   # LD info:
   if( is.null(snpLD) ){
     message("== Retrieve LD information of SNP: [",highlightSnp,"]...")
     try( snpLD <- retrieveLD(DF[1,]$chrom, highlightSnp, population) )
-    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population, windowSize = windowSize, genomeVersion = genomeVersion, token = token) )
+    # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population),snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)])
     data.table::setDT(snpLD)
-  }
 
+  }
   message("Start plotting locuscomappre...")
   p_scatter<- xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], gwasEqtldata[,.(rsid, pValue.gwas)],
                                       highlightSnp=highlightSnp, population = population, legend_position = legend_position, snpLD = snpLD)
@@ -746,10 +746,10 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
+#' @import viridis
 #' @importFrom SummarizedExperiment assay colData
 #' @return A ggplot object.
 #' @export
@@ -766,9 +766,9 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #'            "ENSG00000197576.13","ENSG00000100987.14")
 #' xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
 #' }
-xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", datasetId="gtex_v8"){
+xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = ""){
   `..density..`<-geneSymbol <- NULL
-
+  datasetId="gtex_v8"
   # Automatically determine the type of variable:
   if(geneType=="auto"){
     if( all(unlist(lapply(genes, function(g){ str_detect(g, "^ENSG") }))) ){
@@ -778,7 +778,7 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
     }
   }
 
-  expProfiles <- xQTLdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, datasetId = datasetId, toSummarizedExperiment=TRUE)
+  expProfiles <- xQTLdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, toSummarizedExperiment=TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), SummarizedExperiment::assay(expProfiles) ))
   expData1 <- melt(expData, id.vars="geneSymbol", variable.name = "sampleId", value.name="exp")
   p <- ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
@@ -803,11 +803,9 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' @title Box plot with jittered points for showing number and significance of eQTL associations
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
-#' @import PupillometryR
 #' @return A ggplot object.
 #' @export
 #'
@@ -815,9 +813,10 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", d
 #' \donttest{
 #' xQTLvisual_eqtl("KIF15")
 #' }
-xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
+xQTLvisual_eqtl <- function(gene, geneType="auto" ){
   variantId <- tissueSiteDetail <- pValue <- logP <- NULL
   . <- NULL
+  datasetId = "gtex_v8"
   # gene="KIF15"
   if( datasetId=="gtex_v8" ){
     gencodeVersion="v26"
@@ -834,8 +833,8 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
     }
   }
 
-  geneInfo <- xQTLquery_gene(gene, geneType = geneType, gencodeVersion = gencodeVersion )
-  geneEqtl <- xQTLdownload_eqtlSig(genes=geneInfo$geneSymbol, datasetId=datasetId)
+  geneInfo <- xQTLquery_gene(gene, geneType = geneType )
+  geneEqtl <- xQTLdownload_eqtlSig(genes=geneInfo$geneSymbol)
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)
@@ -863,7 +862,6 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissues A character string or a vector. "All" (default) means that all tissues is included.
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param log10y Display values of expression in log scale. Default: FALSE.
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
 #'
@@ -875,9 +873,10 @@ xQTLvisual_eqtl <- function(gene, geneType="auto", datasetId = "gtex_v8" ){
 #' # Display gene expression in specified tissues.
 #' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
 #' }
-xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", datasetId="gtex_v8", log10y=FALSE, toTissueSite=FALSE){
+xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", log10y=FALSE, toTissueSite=FALSE){
   colorHex <- tissueSite <- expTPM <- NULL
   .<-NULL
+  datasetId="gtex_v8"
 
   if(datasetId == "gtex_v8"){
     tissueSiteDetail <- data.table::copy(tissueSiteDetailGTExv8)
@@ -909,7 +908,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", d
   }
   message("== This may take A few minutes...", format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
   for(t in 1:length(tissueSiteDetail_)){
-    suppressMessages( expTmp <- xQTLdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissueSiteDetail_[t], datasetId=datasetId, toSummarizedExperiment = FALSE) )
+    suppressMessages( expTmp <- xQTLdownload_exp( genes = gene, geneType = geneType, tissueSiteDetail=tissueSiteDetail_[t], toSummarizedExperiment = FALSE) )
     expTmpGencodeId <- expTmp$gencodeId
     expTmp <- as.data.frame(t(expTmp))
     expTmp <- expTmp[ str_detect(rownames(expTmp), stringr::regex("^GTEX-")),, drop=FALSE]
@@ -1157,9 +1156,11 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 #' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
 #' snpHits <- xQTLanalyze_anno(snpInfo)
-#' xQTLvisual_anno(snpHits, plotType="pie")
+#' xQTLvisual_anno(snpHits, plotType="point")
 #' }
 xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
+  cutP <- Num <- Type <- NumSum <- prop <-NULL
+  .<-NULL
 
   typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","cds","utr3","utr5","tfCluster","spliceSite","ingergenic"),
                          Type = c("CPG island", "Enhancer", "Promoter", "Exon", "CDS", "3'UTR", "5'UTR", "TF cluster", "Splice site", "Intergenic"))
@@ -1261,7 +1262,7 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
 #'
 #' @param enrichHits A data.table object from result of xQTLanalyze_enrich
 #' @param pValueBy Cut step of pvlaue. Defaults: 5
-#' @param plotType "point", or "density"
+#' @param plotType "boxplot", or "density"
 #'
 #' @return A ggplot object
 #' @export
@@ -1271,9 +1272,12 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
 #' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
 #' enrichHits <- xQTLanalyze_enrich(snpInfo, enrichElement="TF")
-#' xQTLvisual_enrich(enrichHits, plotType="boxplot")
+#' xQTLvisual_enrich(enrichHits, plotType="density")
 #' }
 xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
+  cutP <- NULL
+  .<-NULL
+
   enrichHits$logP <- log(enrichHits$pValue, base=10)*(-1)
   enrichHits$logP <- ifelse(enrichHits$logP==0, 1e-6, enrichHits$logP)
   enrichHits$cutP <- cut(enrichHits$logP,breaks= ceiling(seq(0,max(enrichHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
@@ -1300,13 +1304,14 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
   }else if(plotType=="density"){
     p1 <- ggplot(enrichHits, aes(x=dist))+
       geom_density(aes(color=cutP,fill=cutP),alpha=0.3)+ #添加密度图层
+      # scale_fill_manual(name=expression(-log["10"]("Pvalue")))+
       scale_x_log10(limits = c(1,(max(enrichHits$dist)+100)),breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))))+
       xlab("Distance")+
       ylab("density")+
       theme_bw()+
       theme(
-        axis.text = element_text(size=rel(1.1)),
-        axis.title = element_text(size=rel(1.2)),
+        axis.text = element_text(size=rel(1.3)),
+        axis.title = element_text(size=rel(1.4)),
         panel.grid = element_blank()
       ) #+ scale_x_log10()
     print(p1)
@@ -1314,4 +1319,132 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
   }
 }
 
+#' @title plot quantile-quantile plot with pvalue
+#'
+#' @param summaryDT A data.frame of one col required: pval.
+#' @param legend_p TRUE or FALSE, or legend position, including: top, bottom, left and right.
+#' @param binCutLogP SNPs whose logP great than this will be binned, other than not binned.
+#' @param binNumber Number of bins.
+#' @import ggplot2
+#'
+#' @return ggplot2 object
+#' @examples
+#' \donttest{
+#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' snpInfo <- fread(url1, sep="\t")
+#' xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
+#' }
+xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=10, binNumber=80000){
+  pval <- observedLogP <- expectedLogP <- NULL
+  .<- NULL
 
+  message("== Number of variants: ", nrow(summaryDT), "  ",date())
+  summaryDT <- summaryDT[,1]
+  names(summaryDT) <- c("pval")
+  summaryDT <- na.omit(summaryDT)
+
+  # 用原始值计算 lamdba，用bin 值作图：
+  legend_p <- ifelse(legend_p, legend_p, "none")
+
+  if(!requireNamespace("ggplot2")){stop("Require ggplot2")}
+
+  message("calculating lamdba: ", date())
+  #lamdba_p <- round(median((qnorm(summaryDT$pval/ 2))^2, na.rm =TRUE) / qchisq(0.5,1), 3)
+  # http://genometoolbox.blogspot.com/2014/08/how-to-calculate-genomic-inflation.html
+  lamdba_p <- median(qchisq(1-summaryDT$pval,1))/qchisq(0.5,1)
+
+  message("== Lamdba: ", lamdba_p)
+
+  message("== sorting... ", date())
+  summaryDT <- summaryDT[order(pval)]
+  message("== logging... ", date())
+  summaryDT[,c("observedLogP", "expectedLogP") := .(-log10(pval), -log10(1:length(pval)/length(pval)))]
+
+  # 要进行 bin的：
+  summaryDT_cut <- summaryDT[observedLogP < binCutLogP]
+  # 不进行 bin 的：
+  summaryDT_noCut <- summaryDT[observedLogP >= binCutLogP]
+
+  # 根据位置划分为 bin size 个点。
+  message("== binning... ", date())
+  summaryDT_cut$ID <- 1:nrow(summaryDT_cut)
+  if( binNumber>=nrow(summaryDT_cut) ){ binNumber<- nrow(summaryDT_cut) }
+  binSize <- round(nrow(summaryDT_cut)/binNumber,0)
+  summaryDT_cut$cutF <- as.character(cut(1:nrow(summaryDT_cut), breaks=seq(0, nrow(summaryDT_cut)+binSize, binSize)))
+  myFunc <- function(dt){ dt[which.min(dt$pval),] }
+  summaryDT_cut <- summaryDT_cut[,myFunc(.SD), by ="cutF"]
+
+  summaryDT_all <- rbind(summaryDT_cut[,-c("ID", "cutF")], summaryDT_noCut)
+  message("cutted: ",nrow(summaryDT_cut), "; non-cutted: ", nrow(summaryDT_noCut))
+  rm(summaryDT_cut, summaryDT_noCut)
+
+  message("== plotting...", date())
+  P <- ggplot(summaryDT_all[,.(expectedLogP, observedLogP)])+
+    geom_point(aes(x=expectedLogP, y= observedLogP ),  color="#5A90BE", size=rel(1.4), alpha=0.8)+
+    # geom_line(aes(x= expectedLogP, y= observedLogP),color="#5A90BE",size=rel(1.2), alpha=0.8)+
+    # scale_shape_manual(values=c(22,21,23,24))+
+    geom_abline(intercept = 0, slope = 1, colour = "#f23321", size = 0.7, alpha=0.7)+
+    theme_classic()+
+    ylim(0, max(summaryDT_all$observedLogP)+1)+
+    xlim(0, max(summaryDT_all$expectedLogP)+1)+
+    theme(
+      axis.text = element_text(size = rel(1.1)),
+      axis.ticks.y = element_blank(),
+      panel.grid.major.x = element_blank(), #设置面板网格
+      panel.grid.major.y = element_line(size = 0.5),
+      panel.grid.minor.x = element_blank(),
+      axis.title=element_text(size=rel(1.3)),
+      legend.title = element_blank(),
+      legend.text = element_text(size=rel(1.1)),
+      legend.position = legend_p,
+      legend.justification = 'left',
+      legend.direction='horizontal'
+      # legend.margin = margin(0.1,0.1,0.1,0.1,"cm"),
+      # legend.background = element_rect(fill="white", size=0.5, linetype="solid",colour ="black")
+    )+xlab(expression(Expected -log["10"](pval)))+  ylab(expression(Obeserved -log["10"](pval)))+
+    annotate("text", x = 0.2, y = max(summaryDT$observedLogP), label = paste0("Lamdba: ", round(lamdba_p,3)), colour = "black", size = 4.5, ,hjust=0)
+
+  return(list(plot=P, lambda=lamdba_p))
+}
+
+
+
+
+#' @title P-N plot
+#'
+#' @param summaryDT A data.frame with three cols: pval,  beta, se.
+#'
+#' @return A ggplot2 object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
+#' qtl <- fread(url1, sep="\t")
+#' xQTLvisual_PNPlot(qtl[,.(pValue, beta, se)])
+#' }
+xQTLvisual_PNPlot <- function(summaryDT){
+  se <- pval <- pZtest <- logPZ <- logP <- NULL
+  . <-NULL
+  summaryDT <- na.omit(summaryDT)
+  summaryDT <- summaryDT[,1:3]
+  names(summaryDT) <- c("pval", "beta", "se")
+  summaryDT[,c("pZtest", "logP") := .(pnorm(-abs(beta/se)), log(pval, 10)*(-1))]
+  summaryDT[,"logPZ" := log(pZtest, 10)*(-1)]
+  summaryDT <- na.omit(summaryDT)
+
+  p <- ggplot(summaryDT)+
+    geom_point(aes(x=logPZ, y=logP))+
+    theme_classic()+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0))+
+    ylab(expression(-log["10"]("Pvalue-raw")))+
+    xlab(expression(-log["10"]("Pvalue-estimated")))+
+    theme_classic()+
+    theme(
+      axis.text = element_text(rel(1.3)),
+      axis.title = element_text(rel(1.4))
+    )
+  print(p)
+  return(list(summaryDT=summaryDT, p=p))
+}

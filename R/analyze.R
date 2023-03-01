@@ -252,7 +252,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
     rm(sentinelSnpChrom, geneInfoChrom, Traits)
   }
   message("== Fetching [", length(unique(traitsAll$gencodeId)),"] genes' information from the GTEx.")
-  geneAnnot <- xQTLquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId", gencodeVersion = genecodeVersion)
+  geneAnnot <- xQTLquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId")
   if( datasetId=="gtex_v7" ){
     geneAnnot$chromosome <- paste0("chr",geneAnnot$chromosome)
   }
@@ -299,6 +299,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' }
 xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", study="gtex_v8", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917", bb.alg=FALSE){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- se.eqtl <- se.gwas <-SNP.PP.H4 <- beta.eqtl <- beta.gwas <- posterior_prob <- regional_prob <-candidate_snp <- posterior_explained_by_snp  <- NULL
+  qtl_group <- NULL
   . <- NULL
 
   # tissueSiteDetail="Brain - Cortex"
@@ -487,7 +488,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 }
 
 
-#' @title conduct colocalization analysis with your own data
+#' @title conduct colocalization analysis with customized QTL data
 #'
 #' @param gwasDF data.frame or data.table, required cols: rsid, chrom, position, pValue, maf, beta, se
 #' @param qtlDF data.frame or data.table, required cols:  rsid, chrom, position, pValue, maf, beta, se
@@ -499,10 +500,17 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #'
 #' @return A list
 #' @export
-xQTLanalyze_coloc_local <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNum=50000, qtlSampleNum=10000, method="coloc", bb.alg=FALSE){
-  rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- se.eqtl <- se.gwas <-SNP.PP.H4 <- beta.eqtl <- beta.gwas <- posterior_prob <- regional_prob <-candidate_snp <- posterior_explained_by_snp  <- NULL
+#' @examples
+#' \donttest{
+#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
+#' url2 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
+#' gwasDF <- data.table::fread(url1)
+#' qtlDF <- data.table::fread(url2)
+#' output <- xQTLanalyze_coloc_local(gwasDF = gwasDF, qtlDF=qtlDF, method="hyprcoloc")
+#' }
+xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNum=50000, qtlSampleNum=10000, method="coloc", bb.alg=FALSE){
+  rsid <- chrom <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- se.eqtl <- se.gwas <-SNP.PP.H4 <- beta.eqtl <- beta.gwas <- posterior_prob <- regional_prob <-candidate_snp <- posterior_explained_by_snp  <- NULL
   . <- NULL
-
 
   if(method == "coloc" && !requireNamespace("coloc")){
     stop("please install package \"coloc\" with install.packages(\"coloc\").")
@@ -629,78 +637,6 @@ xQTLanalyze_coloc_local <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSample
     return(list(colocOut=colocOut, gwasEqtlInfo=gwasEqtlInfo))
   }
 }
-
-#' @title Perform tissue-specific expression analysis for genes.
-#' @param genes A charater vector or a string of gene symbol, gencode id (versioned), or a charater string of gene type.
-#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param method "SPM" or "entropy"
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
-#'
-#' @return A data.table object.
-#' @export
-#'
-#' @examples
-#' TSgene <- xQTLanalyze_TSExp(extractGeneInfo(gencodeGeneInfoAllGranges)$gencodeId[1:5])
-xQTLanalyze_TSExp <- function(genes, geneType="auto", method="SPM", datasetId="gtex_v8"){
-  gencodeId <- geneSymbol <-.<-NULL
-  if(datasetId == "gtex_v8"){
-    genomeVersion="v26"
-    tissueSiteDetail <- copy(tissueSiteDetailGTExv8)
-  }else if(datasetId == "gtex_v7"){
-    genomeVersion="v19"
-    tissueSiteDetail <- copy(tissueSiteDetailGTExv7)
-  }
-  geneExp <- xQTLdownload_geneMedExp(genes=genes,  geneType=geneType, datasetId = datasetId)
-  geneExpCast <- dcast(geneExp[,.(gencodeId, geneSymbol,geneType, median, tissueSiteDetail)], gencodeId+geneSymbol+geneType~tissueSiteDetail, value.var = "median")
-  geneExpCastMat <- geneExpCast[, -c("gencodeId", "geneSymbol", "geneType")]
-
-  if( method=="SPM"){
-    DPMlist <- lapply( 1:nrow(geneExpCastMat), function(x){
-      x <- unlist(geneExpCastMat[x,])
-      x<- as.numeric(x)
-      if(all(x==0)){
-        return(list(SPM=x, DPM=NA ))
-      }else{
-        SPMi <- unlist(lapply(1:length(x), function(xx){
-          xi <- rep(0, length(x))
-          xi[xx] <- x[xx]
-          if(all(xi==0)){
-            cosX = 0
-          }else{
-            # cosX <- xi%*%x/( length(xi)*length(x) )
-            cosX <- crossprod(x, xi)/sqrt(crossprod(x) * crossprod(xi))
-          }
-          return(cosX)
-        }))
-        return(list(SPM=SPMi, DPM=sd(SPMi)*sqrt(length(x)) ))
-      }
-    })
-    SPMmat <- as.data.table(t(as.data.table( lapply(DPMlist, function(x){ x[[1]] }))))
-    names(SPMmat) <- names(geneExpCastMat)
-    DPM <- unlist(lapply(DPMlist, function(x){ x[[2]] }))
-    SPMmat$DPM <- DPM
-    SPMmat <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], SPMmat)
-
-    return(SPMmat)
-  }else if(method== "entropy"){
-    TSI <- copy(geneExpCastMat)
-    TSI$TSI <- apply(geneExpCastMat, 1, function(x){
-      x <- as.numeric(x)
-      if( all(x==0)){
-        pi <- rep(0, length(x))
-      }else{
-        pi <- x/sum(x)
-      }
-      sum(na.omit(-pi*log(pi,2)))
-    })
-    TSI <- cbind(geneExpCast[, c("gencodeId", "geneSymbol", "geneType")], TSI)
-    return(TSI)
-  }else{
-    stop("Please choose the right method.")
-  }
-
-}
-
 
 
 
@@ -936,43 +872,28 @@ xQTLanalyze_propensity <- function(gene="", geneType="auto", variantName="", var
 
 
 
-#
-# qtl1 <- xQTLdownload_eqtlSig(genes="MLH1")
-# qtl1 <- cbind(qtl1, rbindlist(lapply(qtl1$variantId, function(x){ a=stringr::str_split(x, "_")[[1]];data.table(chrom=a[1], pos=as.numeric(a[2]), ref=a[3], alt=a[4]) })) )
-# snpInfo <- unique(qtl1[,.(chrom, pos, ref, alt)])
-#
-# qtl <- xQTLdownload_eqtlAllAsso(gene="MMP7", tissueLabel = "Prostate")
-# qtl$chrom <- ifelse(stringr::str_detect(qtl$chrom, stringr::regex("^chr")), qtl$chrom, paste0("chr",qtl$chrom))
-# qtl <- na.omit(qtl)
-# snpInfo <- unique(qtl[,.(chrom, pos, ref, alt)])
-#
-# varAlleles <- Biostrings::DNAStringSet(snpInfo$alt)
-#
-
-
 #' @title annotate variants with genome positon
 #'
 #' @param snpInfo A data.table/data.frame with two or three columns: chromosome and position.
 #' @param genomeVersion "hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.
-#' @import TxDb.Hsapiens.UCSC.hg38.knownGene
 #' @import data.table
 #' @import stringr
-#' @importFrom GenomicRanges GRanges
-#' @importFrom GenomicFeatures intronicParts exonicParts
+#' @importFrom GenomicRanges GRanges mcols
+#' @importFrom GenomicFeatures intronicParts exonicParts transcripts
 #' @importFrom IRanges findOverlaps
-#' @importFrom VariantAnnotation locateVariants CodingVariants
 #'
 #' @return A data.table object of variants' genomics distribution
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
-#' snpInfo <- fread(url1, sep="\t")
+#' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' snpInfo <- data.table::fread(url1, sep="\t")
 #' snpHits <- xQTLanalyze_anno(snpInfo)
 #' }
 xQTLanalyze_anno <- function(snpInfo="", genomeVersion="hg38"){
-
+  chrom <- pValue <- V1 <- V2 <- V3 <- tx_name <- anno <- TXID <- tx_id <- type <- pos <- proportion <- NULL
+  .<- NULL
   message("==> Start checking variants...")
   # check snpinfo:
   snpInfo <- data.table::as.data.table(snpInfo[,1:3])
@@ -1125,7 +1046,7 @@ xQTLanalyze_anno <- function(snpInfo="", genomeVersion="hg38"){
                                                                    subject = promoterParts,
                                                                    maxgap = 1,
                                                                    ignore.strand=TRUE ))
-  promoterHits <- cbind(snpInfo[promoterHits$queryHits,], as.data.table(mcols(promoterParts))[promoterHits$subjectHits,.(anno=tx_name, type="promoter")])
+  promoterHits <- cbind(snpInfo[promoterHits$queryHits,], as.data.table(GenomicRanges::mcols(promoterParts))[promoterHits$subjectHits,.(anno=tx_name, type="promoter")])
   # collapse annotation:
   promoterHits <- promoterHits[,.(anno=paste(anno,collapse = ",")),by=c("chrom", "pos", "pValue", "type")]
   message("      promoter hits: ",nrow(promoterHits))
@@ -1226,19 +1147,23 @@ xQTLanalyze_anno <- function(snpInfo="", genomeVersion="hg38"){
 #'
 #' @param snpInfo A data.table/data.frame with two or three columns: chromosome and position.
 #' @param genomeVersion "hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.
-#' @param enrichElement "Promoter", "Enhaner" or "TF".
+#' @param enrichElement "Promoter", "Enhancer" or "TF".
 #' @param distLimit Defaults: 1e6
+#' @importFrom GenomicRanges distanceToNearest mcols
 #'
 #' @return A data.table object
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
-#' snpInfo <- fread(url1, sep="\t")
-#' enrichHits <- xQTLanalyze_enrich(snpInfo)
+#' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' snpInfo <- data.table::fread(url1, sep="\t")
+#' enrichHits <- xQTLanalyze_enrich(snpInfo,enrichElement="Enhancer")
 #' }
 xQTLanalyze_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement="Promoter", distLimit=1e6){
+  chrom <- pValue <- tx_name <- distance <- V1 <- V2 <- V3 <- NULL
+  . <- NULL
+
   message("==> Start checking variants...")
   # check snpinfo:
   snpInfo <- data.table::as.data.table(snpInfo[,1:3])
@@ -1291,12 +1216,12 @@ xQTLanalyze_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement=
     promoterParts <- suppressWarnings(GenomicFeatures::promoters(txdb))
     promoterParts <- promoterParts[which(as.character(GenomeInfoDb::seqnames(promoterParts)) %in% paste0("chr", c(1:22,"X","Y", "M"))),]
     #
-    # preDist <- as.data.table(distanceToNearest(snpRanges, promoterParts[subjectHits(precede(snpRanges, promoterParts, select="all")),]))
-    # followDist <- as.data.table(distanceToNearest(snpRanges, promoterParts[subjectHits(follow(snpRanges, promoterParts, select="all")),]))
+    # preDist <- as.data.table(GenomicRanges::distanceToNearest(snpRanges, promoterParts[subjectHits(precede(snpRanges, promoterParts, select="all")),]))
+    # followDist <- as.data.table(GenomicRanges::distanceToNearest(snpRanges, promoterParts[subjectHits(follow(snpRanges, promoterParts, select="all")),]))
     # distPreFollow <- merge(preDist, followDist, by="queryHits", suffixes=c("_pre", "_follow"))
-    nearestDist <- as.data.table(distanceToNearest(snpRanges, promoterParts))
+    nearestDist <- as.data.table(GenomicRanges::distanceToNearest(snpRanges, promoterParts))
     if(nrow(nearestDist)>0){
-      nearestDist <- do.call(cbind, list(snpInfo[nearestDist$queryHits,],  as.data.table(mcols(promoterParts))[nearestDist$subjectHits,.(anno=tx_name)],nearestDist[,.(dist=distance)] ))
+      nearestDist <- do.call(cbind, list(snpInfo[nearestDist$queryHits,],  as.data.table(GenomicRanges::mcols(promoterParts))[nearestDist$subjectHits,.(anno=tx_name)],nearestDist[,.(dist=distance)] ))
       nearestDist <- nearestDist[dist<distLimit,][order(dist)]
     }
 
@@ -1306,7 +1231,7 @@ xQTLanalyze_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement=
     enhancerAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "geneHancer.bed.gz"), header=FALSE)
     enhancerRanges <- GenomicRanges::GRanges(enhancerAnno$V1,
                                              IRanges::IRanges(enhancerAnno$V2, enhancerAnno$V3), strand= "*")
-    nearestDist <- as.data.table(distanceToNearest(snpRanges, enhancerRanges))
+    nearestDist <- as.data.table(GenomicRanges::distanceToNearest(snpRanges, enhancerRanges))
     if(nrow(nearestDist)>0){
       nearestDist <- do.call(cbind, list(snpInfo[nearestDist$queryHits,], enhancerAnno[nearestDist$subjectHits,.(anno=paste0(V1,":",V2,"-",V3))], nearestDist[,.(dist=distance)] ))
       nearestDist <- nearestDist[dist<distLimit,][order(dist)]
@@ -1318,7 +1243,7 @@ xQTLanalyze_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement=
     tfAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "tf_filtered_sorted_merge_sub.bed.gz"), header=FALSE)
     tfRanges <- GenomicRanges::GRanges(tfAnno$V1,
                                        IRanges::IRanges(tfAnno$V2, tfAnno$V3), strand= "*")
-    nearestDist <- as.data.table(distanceToNearest(snpRanges, tfRanges))
+    nearestDist <- as.data.table(GenomicRanges::distanceToNearest(snpRanges, tfRanges))
     if(nrow(nearestDist)>0){
       nearestDist <- do.call(cbind, list(snpInfo[nearestDist$queryHits,], tfAnno[nearestDist$subjectHits,.(anno=paste0(V1,":",V2,"-",V3))], nearestDist[,.(dist=distance)] ))
       nearestDist <- nearestDist[dist<distLimit,][order(dist)]
@@ -1326,3 +1251,54 @@ xQTLanalyze_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement=
   }
   return(nearestDist)
 }
+
+
+
+
+
+#' @title calculate genomic control inflation factor
+#'
+#' @param summaryDT A data.frame containing one or two columns: p-value (required) and group (optional)
+#' @import data.table
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
+#' qtl <- data.table::fread(url1, sep="\t")
+#'
+#' # calculate lambda value with all variants
+#' xQTLanalyze_calLambda(qtl[,.(pValue)])
+#'
+#' # calculate lambda value for each group:
+#' qtl$groups <- sample(c(0,1),size = nrow(qtl), replace = TRUE)
+#' xQTLanalyze_calLambda(qtl[,.(pValue, groups)])
+#' }
+xQTLanalyze_calLambda <- function(summaryDT){
+  .<-NULL
+  message("== Number of variants: ", nrow(summaryDT), "  ",date())
+  if(ncol(summaryDT)==1){
+    summaryDT <- summaryDT[,1]
+    names(summaryDT) <- c("pval")
+    summaryDT <- na.omit(summaryDT)
+    data.table::setDT(summaryDT)
+    message("calculating lamdba: ", date())
+    # http://genometoolbox.blogspot.com/2014/08/how-to-calculate-genomic-inflation.html
+    lamdba_value <- median(qchisq(1-summaryDT$pval,1))/qchisq(0.5,1)
+    message("== Lamdba: ", lamdba_value)
+    lamdba_value <- data.table(groups=NA, lambda=lamdba_value)
+  }else if(ncol(summaryDT)==2){
+    summaryDT <- summaryDT[,1:2]
+    names(summaryDT) <- c("pval", "groups")
+    summaryDT <- na.omit(summaryDT)
+    data.table::setDT(summaryDT)
+    lamdba_value <- summaryDT[,.(lambda= median(qchisq(1-.SD$pval,1))/qchisq(0.5,1)),by="groups"]
+    message("== Lamdba: ", lamdba_value)
+  }
+  return(lamdba_value)
+}
+
+
+

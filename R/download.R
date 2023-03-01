@@ -2,12 +2,10 @@
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param toSummarizedExperiment a logical value indicating whether to return a data.frame or a summarizedExperiment object. Default: TRUE, return a toSummarizedExperiment object.
 #' @param recordPerChunk (integer) number of records fetched per request (default: 80).
 #' @param pathologyNotesCategories a logical value indicating whether to return pathologyNotes. Default: FALSE, the pathologyNotes is ignored.
 #' @import data.table
-#' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @import stats
@@ -39,10 +37,11 @@
 #'                                tissueSiteDetail="Artery - Coronary",
 #'                                toSummarizedExperiment=FALSE)
 #' }
-xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", datasetId="gtex_v8", toSummarizedExperiment=TRUE, recordPerChunk=80, pathologyNotesCategories=FALSE  ){
+xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", toSummarizedExperiment=TRUE, recordPerChunk=80, pathologyNotesCategories=FALSE  ){
   gencodeId <- chromosome <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
+  datasetId <- "gtex_v8"
   # genes=c("ENSG00000210195.2","ENSG00000078808")
   # geneType="gencodeId"
   # tissueSiteDetail="Liver"
@@ -115,7 +114,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
   ############ convert genes. parameter check is unnecessary for this, because xQTLquery_gene check it internally.
   message("== Check the gene name :")
-  geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion)
+  geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType)
   # Only keep genes with non-na gencode ID
   geneInfo <- geneInfo[!is.na(gencodeId)]
   # for gene of the same name but with different gencodeID, like SHOX, ENSG00000185960.13 the name is in X, ENSG00000185960.13_PAR_Y is the name in Y. retain the gencode In x.
@@ -147,7 +146,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
   ############ get sample info:
   message("== Get the samples' detail:")
-  sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", datasetId=datasetId, pathologyNotesCategories=pathologyNotesCategories )
+  sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail=tissueSiteDetail, dataType="RNASEQ", pathologyNotesCategories=pathologyNotesCategories )
   message("== Done.")
   if( !exists("sampleInfo") ||is.null(sampleInfo) ){
     stop("Failed to fetch sample information.")
@@ -242,9 +241,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
-#' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @return A data.table object.
@@ -255,28 +252,27 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' # Download eQTL info for a variant:
 #' xQTLdownload_eqtlSig("rs201327123")
 #' xQTLdownload_eqtlSig("chr1_14677_G_A_b38")
-#' xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7")
-#' xQTLdownload_eqtlSig("11_66328719_T_C_b37", datasetId="gtex_v7",
+#' xQTLdownload_eqtlSig("chr1_14677_G_A_b38",
 #'                     tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
 #'
 #' # Download eQTL association according to all tissues with genome location:
-#' varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708),"gtex_v8")
+#' varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708))
 #' xQTLdownload_eqtlSig(variantName=varInfo$snpId)
 #'
 #' # Download eQTL info for gene:
 #' xQTLdownload_eqtlSig(genes="ATAD3B")
 #' xQTLdownload_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
-#' xQTLdownload_eqtlSig(genes="ENSG00000141510.16", datasetId="gtex_v8")
+#' xQTLdownload_eqtlSig(genes="ENSG00000141510.16")
 #'
 #' # Download eQTL info for a variant-gene pair:
-#' xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v8")
-#' xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53", datasetId="gtex_v7")
+#' xQTLdownload_eqtlSig(variantName="rs1641513", genes="TP53")
 #' xQTLdownload_eqtlSig(variantName="chr1_1667948_A_G_b38",
 #'                      genes="SLC35E2B", tissueSiteDetail="Kidney - Cortex")
 #' }
-xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", geneType="auto", tissueSiteDetail=""){
   variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- NULL
   .<-NULL
+  datasetId <- "gtex_v8"
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
   # datasetId="gtex_v8"
@@ -322,7 +318,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
     }
 
     message("== Check the variant name:")
-    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       message("The variant [",variantName, "] is not incuded in [",datasetId,"].")
       return(NULL)
@@ -344,7 +340,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, recordPerChunk = 150)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input.")
@@ -370,6 +366,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
                  ifelse(all(genes==""),"",paste0("&gencodeId=",paste0(geneInfo$gencodeId, collapse = ","))),
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
                  )
+  # message(url1)
   url1 <- utils::URLencode(url1)
   # check network:
   # bestFetchMethod <- apiAdmin_ping()
@@ -404,9 +401,7 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param recordPerChunk (integer) number of records fetched per request (default: 100).
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
-#' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @return A data.table object.
@@ -418,20 +413,21 @@ xQTLdownload_eqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' eqtlInfo <- xQTLdownload_eqtl(gene="TP53")
 #'
 #' # Use unversioned gencode ID in GTEx V8:
-#' eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510", datasetId="gtex_v8")
+#' eqtl_v8 <- xQTLdownload_eqtl(gene="ENSG00000141510")
 #'
 #' # In a specific tissue:
 #' xQTLdownload_eqtl(gene="ENSG00000141510", geneType="gencodeId",  tissueSiteDetail="Thyroid" )
 #'
 #' # Download eQTL info with a variant-gene pair:
-#' xQTLdownload_eqtl(variantName="rs1641513",gene="TP53", datasetId="gtex_v8")
+#' xQTLdownload_eqtl(variantName="rs1641513",gene="TP53")
 #' xQTLdownload_eqtl(variantName="chr1_1667948_A_G_b38", gene="SLC35E2B",
 #'                   tissueSiteDetail="Kidney - Cortex")
 #' }
-xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8", recordPerChunk=100){
+xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", recordPerChunk=100){
   pos <- variantId <- snpId <- gencodeId <- geneSymbol <- pValue <- nes <- se <- mValue <- NULL
   .<-NULL
   querySnpId=TRUE
+  datasetId="gtex_v8"
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
   # datasetId="gtex_v8"
@@ -498,7 +494,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, recordPerChunk = 150)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
@@ -523,7 +519,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
     }
 
     message("== Check the variant name:")
-    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input, or leave \"variantName\" as null.")
     }else{
@@ -572,7 +568,7 @@ xQTLdownload_eqtl <- function(variantName="", gene="", variantType="auto", geneT
     message("== Querying dbsnp ID from API server:")
     var_tmp <- data.table::data.table(variantId =unique(outInfo$variantId))
     var_tmp <- cbind(var_tmp, data.table::rbindlist(lapply(unique(outInfo$variantId), function(x){ splitOut = stringr::str_split(x,stringr::fixed("_"))[[1]];data.table::data.table(chrom=splitOut[1], pos=splitOut[2]) })))
-    var_tmpGot <- xQTLquery_varPos(unique(var_tmp$chrom), pos=as.integer(unlist(var_tmp$pos)), datasetId = datasetId, recordPerChunk=recordPerChunk)
+    var_tmpGot <- xQTLquery_varPos(unique(var_tmp$chrom), pos=as.integer(unlist(var_tmp$pos)), recordPerChunk=recordPerChunk)
     outInfo <- merge(outInfo, var_tmpGot, by="variantId")
     message("== Done.")
   }else{
@@ -720,7 +716,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
   # if gene is not null, check geneName and add gene unversioned ensemble name.
   if(gene !=""){
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v26")
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType)
     # 对于只需要一个基因的：
     geneInfo <- geneInfo[!is.na(gencodeId)]
     geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
@@ -817,7 +813,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
   }
   if(withB37VariantId){
     # add dbSNP id and  hg19 cordinate:
-    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), datasetId = "gtex_v8", recordPerChunk = 250)
+    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), recordPerChunk = 250)
     gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
     gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
     # gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
@@ -947,7 +943,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
   # if gene is not null, check geneName and add gene unversioned ensemble name.
   if(gene !=""){
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v26")
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType)
     # 对于只需要一个基因的：
     geneInfo <- geneInfo[!is.na(gencodeId)]
     geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
@@ -1014,7 +1010,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
   }
   if(withB37VariantId){
     # add dbSNP id and  hg19 cordinate:
-    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), datasetId = "gtex_v8", recordPerChunk = 250)
+    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), recordPerChunk = 250)
     gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
     gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
     # gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
@@ -1034,7 +1030,6 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @import data.table
-#' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @return A data.table object.
@@ -1105,7 +1100,7 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
     }
 
     message("== Check the variant name:")
-    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType)
     if(nrow(varInfo)==0 || is.null(varInfo)|| !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
     }else{
@@ -1126,7 +1121,7 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=genes, geneType = geneType, recordPerChunk = 150)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
       stop("Invalid gene name or type, please correct your input, or leave \"gene\" as null")
@@ -1182,9 +1177,7 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
-#' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @import stats
@@ -1199,9 +1192,10 @@ xQTLdownload_sqtlSig <- function(variantName="", genes="", variantType="auto", g
 #' xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
 #'                      tissueSiteDetail="Stomach")
 #' }
-xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", geneType="auto", tissueSiteDetail=""){
   gencodeGenetype <- chromosome <-gencodeId <-NULL
   .<-NULL
+  datasetId="gtex_v8"
 
   # variantName="chr1_14677_G_A_b38"
   # variantType="variantId"
@@ -1253,7 +1247,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
     }
 
     message("== Check the variant name:")
-    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
     }else{
@@ -1276,7 +1270,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = gencodeVersion, recordPerChunk = 150)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType, recordPerChunk = 150)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0|| is.null(geneInfo) || !exists("geneInfo")){
       stop("Invalid gene name or type, please correct your input.")
@@ -1332,9 +1326,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @import data.table
-#' @import curl
 #' @import stringr
 #' @import jsonlite
 #' @import stats
@@ -1351,13 +1343,14 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 #' xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
 #'                      phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
 #'                      tissueSiteDetail="Adipose - Subcutaneous")
-xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail="", datasetId="gtex_v8"){
+xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail=""){
   # variantName="chr1_739465_TTTTG_T_b38"
   # phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1"
   # variantType="variantId"
   # tissueSiteDetail="Lung"
   # datasetId="gtex_v8"
   # check version:
+  datasetId="gtex_v8"
   gencodeVersion <- "v26"
   if( datasetId == "gtex_v8" ){
     gencodeVersion <- "v26"
@@ -1401,7 +1394,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
     }
 
     message("== Check the variant name:")
-    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType, datasetId=datasetId)
+    varInfo <- xQTLquery_varId(variantName=variantName, variantType = variantType)
     if(nrow(varInfo)==0 || is.null(varInfo) || !exists("varInfo")){
       stop("Invalid variant name or type, please correct your input.")
     }else{
@@ -1470,7 +1463,6 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results can be filtered by tissue.
 #' @param gene  (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #' @import data.table
@@ -1484,7 +1476,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #' eGeneInfo <- xQTLdownload_egene("TP53")
 #' eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
 #' }
-xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
+xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="", recordPerChunk=2000){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="DDX11"
@@ -1492,6 +1484,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
   # datasetId = "gtex_v8"
   # tissueSiteDetail="Lung"
   # recordPerChunk=100
+  datasetId = "gtex_v8"
 
   page_tmp <- 0
   pageSize_tmp <- recordPerChunk
@@ -1536,7 +1529,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
@@ -1603,7 +1596,6 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #'  sGenes are genes that have at least one significant sQTL acting upon them. Results may be filtered by tissue.
 #' @param gene  (character) gene symbol or gencode id (versioned or unversioned are both supported). Can be null.
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #' @import data.table
@@ -1617,9 +1609,10 @@ xQTLdownload_egene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver")
 #' sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Liver" )
 #' }
-xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8", tissueSiteDetail="", recordPerChunk=2000){
+xQTLdownload_sgene <- function(gene = "", geneType="auto", tissueSiteDetail="", recordPerChunk=2000){
   phenotypeId <- nPhenotypes <- .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
+  datasetId = "gtex_v8"
   # gene="ENSG00000013573.16"
   # geneType="gencodeId"
   # datasetId = "gtex_v8"
@@ -1670,7 +1663,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
     }
 
     message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType, gencodeVersion=gencodeVersion)
+    geneInfo <- xQTLquery_gene(genes=gene, geneType=geneType)
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",gene,"] you entered could not be found!")
@@ -1739,7 +1732,6 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @title Download median expression of all samples for specified genes across tissues.
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param datasetId (character) options: "gtex_v8" (default), "gtex_v7".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param recordPerChunk (integer) number of records fetched per request (default: 150).
 #' @import data.table
@@ -1751,9 +1743,10 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", datasetId = "gtex_v8"
 #' @examples
 #' geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")
 #' geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
-xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v8", tissueSiteDetail="", recordPerChunk=150 ){
+xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail="", recordPerChunk=150 ){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss<-strand <- NULL
+  datasetId="gtex_v8"
   # check genes
   if( is.null(genes) ||  any(is.na(genes)) || any(genes=="") ||length(genes)==0 ){
     stop("Parameter \"genes\" can not be NULL or NA!")
@@ -1807,7 +1800,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", datasetId="gtex_v
     }
 
     message("== Check the gene name:")
-    suppressMessages( geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, gencodeVersion=gencodeVersion, recordPerChunk = recordPerChunk))
+    suppressMessages( geneInfo <- xQTLquery_gene(genes=genes, geneType=geneType, recordPerChunk = recordPerChunk))
     geneInfo <- geneInfo[!is.na(gencodeId)]
     if(nrow(geneInfo)==0 || is.null(geneInfo)||!exists("geneInfo") ){
       stop("The gene [",stringr::str_sub(paste(genes, collapse = ","),1,20),"....] you entered could not be found!")

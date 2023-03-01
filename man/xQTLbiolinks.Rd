@@ -7,3 +7,4 @@
 \description{
 the functions provided in this \pkg{xQTLbiolinks} enable users to access molecular QTLs (eQTLs and sQTLs) and gene expressions data filtered by tissue, gene, variant or dataset.
 }
+\keyword{internal}

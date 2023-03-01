@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,14 +62,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLanalyze_getSentinelSnp</span><span class="op">(</span>
-  <span class="va">gwasDF</span>,
-  pValueThreshold <span class="op">=</span> <span class="fl">5e-08</span>,
-  centerRange <span class="op">=</span> <span class="fl">1e+06</span>,
-  mafThreshold <span class="op">=</span> <span class="fl">0.01</span>,
-  genomeVersion <span class="op">=</span> <span class="st">"grch38"</span>,
-  grch37To38 <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLanalyze_getSentinelSnp</span><span class="op">(</span></span>
+<span>  <span class="va">gwasDF</span>,</span>
+<span>  pValueThreshold <span class="op">=</span> <span class="fl">5e-08</span>,</span>
+<span>  centerRange <span class="op">=</span> <span class="fl">1e+06</span>,</span>
+<span>  mafThreshold <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  genomeVersion <span class="op">=</span> <span class="st">"grch38"</span>,</span>
+<span>  grch37To38 <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -83,31 +83,43 @@
 <p><code>Col 5</code>. "MAF" (numeric). Allel frequency.</p>
 <p><code>Col 6</code>. "beta" (numeric). effect size.</p>
 <p><code>Col 7</code>. "se" (numeric). standard error.</p></dd>
+
+
 <dt>pValueThreshold</dt>
 <dd><p>Cutoff of gwas p-value. Default: 5e-8</p></dd>
+
+
 <dt>centerRange</dt>
 <dd><p>SNP-to-SNP distance. Default:1e6</p></dd>
+
+
 <dt>mafThreshold</dt>
 <dd><p>Cutoff of maf to remove rare variants.</p></dd>
+
+
 <dt>genomeVersion</dt>
 <dd><p>Genome version of input file. "grch37" or "grch38" (default).</p></dd>
+
+
 <dt>grch37To38</dt>
 <dd><p>TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package <code>rtracklayer</code> is required.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="va">url</span><span class="op">&lt;-</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"</span>
-<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chr</span>, <span class="va">position</span>, <span class="va">P</span>, <span class="va">maf</span>, <span class="va">beta</span>, <span class="va">se</span><span class="op">)</span><span class="op">]</span>
-<span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getSentinelSnp</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="va">url</span><span class="op">&lt;-</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chr</span>, <span class="va">position</span>, <span class="va">P</span>, <span class="va">maf</span>, <span class="va">beta</span>, <span class="va">se</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getSentinelSnp</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -121,7 +133,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

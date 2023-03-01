@@ -4,12 +4,7 @@
 \alias{xQTLquery_gene}
 \title{Query basic information (including name, symbol, position and description, etc. ) of genes.}
 \usage{
-xQTLquery_gene(
-  genes = "",
-  geneType = "auto",
-  gencodeVersion = "v26",
-  recordPerChunk = 150
-)
+xQTLquery_gene(genes = "", geneType = "auto", recordPerChunk = 150)
 }
 \arguments{
 \item{genes}{A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
@@ -27,8 +22,6 @@ when "geneType" is "geneCategory", supported "genes" can be listed using functio
 }}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
-
-\item{gencodeVersion}{(character) options: "v26"(default, matched with gtex_v8) or "v19"}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 150).}
 }
@@ -58,8 +51,4 @@ Query basic information (including name, symbol, position and description, etc. 
 geneInfo <- xQTLquery_gene("TP53")
 geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
 geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
-
-# query gene of gencode version v19/hg19
-geneInfo <- xQTLquery_gene(c("TP53","naDK"),  gencodeVersion="v19")
-geneInfo <- xQTLquery_gene(c("ENSG00000141510.16","ENSG00000008130.15"))
 }

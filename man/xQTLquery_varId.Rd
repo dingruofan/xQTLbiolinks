@@ -4,14 +4,12 @@
 \alias{xQTLquery_varId}
 \title{Query variant in GTEx with variant ID or dbSNP ID}
 \usage{
-xQTLquery_varId(variantName = "", variantType = "auto", datasetId = "gtex_v8")
+xQTLquery_varId(variantName = "", variantType = "auto")
 }
 \arguments{
 \item{variantName}{(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".}
 
 \item{variantType}{(character) options: "auto", "snpId" or "variantId". Default: "auto".}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A data.table object.
@@ -21,7 +19,5 @@ Query variant in GTEx with variant ID or dbSNP ID
 }
 \examples{
 xQTLquery_varId("rs12596338")
-xQTLquery_varId("rs12596338", datasetId="gtex_v7")
 xQTLquery_varId("chr11_66561248_T_C_b38")
-xQTLquery_varId("11_66328719_T_C_b37", variantType="variantId", datasetId="gtex_v7")
 }

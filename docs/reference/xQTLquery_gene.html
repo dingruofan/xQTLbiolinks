@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,12 +62,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLquery_gene</span><span class="op">(</span>
-  genes <span class="op">=</span> <span class="st">""</span>,
-  geneType <span class="op">=</span> <span class="st">"auto"</span>,
-  gencodeVersion <span class="op">=</span> <span class="st">"v26"</span>,
-  recordPerChunk <span class="op">=</span> <span class="fl">150</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLquery_gene</span><span class="op">(</span>genes <span class="op">=</span> <span class="st">""</span>, geneType <span class="op">=</span> <span class="st">"auto"</span>, recordPerChunk <span class="op">=</span> <span class="fl">150</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,16 +75,21 @@
 <li><p><strong>gene classification</strong>.</p>
 <p>when "geneType" is "geneCategory", supported "genes" can be listed using function <code>gencodeGenetype$V26</code> or <code>gencodeGenetype$V19</code></p></li>
 </ul></dd>
+
+
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
-<dt>gencodeVersion</dt>
-<dd><p>(character) options: "v26"(default, matched with gtex_v8) or "v19"</p></dd>
+
+
 <dt>recordPerChunk</dt>
 <dd><p>(integer) number of records fetched per request (default: 150).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object of queried gene information. including following columns:</p><ul><li><p><strong>genes.</strong> Input genes</p></li>
+    
+
+<p>A data.table object of queried gene information. including following columns:</p><ul><li><p><strong>genes.</strong> Input genes</p></li>
 <li><p><strong>geneSymbol.</strong> Gene symbol.</p></li>
 <li><p><strong>gencodeId.</strong> Gencode/ensemble id (versioned).</p></li>
 <li><p><strong>entrezGeneId.</strong> Entrez gene ID.</p></li>
@@ -106,15 +106,10 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># query gene of gencode version v26/hg38</span>
-<span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span>
-<span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tp53"</span>,<span class="st">"naDK"</span>,<span class="st">"SDF4"</span><span class="op">)</span> <span class="op">)</span>
-<span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000210195.2"</span>,<span class="st">"ENSG00000078808"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># query gene of gencode version v19/hg19</span>
-<span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP53"</span>,<span class="st">"naDK"</span><span class="op">)</span>,  gencodeVersion<span class="op">=</span><span class="st">"v19"</span><span class="op">)</span>
-<span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000141510.11"</span>,<span class="st">"ENSG00000008130.11"</span><span class="op">)</span>, gencodeVersion<span class="op">=</span><span class="st">"v19"</span><span class="op">)</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># query gene of gencode version v26/hg38</span></span>
+<span><span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span></span>
+<span><span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tp53"</span>,<span class="st">"naDK"</span>,<span class="st">"SDF4"</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_gene</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000210195.2"</span>,<span class="st">"ENSG00000078808"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -128,7 +123,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

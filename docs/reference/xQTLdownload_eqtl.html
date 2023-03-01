@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -62,58 +62,66 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>
-  variantName <span class="op">=</span> <span class="st">""</span>,
-  gene <span class="op">=</span> <span class="st">""</span>,
-  variantType <span class="op">=</span> <span class="st">"auto"</span>,
-  geneType <span class="op">=</span> <span class="st">"auto"</span>,
-  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,
-  datasetId <span class="op">=</span> <span class="st">"gtex_v8"</span>,
-  recordPerChunk <span class="op">=</span> <span class="fl">100</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLdownload_eqtl</span><span class="op">(</span></span>
+<span>  variantName <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  gene <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  variantType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  geneType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  recordPerChunk <span class="op">=</span> <span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>variantName</dt>
 <dd><p>(character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".</p></dd>
+
+
 <dt>gene</dt>
 <dd><p>(character) gene symbol or gencode id (versioned or unversioned are both supported). Can not be null.</p></dd>
+
+
 <dt>variantType</dt>
 <dd><p>(character) options: "auto", "snpId" or "variantId". Default: "auto".</p></dd>
+
+
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
+
+
 <dt>tissueSiteDetail</dt>
 <dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
-<dt>datasetId</dt>
-<dd><p>(character) options: "gtex_v8" (default), "gtex_v7".</p></dd>
+
+
 <dt>recordPerChunk</dt>
 <dd><p>(integer) number of records fetched per request (default: 100).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table object.</p>
+    
+
+<p>A data.table object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># \donttest{</span>
-<span class="co"># Download eQTL info with a gene symbol:</span>
-<span class="va">eqtlInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"TP53"</span><span class="op">)</span>
-
-<span class="co"># Use unversioned gencode ID in GTEx V8:</span>
-<span class="va">eqtl_v8</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000141510"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
-
-<span class="co"># In a specific tissue:</span>
-<span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000141510.11"</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>,
-                  datasetId<span class="op">=</span><span class="st">"gtex_v7"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Thyroid"</span> <span class="op">)</span>
-
-<span class="co"># Download eQTL info with a variant-gene pair:</span>
-<span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"TP53"</span>, datasetId<span class="op">=</span><span class="st">"gtex_v8"</span><span class="op">)</span>
-<span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1667948_A_G_b38"</span>, gene<span class="op">=</span><span class="st">"SLC35E2B"</span>,
-                  tissueSiteDetail<span class="op">=</span><span class="st">"Kidney - Cortex"</span><span class="op">)</span>
-<span class="co"># }</span>
-</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
+<span><span class="co"># Download eQTL info with a gene symbol:</span></span>
+<span><span class="va">eqtlInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"TP53"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use unversioned gencode ID in GTEx V8:</span></span>
+<span><span class="va">eqtl_v8</span> <span class="op">&lt;-</span> <span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000141510"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># In a specific tissue:</span></span>
+<span><span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000141510"</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>,  tissueSiteDetail<span class="op">=</span><span class="st">"Thyroid"</span> <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download eQTL info with a variant-gene pair:</span></span>
+<span><span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"TP53"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLdownload_eqtl</span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1667948_A_G_b38"</span>, gene<span class="op">=</span><span class="st">"SLC35E2B"</span>,</span>
+<span>                  tissueSiteDetail<span class="op">=</span><span class="st">"Kidney - Cortex"</span><span class="op">)</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -127,7 +135,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -4,14 +4,12 @@
 \alias{xQTLvisual_eqtl}
 \title{Box plot with jittered points for showing number and significance of eQTL associations}
 \usage{
-xQTLvisual_eqtl(gene, geneType = "auto", datasetId = "gtex_v8")
+xQTLvisual_eqtl(gene, geneType = "auto")
 }
 \arguments{
 \item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
-
-\item{datasetId}{(character) options: "gtex_v8" (default), "gtex_v7".}
 }
 \value{
 A ggplot object.
