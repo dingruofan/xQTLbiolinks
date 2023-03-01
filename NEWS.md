@@ -1,3 +1,9 @@
+# xQTLbiolinks 1.4.1
+
+## Major changes
+
+* Fix the bugs.
+
 # xQTLbiolinks 1.3.1
 
 ## Major changes
