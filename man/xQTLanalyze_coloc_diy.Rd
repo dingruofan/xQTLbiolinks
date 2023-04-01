@@ -41,6 +41,6 @@ url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFs
 url2 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
 gwasDF <- data.table::fread(url1)
 qtlDF <- data.table::fread(url2)
-output <- xQTLanalyze_coloc_local(gwasDF = gwasDF, qtlDF=qtlDF, method="hyprcoloc")
+output <- xQTLanalyze_coloc_diy(gwasDF = gwasDF, qtlDF=qtlDF, method="coloc")
 }
 }

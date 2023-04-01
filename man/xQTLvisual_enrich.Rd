@@ -4,12 +4,12 @@
 \alias{xQTLvisual_enrich}
 \title{Visualizing enriched variants}
 \usage{
-xQTLvisual_enrich(enrichHits, pValueBy = 5, plotType = "boxplot")
+xQTLvisual_enrich(enrichHits, pValueBy = 10, plotType = "boxplot")
 }
 \arguments{
-\item{enrichHits}{A data.table object from result of xQTLanalyze_enrich}
+\item{enrichHits}{A data.table object from result of xQTLanno_enrich}
 
-\item{pValueBy}{Cut step of pvlaue. Defaults: 5}
+\item{pValueBy}{Cutoff of pvlaue. Defaults: 5}
 
 \item{plotType}{"boxplot", or "density"}
 }
@@ -23,7 +23,7 @@ Visualizing enriched variants
 \donttest{
 url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
-enrichHits <- xQTLanalyze_enrich(snpInfo, enrichElement="TF")
+enrichHits <- xQTLanno_enrich(snpInfo, enrichElement="TF")
 xQTLvisual_enrich(enrichHits, plotType="density")
 }
 }

@@ -7,7 +7,7 @@
 xQTLvisual_anno(snpHits, pValueBy = 5, plotType = "point")
 }
 \arguments{
-\item{snpHits}{A data.table object from result of xQTLanalyze_anno}
+\item{snpHits}{A data.table object from result of xQTLanno_genomic}
 
 \item{pValueBy}{Cut step of pvlaue. Defaults: 5}
 
@@ -21,9 +21,9 @@ Visualizing annotated variants
 }
 \examples{
 \donttest{
-url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
-snpHits <- xQTLanalyze_anno(snpInfo)
+snpHits <- xQTLanno_genomic(snpInfo)
 xQTLvisual_anno(snpHits, plotType="point")
 }
 }

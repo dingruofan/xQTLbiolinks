@@ -858,6 +858,65 @@ xQTLvisual_eqtl <- function(gene, geneType="auto" ){
 }
 
 
+#' @title Box plot with jittered points for showing number and significance of sQTL associations
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @return A ggplot object.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' xQTLvisual_sqtl("KIF15")
+#' }
+xQTLvisual_sqtl <- function(gene, geneType="auto" ){
+  variantId <- tissueSiteDetail <- pValue <- logP <- NULL
+  . <- NULL
+  datasetId = "gtex_v8"
+  # gene="KIF15"
+  if( datasetId=="gtex_v8" ){
+    gencodeVersion="v26"
+  }else{
+    gencodeVersion="v19"
+  }
+
+  # Automatically determine the type of variable:
+  if(geneType=="auto"){
+    if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+      geneType <- "gencodeId"
+    }else{
+      geneType <- "geneSymbol"
+    }
+  }
+
+  geneInfo <- xQTLquery_gene(gene, geneType = geneType )
+  geneEqtl <- xQTLdownload_sqtlSig(genes=geneInfo$geneSymbol)
+  geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
+  geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
+  setDF(geneEqtlSub)
+  p<- ggplot(geneEqtlSub, aes(x=reorder(tissueSiteDetail, -logP, median),y=logP))+
+    PupillometryR::geom_flat_violin(data=geneEqtlSub, mapping=aes(fill=tissueSiteDetail), position=position_nudge(x=0.25), color="black", scale = "width")+
+    geom_jitter(aes(color=tissueSiteDetail), width = 0.1)+
+    geom_boxplot(width=0.15, position = position_nudge(x=0.25), fill="white", size=0.1)+
+    coord_flip() +
+    ylab(expression(-log["10"]("Pvalue")))+
+    xlab("") +
+    theme_bw() +
+    theme(
+      axis.text.x=element_text(size=rel(1.2),face="bold"),
+      axis.text.y = element_text(size=rel(1.2),face="bold"),
+      axis.title.x = element_text(size=rel(1.3),face="bold"),
+      axis.title.y = element_blank()
+    )+
+    guides(fill="none", color="none")
+  print(p)
+  return(p)
+}
+
+
+
 #' @title Violin plot of distribution of the gene expression profiles among multiple tissues.
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
@@ -1145,7 +1204,7 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 
 #' @title Visualizing annotated variants
 #'
-#' @param snpHits A data.table object from result of xQTLanalyze_anno
+#' @param snpHits A data.table object from result of xQTLanno_genomic
 #' @param pValueBy Cut step of pvlaue. Defaults: 5
 #' @param plotType "point", "bar", or "pie"
 #' @return A ggplot object
@@ -1153,9 +1212,9 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
-#' snpHits <- xQTLanalyze_anno(snpInfo)
+#' snpHits <- xQTLanno_genomic(snpInfo)
 #' xQTLvisual_anno(snpHits, plotType="point")
 #' }
 xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
@@ -1260,8 +1319,8 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
 
 #' @title Visualizing enriched variants
 #'
-#' @param enrichHits A data.table object from result of xQTLanalyze_enrich
-#' @param pValueBy Cut step of pvlaue. Defaults: 5
+#' @param enrichHits A data.table object from result of xQTLanno_enrich
+#' @param pValueBy Cutoff of pvlaue. Defaults: 5
 #' @param plotType "boxplot", or "density"
 #'
 #' @return A ggplot object
@@ -1271,10 +1330,10 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
 #' \donttest{
 #' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
-#' enrichHits <- xQTLanalyze_enrich(snpInfo, enrichElement="TF")
+#' enrichHits <- xQTLanno_enrich(snpInfo, enrichElement="TF")
 #' xQTLvisual_enrich(enrichHits, plotType="density")
 #' }
-xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
+xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
   cutP <- NULL
   .<-NULL
 
@@ -1287,13 +1346,13 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
     p1 <- ggplot(enrichHits)+
       geom_boxplot(aes(x=cutP,y=dist,fill=cutP))+
       scale_y_log10(breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))) )+
-      theme_bw()+
+      theme_classic()+
       xlab(expression(-log["10"]("p-value")))+
       ylab(paste("Distance",sep=""))+
       theme(axis.text.x = element_text(size = rel(1.3), angle=30, hjust=1, vjust=1),
             axis.text.y = element_text(size=rel(1.3)),
             axis.title = element_text(size=rel(1.4)),
-            legend.position = "right",
+            legend.position = "none",
             legend.title = element_blank(),
             legend.background = element_rect(fill="white",
                                              size=0.5, linetype="solid",
@@ -1308,12 +1367,14 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=5, plotType="boxplot"){
       scale_x_log10(limits = c(1,(max(enrichHits$dist)+100)),breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))))+
       xlab("Distance")+
       ylab("density")+
-      theme_bw()+
+      theme_classic()+
       theme(
         axis.text = element_text(size=rel(1.3)),
         axis.title = element_text(size=rel(1.4)),
-        panel.grid = element_blank()
-      ) #+ scale_x_log10()
+        panel.grid = element_blank(),
+        legend.position = "none"
+      )
+    #+ scale_x_log10()
     print(p1)
     return(p1)
   }
@@ -1410,41 +1471,3 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=10, binNumbe
 
 
 
-#' @title P-N plot
-#'
-#' @param summaryDT A data.frame with three cols: pval,  beta, se.
-#'
-#' @return A ggplot2 object
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
-#' qtl <- fread(url1, sep="\t")
-#' xQTLvisual_PNPlot(qtl[,.(pValue, beta, se)])
-#' }
-xQTLvisual_PNPlot <- function(summaryDT){
-  se <- pval <- pZtest <- logPZ <- logP <- NULL
-  . <-NULL
-  summaryDT <- na.omit(summaryDT)
-  summaryDT <- summaryDT[,1:3]
-  names(summaryDT) <- c("pval", "beta", "se")
-  summaryDT[,c("pZtest", "logP") := .(pnorm(-abs(beta/se)), log(pval, 10)*(-1))]
-  summaryDT[,"logPZ" := log(pZtest, 10)*(-1)]
-  summaryDT <- na.omit(summaryDT)
-
-  p <- ggplot(summaryDT)+
-    geom_point(aes(x=logPZ, y=logP))+
-    theme_classic()+
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0))+
-    ylab(expression(-log["10"]("Pvalue-raw")))+
-    xlab(expression(-log["10"]("Pvalue-estimated")))+
-    theme_classic()+
-    theme(
-      axis.text = element_text(rel(1.3)),
-      axis.title = element_text(rel(1.4))
-    )
-  print(p)
-  return(list(summaryDT=summaryDT, p=p))
-}
