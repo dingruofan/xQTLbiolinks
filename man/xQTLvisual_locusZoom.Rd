@@ -10,6 +10,7 @@ xQTLvisual_locusZoom(
   population = "EUR",
   posRange = "",
   legend = TRUE,
+  ylim = NULL,
   legend_position = c("topright", "bottomright", "topleft"),
   snpLD = NULL
 )
@@ -32,6 +33,8 @@ xQTLvisual_locusZoom(
 \item{posRange}{Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.}
 
 \item{legend}{(boolean, optional) Should the legend be shown? Default: TRUE.}
+
+\item{ylim}{set the minimum and maximum values for the y-axis. By default, the function will automatically determine the y-axis limits based on the data being plotted.}
 
 \item{legend_position}{(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
 

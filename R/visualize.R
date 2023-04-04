@@ -307,6 +307,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @param highlightSnp Default is the snp that with lowest p-value.
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @param posRange Genome range that you want to visualize (e.g. "chr6:3e7-7e7"). Default is the region that covers all snps.
+#' @param ylim set the minimum and maximum values for the y-axis. By default, the function will automatically determine the y-axis limits based on the data being plotted.
 #' @param legend (boolean, optional) Should the legend be shown? Default: TRUE.
 #' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
 #' @param snpLD A data.frame of LD matirx. Default is null.
@@ -336,7 +337,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' xQTLvisual_locusZoom(eqtlAsso[,c("snpId", "chrom", "pos", "pValue")], highlightSnp="rs4711878",
 #'                      posRange="chr6:47.3e6-47.9e6")
 #' }
-xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
+xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, ylim=NULL, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   chrom <- x <- y<- RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
   # highlightSnp=""
@@ -444,11 +445,13 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   # xlab:
   xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
 
+
   p <- ggplot2::ggplot(DF)+
     geom_point(aes(x=pos, y=logP, fill=r2Cut,  size=pointShape, shape=pointShape), color="black")+
     scale_size_manual(breaks = c('normal', "highlight"), values =  c(3,3.5)  )+
     scale_shape_manual(breaks = c('normal', "highlight"), values =  c(21,23) )+
-    scale_y_continuous(breaks = seq(0,floor(max(DF$logP)),by=ifelse(floor(max(DF$logP))<5, 1, 5)), labels = seq(0,floor(max(DF$logP)), by=ifelse(floor(max(DF$logP))<5, 1, 5)), limits = c(0, max(DF$logP)+0.4))+
+    # scale_y_continuous(breaks = seq(0,floor(max(DF$logP)),by=ifelse(floor(max(DF$logP))<5, 1, 5)),
+    #                    labels = seq(0,floor(max(DF$logP)), by=ifelse(floor(max(DF$logP))<5, 1, 5)),limits = c(0, max(DF$logP)+0.4) )+
     # scale_color_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointColor) +
     scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
@@ -462,6 +465,9 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
           plot.title = element_text(hjust=0.5),
           legend.position = "none"
     )+ guides( shape="none", color="none", size="none", fill = "none" )
+  if(!is.null(ylim)){
+    p <- p+ylim(ylim)
+  }
 
   if (legend == TRUE) {
     legend_position = match.arg(legend_position)
@@ -1469,5 +1475,44 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=10, binNumbe
 }
 
 
+
+#' @title Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.
+#'
+#' @param summaryDT A data.frame with three cols: pval,  beta, se.
+#'
+#' @return a list containing a data.frame of estimated pvalues and A ggplot2 object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
+#' qtl <- fread(url1, sep="\t")
+#' xQTLanno_PZPlot(qtl[,.(pValue, beta, se)])
+#' }
+xQTLvisual_PZPlot <- function(summaryDT){
+  se <- pval <- pZtest <- logPZ <- logP <- NULL
+  . <-NULL
+  summaryDT <- na.omit(summaryDT)
+  summaryDT <- summaryDT[,1:3]
+  names(summaryDT) <- c("pval", "beta", "se")
+  summaryDT[,c("pZtest", "logP") := .(pnorm(-abs(beta/se)), log(pval, 10)*(-1))]
+  summaryDT[,"logPZ" := log(pZtest, 10)*(-1)]
+  summaryDT <- na.omit(summaryDT)
+
+  p <- ggplot(summaryDT)+
+    geom_point(aes(x=logPZ, y=logP))+
+    geom_abline(intercept = 0)+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0))+
+    ylab(expression(-log["10"]("Pvalue-raw")))+
+    xlab(expression(-log["10"]("Pvalue-estimated")))+
+    theme_classic()+
+    theme(
+      axis.text = element_text(rel(1.3)),
+      axis.title = element_text(rel(1.4))
+    )
+  print(p)
+  return(list(summaryDT=summaryDT, p=p))
+}
 
 
