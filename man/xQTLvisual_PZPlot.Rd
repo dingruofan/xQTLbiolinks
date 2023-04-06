@@ -4,7 +4,7 @@
 \alias{xQTLvisual_PZPlot}
 \title{Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.}
 \usage{
-xQTLvisual_PZPlot(summaryDT)
+xQTLvisual_PZPlot(summaryDT, binCutLogP = 4, binNumber = 2000)
 }
 \arguments{
 \item{summaryDT}{A data.frame with three cols: pval,  beta, se.}

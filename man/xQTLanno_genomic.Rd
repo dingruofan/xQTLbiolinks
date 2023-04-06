@@ -4,7 +4,7 @@
 \alias{xQTLanno_genomic}
 \title{annotate all signals in GWAS / QTL dataset by genome location}
 \usage{
-xQTLanno_genomic(snpInfo = "", genomeVersion = "hg38")
+xQTLanno_genomic(snpInfo = "", p_cutoff = 5e-08, genomeVersion = "hg38")
 }
 \arguments{
 \item{snpInfo}{A data.table/data.frame with three columns: chromosome, position, and P-value.}

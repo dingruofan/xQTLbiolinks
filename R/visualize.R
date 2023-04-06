@@ -1234,75 +1234,45 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
   snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
   snpHits$cutP <- cut(snpHits$logP,breaks= ceiling(seq(0,max(snpHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
 
-  if(plotType=="point"){
-    snpHitsCount <- snpHits[,.(Num=nrow(.SD)), by= c("cutP", "type")]
-    snpHitsCount <- merge(snpHitsCount, typeLabel, by="type")
-    # plot:
-    p1 <- ggplot(snpHitsCount)+
-      geom_point(aes(x=cutP,y=Num,fill=Type,shape=Type),size=rel(3.8))+
-      geom_line(aes(x=cutP,y=Num,color=Type,group=Type,linetype=Type),size=rel(1.2))+
-      scale_y_log10(breaks=10^c(0:floor(log(max(snpHitsCount$Num),10))), labels= as.character(as.integer(10^c(0:floor(log(max(snpHitsCount$Num),10))))) )+
-      scale_shape_manual(values= c(0,1,2,5,6,21,22,23,24,25)[1:length(unique(snpHitsCount$Type))] )+
-      theme_classic()+
-      xlab(expression(-log["10"]("p-value")))+
-      ylab("Number of variants")+
-      theme(
-        axis.text.x = element_text(size = rel(1.3), angle=30, hjust=1, vjust=1),
-        axis.text.y =element_text(size=rel(1.3)),
-        axis.ticks.y = element_blank(),
-        panel.grid.major.x = element_blank(), #设置面板网格
-        panel.grid.major.y = element_line(size = 0.5),
-        panel.grid.minor.x = element_blank(),
-        axis.title=element_text(size=rel(1.3)),
-        legend.title = element_text(face="bold",size=rel(1.1)),
-        legend.text = element_text(size=rel(1.1)),
-        legend.position = c(0.874,0.8),
-        legend.margin = margin(0.1,0.1,0.1,0.1,"cm"),
-        legend.background = element_rect(fill="white",
-                                         size=0.5, linetype="solid",colour ="black")
-      )
-    print(p1)
-    return(p1)
-  }
+  snpHits_count <- as.data.table(as.data.frame(table(snpHits$type)))[,.(type=Var1, Num=Freq)]
+  snpHits_count <- merge(snpHits_count, typeLabel, by="type")
+  snpHits_count$prop <- round(snpHits_count$Num/(sum(snpHits_count$Num))*100,2)
+  snpHits_count <- snpHits_count[order(-prop)]
+  snpHits_count$legendLabel=paste(snpHits_count$Type," (",snpHits_count$prop,"%",")", sep="")
+
   if(plotType=="bar"){
-    snpHitsCount <- snpHits[,.(Num=nrow(.SD)), by= c("cutP", "type")]
-    snpHitsCount$Num <- as.numeric(snpHitsCount$Num)
-    snpHitsCount[Num==1, "Num"] <- 1.1
-    snpHitsCount <- merge(snpHitsCount, typeLabel, by="type")
-    snpHitsCount$Type <- factor(snpHitsCount$Type, levels = snpHitsCount[,.(NumSum=sum(Num)),by=c("Type")][order(-NumSum)]$Type)
 
     # a <- randomcoloR::distinctColorPalette(length(unique(snpHitsCount$Type)))
     # a <- randomcoloR::randomColor(length(unique(snpHitsCount$Type)))
-    p1 <- ggplot(snpHitsCount, aes(x = cutP ,y = Num,fill=Type)) +
-      geom_bar(stat = "identity",position =position_dodge(0.9), width = 0.7, alpha=1)+
-      scale_y_log10( breaks=c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))), labels= as.character((c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))))) )+
-      scale_fill_manual( breaks=as.character(unique(snpHitsCount$Type)), values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHitsCount$Type)))])+
+    p1 <- ggplot(snpHits_count, aes(x = reorder(Type, Num, mean) ,y = Num,fill=Type)) +
+      geom_bar(stat = "identity", position =position_dodge(0.9), width = 0.7, alpha=1)+
+      # scale_y_log10( breaks=c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))), labels= as.character((c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))))) )+
+      scale_fill_manual( breaks=as.character(unique(snpHitsCount$Type)),
+                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHits_count$Type)))],
+                         labels= paste0(snpHits_count$Type, "(",snpHits_count$prop,"%)"))+
       theme_classic()+
+      # ylim(c(0, max(snpHits_count$Num)+0.15*max(snpHits_count$Num)))+
+      # geom_text(aes(label=paste(prop, "%")), position=position_dodge(width=0.9), hjust=0)+
       theme(axis.text.x = element_text(size=rel(1.3)),
             axis.text.y = element_text(size=rel(1.3)),
-            axis.title = element_text(size=rel(1.4)),
+            axis.title = element_text(size=rel(1.3)),
             legend.title = element_text(face="bold",size=rel(1.1)),
             legend.text = element_text(size=rel(1.1)),
-            legend.position = c(0.874,0.8)
+            legend.position = "right"
       )+
-      xlab(expression(-log["10"]("p-value")))+
+      # xlab(expression(-log["10"]("p-value")))+
+      xlab("")+
       ylab("Number of variants")+coord_flip()
     plot(p1)
     return(p1)
   }
   if(plotType=="pie"){
-    snpHitsCount <- snpHits[,.(Num=nrow(.SD)), by= c("type")]
-    snpHitsCount <- merge(snpHitsCount, typeLabel, by="type")
-    snpHitsCount$Type <- factor(snpHitsCount$Type, levels = snpHitsCount[,.(NumSum=sum(Num)),by=c("Type")][order(-NumSum)]$Type)
-    snpHitsCount$prop <- round(snpHitsCount$Num/(sum(snpHitsCount$Num))*100,2)
-    snpHitsCount <- snpHitsCount[order(-prop)]
-    snpHitsCount$legendLabel=paste(snpHitsCount$Type," (",snpHitsCount$prop,"%",")", sep="")
 
-    p1 <- ggplot(snpHitsCount, aes(x = "" ,y = prop, fill = Type)) +
+    p1 <- ggplot(snpHits_count, aes(x = "" ,y = prop, fill = Type)) +
       geom_bar(stat = "identity", width=3, alpha=1 )+
-      scale_fill_manual( breaks=as.character(unique(snpHitsCount$Type)),
-                         labels=snpHitsCount$legendLabel,
-                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHitsCount$Type)))])+
+      scale_fill_manual( breaks=as.character(unique(snpHits_count$Type)),
+                         labels=snpHits_count$legendLabel,
+                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHits_count$Type)))])+
       # geom_text(aes(y = prop/3 + c(0, cumsum(prop)[-length(prop)]),label = prop), size=5)+
       theme_bw()+
       theme(
@@ -1489,7 +1459,7 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=10, binNumbe
 #' qtl <- fread(url1, sep="\t")
 #' xQTLanno_PZPlot(qtl[,.(pValue, beta, se)])
 #' }
-xQTLvisual_PZPlot <- function(summaryDT){
+xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
   se <- pval <- pZtest <- logPZ <- logP <- NULL
   . <-NULL
   summaryDT <- na.omit(summaryDT)
@@ -1499,7 +1469,32 @@ xQTLvisual_PZPlot <- function(summaryDT){
   summaryDT[,"logPZ" := log(pZtest, 10)*(-1)]
   summaryDT <- na.omit(summaryDT)
 
-  p <- ggplot(summaryDT)+
+  message("== sorting... ", date())
+  summaryDT <- summaryDT[order(pval)]
+  message("== logging... ", date())
+  # summaryDT[,c("observedLogP", "expectedLogP") := .(-log10(pval), -log10(1:length(pval)/length(pval)))]
+
+  # 要进行 bin的：
+  summaryDT_cut <- summaryDT[logP < binCutLogP]
+  # 不进行 bin 的：
+  summaryDT_noCut <- summaryDT[logP >= binCutLogP]
+
+  # 根据位置划分为 bin size 个点。
+  message("== binning... ", date())
+  summaryDT_cut$ID <- 1:nrow(summaryDT_cut)
+  if( binNumber>=nrow(summaryDT_cut) ){ binNumber<- nrow(summaryDT_cut) }
+  binSize <- round(nrow(summaryDT_cut)/binNumber,0)
+  summaryDT_cut$cutF <- as.character(cut(1:nrow(summaryDT_cut), breaks=seq(0, nrow(summaryDT_cut)+binSize, binSize)))
+  myFunc <- function(dt){ dt[c(which.max(dt$pval),which.min(dt$pval)),] }
+  # myFunc <- function(dt){ dt[sample(1:nrow(dt), 1),] }
+  summaryDT_cut <- summaryDT_cut[,myFunc(.SD), by ="cutF"]
+
+  summaryDT_all <- rbind(summaryDT_cut[,-c("ID", "cutF")], summaryDT_noCut)
+  message("cutted: ",nrow(summaryDT_cut), "; non-cutted: ", nrow(summaryDT_noCut))
+  rm(summaryDT_cut, summaryDT_noCut)
+
+
+  p <- ggplot(summaryDT_all)+
     geom_point(aes(x=logPZ, y=logP))+
     geom_abline(intercept = 0)+
     scale_x_continuous(expand = c(0, 0)) +

@@ -126,7 +126,8 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param genomeVersion "grch38" or "grch37". Default: "grch38"
 #' @param grch37To38 TRUE or FALSE, we recommend converting grch37 to grch38, or using a input file of grch38 directly. Package `rtracklayer` is required.
-#' @param overlapWithEGene take the intersection with eGenes. Default:TRUE
+#' @param overlapWithEGene TRUE(default) of FALSE. take the intersection with eGenes, egene data.frame will be automatically download from GTEx, or can be provided by the parameter `egeneDF` specified the data.frame of one column of genecode ID.  Default:TRUE
+#' @param egeneDF A data.table object of one column of gencode ID. requiring overlapWithEGene is TRUE.
 #' @import data.table
 #' @import stringr
 #' @importFrom GenomicRanges GRanges
@@ -139,10 +140,10 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' \donttest{
 #' URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 #' sentinelSnpDF <- data.table::fread(URL1)
-#' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF,detectRange=1e4,"Brain - Cerebellum",
+#' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
 #'                                    genomeVersion="grch37", grch37To38=TRUE)
 #' }
-xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDetail="", genomeVersion="grch38", grch37To38=FALSE, overlapWithEGene=TRUE){
+xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDetail="", genomeVersion="grch38", grch37To38=FALSE, overlapWithEGene=TRUE, egeneDF=NULL){
   rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
   . <-genes <- geneSymbol <- gencodeId <- geneType <- description<- NULL
 
@@ -251,7 +252,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
     message(i," - ", chrAll[i]," - [",nrow(Traits),"] gene-SNP pairs of [",length(unique(Traits$gencodeId)),"] genes and [",length(unique(Traits$rsid)),"] SNPs." )
     rm(sentinelSnpChrom, geneInfoChrom, Traits)
   }
-  message("== Fetching [", length(unique(traitsAll$gencodeId)),"] genes' information from the GTEx.")
+  message("== Fetching [", length(unique(traitsAll$gencodeId)),"] genes' information from the GTEx...")
   geneAnnot <- xQTLquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId")
   if( datasetId=="gtex_v7" ){
     geneAnnot$chromosome <- paste0("chr",geneAnnot$chromosome)
@@ -263,8 +264,13 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
   }
 
   # Get the overlap with the eGgenes:
-  if(overlapWithEGene){
+  if(overlapWithEGene & is.null(egeneDF)){
     egeneDF <- xQTLdownload_egene(tissueSiteDetail = tissueSiteDetail) #11240
+    traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId]
+    message("== After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
+  }else if(overlapWithEGene & !(is.null(egeneDF))){
+    egeneDF <- egeneDF[,1]
+    names(egeneDF) <- "gencodeId"
     traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId]
     message("== After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
   }

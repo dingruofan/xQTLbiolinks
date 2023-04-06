@@ -14,9 +14,8 @@
   # options(timeout = max(300, getOption("timeout"))) # see ?download.file
 
   citation <- paste0("If you use ", pkgname, " in published research, please cite:\n",
-                     "Ruofan Ding, Xudong Zou, Yangmei Qin, Gao Wang, Lei Li. xQTLbiolinks: an R package for integrative analysis of xQTL data.",
+                     "Ruofan Ding, Xudong Zou, Yangmei Qin, Xuelian Ma, Gao Wang, Lei Li. xQTLbiolinks: a comprehensive and scalable tool for integrative analysis of molecular QTLs.",
                      "")
-
 
   packageStartupMessage(paste0(msg, citation))
 }

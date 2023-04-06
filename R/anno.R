@@ -172,7 +172,7 @@ xQTLanno_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement="Pr
 #' snpInfo <- data.table::fread(url1, sep="\t")
 #' snpHits <- xQTLanno_genomic(snpInfo)
 #' }
-xQTLanno_genomic <- function(snpInfo="", genomeVersion="hg38"){
+xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   chrom <- pValue <- V1 <- V2 <- V3 <- tx_name <- anno <- TXID <- tx_id <- type <- pos <- proportion <- NULL
   .<- NULL
   message("==> Start checking variants...")
@@ -188,6 +188,7 @@ xQTLanno_genomic <- function(snpInfo="", genomeVersion="hg38"){
   if(nrow(snpInfo)<1){
     stop("Number of variants < 1...")
   }
+  snpInfo <- snpInfo[pValue<p_cutoff,]
   # create snpinfo Grange object:
   snpRanges <- GenomicRanges::GRanges(snpInfo$chrom,
                                       IRanges::IRanges(snpInfo$pos, snpInfo$pos),
