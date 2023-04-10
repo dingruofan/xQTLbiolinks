@@ -33,7 +33,7 @@ library(xQTLbiolinks)
 library(stringr)
 ```
 
-## Step 1. data preparation.
+## Step 1. data pre-processing
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
@@ -69,6 +69,17 @@ In this example, a data.table object of 16538 (rows) x 5 (cols) is loaded. Five 
 ```{r, eval=TRUE}
 head(gwasDF)
 ```
+
+Now we can perform quality control for this GWAS dataset by estimating the genomic inflation factor,  validating QQ-plot and PZ-plot using xQTLbiolinks.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_qqPlot(gwasDF[,.(pValue)])
+```
+
+```{r, compare.png, fig.align = 'center', out.width = "50%", echo=FALSE}
+knitr::include_graphics("images/quick_start/QQplot.png")
+```
+The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. 
 
 ## Step 2. Seek sentinel snps.
 

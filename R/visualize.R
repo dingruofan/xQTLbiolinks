@@ -1371,7 +1371,7 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
 #' snpInfo <- fread(url1, sep="\t")
 #' xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 #' }
-xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=10, binNumber=80000){
+xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=1, binNumber=80000){
   pval <- observedLogP <- expectedLogP <- NULL
   .<- NULL
 

@@ -138,10 +138,16 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #'
 #' @examples
 #' \donttest{
+#' # without a customized egene file,
 #' URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 #' sentinelSnpDF <- data.table::fread(URL1)
 #' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
 #'                                    genomeVersion="grch37", grch37To38=TRUE)
+#' # with a egene file:
+#' egeneFile <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/egeneDF.txt"
+#' egeneDF <- fread(egeneFile)
+#' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
+#'                                    genomeVersion="grch37", grch37To38=TRUE, egeneDF=egeneDF)
 #' }
 xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDetail="", genomeVersion="grch38", grch37To38=FALSE, overlapWithEGene=TRUE, egeneDF=NULL){
   rsid <- maf <- strand <- pValue <- chr <- position <- chromosome <- NULL
@@ -272,7 +278,8 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
     egeneDF <- egeneDF[,1]
     names(egeneDF) <- "gencodeId"
     traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId]
-    message("== After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
+    message("== ",nrow(egeneDF), " eGenes are provided...")
+    message("   After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
   }
 
   return(traitsAll)

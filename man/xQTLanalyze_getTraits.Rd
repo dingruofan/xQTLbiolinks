@@ -37,9 +37,15 @@ Identify trait genes using sentinel SNPs generated from \code{xQTLanalyze_getSen
 }
 \examples{
 \donttest{
+# without a customized egene file,
 URL1<-"https://gitee.com/stronghoney/exampleData/raw/master/gwas/GLGC_CG0052/sentinelSnpDF.txt"
 sentinelSnpDF <- data.table::fread(URL1)
 traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
                                    genomeVersion="grch37", grch37To38=TRUE)
+# with a egene file:
+egeneFile <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/egeneDF.txt"
+egeneDF <- fread(egeneFile)
+traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
+                                   genomeVersion="grch37", grch37To38=TRUE, egeneDF=egeneDF)
 }
 }

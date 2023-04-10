@@ -7,7 +7,7 @@
 xQTLvisual_qqPlot(
   summaryDT,
   legend_p = FALSE,
-  binCutLogP = 10,
+  binCutLogP = 1,
   binNumber = 80000
 )
 }
