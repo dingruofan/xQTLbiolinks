@@ -37,7 +37,7 @@ library(stringr)
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
-download.file("https://github.com/dingruofan/exampleData/raw/master/env.zip", temp1)
+download.file("http://github.com/dingruofan/exampleData/raw/master/env.zip", temp1)
 load(unz(temp1,"env.Rdata"))
 close(file(temp1))
 rm(temp1)
@@ -76,7 +76,7 @@ Now we can perform quality control for this GWAS dataset by estimating the genom
 xQTLvisual_qqPlot(gwasDF[,.(pValue)])
 ```
 
-```{r, compare.png, fig.align = 'center', out.width = "50%", echo=FALSE}
+```{r, QQplot.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/quick_start/QQplot.png")
 ```
 The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. 

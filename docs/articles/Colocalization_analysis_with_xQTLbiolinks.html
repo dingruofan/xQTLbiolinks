@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.2</span>
       </span>
     </div>
 
@@ -255,13 +255,13 @@ With a threshold of 0.75 for <code>coloc</code> and 0.5 for
 <code>hyprcoloc</code>, a total of 24 colocalized genes are shared.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">VennDiagram</span><span class="op">)</span></span>
-<span><span class="cn">T</span> <span class="op">&lt;-</span> <span class="fu">venn.diagram</span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>colocOut <span class="op">=</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">PP.H4.abf</span><span class="op">&gt;=</span><span class="fl">0.75</span><span class="op">]</span><span class="op">$</span><span class="va">traitGene</span>, </span>
+<span><span class="cn">T</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/VennDiagram/man/venn.diagram.html" class="external-link">venn.diagram</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>colocOut <span class="op">=</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">PP.H4.abf</span><span class="op">&gt;=</span><span class="fl">0.75</span><span class="op">]</span><span class="op">$</span><span class="va">traitGene</span>, </span>
 <span>                   hyprcolocOut <span class="op">=</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">hypr_posterior</span><span class="op">&gt;=</span><span class="fl">0.5</span><span class="op">]</span><span class="op">$</span><span class="va">traitGene</span><span class="op">)</span>,</span>
 <span>                   filename <span class="op">=</span> <span class="cn">NULL</span>,lwd<span class="op">=</span><span class="fl">1</span>,lty<span class="op">=</span><span class="fl">1</span>, width <span class="op">=</span> <span class="fl">8000</span>, height <span class="op">=</span> <span class="fl">10000</span>,</span>
 <span>                   fill<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'#ff7a45'</span>,<span class="st">'#597ef7'</span><span class="op">)</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'red'</span>,<span class="st">'blue'</span><span class="op">)</span>, cat.col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'red'</span>,<span class="st">'blue'</span><span class="op">)</span>,</span>
 <span>                   main.cex <span class="op">=</span> <span class="fl">0.45</span>, sub.cex<span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                   disable.logging <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">grid.draw</span><span class="op">(</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/venn_coloc_hyprcoloc.png" width="30%" style="display: block; margin: auto;"></p>
 <p>To save time and go through this case as soon as possible, you can
 get the above result directly with:</p>
@@ -468,14 +468,14 @@ matrix:</p>
 <p>R package <code>clusterProfiler</code> is used for gene functional
 annotation:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">clusterProfiler</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/biomedical-knowledge-mining-book/" class="external-link">clusterProfiler</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
-<span><span class="va">ego</span> <span class="op">&lt;-</span> <span class="fu">enrichGO</span><span class="op">(</span>gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">outGenes</span><span class="op">$</span><span class="va">entrezGeneId</span><span class="op">)</span>,</span>
+<span><span class="va">ego</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">enrichGO</a></span><span class="op">(</span>gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">outGenes</span><span class="op">$</span><span class="va">entrezGeneId</span><span class="op">)</span>,</span>
 <span>                OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>,</span>
 <span>                ont<span class="op">=</span> <span class="st">"BP"</span>,</span>
 <span>                pAdjustMethod <span class="op">=</span><span class="st">"none"</span>,</span>
 <span>                readable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">dotplot</span><span class="op">(</span><span class="va">ego</span>, showCategory<span class="op">=</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/enrichplot/man/dotplot.html" class="external-link">dotplot</a></span><span class="op">(</span><span class="va">ego</span>, showCategory<span class="op">=</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_Go.png" width="80%" style="display: block; margin: auto;"></p>
 <p>Viral-related GO terms are enriched in above analysis, including
 <code>"viral life cycle"</code>,

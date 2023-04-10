@@ -1,3 +1,8 @@
+# xQTLbiolinks 1.4.2
+
+## Minor changes
+* The parameter "egeneDF" has been added to the xQTLanalyze_getTraits function, enabling users to obtain trait genes for sentinel SNPs by utilizing their own eGene dataset.
+
 # xQTLbiolinks 1.4.1
 
 ## Major changes

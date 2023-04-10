@@ -25,25 +25,30 @@ articles:
 
 
 reference:
-- title: Query
+- title: Data retrieval
   contents:
   - starts_with("xQTLquery_")
   - starts_with("EBIquery_allTerm")
   - starts_with("extractGeneInfo")
-- title: Download
-  contents:
   - starts_with("xQTLdownload_")
   - starts_with("retrieveLD")
-- title: Visualize
+- title: Pre-processing
   contents:
-  - starts_with("xQTLvisual_")
+  - starts_with("xQTLanno_cal")
+  - starts_with("xQTLanno_")
 - title: Analyze
   contents:
   - starts_with("xQTLanalyze_")
+- title: Visualize
+  contents:
+  - starts_with("xQTLvisual_")
+
 
 
 news:
  releases:
+ - text: "xQLTbiolinks 1.4.2"
+   href: https://dingruofan.github.io/xQTLbiolinks/news/index.html#xqtlbiolinks-142
  - text: "xQLTbiolinks 1.4.1"
    href: https://dingruofan.github.io/xQTLbiolinks/news/index.html#xqtlbiolinks-141
  - text: "xQLTbiolinks 1.3.1"

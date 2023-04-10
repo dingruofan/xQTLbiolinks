@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.2</span>
       </span>
     </div>
 
@@ -68,6 +68,7 @@
 <span>  population <span class="op">=</span> <span class="st">"EUR"</span>,</span>
 <span>  posRange <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="st">"bottomright"</span>, <span class="st">"topleft"</span><span class="op">)</span>,</span>
 <span>  snpLD <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -97,6 +98,10 @@
 
 <dt>legend</dt>
 <dd><p>(boolean, optional) Should the legend be shown? Default: TRUE.</p></dd>
+
+
+<dt>ylim</dt>
+<dd><p>set the minimum and maximum values for the y-axis. By default, the function will automatically determine the y-axis limits based on the data being plotted.</p></dd>
 
 
 <dt>legend_position</dt>

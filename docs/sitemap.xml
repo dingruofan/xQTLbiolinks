@@ -139,6 +139,15 @@
     <loc>/reference/xQTLanalyze_TSExp.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLanno_calLambda.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLanno_enrich.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLanno_genomic.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLbiolinks.html</loc>
   </url>
   <url>
@@ -232,6 +241,9 @@
     <loc>/reference/xQTLvisual_PNPlot.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLvisual_PZPlot.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLvisual_qqPlot.html</loc>
   </url>
   <url>
@@ -239,6 +251,9 @@
   </url>
   <url>
     <loc>/reference/xQTLvisual_qtlSpecificity.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_sqtl.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLvisual_sqtlExp.html</loc>

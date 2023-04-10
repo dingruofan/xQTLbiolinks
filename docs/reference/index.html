@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.2</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="query">Query <a href="#query" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="data-retrieval">Data retrieval <a href="#data-retrieval" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
@@ -95,11 +95,7 @@
           <p><code><a href="extractGeneInfo.html">extractGeneInfo()</a></code> </p>
         </td>
         <td><p>extract gene infor of specified genome from gencodeGeneInfoAllGranges</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="download">Download <a href="#download" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
+      </tr><tr><td>
           <p><code><a href="xQTLdownload_egene.html">xQTLdownload_egene()</a></code> </p>
         </td>
         <td><p>Download details of eGenes (eQTL Genes) for a specified gene or a tissue.</p></td>
@@ -152,6 +148,46 @@
         </td>
         <td><p>Retrive SNP pairwise LD from LDlink database</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="pre-processing">Pre-processing <a href="#pre-processing" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="xQTLanno_calLambda.html">xQTLanno_calLambda()</a></code> </p>
+        </td>
+        <td><p>calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset.</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanno_enrich.html">xQTLanno_enrich()</a></code> </p>
+        </td>
+        <td><p>enrichment analysis for GWAS / QTL signals in functional elements, including enhancer, promoter, CPG, and TFs</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanno_genomic.html">xQTLanno_genomic()</a></code> </p>
+        </td>
+        <td><p>annotate all signals in GWAS / QTL dataset by genome location</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="analyze">Analyze <a href="#analyze" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="xQTLanalyze_coloc.html">xQTLanalyze_coloc()</a></code> </p>
+        </td>
+        <td><p>Conduct colocalization analysis with trait genes generated from <code>xQTLanalyze_getTraits</code></p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_coloc_diy.html">xQTLanalyze_coloc_diy()</a></code> </p>
+        </td>
+        <td><p>conduct colocalization analysis with customized QTL data</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_getSentinelSnp.html">xQTLanalyze_getSentinelSnp()</a></code> </p>
+        </td>
+        <td><p>Detect sentinel SNPs in a given summary statistis dataset.</p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_getTraits.html">xQTLanalyze_getTraits()</a></code> </p>
+        </td>
+        <td><p>Identify trait genes using sentinel SNPs generated from <code>xQTLanalyze_getSentinelSnp</code></p></td>
+      </tr><tr><td>
+          <p><code><a href="xQTLanalyze_propensity.html">xQTLanalyze_propensity()</a></code> </p>
+        </td>
+        <td><p>eQTL-specific analysis</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="visualize">Visualize <a href="#visualize" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
@@ -192,9 +228,9 @@
         </td>
         <td><p>Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics</p></td>
       </tr><tr><td>
-          <p><code><a href="xQTLvisual_PNPlot.html">xQTLvisual_PNPlot()</a></code> </p>
+          <p><code><a href="xQTLvisual_PZPlot.html">xQTLvisual_PZPlot()</a></code> </p>
         </td>
-        <td><p>P-N plot</p></td>
+        <td><p>Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.</p></td>
       </tr><tr><td>
           <p><code><a href="xQTLvisual_qqPlot.html">xQTLvisual_qqPlot()</a></code> </p>
         </td>
@@ -204,45 +240,13 @@
         </td>
         <td><p>Visualization of QTL specificity among multiple cells/tissues.</p></td>
       </tr><tr><td>
+          <p><code><a href="xQTLvisual_sqtl.html">xQTLvisual_sqtl()</a></code> </p>
+        </td>
+        <td><p>Box plot with jittered points for showing number and significance of sQTL associations</p></td>
+      </tr><tr><td>
           <p><code><a href="xQTLvisual_sqtlExp.html">xQTLvisual_sqtlExp()</a></code> </p>
         </td>
         <td><p>Boxplot of normalized expression among genotypes for sQTL.</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="analyze">Analyze <a href="#analyze" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="xQTLanalyze_anno.html">xQTLanalyze_anno()</a></code> </p>
-        </td>
-        <td><p>annotate variants with genome positon</p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_calLambda.html">xQTLanalyze_calLambda()</a></code> </p>
-        </td>
-        <td><p>calculate genomic control inflation factor</p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_coloc.html">xQTLanalyze_coloc()</a></code> </p>
-        </td>
-        <td><p>Conduct colocalization analysis with trait genes generated from <code>xQTLanalyze_getTraits</code></p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_coloc_diy.html">xQTLanalyze_coloc_diy()</a></code> </p>
-        </td>
-        <td><p>conduct colocalization analysis with customized QTL data</p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_enrich.html">xQTLanalyze_enrich()</a></code> </p>
-        </td>
-        <td><p>variant enrichment analysis</p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_getSentinelSnp.html">xQTLanalyze_getSentinelSnp()</a></code> </p>
-        </td>
-        <td><p>Detect sentinel SNPs in a given summary statistis dataset.</p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_getTraits.html">xQTLanalyze_getTraits()</a></code> </p>
-        </td>
-        <td><p>Identify trait genes using sentinel SNPs generated from <code>xQTLanalyze_getSentinelSnp</code></p></td>
-      </tr><tr><td>
-          <p><code><a href="xQTLanalyze_propensity.html">xQTLanalyze_propensity()</a></code> </p>
-        </td>
-        <td><p>eQTL-specific analysis</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
