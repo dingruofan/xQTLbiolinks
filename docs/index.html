@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>An R Package for Integrative Analysis of Quantitative Trait Locus Data of GTEx • xQTLbiolinks</title>
+<title>An R Package for Integrative Analysis of Quantitative Trait Locus Data of xQTL • xQTLbiolinks</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="An R Package for Integrative Analysis of Quantitative Trait Locus Data of GTEx">
-<meta property="og:description" content="User can query, download, and visualize of molecular quantitative trait locus and gene expression data from public resources through the application programming interface &lt;https://gtexportal.org/home/api-docs/index.html&gt; of GTEx. ">
+<script src="pkgdown.js"></script><meta property="og:title" content="An R Package for Integrative Analysis of Quantitative Trait Locus Data of xQTL">
+<meta property="og:description" content="xQTLbiolinks is a well-developed R package that enables users-customized data retrieval, pre-processing, analysis, and data visualization of molecular QTLs (eQTLs and sQTLs) and gene expression data from public resources through the application programming interface &lt;https://gtexportal.org/home/api-docs/index.html&gt; of GTEx. ">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -76,10 +76,9 @@
   <div class="contents col-md-9">
 
 <div class="section level3">
-<h3 id="xqtlbiolinks-xqtlbiolinks-a-comprehensive-and-scalable-tool-for-integrative-analysis-of-molecular-qtls">xQTLbiolinks: xQTLbiolinks: a comprehensive and scalable tool for integrative analysis of molecular QTLs<a class="anchor" aria-label="anchor" href="#xqtlbiolinks-xqtlbiolinks-a-comprehensive-and-scalable-tool-for-integrative-analysis-of-molecular-qtls"></a>
+<h3 id="xqtlbiolinks-a-comprehensive-and-scalable-tool-for-integrative-analysis-of-molecular-qtls">xQTLbiolinks: a comprehensive and scalable tool for integrative analysis of molecular QTLs<a class="anchor" aria-label="anchor" href="#xqtlbiolinks-a-comprehensive-and-scalable-tool-for-integrative-analysis-of-molecular-qtls"></a>
 </h3>
-<p><strong><code>xQTLbiolinks</code></strong> is a well-developed R package that enables users-customized data retrieval, pre-processing, analysis, and data visualization of <strong>molecular QTLs</strong> (eQTLs and sQTLs) and <strong>gene expression</strong> data from public resources (e.g., GTEx) through the application programming interface (API) of <a href="https://gtexportal.org/home/api-docs/index.html" class="external-link">GTEx</a> and <a href="https://www.ebi.ac.uk/eqtl/api-docs/" class="external-link">eQTL Catalogue</a>.</p>
-<p>xQTLbiolinks consists of tailored functions that can be grouped into four modules: <strong>Data retrieval</strong>, <strong>Pre-processing</strong>, <strong>Analysis</strong> and <strong>Visualization</strong>.</p>
+<p><strong><code>xQTLbiolinks</code></strong> is a end-to-end bioinformatic tool for efficient mining and analyzing public and user-customized xQTLs data for the discovery of disease susceptibility genes. xQTLbiolinks consists of tailored functions that can be grouped into four modules: <strong>Data retrieval</strong>, <strong>Pre-processing</strong>, <strong>Analysis</strong> and <strong>Visualization</strong>.</p>
 <p>Instructions, documentation, and tutorials can be found at <a href="https://dingruofan.github.io/xQTLbiolinks/index.html" class="external-link"><strong>here</strong></a>.</p>
 <p><img src="https://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/Overview.png" alt="Overview" width="100%" height="100%"></p>
 </div>
@@ -88,7 +87,7 @@
 </h3>
 <ol style="list-style-type: decimal">
 <li>
-<code>xQTLbiolinks</code> has been successfully installed on Mac OS X, Linux, and Windows, using the <code>install.package</code> function to install directly from CRAN with command <code>install.package("xQTLbiolinks")</code>. We recommend installing the latest version from GitHub (<code>remotes::install_github("dingruofan/xQTLbiolinks")</code>) to access more advanced software features. Check more details in section “Installation” below.</li>
+<code>xQTLbiolinks</code> has been successfully installed on Mac OS X, Linux, and Windows, using the <code>install.packages</code> function to install directly from CRAN with command <code>install.package("xQTLbiolinks")</code>. We recommend installing the latest version from GitHub (<code>remotes::install_github("dingruofan/xQTLbiolinks")</code>) to access more advanced software features. Check more details in section “Installation” below.</li>
 <li>Find the <a href="https://dingruofan.github.io/xQTLbiolinks/articles/Quick_start.html" class="external-link"><strong>Full document</strong></a> for a quick application of colocalization analysis with xQTLbiolinks.</li>
 <li>Go through a whole <a href="https://dingruofan.github.io/xQTLbiolinks/articles/Colocalization_analysis_with_xQTLbiolinks.html" class="external-link"><strong>Case study</strong></a> of detection of casual vairants and genes in prostate cancer using <code>xQTLbiolinks</code>.</li>
 <li>Then walk through these vignettes to learn more about xQTLbiolinks: <a href="https://dingruofan.github.io/xQTLbiolinks/reference/index.html" class="external-link"><strong>Function Instruction</strong></a> and <a href="https://dingruofan.github.io/xQTLbiolinks/articles/visualization.html" class="external-link"><strong>Visualization of expression and xQTL</strong></a>.</li>
@@ -108,14 +107,13 @@
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><p>We strongly recommend to install in the environment of R, instead of Rstudio.</p></li>
-<li><p>Package <code>SummarizedExperiment</code> is required but reposited in Biocouductor. If you haven’t installed it, please install <code>SummarizedExperiment</code> from Biocouductor with following command.</p></li>
+<li>Package <code>SummarizedExperiment</code> is required but reposited in Biocouductor. If you haven’t installed it, please install <code>SummarizedExperiment</code> from Biocouductor with following command.</li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install required bioconductor package SummarizedExperiment:</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span><span class="op">}</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"SummarizedExperiment"</span><span class="op">)</span></span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
+<ol start="2" style="list-style-type: decimal">
 <li>Install <code>xQTLbiolinks</code> from CRAN or github.</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

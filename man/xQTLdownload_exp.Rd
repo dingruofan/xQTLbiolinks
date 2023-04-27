@@ -8,7 +8,7 @@ xQTLdownload_exp(
   genes = "",
   geneType = "auto",
   tissueSiteDetail = "Liver",
-  toSummarizedExperiment = TRUE,
+  toSummarizedExperiment = FALSE,
   recordPerChunk = 80,
   pathologyNotesCategories = FALSE
 )
@@ -37,21 +37,21 @@ Download normalized gene expression at the sample level in a specified tissue.
 # Download gene expression with a genecode ID:
 expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")
 
+# Download gene expression into a SummarizedExperiment object:
+expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver",
+               toSummarizedExperiment=TRUE)
 # extract expression profile from SummarizedExperiment object:
 expDT <- SummarizedExperiment::assay(expProfiles)
-
 # extract samples' detail from SummarizedExperiment object:
 sampleDT <- SummarizedExperiment::colData(expProfiles)
 
 # Download gene expression profiles of multiple genes:
 expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
                                 tissueSiteDetail="Artery - Coronary",
-                                pathologyNotesCategories=TRUE,
-                                toSummarizedExperiment=FALSE)
+                                pathologyNotesCategories=TRUE)
 
 # Download with versioned and unversioned gencode Id.
 expProfiles <- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),
-                               tissueSiteDetail="Artery - Coronary",
-                               toSummarizedExperiment=FALSE)
+                               tissueSiteDetail="Artery - Coronary")
 }
 }

@@ -21,7 +21,7 @@ retrieveLD_LDproxy(
 
 \item{windowSize}{Window around the highlighted snp for querying linkage disequilibrium information. Default:500000}
 
-\item{method}{The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader", or "GET".}
+\item{method}{The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader".}
 
 \item{genomeVersion}{"grch38"(default) or "grch37".}
 

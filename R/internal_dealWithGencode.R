@@ -446,7 +446,6 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("utils", min_version = "4.0.3")
 # usethis::use_package("SummarizedExperiment", min_version = "1.4.0")
 # usethis::use_package("ggplot2", min_version="3.3.6")
-# usethis::use_package("httr")
 # usethis::use_package("RMySQL")
 # usethis::use_package("DBI") # in RMySQL
 # usethis::use_package("ggridges")
@@ -457,11 +456,11 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("GenomicRanges") # in SummarizedExperiment
 # usethis::use_package("BiocGenerics")
 # usethis::use_package("cowplot", min_version="1.1.1")
-# usethis::use_package("scales")
 # usethis::use_package("GenomicFeatures")
 # usethis::use_package("VariantAnnotation")
 # usethis::use_package("TxDb.Hsapiens.UCSC.hg38.knownGene")
-# usethis::use_package("viridis", type="Suggests")
+# usethis::use_package("SummarizedExperiment")
+
 
 #
 # # suggest:
@@ -472,9 +471,12 @@ createGencodeGeneInfoAll <- function(){
 # usethis::use_package("hyprcoloc",type="Suggests")
 # usethis::use_package("PupillometryR")
 # usethis::use_package("ggridges", type="Suggests")
+# usethis::use_package("viridis", type="Suggests")
 
 
 
 # usethis::use_package("crayon", min_version = "1.4.1") # message 字体：
 # usethis::use_package("ggeextra", min_version = "1.4.1") # message 字体：
 # usethis::use_package("rlang", min_version = "0.4.11", type="Suggests") # in ggpubr
+# usethis::use_package("httr")
+# usethis::use_package("scales")

@@ -7,8 +7,8 @@
 xQTLvisual_qqPlot(
   summaryDT,
   legend_p = FALSE,
-  binCutLogP = 1,
-  binNumber = 80000
+  binCutLogP = 3,
+  binNumber = 1000
 )
 }
 \arguments{
@@ -29,7 +29,7 @@ plot quantile-quantile plot with pvalue
 \examples{
 \donttest{
 url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
-snpInfo <- fread(url1, sep="\t")
+snpInfo <- data.table::fread(url1, sep="\t")
 xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 }
 }

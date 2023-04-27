@@ -4,14 +4,14 @@
 \alias{xQTLvisual_anno}
 \title{Visualizing annotated variants}
 \usage{
-xQTLvisual_anno(snpHits, pValueBy = 5, plotType = "point")
+xQTLvisual_anno(snpHits, pValueBy = 5, plotType = "bar")
 }
 \arguments{
 \item{snpHits}{A data.table object from result of xQTLanno_genomic}
 
 \item{pValueBy}{Cut step of pvlaue. Defaults: 5}
 
-\item{plotType}{"point", "bar", or "pie"}
+\item{plotType}{"bar" (Default), or "pie"}
 }
 \value{
 A ggplot object
@@ -24,6 +24,6 @@ Visualizing annotated variants
 url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
 snpHits <- xQTLanno_genomic(snpInfo)
-xQTLvisual_anno(snpHits, plotType="point")
+xQTLvisual_anno(snpHits, plotType="bar")
 }
 }

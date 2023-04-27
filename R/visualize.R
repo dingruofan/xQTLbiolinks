@@ -125,16 +125,20 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
   genoLableX <- merge(data.table(genoLabels = levels(genoLable$genoLabels)),genoLableX, by="genoLabels", sort=FALSE)
 
   # for Pie:
-  genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
-  names(genoLabelPie) <- c("genoLabels", "labelNum")
-  genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
+  # genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
+  # names(genoLabelPie) <- c("genoLabels", "labelNum")
+  # genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
 
   if( requireNamespace("ggplot2") ){
-    p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
-      geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
-      geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
-      scale_fill_brewer(palette="Dark2") +
+
+    jitter_color <- c("#83bea5", "#e09069","#8f9dc6")
+    p <- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+      stat_boxplot( aes(genoLabels, normExp),
+                  geom='errorbar', linetype=1, width=0.5)+  #whiskers
+      geom_boxplot( aes(genoLabels, normExp),outlier.shape = NA) +
+      geom_jitter(width = 0.1, aes(color=genoLabels))+ #colour="#595959",
+      scale_color_manual(values = jitter_color[1:length(unique(genoLable$genoLabels))])+
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
       # labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol) )+
       xlab("Genotypes")+
@@ -148,6 +152,24 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
         plot.title = element_text(hjust=0.5)
       )+
       geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
+
+    # p<- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+    #   geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
+    #   geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
+    #   scale_fill_brewer(palette="Dark2") +
+    #   scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
+    #   # labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol) )+
+    #   xlab("Genotypes")+
+    #   ylab("Normalized expression")+
+    #   theme_classic()+
+    #   theme(
+    #     axis.text.x=element_text(size=rel(1.3)),
+    #     axis.text.y = element_text(size=rel(1.3)),
+    #     axis.title = element_text(size=rel(1.3)),
+    #     legend.position = "none",
+    #     plot.title = element_text(hjust=0.5)
+    #   )+
+    #   geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
   }
   return(list(eqtl=eqtlInfo, exp=genoLable, p=p))
 }
@@ -252,9 +274,9 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
   genoLableX <- merge(data.table(genoLabels = levels(genoLable$genoLabels)),genoLableX, by="genoLabels", sort=FALSE)
 
   # for Pie:
-  genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
-  names(genoLabelPie) <- c("genoLabels", "labelNum")
-  genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
+  # genoLabelPie <- data.table::data.table(table(genoLable$genoLabels))
+  # names(genoLabelPie) <- c("genoLabels", "labelNum")
+  # genoLabelPie$legends <- paste0(genoLabelPie$genoLabels, "(",genoLabelPie$labelNum,")")
 
   # retrieve sQTL detail:
   P_geneName <- stringr::str_split(phenotypeId, ":")[[1]][5]
@@ -269,22 +291,44 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
 
   if( requireNamespace("ggplot2") ){
-    p<- ggplot2::ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
-      geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
-      geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
-      scale_fill_brewer(palette="Dark2") +
+
+    jitter_color <- c("#83bea5", "#e09069","#8f9dc6")
+    p <- ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+      stat_boxplot( aes(genoLabels, normExp),
+                    geom='errorbar', linetype=1, width=0.5)+  #whiskers
+      geom_boxplot( aes(genoLabels, normExp),outlier.shape = NA) +
+      geom_jitter(width = 0.1, aes(color=genoLabels))+ #colour="#595959",
+      scale_color_manual(values = jitter_color[1:length(unique(genoLable$genoLabels))])+
       scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
-      # labs(title = paste0(ifelse(varInfo$snpId==""|| is.na(varInfo$snpId), varInfo$variantId, varInfo$snpId), "- ", phenotypeId, " (",tissueSiteDetail,")") )+
+      # labs(title = paste0(ifelse(eqtlInfo$snpId==""|| is.na(eqtlInfo$snpId), eqtlInfo$variantId, eqtlInfo$snpId), "- ", eqtlInfo$geneSymbol) )+
       xlab("Genotypes")+
-      ylab("Normalized expression")+
+      ylab("Norm.Intron-Excision Ratio")+
       theme_classic()+
       theme(
-        axis.text=element_text(size=rel(1.3)),
+        axis.text.x=element_text(size=rel(1.3)),
+        axis.text.y = element_text(size=rel(1.3)),
         axis.title = element_text(size=rel(1.3)),
         legend.position = "none",
         plot.title = element_text(hjust=0.5)
       )+
-      geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label= labelPvalue))
+      geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(sqtlInfo$pValue, 3)) ))
+
+    # p<- ggplot2::ggplot( genoLable, aes(x=genoLabels, y=normExp)) +
+    #   geom_violin( aes(fill=genoLabels),width=0.88, trim=FALSE, alpha=0.9, scale="width") +
+    #   geom_boxplot(fill="white", width=0.2,  alpha=0.9)+
+    #   scale_fill_brewer(palette="Dark2") +
+    #   scale_x_discrete( breaks=genoLableX$genoLabels, labels=genoLableX$label)+
+    #   # labs(title = paste0(ifelse(varInfo$snpId==""|| is.na(varInfo$snpId), varInfo$variantId, varInfo$snpId), "- ", phenotypeId, " (",tissueSiteDetail,")") )+
+    #   xlab("Genotypes")+
+    #   ylab("Normalized expression")+
+    #   theme_classic()+
+    #   theme(
+    #     axis.text=element_text(size=rel(1.3)),
+    #     axis.title = element_text(size=rel(1.3)),
+    #     legend.position = "none",
+    #     plot.title = element_text(hjust=0.5)
+    #   )+
+    #   geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label= labelPvalue))
   }
 
   return(list(varInfo=varInfo, exp=genoLable, p=p))
@@ -1043,7 +1087,6 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
-#' @importFrom scales hue_pal
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom cowplot plot_grid
 #'
@@ -1212,7 +1255,7 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 #'
 #' @param snpHits A data.table object from result of xQTLanno_genomic
 #' @param pValueBy Cut step of pvlaue. Defaults: 5
-#' @param plotType "point", "bar", or "pie"
+#' @param plotType "bar" (Default), or "pie"
 #' @return A ggplot object
 #' @export
 #'
@@ -1221,14 +1264,14 @@ xQTLvisual_qtlPropensity <- function(propensityRes,  P_cutoff=1){
 #' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
 #' snpHits <- xQTLanno_genomic(snpInfo)
-#' xQTLvisual_anno(snpHits, plotType="point")
+#' xQTLvisual_anno(snpHits, plotType="bar")
 #' }
-xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
-  cutP <- Num <- Type <- NumSum <- prop <-NULL
+xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
+  cutP <- Num <- Type <- NumSum <- prop <- Freq <- snpHitsCount<- Var1 <-NULL
   .<-NULL
 
   typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","cds","utr3","utr5","tfCluster","spliceSite","ingergenic"),
-                         Type = c("CPG island", "Enhancer", "Promoter", "Exon", "CDS", "3'UTR", "5'UTR", "TF cluster", "Splice site", "Intergenic"))
+                         Type = c("CpG island", "Enhancer", "Promoter", "Exon", "CDS", "3'UTR", "5'UTR", "TF cluster", "Splice site", "Intergenic"))
 
   snpHits$logP <- log(snpHits$pValue, base=10)*(-1)
   snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
@@ -1247,9 +1290,11 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="point"){
     p1 <- ggplot(snpHits_count, aes(x = reorder(Type, Num, mean) ,y = Num,fill=Type)) +
       geom_bar(stat = "identity", position =position_dodge(0.9), width = 0.7, alpha=1)+
       # scale_y_log10( breaks=c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))), labels= as.character((c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))))) )+
-      scale_fill_manual( breaks=as.character(unique(snpHitsCount$Type)),
-                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHits_count$Type)))],
-                         labels= paste0(snpHits_count$Type, "(",snpHits_count$prop,"%)"))+
+      scale_fill_manual( breaks=as.character(unique(snpHits_count$Type)),
+                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8", "#e27771")[1:length(as.character(unique(snpHits_count$Type)))],
+                         labels= paste0(snpHits_count$Type)
+                         # labels= paste0(snpHits_count$Type, "(",snpHits_count$prop,"%)")
+                         )+
       theme_classic()+
       # ylim(c(0, max(snpHits_count$Num)+0.15*max(snpHits_count$Num)))+
       # geom_text(aes(label=paste(prop, "%")), position=position_dodge(width=0.9), hjust=0)+
@@ -1368,10 +1413,10 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
 #' @examples
 #' \donttest{
 #' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
-#' snpInfo <- fread(url1, sep="\t")
+#' snpInfo <- data.table::fread(url1, sep="\t")
 #' xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 #' }
-xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=1, binNumber=80000){
+xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber=1000){
   pval <- observedLogP <- expectedLogP <- NULL
   .<- NULL
 
@@ -1408,8 +1453,11 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=1, binNumber
   if( binNumber>=nrow(summaryDT_cut) ){ binNumber<- nrow(summaryDT_cut) }
   binSize <- round(nrow(summaryDT_cut)/binNumber,0)
   summaryDT_cut$cutF <- as.character(cut(1:nrow(summaryDT_cut), breaks=seq(0, nrow(summaryDT_cut)+binSize, binSize)))
-  myFunc <- function(dt){ dt[which.min(dt$pval),] }
-  summaryDT_cut <- summaryDT_cut[,myFunc(.SD), by ="cutF"]
+  myFunc <- function(dt){ return(dt[c(which.max(dt$pval),which.min(dt$pval)),]) }
+  myFunc2 <- function(dt){ if(nrow(dt)>5){return(dt[sample(1:nrow(dt), 5),])}else{return(dt)} }
+  summaryDT_cut <-summaryDT_cut[, myFunc2(.SD), by ="cutF"]
+  # summaryDT_cut <- rbind(summaryDT_cut[cutF %in% unique(summaryDT_cut$cutF)[1:10], myFunc2(.SD), by="cutF"],
+  #                        summaryDT_cut[!(cutF %in% unique(summaryDT_cut$cutF)[1:10]), myFunc(.SD), by ="cutF"])
 
   summaryDT_all <- rbind(summaryDT_cut[,-c("ID", "cutF")], summaryDT_noCut)
   message("cutted: ",nrow(summaryDT_cut), "; non-cutted: ", nrow(summaryDT_noCut))
@@ -1426,9 +1474,8 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=1, binNumber
     xlim(0, max(summaryDT_all$expectedLogP)+1)+
     theme(
       axis.text = element_text(size = rel(1.1)),
-      axis.ticks.y = element_blank(),
       panel.grid.major.x = element_blank(), #设置面板网格
-      panel.grid.major.y = element_line(size = 0.5),
+      panel.grid.major.y = element_blank(),
       panel.grid.minor.x = element_blank(),
       axis.title=element_text(size=rel(1.3)),
       legend.title = element_blank(),
@@ -1445,22 +1492,22 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=1, binNumber
 }
 
 
-
 #' @title Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.
 #'
 #' @param summaryDT A data.frame with three cols: pval,  beta, se.
-#'
+#' @param binCutLogP To speed up the rendering process of the plot for tens of millions of GWAS variants, variants with a p-value below a specified threshold (binCutLogP) are randomly sampled for display.
+#' @param binNumber The number of points randomly selected for plotting.
 #' @return a list containing a data.frame of estimated pvalues and A ggplot2 object
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
-#' qtl <- fread(url1, sep="\t")
-#' xQTLanno_PZPlot(qtl[,.(pValue, beta, se)])
+#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
+#' sumDT <- data.table::fread(url1, sep="\t")
+#' xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)])
 #' }
 xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
-  se <- pval <- pZtest <- logPZ <- logP <- NULL
+  se <- pval <- pZtest <- logPZ <- cutF <- logP <- NULL
   . <-NULL
   summaryDT <- na.omit(summaryDT)
   summaryDT <- summaryDT[,1:3]
@@ -1485,9 +1532,11 @@ xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
   if( binNumber>=nrow(summaryDT_cut) ){ binNumber<- nrow(summaryDT_cut) }
   binSize <- round(nrow(summaryDT_cut)/binNumber,0)
   summaryDT_cut$cutF <- as.character(cut(1:nrow(summaryDT_cut), breaks=seq(0, nrow(summaryDT_cut)+binSize, binSize)))
-  myFunc <- function(dt){ dt[c(which.max(dt$pval),which.min(dt$pval)),] }
-  # myFunc <- function(dt){ dt[sample(1:nrow(dt), 1),] }
-  summaryDT_cut <- summaryDT_cut[,myFunc(.SD), by ="cutF"]
+  myFunc <- function(dt){ return(dt[c(which.max(dt$pval),which.min(dt$pval)),]) }
+  myFunc2 <- function(dt){ if(nrow(dt)>20){return(dt[sample(1:nrow(dt), 20),])}else{return(dt)} }
+  # summaryDT_cut <-summaryDT_cut[,myFunc(.SD), by ="cutF"]
+  summaryDT_cut <- rbind(summaryDT_cut[cutF %in% unique(summaryDT_cut$cutF)[1:4], myFunc2(.SD), by="cutF"],
+                         summaryDT_cut[!(cutF %in% unique(summaryDT_cut$cutF)[1:4]), myFunc(.SD), by ="cutF"])
 
   summaryDT_all <- rbind(summaryDT_cut[,-c("ID", "cutF")], summaryDT_noCut)
   message("cutted: ",nrow(summaryDT_cut), "; non-cutted: ", nrow(summaryDT_noCut))
@@ -1499,8 +1548,8 @@ xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
     geom_abline(intercept = 0)+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0))+
-    ylab(expression(-log["10"]("Pvalue-raw")))+
-    xlab(expression(-log["10"]("Pvalue-estimated")))+
+    ylab(expression(-log["10"](Pvalue-raw)))+
+    xlab(expression(-log["10"](Pvalue-estimated)))+
     theme_classic()+
     theme(
       axis.text = element_text(rel(1.3)),
@@ -1508,6 +1557,304 @@ xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
     )
   print(p)
   return(list(summaryDT=summaryDT, p=p))
+}
+
+
+#' @title heatmap of LD-p-value of the QTL
+#'
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
+#' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
+#' @param tissueLabels (a character vector) can be listed with `ebi_study_tissues`. If is null, use all tissue / cell-types. (Default)
+#' @param study (character) Studies can be listed using `ebi_study_tissues`. If is null, use all studies (Default).
+#' @param population (string) One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
+#' @import data.table
+#' @import stringr
+#' @import ggplot2
+#' @return A list containing a data.table object and a ggplot object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' heatmapQTL <- xQTLvisual_coloc( gene="MMP7", variantName="rs11568818", study="TwinsUK")
+#' }
+xQTLvisual_coloc <-  function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabels="", study="", population="EUR"){
+  . <- NULL
+  R2 <- SNP_B <- LDbins <- corRP <- ID  <- LogPpropensity <- tissue_label <- corPR <- logP_minMax <- colorRampPalette <- hue_pal <- slope <- intercept <- y <- x <- tissue_slope <- NULL
+  pValue_propensity <- regDT <- lm_R2_logP_top <- label_Propensity <- pValue_eQTL <- NULL
+  study_accession <- pos <- snpPanel <- variantId <- R2 <-snpId <- pValue <- tissue <- study_id <- qtl_group <- SNP_B <- logP <- NULL
+
+  binNum <- 4
+  outPlot="heatmap"
+
+  ebi_ST <- data.table::copy(ebi_study_tissues)
+
+  # study- tissue:
+  if( all(tissueLabels!="") & study!=""){
+    ebi_ST <- ebi_ST[which(tolower(tissue_label) %in% tolower(tissueLabels) & tolower(ebi_ST$study_accession) == tolower(study) ), ][,.SD[1,], by="tissue_label"]
+    message(study)
+  }
+
+  # all tissue- study:
+  if(study=="" & all(tissueLabels=="") ){
+    ebi_ST <- ebi_ST[,.SD[1,], by="tissue_label"]
+  }
+
+  if(study!="" & all(tissueLabels=="") ){
+    ebi_ST <- ebi_ST[ which(tolower(ebi_ST$study_accession) == tolower(study)),][,.SD[1,], by="tissue_label"]
+  }
+
+  if(study=="" & all(tissueLabels!="") ){
+    ebi_ST <- ebi_ST[ which(tolower(tissue_label) %in% tolower(tissueLabels)),][,.SD[1,], by="tissue_label"]
+  }
+
+  if(nrow(ebi_ST)==0){
+    stop("Please check study id or tissue label.")
+  }
+
+  if(gene=="" || variantName==""){
+    stop("gene and variant can not be null!")
+  }
+
+  # check geneType
+  if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
+  }
+  if( length(gene)==1 && gene!=""){
+    # Automatically determine the type of variable:
+    if(geneType=="auto"){
+      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+        geneType <- "gencodeId"
+      }else{
+        geneType <- "geneSymbol"
+      }
+    }
+  }
+
+  # check variantType:
+  if( !(variantType %in% c("auto","snpId", "variantId")) ){
+    stop("Parameter \"geneType\" should be choosen from \"auto\", \"snpId\", and \"variantId\".")
+  }
+  if(length(variantName)==1 && variantName!=""){
+    # auto pick variantType
+    if(variantType=="auto"){
+      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+        variantType <- "snpId"
+      }else if(stringr::str_count(variantName,"_")>=3){
+        variantType <- "variantId"
+      }else{
+        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+      }
+    }
+  }
+
+  # check study:
+  if( length(study) ==1 && study!="" ){
+    if(toupper(study) %in% toupper(unique(ebi_ST$study_accession))){
+      study <- unique(ebi_ST$study_accession)[ toupper(unique(ebi_ST$study_accession)) == toupper(study) ]
+      message("== Study [", study, "] detected...")
+    }else{
+      message("ID\tstudy\ttissueLabel")
+      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+      stop("== Study [",study,"] can not be correctly matched, please choose from above list: ")
+    }
+  }
+
+  # variant detail:
+  variantInfo <- xQTLquery_varId(variantName, variantType = variantType)
+  if( (!exists("variantInfo")) || nrow(variantInfo)==0){
+    stop("Variant [",variantName,"] is not exists in GTEx, please check your input.")
+  }
+  if(nrow(variantInfo)>1){
+    variantInfo <- variantInfo[1,]
+  }
+
+  # fetch LD:
+  message("== Retrieve LD information of SNP: [",variantInfo$snpId,"]...")
+  try(snpLD <- retrieveLD(variantInfo$chromosome, variantInfo$snpId, population))
+  data.table::setDT(snpLD)
+  snpLD <- snpLD[which(stringr::str_detect(SNP_B, stringr::regex("^rs"))), ]
+  # try(snpLD <- retrieveLD_LDproxy(targetSnp= variantInfo$snpId, population = population,  windowSize = 500000,genomeVersion = "grch38", token="9246d2db7917") )
+  #
+  if(nrow(snpLD)<1){
+    stop("No LD found for variant: [", variantInfo$snpId, "]")
+  }
+  message("== Number of LD-associated variants: ", nrow(snpLD))
+
+  # 1. 获取所有组织该基因的 eQTL. 2. 为每个 LD-associated gene构建panel.
+  assoAll <- data.table()
+  for( i in 1:nrow(ebi_ST)){
+    # 如果有多个 qtl group:
+    message("")
+    message("==> For tissue ",ebi_ST[i,]$tissue_label, " (",i,"/",nrow(ebi_ST),")")
+    geneAsso_i <- xQTLdownload_eqtlAllAsso(gene=gene, geneType = geneType, tissueLabel = ebi_ST[i,]$tissue_label, study=ebi_ST[i,]$study_accession)
+    if(!exists("geneAsso_i") ||is.null(geneAsso_i)|| nrow(geneAsso_i)==0){
+      next()
+    }else{
+      geneAsso_i <- geneAsso_i[ qtl_group ==geneAsso_i[1,]$qtl_group,][order(pos)]
+    }
+    # LD-associated gene for plot:
+    asso_I <- geneAsso_i[snpId %in% union(snpLD$SNP_B, snpLD$SNP_A),.(snpId, pValue, beta, tissue, tissue_label, study_id, qtl_group)]
+    assoAll <- rbind(assoAll, asso_I)
+    rm(asso_I)
+
+    # all variants of gene:
+    assoAllLd_i <- geneAsso_i[,.(snpId, pos, pValue)]
+    assoAllLd_i <- merge(assoAllLd_i, snpLD[,.(snpId=SNP_B,R2)], by="snpId", sort=FALSE)
+    assoAllLd_i$snpPanel <- paste0("s",1:nrow(assoAllLd_i))
+  }
+
+  # Retain min pvalue in each tissue_label-study, due to the duplication induced by qtl_group.
+  assoAll <- assoAll[,.SD[which.min(pValue),], by=c("tissue", "tissue_label", "study_id", "qtl_group", "snpId")]
+  assoAllLd <- merge(snpLD[,.(snpId=SNP_B, R2)], assoAll, by="snpId")
+  assoAllLd$logP <- ifelse(assoAllLd$pValue==0, 0, (-log(assoAllLd$pValue,10)))
+  # scale logP by tissue group:
+  assoAllLd <- assoAllLd[,.(snpId, R2, beta, logP, logP_minMax=(logP-min(logP))/(max(logP)-min(logP))),by="tissue_label"]
+
+  # cor:
+  cor_R2_logP <- assoAllLd[,.(corRP=cor(R2, logP_minMax), corPvalue=cor.test(R2, logP_minMax)$p.value),by="tissue_label"][order(corRP)]
+  cor_R2_logP$logCorP <- log10( cor_R2_logP$corPvalue)*(-1)
+
+  # extract variable:
+  # snpLD <- propensityRes[['snpLD']]
+  # assoAllLd <- propensityRes[['assoAllLd']]
+  # cor_R2_logP <- propensityRes[['cor_R2_logP']]
+
+
+  data.table::setDT(snpLD)
+  data.table::setDT(assoAllLd)
+  data.table::setDT(cor_R2_logP)
+
+  # topTissues <- nrow(cor_R2_logP[corRP <= cor_cutofff])
+
+  # recut LD into bins:
+  snpLD$LDbins <- as.character(cut(snpLD$R2, breaks=seq(0,1,length.out=(binNum+1)) ))
+  snpLD <- snpLD[order(R2)]
+  snpLD$LDorder <- 1:nrow(snpLD)
+  assoAllLd <- merge(snpLD[,.(snpId=SNP_B, LDbins)], assoAllLd, by="snpId")
+
+  # cor:
+  # cor_R2_logP$corRPcut <- as.character( cut(abs(cor_R2_logP$corRP), breaks = seq(0,1,length.out=101)) )
+  assoAllLd <- merge(cor_R2_logP, assoAllLd , by="tissue_label")[order(-corRP)]
+
+
+  # Retain max pvalue in each bin:
+  minP_f <- function(x){  data.table::data.table(tissue_label=x[1,]$tissue_label, corPR=x[1,]$corRP, logCorP=x[1,]$logCorP, LDbins= x[1,]$LDbins, logP_minMax=max(x$logP_minMax) )  }
+  heatmapDT <- assoAllLd[,minP_f(.SD), by=c("LDbins", "tissue_label")]
+  # fill NA bins:
+  heatmapDT_allComb <- data.table::as.data.table(expand.grid(LDbins = unique(heatmapDT$LDbins), tissue_label =unique(heatmapDT$tissue_label) ))
+  heatmapDT_allComb <- merge(heatmapDT_allComb, heatmapDT, by=c("LDbins", "tissue_label"), all.x = TRUE)
+  heatmapDT_allComb <- merge(heatmapDT_allComb, data.table(LDbins=unique(snpLD$LDbins), ID=1:length(unique(snpLD$LDbins))), by="LDbins", all.x=TRUE)
+  if(nrow(heatmapDT_allComb)==0){
+    stop("Not enough data for plot!")
+  }
+  rm(heatmapDT)
+  heatmapDT_allComb$tissue_label <- factor(heatmapDT_allComb$tissue_label, levels = unique(heatmapDT_allComb[order(corPR)]$tissue_label))
+
+  if(outPlot == "heatmap"){
+    p1 <- ggplot(heatmapDT_allComb)+
+      geom_tile(aes(x=ID, y=tissue_label, fill=logP_minMax), color="#595959")+
+      scale_x_continuous(breaks = unique(heatmapDT_allComb$ID), labels = unique(heatmapDT_allComb$LDbins))+
+      # geom_text(aes(x=LDorder, y=tissue_label, label = round(logP,2),  color = logP), size = 3.5)+
+      # scale_fill_gradient2(low="grey", mid="orange", high="red")+
+      scale_fill_gradientn(colors= colorRampPalette(c("#fcffe6", "#95de64", "#5976ba"))(length(unique(heatmapDT_allComb$logP_minMax))) )+
+      theme_classic()+
+      xlab("LD bins")+
+      # guides(color="none")+
+      theme(
+        axis.text.x=element_text(size=rel(1.5), angle = 30, hjust=1, vjust=1),
+        axis.text.y=element_text(size=rel(1.5)),
+        axis.title.x = element_text(size=rel(1.5)),
+        axis.title.y = element_blank(),
+        panel.grid.minor = element_line(colour="grey", size=0.5),
+        legend.position = "top",
+        # panel.spacing.x = unit(15, 'mm'),
+        legend.direction = "horizontal",
+        legend.key.width = unit(0.065, "npc"),
+        plot.title = element_text(hjust=0.5),
+        plot.margin=unit(c(2.5,0,0.3,0.3),"cm")
+      )+
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = expression(paste("Normailzed  ",-log["10"],P[QTL],sep="")) ))
+
+
+    p2 <- ggplot(heatmapDT_allComb)+
+      geom_tile(aes(x=1, y=reorder(tissue_label, corPR), fill=corPR),color = "black")+
+      scale_x_continuous(breaks = c(1), labels = "Correlation")+
+      # geom_text(aes(x=1, y=reorder(tissue_label, LogPpropensity),label = round(heatmapDT_allComb$LogPpropensity,2)), color="#595959")+
+      # breaks = seq(-1,1, length.out=5), labels = seq(-1,1, length.out=5),
+      # scale_fill_gradientn(colors= c("#66bfdf", "white", "#ea5a5a") )+
+      scale_fill_gradient2(low= "#03b1f0", mid="#f6ffed", high="#ea5a5a", midpoint = 0)+
+      xlab("")+
+      theme_minimal()+
+      theme(
+        legend.position = "top",
+        legend.direction = "horizontal",
+        legend.key.width = unit(0.065, "npc"),
+        plot.title = element_text(hjust=0.5),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=rel(1.5), angle = 30, hjust=1, vjust=1),
+        panel.grid.major = element_blank(),
+        plot.margin=unit(c(2.5,1,0.3,0.3),"cm")
+      )+
+      guides(fill = guide_colourbar(title.position="top", title.hjust = 0, title = "Pearson Correlation" ))
+
+    p3 <- cowplot::plot_grid(p1, p2, align = "h", ncol = 3, rel_widths = c(12,2,1))
+    print(p3)
+    return(list(assoAllLd=assoAllLd,p=p3))
+  }
+}
+
+
+
+
+#' @title Advanced CM plot of 11
+#' @param gwasDF A data.frame of summary statistics data, including four cols arranged in the following order: SNP name, chomosome, position, p-value.
+#' @param pvalue_cutoff Default: 1e-4. The Manhattan plot is a helpful tool for visualizing genome-wide association study results. However, when there are a large number of SNPs, the plot can become difficult to render and generate a large file size. This is due to the stacking of non-significant SNPs at the bottom of the plot. To address this issue, we can choose to filter out some of the non-significant SNPs or randomly select a subset of them to plot. This will improve the readability of the plot and reduce the file size.
+#' @param num_snp_selected Default: 2000. Number of SNPs randomly selected for each chromosome.
+#' @return A pdf format figure.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' gwasDF <- data.table::fread(
+#'       "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasChr6Sub.txt")
+#' xQTLvisual_manhattan(gwasDF[,.(rsid, chr, position,P)])
+#' }
+xQTLvisual_manhattan <- function(gwasDF, pvalue_cutoff=1e-4, num_snp_selected=2000){
+  pValue <- Chromosome <-
+  if( !requireNamespace("CMplot") ){ stop("please install package \"CMplot\".") }
+  data.table::setDT(gwasDF)
+  gwasDF <- gwasDF[,1:4]
+  names(gwasDF) <- c("SNP", "Chromosome", "pos", "pValue")
+  chroms<- unique(gwasDF$Chromosome)
+  gwasDF_CMp_1 <- gwasDF[ pValue < pvalue_cutoff]
+  gwasDF_CMp_2 <- data.table()
+  for(i in 1:length(chroms)){
+    message(i)
+    a <- gwasDF[ Chromosome == chroms[i] & pValue>=pvalue_cutoff]
+    if(nrow(a)>num_snp_selected){
+      gwasDF_CMp_2 <- rbind(gwasDF_CMp_2, a[sample(1:nrow(a), num_snp_selected)])
+    }else{
+      gwasDF_CMp_2 <- rbind(gwasDF_CMp_2, a)
+    }
+  }
+  gwasDF_CMp<- rbind(gwasDF_CMp_1, gwasDF_CMp_2)
+
+  minP_eachChr <- gwasDF_CMp[,.SD[which.min(pValue)],by="Chromosome"]
+  minP_eachChr$snp_color <- "red"
+
+  CMplot::CMplot(gwasDF_CMp, plot.type="m",LOG10=TRUE,
+         col=c("grey30","grey60"),
+         # col=c("#4197d8", "#f8c120", "#413496", "#495226","#d60b6f", "#e66519", "#d581b7", "#83d3ad", "#7c162c", "#26755d"),
+         highlight=minP_eachChr$SNP,
+         highlight.col=minP_eachChr$snp_color,
+         highlight.text=minP_eachChr$SNP,
+         highlight.cex=1.7,highlight.pch=c(17),
+         highlight.text.col="black", threshold=5e-08, threshold.lty=2,  signal.cex=0.7, #file.name="GWAS_breast_cancer/CG0050/Manhattan.pValue.pdf",
+         amplify=FALSE,file="pdf",dpi=600,file.output=TRUE,verbose=TRUE,width=14,height=6)
+
 }
 
 

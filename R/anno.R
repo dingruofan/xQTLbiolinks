@@ -45,7 +45,7 @@ xQTLanno_calLambda <- function(summaryDT){
 
 #' @title enrichment analysis for GWAS / QTL signals in functional elements, including enhancer, promoter, CPG, and TFs
 #'
-#' @param snpInfo A data.table/data.frame with two columns: chromosome and position.
+#' @param snpInfo A data.table/data.frame with three columns: chromosome, position and p-value.
 #' @param genomeVersion "hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.
 #' @param enrichElement "Promoter", "Enhancer" or "TF".
 #' @param distLimit Defaults: 1e6
@@ -157,11 +157,12 @@ xQTLanno_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement="Pr
 #'
 #' @param snpInfo A data.table/data.frame with three columns: chromosome, position, and P-value.
 #' @param genomeVersion "hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.
+#' @param p_cutoff Cutoff of p-values of significant variants that will be annotated
 #' @import data.table
 #' @import stringr
 #' @importFrom GenomicRanges GRanges mcols
 #' @importFrom GenomicFeatures intronicParts exonicParts transcripts
-#' @importFrom IRanges findOverlaps
+#' @importFrom IRanges findOverlaps IRanges
 #'
 #' @return A data.table object of variants' genomics distribution
 #' @export
@@ -189,10 +190,11 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
     stop("Number of variants < 1...")
   }
   snpInfo <- snpInfo[pValue<p_cutoff,]
+  message("    Number of SNPs with p-value <", p_cutoff,": ",nrow(snpInfo))
   # create snpinfo Grange object:
   snpRanges <- GenomicRanges::GRanges(snpInfo$chrom,
                                       IRanges::IRanges(snpInfo$pos, snpInfo$pos),
-                                      strand= "*",
+                                      strand= rep("*", nrow(snpInfo)),
                                       snpInfo[,"pValue"]
   )
   snpInfoNew <- data.table::data.table()
@@ -259,7 +261,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   promoterParts <- promoterParts[which(as.character(GenomeInfoDb::seqnames(promoterParts)) %in% paste0("chr", c(1:22,"X","Y", "M"))),]
 
   # all transcripts:
-  txinfo <- as.data.table(transcripts(txdb))
+  txinfo <- as.data.table(GenomicFeatures::transcripts(txdb))
   txinfo <- txinfo[which(seqnames %in% paste0("chr", c(1:22,"X","Y", "M"))),]
 
   ############ start find overlap with annotations:
@@ -416,12 +418,19 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   snpHits <- rbind(snpHits, failedSnps)
 
   # prop:
-  hitsProp <- as.data.table(round(prop.table(table(snpHits$type))*100, 3))
-  names(hitsProp) <- c("type", "proportion")
+  hitsProp <- round(prop.table(table(snpHits$type))*100, 3)
+  hitsProp <- data.table(type=names(hitsProp), proportion=as.numeric(hitsProp))
   hitsProp <- hitsProp[order(-proportion)]
   message("==> Proportion: \n", paste("     ",paste(hitsProp$type, ":\t",hitsProp$proportion, "%",sep=""), collapse = "; \n"))
 
   return(snpHits)
 }
+
+# snpHits <- xQTLanno_genomic(gwasDT[,.(chr, position,`p-value`)], p_cutoff = 5e-8, genomeVersion = "hg19")
+# annoPlotBar <- xQTLvisual_anno(snpHits2,plotType="bar")
+
+
+
+
 
 

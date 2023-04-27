@@ -12,7 +12,7 @@ xQTLanno_enrich(
 )
 }
 \arguments{
-\item{snpInfo}{A data.table/data.frame with two columns: chromosome and position.}
+\item{snpInfo}{A data.table/data.frame with three columns: chromosome, position and p-value.}
 
 \item{genomeVersion}{"hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.}
 

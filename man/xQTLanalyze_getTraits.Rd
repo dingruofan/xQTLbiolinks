@@ -44,7 +44,7 @@ traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cereb
                                    genomeVersion="grch37", grch37To38=TRUE)
 # with a egene file:
 egeneFile <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/egeneDF.txt"
-egeneDF <- fread(egeneFile)
+egeneDF <- data.table::fread(egeneFile)
 traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
                                    genomeVersion="grch37", grch37To38=TRUE, egeneDF=egeneDF)
 }

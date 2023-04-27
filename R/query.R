@@ -877,11 +877,11 @@ apiAdmin_ping <- function(fetchMethod=""){
 
   # platform-depend methods ordr:
   if( .Platform$OS.type =="unix"){
-    methods_all <- c( "fromJSON", "download","curl", "GET")
+    methods_all <- c( "fromJSON", "download","curl")
   }else if(.Platform$OS.type =="windows"){
-    methods_all <- c("download","curl", "GET", "fromJSON")
+    methods_all <- c("download","curl",  "fromJSON")
   }else{
-    methods_all <- c("download","curl", "GET", "fromJSON")
+    methods_all <- c("download","curl",  "fromJSON")
   }
 
 
@@ -962,7 +962,7 @@ apiAdmin_ping <- function(fetchMethod=""){
 #' @return A character string of fetchContent method.
 apiEbi_ping <- function(){
   url1 <- "https://www.ebi.ac.uk/eqtl/api/"
-  fetchMethod = c("fromJSON","curl", "download","GET")
+  fetchMethod = c("fromJSON","curl", "download")
   downloadMethod = "auto"
   for( i in 1:length(fetchMethod)){
     tryCatch(
@@ -995,7 +995,7 @@ apiEbi_ping <- function(){
 #' @title Fetch data using url by three methods
 #'
 #' @param url1 A url string.
-#' @param method Can be chosen from "download", "curl", "fromJSON", or "GET".
+#' @param method Can be chosen from "download", "curl", "fromJSON".
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @param isJson Fetched content is a json file or not. Defaulst: TRUE.
 #' @import utils
@@ -1003,7 +1003,6 @@ apiEbi_ping <- function(){
 #' @import stringr
 #' @import data.table
 #' @importFrom curl curl_fetch_memory
-#' @importFrom httr GET
 #' @keywords internal
 #' @return A json object.
 fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE){
@@ -1124,27 +1123,6 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       url1GetText <- fread(url1GetText, sep="\t", header=TRUE)
       return(url1GetText)
     }
-  }else if( method == "GET" ){
-    url1Get <- httr::GET(url1)
-    # if( url1Get$status_code!=200){
-    #   message("Http status code: ", url1Get$status_code)
-    # }
-    url1GetText <- rawToChar(url1Get$content)
-    if(isJson){
-      # replace NAN with NULL:
-      url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
-      url1GetText2Json <- jsonlite::fromJSON(url1GetText, flatten = FALSE)
-      if( !exists("url1GetText2Json") || is.null(url1GetText2Json) || all(url1GetText2Json=="") || length(url1GetText2Json)==0 ){
-        message("No data fetched, please check your input.")
-        return(NULL)
-      }
-      return(url1GetText2Json)
-    }else{
-      url1GetText <- fread(url1GetText, sep="\t", header=TRUE)
-      return(url1GetText)
-    }
-  }else{
-    stop("please choose the right download method.")
   }
 }
 
@@ -1152,7 +1130,7 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @title Fetch records from
 #'
 #' @param url1 A url string.
-#' @param method Can be chosen from "download", "curl" or "GET".
+#' @param method Can be chosen from "download", "curl".
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
@@ -1420,7 +1398,7 @@ extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="v26"){
 #' @param targetSnp target SNP, support dbSNP IP.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
 #' @param windowSize Window around the highlighted snp for querying linkage disequilibrium information. Default:500000
-#' @param method The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader", or "GET".
+#' @param method The same as fetchContent function, can be chosen from "download", "curl", "GetWithHeader".
 #' @param genomeVersion "grch38"(default) or "grch37".
 #' @param max_count To prevent download failure due to network fluctuations, max number of connection attempts.
 #' @param token Ldlink token, default: "9246d2db7917"

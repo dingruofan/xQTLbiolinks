@@ -9,8 +9,8 @@
 #' @import stringr
 #' @import jsonlite
 #' @import stats
-#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom GenomicRanges GRanges
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom   IRanges IRanges
 #' @importFrom GenomeInfoDb Seqinfo
 #' @return return a SummarizedExperiment or a data.table object harbing gene expression profiles and samples' information.
@@ -20,24 +20,24 @@
 #' # Download gene expression with a genecode ID:
 #' expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")
 #'
+#' # Download gene expression into a SummarizedExperiment object:
+#' expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver",
+#'                toSummarizedExperiment=TRUE)
 #' # extract expression profile from SummarizedExperiment object:
 #' expDT <- SummarizedExperiment::assay(expProfiles)
-#'
 #' # extract samples' detail from SummarizedExperiment object:
 #' sampleDT <- SummarizedExperiment::colData(expProfiles)
 #'
 #' # Download gene expression profiles of multiple genes:
 #' expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
 #'                                 tissueSiteDetail="Artery - Coronary",
-#'                                 pathologyNotesCategories=TRUE,
-#'                                 toSummarizedExperiment=FALSE)
+#'                                 pathologyNotesCategories=TRUE)
 #'
 #' # Download with versioned and unversioned gencode Id.
 #' expProfiles <- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),
-#'                                tissueSiteDetail="Artery - Coronary",
-#'                                toSummarizedExperiment=FALSE)
+#'                                tissueSiteDetail="Artery - Coronary")
 #' }
-xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", toSummarizedExperiment=TRUE, recordPerChunk=80, pathologyNotesCategories=FALSE  ){
+xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver", toSummarizedExperiment=FALSE, recordPerChunk=80, pathologyNotesCategories=FALSE  ){
   gencodeId <- chromosome <- cutF <- genesUpper <- geneSymbol <- entrezGeneId <- tss <- description <- NULL
   .<-NULL
   cutNum <- recordPerChunk
@@ -1902,7 +1902,13 @@ retrieveLD = function(chr, snp, population){
 }
 
 
-
+# xQTLdownload_sqtlAllAsso <- function(){
+#
+# }
+#
+# xQTLdownload_xqtlAllAsso <- function(){
+#
+# }
 
 
 

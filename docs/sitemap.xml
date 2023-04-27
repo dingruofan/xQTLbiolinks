@@ -211,6 +211,9 @@
     <loc>/reference/xQTLvisual_anno.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLvisual_coloc.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLvisual_enrich.html</loc>
   </url>
   <url>
@@ -236,6 +239,9 @@
   </url>
   <url>
     <loc>/reference/xQTLvisual_locusZoom.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_manhattan.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLvisual_PNPlot.html</loc>

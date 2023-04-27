@@ -8,6 +8,10 @@ xQTLvisual_PZPlot(summaryDT, binCutLogP = 4, binNumber = 2000)
 }
 \arguments{
 \item{summaryDT}{A data.frame with three cols: pval,  beta, se.}
+
+\item{binCutLogP}{To speed up the rendering process of the plot for tens of millions of GWAS variants, variants with a p-value below a specified threshold (binCutLogP) are randomly sampled for display.}
+
+\item{binNumber}{The number of points randomly selected for plotting.}
 }
 \value{
 a list containing a data.frame of estimated pvalues and A ggplot2 object
@@ -17,8 +21,8 @@ Compare P-values reported in the association result file to P-values calculated 
 }
 \examples{
 \donttest{
-url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
-qtl <- fread(url1, sep="\t")
-xQTLanno_PZPlot(qtl[,.(pValue, beta, se)])
+url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
+sumDT <- data.table::fread(url1, sep="\t")
+xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)])
 }
 }

@@ -99,6 +99,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
   message("== Detecting sentinel SNPs... ")
   # pValue filter:
   gwasDFsub <- gwasDF[pValue<pValueThreshold, ]
+  gwasDFsub <- gwasDFsub[chr %in% paste0("chr", 1:22)]
   chrAll <- unique(gwasDFsub$chr)
   chrAll <- chrAll[order(as.numeric(str_remove(chrAll,"chr")))]
   sentinelSnpDF <- data.table()
@@ -145,7 +146,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #'                                    genomeVersion="grch37", grch37To38=TRUE)
 #' # with a egene file:
 #' egeneFile <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/egeneDF.txt"
-#' egeneDF <- fread(egeneFile)
+#' egeneDF <- data.table::fread(egeneFile)
 #' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
 #'                                    genomeVersion="grch37", grch37To38=TRUE, egeneDF=egeneDF)
 #' }
@@ -155,11 +156,11 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 
   data.table::setDT(sentinelSnpDF)
 
-  if(overlapWithEGene){
-    if( length(tissueSiteDetail)!=1 | tissueSiteDetail=="" | !(tissueSiteDetail %in% tissueSiteDetailGTExv8$tissueSiteDetail) ){
-      stop("== \"tissueSiteDetail\" can not be null. Please choose the tissue from tissue list of tissueSiteDetailGTExv8")
-    }
-  }
+  # if(overlapWithEGene){
+  #   if( length(tissueSiteDetail)!=1 | tissueSiteDetail=="" | !(tissueSiteDetail %in% tissueSiteDetailGTExv8$tissueSiteDetail) ){
+  #     stop("== \"tissueSiteDetail\" can not be null. Please choose the tissue from tissue list of tissueSiteDetailGTExv8")
+  #   }
+  # }
 
   # (未做) 由于下一步的 xQTLdownload_eqtlPost 函数只能 query 基于 hg38(v26) 的突变 1e6 bp附近的基因，所以如果输入的GWAS是 hg19 的突变坐标，需要进行转换为38，然后再进行下一步 eqtl sentinel snp filter.
   # 由于从 EBI category 里获得的是 hg38(v26) 的信息，所以如果这一步是 hg19 的1e6范围内，则在 hg38里就会未必，所以需要这一步，如果是hg19，则对突变的坐标进行变换：
@@ -259,25 +260,25 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
     rm(sentinelSnpChrom, geneInfoChrom, Traits)
   }
   message("== Fetching [", length(unique(traitsAll$gencodeId)),"] genes' information from the GTEx...")
-  geneAnnot <- xQTLquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId")
-  if( datasetId=="gtex_v7" ){
-    geneAnnot$chromosome <- paste0("chr",geneAnnot$chromosome)
-  }
-  if( exists("geneAnnot") && !is.null(geneAnnot) && nrow(geneAnnot)>0 ){
-    traitsAll <- merge(geneAnnot[,.(genes, geneSymbol,gencodeId, geneType, description, chromosome, start,end ,strand)],traitsAll, by.x="genes",by.y="gencodeId",  all.x=TRUE)[,-c("genes")]
-    traitsAll <- traitsAll[,.( chromosome, geneStart=start, geneEnd=end, geneStrand=strand, geneSymbol, gencodeId, rsid, position, pValue, maf )][order(as.numeric(str_remove(chromosome, "chr")), pValue, position)]
-    message("== Totally, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
-  }
+  # geneAnnot <- xQTLquery_gene(unique(traitsAll$gencodeId), geneType = "gencodeId")
+  # if( datasetId=="gtex_v7" ){
+  #   geneAnnot$chromosome <- paste0("chr",geneAnnot$chromosome)
+  # }
+  # if( exists("geneAnnot") && !is.null(geneAnnot) && nrow(geneAnnot)>0 ){
+  #   traitsAll <- merge(geneAnnot[,.(genes, geneSymbol,gencodeId, geneType, description, chromosome, start,end ,strand)],traitsAll, by.x="genes",by.y="gencodeId",  all.x=TRUE)[,-c("genes")]
+  #   traitsAll <- traitsAll[,.( chromosome, geneStart=start, geneEnd=end, geneStrand=strand, geneSymbol, gencodeId, rsid, position, pValue, maf )][order(as.numeric(str_remove(chromosome, "chr")), pValue, position)]
+  #   message("== Totally, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
+  # }
 
   # Get the overlap with the eGgenes:
   if(overlapWithEGene & is.null(egeneDF)){
     egeneDF <- xQTLdownload_egene(tissueSiteDetail = tissueSiteDetail) #11240
-    traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId]
+    traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId | gencodeId %in% unlist(lapply(egeneDF$gencodeId, function(x){ str_split(x, fixed("."))[[1]][1] }))]
     message("== After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
   }else if(overlapWithEGene & !(is.null(egeneDF))){
     egeneDF <- egeneDF[,1]
     names(egeneDF) <- "gencodeId"
-    traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId]
+    traitsAll <- traitsAll[gencodeId %in% egeneDF$gencodeId | gencodeId %in% unlist(lapply(egeneDF$gencodeId, function(x){ str_split(x, fixed("."))[[1]][1] }))]
     message("== ",nrow(egeneDF), " eGenes are provided...")
     message("   After taking the intersection with egenes, [",nrow(traitsAll), "] associations between [",length(unique(traitsAll$gencodeId)),"] traits genes and [",length(unique(traitsAll$rsid)),"] SNPs are detected." )
   }
@@ -881,11 +882,6 @@ xQTLanalyze_propensity <- function(gene="", geneType="auto", variantName="", var
 
   return(list(snpLD=snpLD, tissuePropensity=tissuePropensity, cor_R2_logP=cor_R2_logP, lm_R2_logP=lm_R2_logP, assoAllLd=assoAllLd))
 }
-
-
-
-
-
 
 
 

@@ -53,6 +53,18 @@ gwasDF <- example_Coloc_gwasDF
 head(gwasDF)
 ```
 
+Now we can perform quality control for this GWAS dataset by estimating the genomic inflation factor,  validating QQ-plot and PZ-plot using xQTLbiolinks.
+
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+xQTLvisual_qqPlot(gwasDF[,.(pValue)])
+xQTLvisual_PZPlot(gwasDF[,.(pValue, beta, se)])
+```
+
+```{r, qq_pz.png, fig.align = 'center', out.width = "50%", echo=FALSE}
+knitr::include_graphics("images/prostate/qq_pz_plot.png")
+```
+Left is the QQ plot. The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. Right is the PZ plot, he observed p-values on the y-axis and the corresponding p-values derived from z-scores that estimated by beta and se on the x-axis.
+
 ## Step 1: Filter sentinel snps.
 
 Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value \< 5e-8 and SNP-to-SNP distance \> 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE` (package `rtracklayer`is required):
@@ -88,7 +100,7 @@ traitsAll <- example_Coloc_traitsAll
 ```
 
 ```{r, eval=TRUE}
-head(example_Coloc_traitsAll)
+head(traitsAll)
 ```
 
 ## Step 3: Conduct colocalization analysis.

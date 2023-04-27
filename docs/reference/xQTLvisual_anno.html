@@ -62,7 +62,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_anno</span><span class="op">(</span><span class="va">snpHits</span>, pValueBy <span class="op">=</span> <span class="fl">5</span>, plotType <span class="op">=</span> <span class="st">"point"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_anno</span><span class="op">(</span><span class="va">snpHits</span>, pValueBy <span class="op">=</span> <span class="fl">5</span>, plotType <span class="op">=</span> <span class="st">"bar"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,7 +76,7 @@
 
 
 <dt>plotType</dt>
-<dd><p>"point", "bar", or "pie"</p></dd>
+<dd><p>"bar" (Default), or "pie"</p></dd>
 
 </dl></div>
     <div id="value">
@@ -92,7 +92,7 @@
 <span><span class="va">url1</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"</span></span>
 <span><span class="va">snpInfo</span> <span class="op">&lt;-</span> <span class="fu">fread</span><span class="op">(</span><span class="va">url1</span>, sep<span class="op">=</span><span class="st">"\t"</span><span class="op">)</span></span>
 <span><span class="va">snpHits</span> <span class="op">&lt;-</span> <span class="fu"><a href="xQTLanno_genomic.html">xQTLanno_genomic</a></span><span class="op">(</span><span class="va">snpInfo</span><span class="op">)</span></span>
-<span><span class="fu">xQTLvisual_anno</span><span class="op">(</span><span class="va">snpHits</span>, plotType<span class="op">=</span><span class="st">"point"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_anno</span><span class="op">(</span><span class="va">snpHits</span>, plotType<span class="op">=</span><span class="st">"bar"</span><span class="op">)</span></span>
 <span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>
