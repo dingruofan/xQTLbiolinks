@@ -1497,6 +1497,7 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 #' @param summaryDT A data.frame with three cols: pval,  beta, se.
 #' @param binCutLogP To speed up the rendering process of the plot for tens of millions of GWAS variants, variants with a p-value below a specified threshold (binCutLogP) are randomly sampled for display.
 #' @param binNumber The number of points randomly selected for plotting.
+#' @param distribution_func "pnorm"(default) or "pchisq"
 #' @return a list containing a data.frame of estimated pvalues and A ggplot2 object
 #' @export
 #'
@@ -1504,15 +1505,20 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 #' \donttest{
 #' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
 #' sumDT <- data.table::fread(url1, sep="\t")
-#' xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)])
+#' xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)], distribution_func="pchisq")
 #' }
-xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
+xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000, distribution_func="pnorm"){
   se <- pval <- pZtest <- logPZ <- cutF <- logP <- NULL
   . <-NULL
   summaryDT <- na.omit(summaryDT)
   summaryDT <- summaryDT[,1:3]
   names(summaryDT) <- c("pval", "beta", "se")
-  summaryDT[,c("pZtest", "logP") := .(pnorm(-abs(beta/se)), log(pval, 10)*(-1))]
+  if(distribution_func=="pnorm"){
+    summaryDT[,c("pZtest", "logP") := .(pnorm(-abs(beta/se)), log(pval, 10)*(-1))]
+  }else if(distribution_func=="pchisq"){
+    summaryDT[,c("pZtest", "logP") := .(pchisq((beta/se)^2, 1, lower.tail = FALSE), log(pval, 10)*(-1))]
+  }
+
   summaryDT[,"logPZ" := log(pZtest, 10)*(-1)]
   summaryDT <- na.omit(summaryDT)
 
