@@ -1409,6 +1409,7 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
 #' @param binNumber Number of bins.
 #' @import ggplot2
 #'
+#' @export
 #' @return ggplot2 object
 #' @examples
 #' \donttest{
