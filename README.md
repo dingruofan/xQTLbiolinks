@@ -25,7 +25,7 @@ Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518
 
 ### Installation
 
-1. Package `SummarizedExperiment` is required but reposited in Biocouductor. If you haven't installed it, please install `SummarizedExperiment` from Biocouductor with following command.
+1. Package `SummarizedExperiment` is required before using xQTLbiolinks. Install `SummarizedExperiment` from Biocouductor with the following command.
 
 ``` r
 # install required bioconductor package SummarizedExperiment:
