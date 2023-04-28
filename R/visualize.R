@@ -1412,7 +1412,7 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
 #' @return ggplot2 object
 #' @examples
 #' \donttest{
-#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
 #' snpInfo <- data.table::fread(url1, sep="\t")
 #' xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 #' }
@@ -1552,8 +1552,8 @@ xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000){
     xlab(expression(-log["10"](Pvalue-estimated)))+
     theme_classic()+
     theme(
-      axis.text = element_text(rel(1.3)),
-      axis.title = element_text(rel(1.4))
+      axis.text = element_text(size = rel(1.3)),
+      axis.title = element_text(size= rel(1.4))
     )
   print(p)
   return(list(summaryDT=summaryDT, p=p))
