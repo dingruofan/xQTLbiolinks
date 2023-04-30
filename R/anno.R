@@ -299,7 +299,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                  ignore.strand=TRUE ))
   convertCharacter <- function(x){ a=as.list(x);paste0(unlist(a), collapse = ",") }
   if(nrow(intronHits)>0){
-    intronHits <- cbind(snpInfo[intronHits$queryHits,],intronAnno[intronHits$subjectHits,.(anno=tx_name, type="exon")])
+    intronHits <- cbind(snpInfo[intronHits$queryHits,],intronAnno[intronHits$subjectHits,.(anno=tx_name, type="intron")])
     intronHits$anno <- unlist(lapply(intronHits$anno, convertCharacter))
     # collapse annotation:
     intronHits <- intronHits[,.(anno=paste(anno,collapse = ",")),by=c("chrom", "pos", "pValue", "type")]
@@ -341,7 +341,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                                                 txdb,
                                                                                                 VariantAnnotation::CodingVariants())) ))
   if(nrow(cdsHits)>0){
-    cdsHits <- cbind(snpInfo[cdsHits$QUERYID,], cdsHits[,.(tx_id=as.integer(TXID),type="cds")])
+    cdsHits <- cbind(snpInfo[cdsHits$QUERYID,], cdsHits[,.(tx_id=as.integer(TXID),type="nonsynonymous")])
     cdsHits <- merge(cdsHits, txinfo[,.(tx_id,anno=tx_name)],by="tx_id")[,-c("tx_id")]
     # collapse annotation:
     cdsHits <- cdsHits[,.(anno=paste(anno,collapse = ",")),by=c("chrom", "pos", "pValue", "type")]
@@ -410,7 +410,17 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   rm(txinfo)
 
   # combine all hits:
-  snpHits <- do.call(rbind,list(cpgHits, enhancerHits, promoterHits, exonHits, cdsHits, intronHits, utr3Hits, utr5Hits, tfHits, splicingHits, intergenicHits))
+  snpHits <- do.call(rbind,list(cpgHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                enhancerHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                promoterHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                exonHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                cdsHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                intronHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                utr3Hits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                utr5Hits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                tfHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                splicingHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                intergenicHits[,c("chrom", "pos", "pValue", "anno", "type")]))
   # For the rest of the failed to be annotated, all in intergenic:
   failedSnps <- fsetdiff(snpInfo, snpHits[,.(chrom, pos, pValue)])
   failedSnps$anno <- "-"

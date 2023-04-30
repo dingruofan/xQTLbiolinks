@@ -1270,8 +1270,8 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
   cutP <- Num <- Type <- NumSum <- prop <- Freq <- snpHitsCount<- Var1 <-NULL
   .<-NULL
 
-  typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","cds","utr3","utr5","tfCluster","spliceSite","ingergenic"),
-                         Type = c("CpG island", "Enhancer", "Promoter", "Exon", "CDS", "3'UTR", "5'UTR", "TF cluster", "Splice site", "Intergenic"))
+  typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","nonsynonymous","utr3","utr5","tfCluster", "spliceSite", "ingergenic", "intron"),
+                         Type = c("CpG island", "Enhancer", "Promoter", "Exon", "Nonsynonymous", "3'UTR", "5'UTR", "TFBS", "Splice site", "Intergenic", "Intron"))
 
   snpHits$logP <- log(snpHits$pValue, base=10)*(-1)
   snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
