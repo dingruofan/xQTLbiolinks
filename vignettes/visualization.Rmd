@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
   progress =FALSE,
   comment = "#>"
 )
-knitr::include_graphics("images/quick_start/colocalization_framework.png")
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 Some visual examples are provided in this vignette, including example data, code, and figures.

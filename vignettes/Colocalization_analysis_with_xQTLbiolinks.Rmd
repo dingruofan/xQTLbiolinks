@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
   progress =FALSE,
   comment = "#>"
 )
-knitr::include_graphics("images/quick_start/colocalization_framework.png")
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ## Before we start.
@@ -25,7 +25,7 @@ knitr::include_graphics("images/quick_start/colocalization_framework.png")
 All we need to prepare include three parts:
 
 1.  GWAS summary statistics dataset.
-2.  Name of tissue of interest.
+2.  Tissue of interest.
 3.  Following three installed packages.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
@@ -56,7 +56,7 @@ head(gwasDF)
 
 Now we can perform quality control for this GWAS dataset by estimating the genomic inflation factor,  validating QQ-plot and PZ-plot using xQTLbiolinks.
 
-```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, out.width = "70%", warning=FALSE, eval=FALSE}
 xQTLvisual_qqPlot(gwasDF[,.(pValue)])
 xQTLvisual_PZPlot(gwasDF[,.(pValue, beta, se)])
 ```
@@ -64,7 +64,15 @@ xQTLvisual_PZPlot(gwasDF[,.(pValue, beta, se)])
 ```{r, qq_pz.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/prostate/qq_pz_plot.png")
 ```
-Left is the QQ plot. The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. Right is the PZ plot, he observed p-values on the y-axis and the corresponding p-values derived from z-scores that estimated by beta and se on the x-axis.
+- Left is the QQ-plot. The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. There is a significant deviation from the diagonal line, which indicates potential variations from the null hypothesis that may result from true associations or LD. 
+- The genomic inflation factor (lambda) is labeled in the top left of the QQ-plot, and a lambda value of 1.147 indicating no strong population stratification. 
+- Right is the PZ plot, the observed p-values on the y-axis and the corresponding p-values derived from z-scores that estimated by beta and se on the x-axis. A strong concordance can be observed between the observed p-values and those calculated from Z-scores.
+
+Genomic annotation of the significant signals can be conducted using:
+```{r, results = 'hide', echo=TRUE, message=FALSE, out.width = "70%", warning=FALSE, eval=FALSE}
+xQTLvisual_qqPlot(gwasDF[,.(pValue)])
+xQTLvisual_PZPlot(gwasDF[,.(pValue, beta, se)])
+```
 
 ## Step 1: Filter sentinel snps.
 
@@ -222,7 +230,7 @@ knitr::include_graphics("images/prostate/prostate_geneExpInOneTissue.png", error
 
 
 
-Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` & `hypr_posterior=0.9993` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis [@RefSeq]. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17 [@zhang2017]. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer [@tregunna2020].
+Trait gene **`MMP7`** that with the highest `PPH4.ABF=0.9978` & `hypr_posterior=0.9993` encodes a member of the peptidase M10 family of matrix metalloproteinases, which is involved in the breakdown of extracellular matrix in normal physiological processes, such as embryonic development, reproduction, and tissue remodeling, as well as in disease processes, such as arthritis and metastasis. Prostate cancer can be promoted via MMP7-induced epithelial-to-mesenchymal transition by Interleukin-17. Resent literature has shown that serum MMP7 levels could guide metastatic therapy for prostate cancer.
 
 Expression of MMP7 in multiple tissues can be plotted with `xQTLvisual_geneExpTissues`:
 
@@ -248,7 +256,7 @@ Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoo
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 t1 <- tempfile()
-utils::download.file("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasEqtldata.txt", t1)
+utils::download.file("http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
 close(file(t1))
 rm(t1)
@@ -369,6 +377,4 @@ dotplot(ego, showCategory=15)
 knitr::include_graphics("images/prostate/prostate_Go.png")
 ```
 
-Viral-related GO terms are enriched in above analysis, including `"viral life cycle"`, `"positive regulation of viral life cycle"` and `"positive regulation of viral process"`. Previous studies have highlighted the role of viral infections in initiation or progression of prostate cancer. The presence of viruses such as human papillomavirus (HPV), herpesviruses including cytomegalovirus (CMV), human herpes simplex virus type 2 (HSV2), human herpesvirus type 8 (HHV8) and Epstein-Barr virus (EBV) can infect the prostate [@abidi2018]. However, the causal variants' genetic effects on the phenotype and whether the trait genes has a direct association with prostate carcinogenesis has not yet been established.
 
-## References
