@@ -1923,6 +1923,7 @@ retrieveLD = function(chr, snp, population){
 xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names="", clu_geneid_DF=NULL){
   tissueSiteDetail <- NULL
   # match tissue:
+  if(tissue==""){ stop("tissue can not be null...") }
   tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissue | tissueSiteDetailId==tissue][1,]
   if(nrow(tissueDT)==0){ stop("tissue not found...")}
   # get clu-gene info:

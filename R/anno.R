@@ -348,7 +348,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     cdsHits <- cpgHits[0,]
   }
-  message("      cds hits: ",nrow(cdsHits))
+  message("      nonsynonymous hits: ",nrow(cdsHits))
 
   # annotate snp with 5 utr:
   utr5Hits <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
@@ -414,7 +414,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                 enhancerHits[,c("chrom", "pos", "pValue", "anno", "type")],
                                 promoterHits[,c("chrom", "pos", "pValue", "anno", "type")],
                                 exonHits[,c("chrom", "pos", "pValue", "anno", "type")],
-                                cdsHits[,c("chrom", "pos", "pValue", "anno", "type")],
+                                # cdsHits[,c("chrom", "pos", "pValue", "anno", "type")],
                                 intronHits[,c("chrom", "pos", "pValue", "anno", "type")],
                                 utr3Hits[,c("chrom", "pos", "pValue", "anno", "type")],
                                 utr5Hits[,c("chrom", "pos", "pValue", "anno", "type")],

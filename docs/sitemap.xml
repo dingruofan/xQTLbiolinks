@@ -181,10 +181,16 @@
     <loc>/reference/xQTLdownload_sgene.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLdownload_sqtlAllAsso.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLdownload_sqtlExp.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLdownload_sqtlSig.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLdownload_xqtlAllAsso.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLquery_gene.html</loc>
