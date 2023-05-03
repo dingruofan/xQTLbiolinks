@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
   progress =FALSE,
   comment = "#>"
 )
+knitr::include_graphics("images/quick_start/colocalization_framework.png")
 ```
 
 ## Before we start.
