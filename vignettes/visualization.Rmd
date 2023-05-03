@@ -1,5 +1,5 @@
 ---
-title: "Visualization using xQTLbiolinks"
+title: "4. Visualization using xQTLbiolinks"
 date: "2023-05-01"
 output: rmarkdown::html_vignette
 vignette: >

@@ -1,5 +1,5 @@
 ---
-title: "A quick application of coloclization analysis"
+title: "2. A quick application of coloclization analysis"
 date: "2023-05-01"
 output: rmarkdown::html_vignette
 vignette: >

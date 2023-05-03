@@ -1136,7 +1136,7 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
       )+
       # xlab(expression(-log["10"]("p-value")))+
       xlab("")+
-      ylab("Number of variants")+coord_flip()
+      ylab("Number of variants")+coord_flip()+guides(fill="none")
     plot(p1)
     return(p1)
   }
