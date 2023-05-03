@@ -1,6 +1,6 @@
 ---
 title: "A quick application of coloclization analysis"
-date: "2022-06-08"
+date: "2023-05-01"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Quick_start}
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-xQTLbiolinks has provided a pipeline for disease target gene discovery to detect susceptible genes and causal variants.
+xQTLbiolinks has provided a pipeline for disease target gene discovery through colocalization analysis with xQTLs to detect susceptible genes and causal variants.
 ```{r, colocalization_framework.png, fig.align = 'center', out.width = "70%", echo=FALSE}
 knitr::include_graphics("images/quick_start/colocalization_framework.png")
 ```
@@ -39,7 +39,7 @@ library(stringr)
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
-download.file("http://github.com/dingruofan/exampleData/raw/master/env.zip", temp1)
+download.file("https://github.com/dingruofan/exampleData/raw/master/env.zip", temp1)
 load(unz(temp1,"env.Rdata"))
 close(file(temp1))
 rm(temp1)
@@ -48,7 +48,7 @@ rm(temp1)
 Download and load an example file of summary statistics dataset (GRCh38). We perform colocalization analysis in `Brain - Cerebellum`.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-gwasDF <- fread("http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt")
+gwasDF <- fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt")
 tissueSiteDetail="Brain - Cerebellum"
 ```
 

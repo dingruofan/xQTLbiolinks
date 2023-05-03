@@ -93,7 +93,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
   }
 
   message("== Querying significant eQTL associations from API server:")
-  suppressMessages(eqtlInfo <- xQTLdownload_eqtl(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
+  suppressMessages(eqtlInfo <- xQTLquery_eqtl(gene = gene, variantName = variantName, geneType = geneType, variantType = variantType, tissueSiteDetail = tissueSiteDetail))
   if( !exists("eqtlInfo") || is.null(eqtlInfo) || nrow(eqtlInfo)==0 ){
     stop("No eqtl associations were found for gene [", gene, "] and variant [", variantName,"] in ", tissueSiteDetail, " in ", datasetId,".")
   }else{
@@ -280,7 +280,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
   # retrieve sQTL detail:
   P_geneName <- stringr::str_split(phenotypeId, ":")[[1]][5]
-  try(suppressMessages(sqtlInfo <- xQTLdownload_sqtlSig(variantName = varInfo$variantId, genes = P_geneName, tissueSiteDetail=tissueSiteDetail)), silent = TRUE)
+  try(suppressMessages(sqtlInfo <- xQTLquery_sqtlSig(variantName = varInfo$variantId, genes = P_geneName, tissueSiteDetail=tissueSiteDetail)), silent = TRUE)
   sqtlInfo <- sqtlInfo[phenotypeId==phenotypeId]
   if(exists("sqtlInfo") & !is.null(sqtlInfo) & nrow(sqtlInfo)==1 ){
     message("Significant sQTL association found!")
@@ -884,7 +884,7 @@ xQTLvisual_eqtl <- function(gene, geneType="auto" ){
   }
 
   geneInfo <- xQTLquery_gene(gene, geneType = geneType )
-  geneEqtl <- xQTLdownload_eqtlSig(genes=geneInfo$geneSymbol)
+  geneEqtl <- xQTLquery_eqtlSig(genes=geneInfo$geneSymbol)
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)
@@ -942,7 +942,7 @@ xQTLvisual_sqtl <- function(gene, geneType="auto" ){
   }
 
   geneInfo <- xQTLquery_gene(gene, geneType = geneType )
-  geneEqtl <- xQTLdownload_sqtlSig(genes=geneInfo$geneSymbol)
+  geneEqtl <- xQTLquery_sqtlSig(genes=geneInfo$geneSymbol)
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)

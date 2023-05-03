@@ -18,9 +18,9 @@ articles:
     desc:
       We provide a series of vignettes to help users get started with `xQTLbiolinks`. You can also check out [Function](/reference/index.html) page which contains a full list of functions available.
     contents:
+    - query_download
     - Quick_start
     - Colocalization_analysis_with_xQTLbiolinks
-    - eQTL_Specificity
     - visualization
 
 

@@ -78,7 +78,7 @@
       <h1 data-toc-skip>Case study: colocalization analysis in prostate
 cancer</h1>
             
-            <h4 data-toc-skip class="date">2022-06-08</h4>
+            <h4 data-toc-skip class="date">2023-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/vignettes/Colocalization_analysis_with_xQTLbiolinks.Rmd" class="external-link"><code>vignettes/Colocalization_analysis_with_xQTLbiolinks.Rmd</code></a></small>
       <div class="hidden name"><code>Colocalization_analysis_with_xQTLbiolinks.Rmd</code></div>
@@ -134,17 +134,17 @@ using xQTLbiolinks.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_qqPlot.html">xQTLvisual_qqPlot</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">pValue</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/xQTLvisual_PZPlot.html">xQTLvisual_PZPlot</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">pValue</span>, <span class="va">beta</span>, <span class="va">se</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="images/prostate/qq_pz_plot.png" width="50%" style="display: block; margin: auto;">
-- Left is the QQ-plot. The x-axis of the QQ-plot represents the expected
-p-values under the null hypothesis, while the y-axis represents the
-observed p-values from the GWAS summary statistics data. There is a
+<p><img src="images/prostate/qq_pz_plot.png" width="50%" style="display: block; margin: auto;"></p>
+<p>Left is the QQ-plot. The x-axis of the QQ-plot represents the
+expected p-values under the null hypothesis, while the y-axis represents
+the observed p-values from the GWAS summary statistics data. There is a
 significant deviation from the diagonal line, which indicates potential
 variations from the null hypothesis that may result from true
-associations or LD. - The genomic inflation factor (lambda) is labeled
-in the top left of the QQ-plot, and a lambda value of 1.147 indicating
-no strong population stratification. - Right is the PZ plot, the
-observed p-values on the y-axis and the corresponding p-values derived
-from z-scores that estimated by beta and se on the x-axis. A strong
+associations or LD. The genomic inflation factor (lambda) is labeled in
+the top left of the QQ-plot, and a lambda value of 1.138 indicating no
+strong population stratification. Right is the PZ plot, the observed
+p-values on the y-axis and the corresponding p-values derived from
+z-scores that estimated by beta and se on the x-axis. A strong
 concordance can be observed between the observed p-values and those
 calculated from Z-scores.</p>
 <p>Genomic annotation of the significant signals can be conducted

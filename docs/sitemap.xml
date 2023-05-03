@@ -193,6 +193,12 @@
     <loc>/reference/xQTLdownload_xqtlAllAsso.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLquery_eqtl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLquery_eqtlSig.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLquery_gene.html</loc>
   </url>
   <url>
@@ -203,6 +209,9 @@
   </url>
   <url>
     <loc>/reference/xQTLquery_sampleByTissue.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLquery_sqtlSig.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLquery_tissue.html</loc>

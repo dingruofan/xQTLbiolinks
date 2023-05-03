@@ -18,5 +18,4 @@ Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq sa
 \examples{
 tissueAll <- xQTLquery_tissue() # fetch all tissues
 Brain <- xQTLquery_tissue("Brain")
-Brains <- xQTLquery_tissue("Brain - Hippocampus")
 }

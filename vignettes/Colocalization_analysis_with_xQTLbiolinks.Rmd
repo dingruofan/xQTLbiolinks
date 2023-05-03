@@ -1,14 +1,12 @@
 ---
 title: "Case study: colocalization analysis in prostate cancer"
-date: "2022-06-08"
+date: "2023-05-01"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Colocalization_analysis_with_xQTLbiolinks}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-link-citations: true
 lang: en-US
-bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -64,9 +62,10 @@ xQTLvisual_PZPlot(gwasDF[,.(pValue, beta, se)])
 ```{r, qq_pz.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/prostate/qq_pz_plot.png")
 ```
-- Left is the QQ-plot. The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. There is a significant deviation from the diagonal line, which indicates potential variations from the null hypothesis that may result from true associations or LD. 
-- The genomic inflation factor (lambda) is labeled in the top left of the QQ-plot, and a lambda value of 1.147 indicating no strong population stratification. 
-- Right is the PZ plot, the observed p-values on the y-axis and the corresponding p-values derived from z-scores that estimated by beta and se on the x-axis. A strong concordance can be observed between the observed p-values and those calculated from Z-scores.
+
+Left is the QQ-plot. The x-axis of the QQ-plot represents the expected p-values under the null hypothesis, while the y-axis represents the observed p-values from the GWAS summary statistics data. There is a significant deviation from the diagonal line, which indicates potential variations from the null hypothesis that may result from true associations or LD. 
+The genomic inflation factor (lambda) is labeled in the top left of the QQ-plot, and a lambda value of 1.138 indicating no strong population stratification. 
+Right is the PZ plot, the observed p-values on the y-axis and the corresponding p-values derived from z-scores that estimated by beta and se on the x-axis. A strong concordance can be observed between the observed p-values and those calculated from Z-scores.
 
 Genomic annotation of the significant signals can be conducted using:
 ```{r, results = 'hide', echo=TRUE, message=FALSE, out.width = "70%", warning=FALSE, eval=FALSE}
@@ -256,7 +255,7 @@ Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoo
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 t1 <- tempfile()
-utils::download.file("http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasEqtldata.txt", t1)
+utils::download.file("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
 close(file(t1))
 rm(t1)

@@ -1,12 +1,3 @@
-#' @title xQTLbiolinks package
-#' @description
-#' the functions provided in this \pkg{xQTLbiolinks} enable users to access molecular QTLs (eQTLs and sQTLs) and gene expressions data filtered by tissue, gene, variant or dataset.
-#'
-#' @docType package
-#' @name xQTLbiolinks
-#' @keywords internal
-NULL
-
 #' @title  Tissue name and tissue id mapping of GTEx V8.
 #' @description
 #'  A dataset containing the 54 tissues' name and corresponding ID of GTEx V8.

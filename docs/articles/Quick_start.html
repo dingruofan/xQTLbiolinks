@@ -78,7 +78,7 @@
       <h1 data-toc-skip>A quick application of coloclization
 analysis</h1>
             
-            <h4 data-toc-skip class="date">2022-06-08</h4>
+            <h4 data-toc-skip class="date">2023-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dingruofan/xQTLbiolinks/blob/HEAD/vignettes/Quick_start.Rmd" class="external-link"><code>vignettes/Quick_start.Rmd</code></a></small>
       <div class="hidden name"><code>Quick_start.Rmd</code></div>
@@ -88,7 +88,8 @@ analysis</h1>
     
     
 <p>xQTLbiolinks has provided a pipeline for disease target gene
-discovery to detect susceptible genes and causal variants.
+discovery through colocalization analysis with xQTLs to detect
+susceptible genes and causal variants.
 <img src="images/quick_start/colocalization_framework.png" width="70%" style="display: block; margin: auto;"></p>
 <div class="section level2">
 <h2 id="before-we-start">Before we start<a class="anchor" aria-label="anchor" href="#before-we-start"></a>
@@ -109,7 +110,7 @@ packages:</p>
 (GRCh38). We perform colocalization analysis in
 <code>Brain - Cerebellum</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"</span><span class="op">)</span></span>
 <span><span class="va">tissueSiteDetail</span><span class="op">=</span><span class="st">"Brain - Cerebellum"</span></span></code></pre></div>
 <p>In this example, a data.table object of 16538 (rows) x 5 (cols) is
 loaded. Five columns are required (arbitrary column names is supported,
