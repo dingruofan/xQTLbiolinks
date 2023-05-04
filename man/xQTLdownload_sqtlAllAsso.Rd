@@ -6,7 +6,7 @@
 \usage{
 xQTLdownload_sqtlAllAsso(
   genes = "",
-  geneType = "",
+  geneType = "gencodeId",
   tissue = "",
   clu_names = "",
   clu_geneid_DF = NULL
@@ -15,7 +15,7 @@ xQTLdownload_sqtlAllAsso(
 \arguments{
 \item{genes}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "gencodeId".}
 
 \item{tissue}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8}}
 

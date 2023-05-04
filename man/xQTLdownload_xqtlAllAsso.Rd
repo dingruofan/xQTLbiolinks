@@ -6,7 +6,7 @@
 \usage{
 xQTLdownload_xqtlAllAsso(
   genes = "",
-  geneType = "",
+  geneType = "geneSymbol",
   tissue = "",
   mRNA_refseq = "",
   mRNA_gene_DF = NULL,
@@ -16,7 +16,7 @@ xQTLdownload_xqtlAllAsso(
 \arguments{
 \item{genes}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
-\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
+\item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".}
 
 \item{tissue}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8}}
 
@@ -34,6 +34,6 @@ Download summary statistics of xQTL of a specified gene in GTEx v8, default:3'aQ
 }
 \examples{
 \donttest{
-aQTL_DT <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
+aQTL_DT <- xQTLdownload_xqtlAllAsso(genes=c("MMP7", "EPS15"), tissue="Lung")
 }
 }

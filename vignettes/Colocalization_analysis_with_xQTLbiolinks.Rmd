@@ -27,11 +27,14 @@ All we need to prepare include three parts:
 3.  Following three installed packages.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
-library(data.table)
 library(xQTLbiolinks)
-library(stringr)
 library(coloc)
 library(hyprcoloc)
+library(data.table)
+library(stringr)
+library(R.utils)
+library(TxDb.Hsapiens.UCsC.hg38.knownGene)
+library(VariantAnnotation)
 ```
 
 Prostate cancer is one of the most common cancers in men. Prostate cancer pathogenesis involves both heritable and environmental factors. The molecular events involved in the development or progression of prostate cancer are still unclear. In this example, we aim to figure out the causal variants and genes assocaited with prostate cancer, and to uncover potential molecular mechanisms of regulation.
@@ -71,7 +74,7 @@ Right is the PZ plot, the observed p-values on the y-axis and the corresponding 
 
 Genomic annotation of the significant signals can be conducted using `xQTLanno_genomic`:
 ```{r, results = 'hide', echo=TRUE, message=FALSE, out.width = "70%", warning=FALSE, eval=FALSE}
-snpHits <- xQTLanno_genomic(gwasDF[,.(chrom2, position, pValue)])
+snpHits <- xQTLanno_genomic(gwasDF[,.(chrom=paste0("chr",chrom), position, pValue)])
 xQTLvisual_anno(snpHits)
 ```
 ```{r, anno.png, fig.align = 'center', out.width = "35%", echo=FALSE}

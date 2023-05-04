@@ -1396,7 +1396,7 @@ retrieveLD = function(chr, snp, population){
 #' @title download summary statistics of sQTL of a specified gene in GTEx v8.
 #'
 #' @param genes (character) gene symbol or gencode id (versioned or unversioned are both supported).
-#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "gencodeId".
 #' @param tissue (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8`
 #' @param clu_names (character) If provided, only the sQTL of clu_names will be downloaded
 #' @param clu_geneid_DF (data.frame) If provided, clu-gencode mapping relationship will be loaded from this data.frame.
@@ -1410,7 +1410,7 @@ retrieveLD = function(chr, snp, population){
 #' \donttest{
 #' sQTL_DT <- xQTLdownload_sqtlAllAsso(genes=c("MMP7","TP53"), tissue="Lung")
 #' }
-xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names="", clu_geneid_DF=NULL){
+xQTLdownload_sqtlAllAsso <- function(genes="", geneType="gencodeId", tissue="", clu_names="", clu_geneid_DF=NULL){
   tissueSiteDetail <- clu_name<- tissueSiteDetailId <- gencodeId <- gencodeId_unv <- NULL
   # match tissue:
   if(tissue==""){ stop("tissue can not be null...") }
@@ -1421,7 +1421,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names
     setDT(clu_geneid_DF)
     clu_geneid<-clu_geneid_DF
   }else{
-    clu_geneid <- fread(paste0("https://raw.githubusercontent.com/dingruofan/exampleData/master/sQTL_clu_gene2/sQTL_intron_gene_id_",tissueDT$tissueSiteDetailId,".txt"), header=FALSE)
+    clu_geneid <- fread(paste0("http://bioinfo.szbl.ac.cn/aQTL/for_xQTLbiolinks/sQTL_clu_gene2/sQTL_intron_gene_id_",tissueDT$tissueSiteDetailId,".txt"), header=FALSE)
     if(!exists("clu_geneid") || nrow(clu_geneid)==0){ stop("tissue not found...") }
   }
   names(clu_geneid) <- c("clu_name","gencodeId")
@@ -1446,6 +1446,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names
   clu_geneid_sub$tmpFilePath <- paste(unlist(lapply(1:nrow(clu_geneid_sub), function(x){tempfile(pattern = "sqtl_")})),"sQTL_",1:nrow(clu_geneid_sub),".txt", sep="")
 
   # download sQTL by clu:
+  message("== Start downloading sQTLs...")
   for(i in 1:nrow(clu_geneid_sub)){
     cat("== Downloading ", clu_geneid_sub[i,]$gencodeId, "-", clu_geneid_sub[i,]$clu_name,"...")
     df <- try(suppressWarnings(utils::download.file(url = clu_geneid_sub[i,]$url1,
@@ -1476,7 +1477,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names
 #' @title Download summary statistics of xQTL of a specified gene in GTEx v8, default:3'aQTL
 #'
 #' @param genes (character) gene symbol or gencode id (versioned or unversioned are both supported).
-#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".
 #' @param tissue (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8`
 #' @param mRNA_refseq (character) If provided, only the 3'aQTL of mRNA will be downloaded
 #' @param mRNA_gene_DF (data.frame) If provided, mRNA-gencode mapping relationship will be loaded from this data.frame.
@@ -1487,10 +1488,10 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names
 #'
 #' @examples
 #' \donttest{
-#' aQTL_DT <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
+#' aQTL_DT <- xQTLdownload_xqtlAllAsso(genes=c("MMP7", "EPS15"), tissue="Lung")
 #' }
-xQTLdownload_xqtlAllAsso <- function(genes="", geneType="",  tissue="", mRNA_refseq="",  mRNA_gene_DF=NULL, type="3'aQTL"){
-  tissueSiteDetail <- tissueSiteDetailId <- gencodeId_unv <- mRNA<- NULL
+xQTLdownload_xqtlAllAsso <- function(genes="", geneType="geneSymbol",  tissue="", mRNA_refseq="",  mRNA_gene_DF=NULL, type="3'aQTL"){
+  tissueSiteDetail <- tissueSiteDetailId <- gencodeId_unv <- geneSymbol <- mRNA<- NULL
   if(type=="3'aQTL"){
     # match tissue:
     tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissue | tissueSiteDetailId==tissue][1,]
@@ -1500,22 +1501,23 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="",  tissue="", mRNA_ref
       setDT(mRNA_gene_DF)
       mRNA_gene<-mRNA_gene_DF
     }else{
-      mRNA_gene <- fread(paste0("https://github.com/dingruofan/exampleData/raw/master/hg38_refseq_gencodeId.txt"), header=TRUE)
+      # mRNA_gene <- fread(paste0("https://github.com/dingruofan/exampleData/raw/master/hg38_refseq_gencodeId.txt"), header=TRUE)
+      mRNA_gene <- fread("http://bioinfo.szbl.ac.cn/aQTL/for_xQTLbiolinks/hg38_3UTR_anno.txt", header=FALSE)
       if(!exists("mRNA_gene") || nrow(mRNA_gene)==0){ stop("mRNA info download fail...") }
     }
-    mRNA_gene$gencodeId_unv <- str_remove(mRNA_gene$gencodeId, regex("[.].*$"))
+    names(mRNA_gene) <- c("mRNA", "geneSymbol")
 
     # merge with genes:
-    if(geneType=="gencodeId"){
-      mRNA_gene_sub <- mRNA_gene[gencodeId %in% genes |  gencodeId_unv %in% genes]
+    if(geneType=="geneSymbol"){
+      mRNA_gene_sub <- mRNA_gene[str_to_lower(geneSymbol) %in% str_to_lower(genes)]
     }else{
       message("==> Querying genes...")
       genes_info <- xQTLquery_gene(genes)
-      mRNA_gene_sub <- mRNA_gene[gencodeId %in% genes_info$gencodeId]
+      mRNA_gene_sub <- mRNA_gene[str_to_lower(geneSymbol) %in% str_to_lower(genes_info$geneSymbol)]
     }
     # merge with clu_name:
     if(!mRNA_refseq==""){
-      mRNA_gene_sub <- mRNA_gene_sub[mRNA %in% mRNA_refseq]
+      mRNA_gene_sub <- mRNA_gene_sub[str_to_lower(mRNA) %in% str_to_lower(mRNA_refseq)]
     }
 
     # construct mRNA infor data.table:
@@ -1524,6 +1526,7 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="",  tissue="", mRNA_ref
     mRNA_gene_sub$tmpFilePath <- paste(unlist(lapply(1:nrow(mRNA_gene_sub), function(x){tempfile(pattern = "aqtl_")})),"sQTL_",1:nrow(mRNA_gene_sub),".txt", sep="")
 
     # download sQTL by clu:
+    message("== Start downloading 3'QTLs...")
     for(i in 1:nrow(mRNA_gene_sub)){
       cat("== Downloading ", i,"-", mRNA_gene_sub[i,]$gencodeId, "-", mRNA_gene_sub[i,]$clu_name,"...")
       df <- try(suppressWarnings(utils::download.file(url = mRNA_gene_sub[i,]$url1,
@@ -1544,13 +1547,13 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="",  tissue="", mRNA_ref
         aQTL_summary_i <- fread(mRNA_gene_sub[i,]$tmpFilePath, header=TRUE)
         if(nrow(aQTL_summary_i)>0){
           # cat(i,"-")
-          aQTL_summary_i$gencodeId <- mRNA_gene_sub[i,]$gencodeId
+          aQTL_summary_i$geneSymbol <- mRNA_gene_sub[i,]$geneSymbol
           aQTL_summary <- rbind(aQTL_summary, aQTL_summary_i)
           file.remove(mRNA_gene_sub[i,]$tmpFilePath)
         }
       }
     }
-    names(aQTL_summary) <- c("rsid", "maf","pValue",  "beta", "se", "mRNA", "gencodeId")
+    names(aQTL_summary) <- c("rsid", "maf","pValue",  "beta", "se", "mRNA", "geneSymbol")
     return(aQTL_summary)
   }
 }

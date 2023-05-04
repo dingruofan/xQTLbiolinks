@@ -48,5 +48,6 @@ Suggests:
     rtracklayer,
     usethis,
     ggridges,
-    CMplot
+    CMplot,
+    R.utils
     
