@@ -32,7 +32,7 @@ BiocManager::install("SummarizedExperiment",type="source") # For MAC
 ```
 Note: If you have not installed some basic packages such as `XML` before, you will need to install them using the following command: `install.packages("XML")`
 
-Once you have installed the required package, you can then install `xQTLbiolinks` from CRAN or github(recommended) using:
+Once you have installed the required package, you can then install `xQTLbiolinks` from CRAN or github(recommended) using following command:
 ``` r
 # This command should automatically install any missing dependencies that are available from CRAN
 install.packages("xQTLbiolinks")
