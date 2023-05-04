@@ -105,12 +105,14 @@ tissues.</p>
 <p><img src="images/visualization/geneExpTissues.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expEqtl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_eqtlExp.html">xQTLvisual_eqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs78378222"</span>, gene <span class="op">=</span><span class="st">"TP53"</span>,</span>
-<span>                              tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span></code></pre></div>
+<span>                              tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span>
+<span><span class="va">expEqtl</span></span></code></pre></div>
 <p><img src="images/visualization/xQTLvisual_eqtlExp.png" width="30%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expSqtl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_sqtlExp.html">xQTLvisual_sqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr11_66561248_T_C_b38"</span>,variantType<span class="op">=</span><span class="st">"variantId"</span>,</span>
 <span>                              phenotypeId <span class="op">=</span><span class="st">"chr11:66348070:66353455:clu_8500:ENSG00000255468.6"</span>,</span>
-<span>                              tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span></span></code></pre></div>
+<span>                              tissueSiteDetail<span class="op">=</span><span class="st">"Skin - Sun Exposed (Lower leg)"</span><span class="op">)</span></span>
+<span><span class="va">expSqtl</span></span></code></pre></div>
 <p><img src="images/visualization/xQTLvisual_sqtlExp.png" width="30%" style="display: block; margin: auto;"></p>
 <blockquote>
 <p>LocusZoom plot for <strong>GWAS</strong> dataset:</p>
@@ -154,7 +156,7 @@ interest:</p>
 <span><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/visualization/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/xQTLbiolinks/man/xQTLanalyze_propensity.html" class="external-link">xQTLanalyze_propensity</a></span><span class="op">(</span> gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"TwinsUK"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">propensityRes</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_propensity</span><span class="op">(</span> gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"TwinsUK"</span><span class="op">)</span></span>
 <span><span class="fu">xQTLvisual_qtlPropensity</span><span class="op">(</span><span class="va">propensityRes</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/visualization/eQTLspecificity.png" width="70%" style="display: block; margin: auto;"></p>
   </div>

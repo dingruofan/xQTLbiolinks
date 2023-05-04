@@ -60,6 +60,7 @@ knitr::include_graphics("images/visualization/geneExpTissues.png")
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 expEqtl <- xQTLvisual_eqtlExp(variantName="rs78378222", gene ="TP53",
                               tissueSiteDetail="Lung")
+expEqtl
 ```
 
 ```{r, xQTLvisual_eqtlExp.png, fig.align = 'center', out.width = "30%", fig.cap = "", echo=FALSE}
@@ -70,6 +71,7 @@ knitr::include_graphics("images/visualization/xQTLvisual_eqtlExp.png")
 expSqtl <- xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",variantType="variantId",
                               phenotypeId ="chr11:66348070:66353455:clu_8500:ENSG00000255468.6",
                               tissueSiteDetail="Skin - Sun Exposed (Lower leg)")
+expSqtl
 ```
 
 ```{r, xQTLvisual_sqtlExp.png, fig.align = 'center', out.width = "30%", fig.cap = "", echo=FALSE}
