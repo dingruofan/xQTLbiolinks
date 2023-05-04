@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{extractGeneInfo}
 \alias{extractGeneInfo}
-\title{extract gene infor of specified genome from gencodeGeneInfoAllGranges}
+\title{Extract gene infor of specified genome from gencodeGeneInfoAllGranges}
 \usage{
 extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "v26")
 }
@@ -15,7 +15,7 @@ extractGeneInfo(gencodeGeneInfoAllGranges, genomeVersion = "v26")
 A data.table object.
 }
 \description{
-extract gene infor of specified genome from gencodeGeneInfoAllGranges
+Extract gene infor of specified genome from gencodeGeneInfoAllGranges
 }
 \examples{
 gencodeGeneInfo <- extractGeneInfo(gencodeGeneInfoAllGranges)

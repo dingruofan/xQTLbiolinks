@@ -1291,7 +1291,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 }
 
 
-#' @title EBIquery_allTerm
+#' @title Query supported terms (phenotypes, studies, tissues) in eQTL catalogue
 #'
 #' @param term "associations", "molecular_phenotypes", "studies", "tissues", "qtl_groups", "genes" or "chromosomes".
 #' @param termSize Number of fetched term.
@@ -1359,7 +1359,7 @@ EBIquery_allTerm <- function( term="genes", termSize=2000){
 
 
 
-#' @title extract gene infor of specified genome from gencodeGeneInfoAllGranges
+#' @title Extract gene infor of specified genome from gencodeGeneInfoAllGranges
 #'
 #' @param gencodeGeneInfoAllGranges from internal data
 #' @param genomeVersion "v26" (default) or "v19"
@@ -1446,7 +1446,7 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 
 
 
-#' @title Download significant or unsignificant eQTL associations of a tissue or across all tissues
+#' @title query multi-tissue eQTL metasoft results
 #' @description
 #'  can be quried with a gene/variant-gene pair.
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".

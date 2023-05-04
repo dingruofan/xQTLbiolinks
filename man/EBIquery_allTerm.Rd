@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{EBIquery_allTerm}
 \alias{EBIquery_allTerm}
-\title{EBIquery_allTerm}
+\title{Query supported terms (phenotypes, studies, tissues) in eQTL catalogue}
 \usage{
 EBIquery_allTerm(term = "genes", termSize = 2000)
 }
@@ -15,7 +15,7 @@ EBIquery_allTerm(term = "genes", termSize = 2000)
 A data.table object.
 }
 \description{
-EBIquery_allTerm
+Query supported terms (phenotypes, studies, tissues) in eQTL catalogue
 }
 \examples{
 \donttest{

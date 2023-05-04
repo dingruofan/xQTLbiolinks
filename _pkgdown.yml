@@ -28,9 +28,9 @@ reference:
 - title: Data retrieval
   contents:
   - starts_with("xQTLquery_")
+  - starts_with("xQTLdownload_")
   - starts_with("EBIquery_allTerm")
   - starts_with("extractGeneInfo")
-  - starts_with("xQTLdownload_")
   - starts_with("retrieveLD")
 - title: Pre-processing
   contents:

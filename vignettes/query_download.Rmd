@@ -38,7 +38,7 @@ rm(temp1)
 
 ### Query eQTLs:
 
-####  Query significant eQTL associations with a variant id across all tissues:
+####  **Query significant eQTL associations with a variant id across all tissues:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eQTL_sig1 <- xQTLquery_eqtlSig("rs201327123")
 eQTL_sig1 <- xQTLquery_eqtlSig("chr1_14677_G_A_b38")
@@ -50,7 +50,7 @@ eQTL_sig1 <- xQTLquery_eqtlSig("chr1_14677_G_A_b38",
 eQTL_sig1
 ```
                    
-#### Query eQTL associations for multiple variants:
+#### **Query eQTL associations for multiple variants:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 varInfo <-  xQTLquery_varPos(chrom="chr1", pos=c(1102708))
 eQTL_sig2 <- xQTLquery_eqtlSig(variantName=varInfo$snpId)
@@ -59,7 +59,7 @@ eQTL_sig2 <- xQTLquery_eqtlSig(variantName=varInfo$snpId)
 head(eQTL_sig2)
 ```
 
-#### Query eQTL associations by genes or tissues:
+#### **Query eQTL associations by genes or tissues:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eQTL_sig3 <- xQTLquery_eqtlSig(genes="ATAD3B")
 eQTL_sig3 <- xQTLquery_eqtlSig(genes=c("TP53", "SLC35E2B"), tissueSiteDetail= "Brain - Cerebellum")
@@ -69,7 +69,7 @@ eQTL_sig3 <- xQTLquery_eqtlSig(genes="ENSG00000141510.16")
 head(eQTL_sig3)
 ```
 
-#### Query eQTL associations with a variant-gene pair:
+#### **Query eQTL associations with a variant-gene pair:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eQTL_sig4 <- xQTLquery_eqtlSig(variantName="rs1641513", genes="TP53")
 eQTL_sig4 <- xQTLquery_eqtlSig(variantName="chr1_1667948_A_G_b38",
@@ -79,7 +79,7 @@ eQTL_sig4 <- xQTLquery_eqtlSig(variantName="chr1_1667948_A_G_b38",
 eQTL_sig4
 ```
 
-Multi-tissue eQTL metasoft results for a given gene and variant can be also queried using `xQTLquery_eqtl`, the results include: m-value (mValue), normalized effect size (nes), p-value (pValue) and standard error (se).
+**Multi-tissue eQTL metasoft results for a given gene and variant can be also queried using `xQTLquery_eqtl`, the results include: m-value (mValue), normalized effect size (nes), p-value (pValue) and standard error (se).**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 # Query with a gene symbol:
 eqtlMeta <- xQTLquery_eqtl(gene="TP53")
@@ -92,7 +92,7 @@ head(eqtlMeta)
 
 ### Query sQTLs:
 
-#### Query sQTL associations with rsid:
+#### **Query sQTL associations with rsid:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sQTL_sig1 <- xQTLquery_sqtlSig(variantName="rs201327123")
 sQTL_sig1 <- xQTLquery_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetail="Whole Blood")
@@ -101,7 +101,7 @@ sQTL_sig1 <- xQTLquery_sqtlSig(variantName="chr1_14677_G_A_b38", tissueSiteDetai
 sQTL_sig1
 ```
 
-#### Query sQTL associations with gene symbol and gencode ID:
+#### **Query sQTL associations with gene symbol and gencode ID:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sQTL_sig2 <- xQTLquery_sqtlSig(genes="ENSG00000141510.16", tissueSiteDetail="Lung" )
 sQTL_sig2 <- xQTLquery_sqtlSig(genes=c("ATAD3B", "MLH1"))
@@ -110,7 +110,7 @@ sQTL_sig2 <- xQTLquery_sqtlSig(genes=c("ATAD3B", "MLH1"))
 sQTL_sig2
 ```
 
-#### Query sQTL associations with the variant-genes pair:
+#### **Query sQTL associations with the variant-genes pair:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sQTL_sig3 <- xQTLquery_sqtlSig(variantName="rs201327123", genes=c("WASH7P","RP11-206L10.2"))
 sQTL_sig3 <- xQTLquery_sqtlSig(variantName="chr17_7465085_A_G_b38", genes="TP53", 
@@ -122,28 +122,28 @@ sQTL_sig3
 
 ## xQTLs Download
 ### eQTL Download:
-#### Download all eQTL associations for MLH1-rs13315355 pair in all tissues from all studies:
+#### **Download all eQTL associations for MLH1-rs13315355 pair in all tissues from all studies:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAssos <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study="")
 ```
 
-#### Download all eQTL associations for gene ATP11B in Muscle - Skeletal from GTEx_V8:
+#### **Download all eQTL associations for gene ATP11B in Muscle - Skeletal from GTEx_V8:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAssos <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
 ```
 
-#### Download all eQTL associations for SNP rs11568818 in all tissues from all supported studies:
+#### **Download all eQTL associations for SNP rs11568818 in all tissues from all supported studies:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAssos <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")
 ```
 
-#### Download all eQTL associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
+#### **Download all eQTL associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAssos <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
                                    tissueLabel="Muscle - Skeletal", study="GTEx_V8")
 ```
 
-#### Download all eQTL associations for gene ATP11B in CD4+ T cell from all supported studies:
+#### **Download all eQTL associations for gene ATP11B in CD4+ T cell from all supported studies:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAssos <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
 ```
@@ -153,7 +153,7 @@ eqtlAssos
 ```
 
 ### sQTL Download:
-#### Download all sQTL associations for gene MMP7 and TP53 in Lung:
+#### **Download all sQTL associations for gene MMP7 and TP53 in Lung:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sqtlAssos <- xQTLdownload_sqtlAllAsso(genes=c("MMP7","TP53"), tissue="Lung")
 ```
@@ -162,7 +162,7 @@ sqtlAssos
 ```
 
 ### 3'aQTL Download:
-#### Download all 3'aQTL associations for gene MMP7 in Lung:
+#### **Download all 3'aQTL associations for gene MMP7 in Lung:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 aqtlAssos <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
 ```
@@ -173,7 +173,7 @@ aqtlAssos
 
 ## Query details of gene, variant, tissue and samples in GTEx:
 
-#### Query gene details with gene symbols, versioned or unversioned gencode ID:
+#### **Query gene details with gene symbols, versioned or unversioned gencode ID:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 geneInfo <- xQTLquery_gene("TP53")
 geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
@@ -183,7 +183,7 @@ geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
 geneInfo
 ```
 
-#### Query variants using dbSNP ID or variant ID:
+#### **Query variants using dbSNP ID or variant ID:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 varInfo <- xQTLquery_varId("rs12596338")
 varInfo <- xQTLquery_varId("chr11_66561248_T_C_b38")
@@ -193,7 +193,7 @@ varInfo <- xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739))
 varInfo
 ```
 
-#### Query tissue using tissue name:
+#### **Query tissue using tissue name:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 tissueAll <- xQTLquery_tissue() # fetch all tissues in GTEx
 Brain <- xQTLquery_tissue("Brain")
@@ -203,7 +203,7 @@ Brain
 ```
 
 
-#### Query sample using tissue name or sample ID:
+#### **Query sample using tissue name or sample ID:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala" )
 sampleInfo <- xQTLquery_sampleByTissue(tissueSiteDetail="Liver", pathologyNotesCategories=TRUE)
@@ -215,6 +215,104 @@ sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
 sampleInfo
 ```
 
+## xQTL expression download
+### Download normalized expression of gene for a eQTL pair.
+#### **Download exp with variant-gene pair in different tissues:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+eQTLexp <- xQTLdownload_eqtlExp(variantName="rs1641513",gene="TP53", tissueSiteDetail="Liver")
+```
+
+#### **Download expression using variant ID and gencode ID:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+eQTLexp <- xQTLdownload_eqtlExp(variantName="chr1_14677_G_A_b38",gene="ENSG00000228463.9",
+                                tissueSiteDetail="Stomach")
+```
+```{r, eval=TRUE}
+eQTLexp
+```
+
+### Download normalized intron-excision ratio of intron for a sQTL pair.
+#### **Download normalized intron-excision ratio in different tissues:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+sQTLratio <- xQTLdownload_sqtlExp(variantName="rs1450891501",
+                                phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1",
+                                tissueSiteDetail="Lung")
+```
+
+#### **Dowload normalized intron-excision ratio using variant ID:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+sQTLratio <- xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
+                                phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
+                                tissueSiteDetail="Adipose - Subcutaneous")
+```
+```{r, eval=TRUE}
+sQTLratio
+```
+
+## eGene/sGene download
+### Download details of eGenes (eQTL Genes) for a specified gene or a tissue.
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
+eGeneInfo <- xQTLdownload_egene("TP53")
+```
+```{r, eval=TRUE}
+eGeneInfo
+```
+
+
+### Download details of sGenes (sQTL Genes) for a specified gene or a tissue.
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver")
+sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Liver" )
+```
+```{r, eval=TRUE}
+eGeneInfo
+```
+
+
+
+## Gene expression download
+### Download normalized gene expression at the sample level in a specified tissue:
+
+#### **Download gene expression with a genecode ID:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver")
+```
+
+#### **Download gene expression into a SummarizedExperiment object:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+expProfiles <- xQTLdownload_exp("ENSG00000210195.2", tissueSiteDetail="Liver",
+               toSummarizedExperiment=TRUE)
+# extract expression profile from SummarizedExperiment object:
+expDT <- SummarizedExperiment::assay(expProfiles)
+# extract samples' detail from SummarizedExperiment object:
+sampleDT <- SummarizedExperiment::colData(expProfiles)
+```
+
+#### **Download gene expression profiles for multiple genes:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
+                                tissueSiteDetail="Artery - Coronary",
+                                pathologyNotesCategories=TRUE)
+```
+
+#### **Download using versioned and unversioned gencode Id.**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+expProfiles <- xQTLdownload_exp(c("ENSG00000141510.16","ENSG00000008130.15","ENSG00000078808"),
+                               tissueSiteDetail="Artery - Coronary")
+```
+```{r, eval=TRUE}
+expProfiles[,1:12]
+```
+
+
+### Download median expression of all samples for specified genes across tissues.
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+geneMedExp <- xQTLdownload_geneMedExp(genes=c("TP53", "IRF5"))
+```
+```{r, eval=TRUE}
+geneMedExp
+```
 
 
 

@@ -19,15 +19,15 @@ xQTLanalyze_coloc_diy(
 
 \item{qtlDF}{data.frame or data.table, required cols:  rsid, chrom, position, pValue, maf, beta, se}
 
-\item{mafThreshold}{0.01}
+\item{mafThreshold}{Cutoff of maf to remove rare variants.}
 
-\item{gwasSampleNum}{50000}
+\item{gwasSampleNum}{Sample number of GWAS dataset. Default:50000.}
 
-\item{qtlSampleNum}{10000}
+\item{qtlSampleNum}{Sample number of QTL dataset. Default:10000.}
 
-\item{method}{"coloc", "hyprcoloc", and "Both"}
+\item{method}{(character) options: "coloc"(default) or "hyprcoloc" (need a highe version).}
 
-\item{bb.alg}{TRUE}
+\item{bb.alg}{For \code{hyprcoloc}, branch and bound algorithm: TRUE, employ BB algorithm; FALSE, do not. Default: FALSE.}
 }
 \value{
 A list

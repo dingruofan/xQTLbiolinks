@@ -1411,7 +1411,7 @@ retrieveLD = function(chr, snp, population){
 #' sQTL_DT <- xQTLdownload_sqtlAllAsso(genes=c("MMP7","TP53"), tissue="Lung")
 #' }
 xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names="", clu_geneid_DF=NULL){
-  tissueSiteDetail <- NULL
+  tissueSiteDetail <- clu_name<- tissueSiteDetailId <- gencodeId <- gencodeId_unv <- NULL
   # match tissue:
   if(tissue==""){ stop("tissue can not be null...") }
   tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissue | tissueSiteDetailId==tissue][1,]
@@ -1473,7 +1473,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names
   return(sQTL_summary)
 }
 
-#' @title download summary statistics of xQTL of a specified gene in GTEx v8, default:3'aQTL
+#' @title Download summary statistics of xQTL of a specified gene in GTEx v8, default:3'aQTL
 #'
 #' @param genes (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
@@ -1490,7 +1490,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="", tissue="", clu_names
 #' aQTL_DT <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
 #' }
 xQTLdownload_xqtlAllAsso <- function(genes="", geneType="",  tissue="", mRNA_refseq="",  mRNA_gene_DF=NULL, type="3'aQTL"){
-  tissueSiteDetail <- NULL
+  tissueSiteDetail <- tissueSiteDetailId <- gencodeId_unv <- mRNA<- NULL
   if(type=="3'aQTL"){
     # match tissue:
     tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissue | tissueSiteDetailId==tissue][1,]

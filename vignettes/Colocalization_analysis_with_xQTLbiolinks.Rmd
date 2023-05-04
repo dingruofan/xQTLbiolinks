@@ -72,7 +72,7 @@ Genomic annotation of the significant signals can be conducted using `xQTLanno_g
 snpHits <- xQTLanno_genomic(gwasDF[,.(chrom2, position, pValue)])
 xQTLvisual_anno(snpHits)
 ```
-```{r, anno.png, fig.align = 'center', out.width = "80%", echo=FALSE}
+```{r, anno.png, fig.align = 'center', out.width = "35%", echo=FALSE}
 knitr::include_graphics("images/prostate/anno.png")
 ```
 
