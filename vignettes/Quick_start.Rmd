@@ -156,6 +156,7 @@ Function `xQTLvisual_locusCompare` displays the candidate SNP ***rs13120565*** (
 xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], 
                         gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
 ```
+**Note: **The information on SNP linkage disequilibrium is automatically downloaded online. Due to network issues, the download may fail at times. If this happens, please try running it again.
 
 ```{r, compare.png, fig.align = 'center', out.width = "50%", echo=FALSE}
 knitr::include_graphics("images/quick_start/compare.png")
