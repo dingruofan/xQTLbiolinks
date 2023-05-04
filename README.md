@@ -24,17 +24,15 @@ Institute of Systems and Physical Biology, Shenzhen Bay Laboratory, Shenzhen 518
 ------------------------------------------------------------------------
 
 ### Installation
-
-1. Package `SummarizedExperiment` is required before using xQTLbiolinks. Install `SummarizedExperiment` from Biocouductor with the following command.
-
-``` r
-# install required bioconductor package SummarizedExperiment:
-if (!require("BiocManager")){install.packages("BiocManager")}
-BiocManager::install("SummarizedExperiment")
+To install this R package, you will need to have required package `SummarizedExperiment` installed from Bioconductor with following command:
 ```
+if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
+BiocManager::install("SummarizedExperiment") # For windows or linux
+BiocManager::install("SummarizedExperiment",type="source") # For MAC
+```
+Note: If you have not installed some basic packages such as `XML` before, you will need to install them using the following command: `install.packages("XML")`
 
-2. Install `xQTLbiolinks` from CRAN or github.
-
+Once you have installed the required package, you can then install `xQTLbiolinks` from CRAN or github(recommended) using:
 ``` r
 # This command should automatically install any missing dependencies that are available from CRAN
 install.packages("xQTLbiolinks")
@@ -43,4 +41,5 @@ install.packages("xQTLbiolinks")
 if(!require("remotes")){install.packages("remotes")}
 remotes::install_github("dingruofan/xQTLbiolinks")
 ```
+
 
