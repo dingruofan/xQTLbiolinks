@@ -146,8 +146,7 @@ knitr::include_graphics("images/visualization/xQTLvisual_locusCombine.png")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-propensityRes <- xQTLanalyze_propensity( gene="MMP7", variantName="rs11568818", study="TwinsUK")
-xQTLvisual_qtlPropensity(propensityRes)
+xQTLvisual_coloc( gene="MMP7", variantName="rs11568818", study="TwinsUK")
 ```
 
 ```{r, xQTL_visual_eQTLspecificity.png, fig.align = 'center', out.width = "70%", fig.cap = "", echo=FALSE}
