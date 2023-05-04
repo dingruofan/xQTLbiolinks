@@ -157,7 +157,7 @@ calculated from Z-scores.</p>
 <p><img src="images/prostate/anno.png" width="35%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
-<h2 id="step-1-filter-sentinel-snps">Step 1: Filter sentinel SNPs:<a class="anchor" aria-label="anchor" href="#step-1-filter-sentinel-snps"></a>
+<h2 id="step-1-identify-sentinel-snps">Step 1: Identify sentinel SNPs:<a class="anchor" aria-label="anchor" href="#step-1-identify-sentinel-snps"></a>
 </h2>
 <p>Sentinel SNP is the most prominent signal within a given genome
 range, and is usually in high LD with causal variants. By default,
@@ -479,7 +479,7 @@ of PPH4 (&gt;0.75) &amp; hypr_posterior (&gt;0.5) in prostate.</p>
 each gene:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">expMat</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="op">-</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">corDT</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">corDT</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">corDT</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span></span></code></pre></div>
 <p>R package <code>corrplot</code> is used to display this correlation
 matrix:</p>

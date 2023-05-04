@@ -73,7 +73,7 @@ In this example, a data.table object of 16538 (rows) x 5 (cols) is loaded. Five 
 head(gwasDF)
 ```
 
-## Step 2. Seek sentinel snps.
+## Step 2. Identify sentinel snps.
 
 Sentinel SNPs can be detected using `xQTLanalyze_getSentinelSnp` with the arguments `p-value < 5e-8` and `SNP-to-SNP distance > 10e6 bp`. We recommend converting the genome version of the GWAS file to GRCh38 if that is GRCh37 (run with parameter: `genomeVersion="grch37"`; `grch37To38=TRUE`, and package `rtracklayer`is required).
 

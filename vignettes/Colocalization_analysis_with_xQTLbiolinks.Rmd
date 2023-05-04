@@ -79,7 +79,7 @@ knitr::include_graphics("images/prostate/anno.png")
 ```
 
 
-## Step 1: Filter sentinel SNPs:
+## Step 1: Identify sentinel SNPs:
 
 Sentinel SNP is the most prominent signal within a given genome range, and is usually in high LD with causal variants. By default, xQTLbiolinks detect sentinel snps that with the p-value \< 5e-8 and SNP-to-SNP distance \> 10e6 bp. **Note**: For in this example, due to the inconsistent genome version between the GWAS dataset (GRCh37) and eQTL associations (GRCh38) from eQTL category, conversion of genome version is required, and can be conducted using `xQTLanalyze_getSentinelSnp` with `genomeVersion="grch37"` and `grch37To38=TRUE` (package `rtracklayer`is required):
 
