@@ -30,6 +30,8 @@ All we need to prepare include three parts:
 library(data.table)
 library(xQTLbiolinks)
 library(stringr)
+library(coloc)
+library(hyprcoloc)
 ```
 
 Prostate cancer is one of the most common cancers in men. Prostate cancer pathogenesis involves both heritable and environmental factors. The molecular events involved in the development or progression of prostate cancer are still unclear. In this example, we aim to figure out the causal variants and genes assocaited with prostate cancer, and to uncover potential molecular mechanisms of regulation.

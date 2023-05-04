@@ -140,7 +140,12 @@ xQTLanno_enrich <- function(snpInfo="",  genomeVersion="hg38", enrichElement="Pr
   }else if(enrichElement == "TF"){
     # import tf cluster dataset:
     message("      enrichment analysis of tf clusters...")
-    tfAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "tf_filtered_sorted_merge_sub.bed.gz"), header=FALSE)
+    # tfAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "tf_filtered_sorted_merge_sub.bed.gz"), header=FALSE)
+    temp1 <- tempfile(fileext=".gz")
+    download.file("https://github.com/dingruofan/exampleData/raw/master/exdata/tf_filtered_sorted_merge_sub.bed.gz", temp1)
+    close(file(temp1))
+    tfAnno <- fread(temp1, header=FALSE)
+    rm(temp1)
     tfRanges <- GenomicRanges::GRanges(tfAnno$V1,
                                        IRanges::IRanges(tfAnno$V2, tfAnno$V3), strand= "*")
     nearestDist <- as.data.table(GenomicRanges::distanceToNearest(snpRanges, tfRanges))
@@ -227,13 +232,24 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   ############## import datasets:
   message("==> Start importing annotations...")
   message("      cpg...")
-  cpgAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "cpgLsland.bed.gz"), header=FALSE)
+  # cpgAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "cpgLsland.bed.gz"), header=FALSE)
+  temp1 <- tempfile(fileext=".gz")
+  download.file("https://github.com/dingruofan/exampleData/raw/master/exdata/cpgLsland.bed.gz", temp1)
+  close(file(temp1))
+  cpgAnno <- fread(temp1, header=FALSE)
+  rm(temp1)
+
   cpgRanges <- GenomicRanges::GRanges(cpgAnno$V1,
                                       IRanges::IRanges(cpgAnno$V2, cpgAnno$V3), strand= "*")
 
   # import enhancer dataset:
   message("      enhancer...")
-  enhancerAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "geneHancer.bed.gz"), header=FALSE)
+  # enhancerAnno <- fread(system.file(package = "xQTLbiolinks", "extdata", "geneHancer.bed.gz"), header=FALSE)
+  temp1 <- tempfile(fileext=".gz")
+  download.file("https://github.com/dingruofan/exampleData/raw/master/exdata/geneHancer.bed.gz", temp1)
+  close(file(temp1))
+  enhancerAnno <- fread(temp1, header=FALSE)
+  rm(temp1)
   enhancerRanges <- GenomicRanges::GRanges(enhancerAnno$V1,
                                            IRanges::IRanges(enhancerAnno$V2, enhancerAnno$V3), strand= "*")
 

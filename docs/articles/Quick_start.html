@@ -101,7 +101,8 @@ packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dingruofan/xQTLbiolinks" class="external-link">xQTLbiolinks</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/chr1swallace/coloc" class="external-link">coloc</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-1--data-pre-processing">Step 1. data pre-processing<a class="anchor" aria-label="anchor" href="#step-1--data-pre-processing"></a>
@@ -225,11 +226,8 @@ function can be used to get all genes’ outputs (using both
 <p>For the potential casual gene
 <strong><em>ENSG00000109684.14</em></strong>
 (PP4=<strong>0.9937</strong> &amp;
-hypr_posterior=<strong>0.9793</strong>) with candidate SNP
-<strong><em>rs13120565</em></strong>
-(SNP.PP.H4=<strong>0.5328849</strong> &amp;
-hypr_posterior_explainedBySnp=<strong>0.4747</strong>), we can get the
-significant associations of the gene across tissues:</p>
+hypr_posterior=<strong>0.9793</strong>), we can get its significant
+associations across tissues:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_eqtl.html">xQTLvisual_eqtl</a></span><span class="op">(</span><span class="st">"ENSG00000109684.14"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/quick_start/eQTL_multiple_tissue.png" width="80%" style="display: block; margin: auto;"></p>

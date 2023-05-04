@@ -31,6 +31,7 @@ To perform colocalization analysis using xQTLbiolinks, users need to provide the
 library(data.table)
 library(xQTLbiolinks)
 library(stringr)
+library(coloc)
 ```
 
 ## Step 1. data pre-processing
@@ -129,7 +130,7 @@ outputs
 
 ## Step 5. Visualization of the results.
 
-For the potential casual gene ***ENSG00000109684.14*** (PP4=**0.9937** & hypr_posterior=**0.9793**) with candidate SNP ***rs13120565*** (SNP.PP.H4=**0.5328849** & hypr_posterior_explainedBySnp=**0.4747**), we can get the significant associations of the gene across tissues:
+For the potential casual gene ***ENSG00000109684.14*** (PP4=**0.9937** & hypr_posterior=**0.9793**), we can get its significant associations across tissues:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtl("ENSG00000109684.14")
@@ -150,7 +151,7 @@ gwasEqtldata <- merge(gwasDF, eqtlAsso[,.(rsid=snpId, position=pos, maf, pValue)
 ```
 
 
-then using `xQTLvisual_locusCompare`:
+Function `xQTLvisual_locusCompare` displays the candidate SNP ***rs13120565*** (SNP.PP.H4=**0.5328849** & hypr_posterior_explainedBySnp=**0.4747**) in the top right corner:
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], 
                         gwasEqtldata[,.(rsid, pValue.gwas)], legend_position = "bottomright")
