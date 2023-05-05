@@ -278,204 +278,254 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
 
-  ebi_ST <-copy(ebi_study_tissues)
+  if(data_source=="liLab"){
+    tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissueLabel | tissueSiteDetailId==tissueLabel][1,]
+    if(nrow(tissueDT)==0){ stop("tissue not found...")}
 
-  # check study:
-  if( length(study) ==1 && study!="" ){
-    if(toupper(study) %in% toupper(unique(ebi_ST$study_accession))){
-      study <- unique(ebi_ST$study_accession)[ toupper(unique(ebi_ST$study_accession)) == toupper(study) ]
-      message("== Study [", study, "] detected...")
-    }else{
-      message("ID\tstudy\ttissueLabel")
-      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
-      stop("== Study [",study,"] can not be correctly matched, please choose from above list: ")
+    # merge with genes:
+    if(geneType!="gencodeId"){
+      message("==> Querying genes...")
+      geneDT <- xQTLquery_gene(gene)
+      geneDT <- geneDT[,c("gencodeId")]
+    }else if(geneType=="gencodeId"){
+      geneDT <- data.table(gencodeId= gene)
     }
-  }
+    if(nrow(geneDT)==0){ return(NULL)}
+    geneDT$url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/eQTL_b38_rsid_gene/", tissueDT$tissueSiteDetailId, "/",geneDT$gencodeId)
+    geneDT$tmpFilePath <- paste(unlist(lapply(1:nrow(geneDT), function(x){tempfile(pattern = "eqtl_")})),"eQTL_",1:nrow(geneDT),".txt", sep="")
 
-  # check tissue:
-  if( length(tissueLabel)==1 && tissueLabel!="" ){
-    if( toupper(tissueLabel) %in% toupper(unique(ebi_ST$tissue_label)) ){
-      message("== Tissue label [", tissueLabel, "] detected...")
-      tissueLabel <- unique(ebi_ST$tissue_label)[ toupper(unique(ebi_ST$tissue_label)) == toupper(tissueLabel) ]
-    }else{
-      message("ID\tstudy\ttissueLabel")
-      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
-      stop("== tissueLabel [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
+    # download sQTL by clu:
+    message("== Start downloading eQTLs...")
+    for(i in 1:nrow(geneDT)){
+      cat("== Downloading eQTL of ", geneDT[i,]$gencodeId,  "...")
+      df <- try(suppressWarnings(utils::download.file(url = geneDT[i,]$url1,
+                                                      destfile=geneDT[i,]$tmpFilePath,
+                                                      quiet = TRUE )), silent=TRUE)
+      if(!file.exists(geneDT[i,]$tmpFilePath)){ cat("    > Failed...") }
+      cat("   > Success!")
+      message("")
     }
-  }
 
-  # check study-tissue:
-  if( length(study) ==1 && length(tissueLabel)==1 && study!="" && tissueLabel!=""){
-    if(nrow( ebi_ST[study_accession == study & tissue_label==tissueLabel])==1){
-      message("== Study [",study,"] -- Tissue label [",tissueLabel,"] correctly mapped..")
-    }else{
-      message("ID\tstudy\ttissueLabel")
-      for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
-      stop("== Study [",study,"] -- Tissue label [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
-    }
-  }
-
-
-
-  # check geneType
-  if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
-    stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
-  }
-  if( length(gene)==1 && gene!=""){
-    # Automatically determine the type of variable:
-    if(geneType=="auto"){
-      if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
-        geneType <- "gencodeId"
-      }else{
-        geneType <- "geneSymbol"
+    message("== combine results...")
+    eQTL_summary <- data.table()
+    for(i in 1:nrow(geneDT)){
+      if(file.exists(geneDT[i,]$tmpFilePath)){
+        eQTL_summary_i <- fread(geneDT[i,]$tmpFilePath, header=TRUE)
+        if(nrow(eQTL_summary_i)>0){
+          # cat(i,"-")
+          eQTL_summary_i$gencodeId <- geneDT[i,]$gencodeId
+          eQTL_summary <- rbind(eQTL_summary, eQTL_summary_i)
+          # file.remove(geneDT[i,]$tmpFilePath)
+        }
       }
     }
+    if(nrow(eQTL_summary)>0){
+      return(eQTL_summary)
+    }else{
+      return(NULL)
+    }
   }
 
-  # check variantType:
-  if( !(variantType %in% c("auto","snpId", "variantId")) ){
-    stop("Parameter \"geneType\" should be choosen from \"auto\", \"snpId\", and \"variantId\".")
-  }
-  if(length(variantName)==1 && variantName!=""){
-    # auto pick variantType
-    if(variantType=="auto"){
-      if(stringr::str_detect(variantName, stringr::regex("^rs"))){
-        variantType <- "snpId"
-      }else if(stringr::str_count(variantName,"_")>=3){
-        variantType <- "variantId"
+  if(data_source=="eQTL_catalogue"){
+    ebi_ST <-copy(ebi_study_tissues)
+
+    # check study:
+    if( length(study) ==1 && study!="" ){
+      if(toupper(study) %in% toupper(unique(ebi_ST$study_accession))){
+        study <- unique(ebi_ST$study_accession)[ toupper(unique(ebi_ST$study_accession)) == toupper(study) ]
+        message("== Study [", study, "] detected...")
       }else{
-        stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+        message("ID\tstudy\ttissueLabel")
+        for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+        stop("== Study [",study,"] can not be correctly matched, please choose from above list: ")
       }
     }
-  }
-  # modify variant name of variantID:
-  if(length(variantName)==1 && variantName!="" && variantType == "variantId"){
-    variantName <- stringr::str_remove(variantName, "_b38")
-  }
 
-  # Excessive empty variables:
-  if(gene=="" && variantName=="" && tissueLabel==""){
-    warning("== All associations from Study [", study,"] will be returned, this will take several days...")
-    warning("== Please make sure you have enough memory...")
-    message("== Specified gene, variant or tissueLabel is recommended.")
-  }
-  if(gene=="" && variantName=="" && study==""){
-    warning("== All associations in Tissue [", tissueLabel,"] will be returned, this will take several days...")
-    warning("== Please make sure you have enough memory...")
-    message("== Specified gene, variant or study is recommended.")
-  }
-  if(gene=="" && variantName=="" && tissueLabel=="" && study==""){
-    stop("== All required fileds are empty, please specify gene, variant study or tissueLabel")
-  }
-
-  # if gene is not null, check geneName and add gene unversioned ensemble name.
-  if(gene !=""){
-    message("== Check the gene name:")
-    geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType)
-    # 对于只需要一个基因的：
-    geneInfo <- geneInfo[!is.na(gencodeId)]
-    geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
-    geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & is.na(entrezGeneId))]
-    # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
-    if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
-      stop("Invalid gene name or type, please correct your input, or set gene with gencodeId.")
-    }else{
-      geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
-      message("== Done.")
+    # check tissue:
+    if( length(tissueLabel)==1 && tissueLabel!="" ){
+      if( toupper(tissueLabel) %in% toupper(unique(ebi_ST$tissue_label)) ){
+        message("== Tissue label [", tissueLabel, "] detected...")
+        tissueLabel <- unique(ebi_ST$tissue_label)[ toupper(unique(ebi_ST$tissue_label)) == toupper(tissueLabel) ]
+      }else{
+        message("ID\tstudy\ttissueLabel")
+        for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+        stop("== tissueLabel [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
+      }
     }
-  }
 
-  ##################### fetch geneInfo:
-  if( variantName!="" && variantType!= "auto"){
+    # check study-tissue:
+    if( length(study) ==1 && length(tissueLabel)==1 && study!="" && tissueLabel!=""){
+      if(nrow( ebi_ST[study_accession == study & tissue_label==tissueLabel])==1){
+        message("== Study [",study,"] -- Tissue label [",tissueLabel,"] correctly mapped..")
+      }else{
+        message("ID\tstudy\ttissueLabel")
+        for(i in 1:nrow(ebi_ST)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+        stop("== Study [",study,"] -- Tissue label [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
+      }
+    }
+
+
+
+    # check geneType
+    if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+      stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
+    }
+    if( length(gene)==1 && gene!=""){
+      # Automatically determine the type of variable:
+      if(geneType=="auto"){
+        if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+          geneType <- "gencodeId"
+        }else{
+          geneType <- "geneSymbol"
+        }
+      }
+    }
+
+    # check variantType:
+    if( !(variantType %in% c("auto","snpId", "variantId")) ){
+      stop("Parameter \"geneType\" should be choosen from \"auto\", \"snpId\", and \"variantId\".")
+    }
+    if(length(variantName)==1 && variantName!=""){
+      # auto pick variantType
+      if(variantType=="auto"){
+        if(stringr::str_detect(variantName, stringr::regex("^rs"))){
+          variantType <- "snpId"
+        }else if(stringr::str_count(variantName,"_")>=3){
+          variantType <- "variantId"
+        }else{
+          stop("Note: \"variantName\" only support dbSNP id that start with \"rs\", like: rs12596338, or variant ID like: \"chr16_57156226_C_T_b38\", \"16_57190138_C_T_b37\" ")
+        }
+      }
+    }
+    # modify variant name of variantID:
+    if(length(variantName)==1 && variantName!="" && variantType == "variantId"){
+      variantName <- stringr::str_remove(variantName, "_b38")
+    }
+
+    # Excessive empty variables:
+    if(gene=="" && variantName=="" && tissueLabel==""){
+      warning("== All associations from Study [", study,"] will be returned, this will take several days...")
+      warning("== Please make sure you have enough memory...")
+      message("== Specified gene, variant or tissueLabel is recommended.")
+    }
+    if(gene=="" && variantName=="" && study==""){
+      warning("== All associations in Tissue [", tissueLabel,"] will be returned, this will take several days...")
+      warning("== Please make sure you have enough memory...")
+      message("== Specified gene, variant or study is recommended.")
+    }
+    if(gene=="" && variantName=="" && tissueLabel=="" && study==""){
+      stop("== All required fileds are empty, please specify gene, variant study or tissueLabel")
+    }
+
+    # if gene is not null, check geneName and add gene unversioned ensemble name.
+    if(gene !=""){
+      message("== Check the gene name:")
+      geneInfo <- xQTLquery_gene(genes=gene, geneType = geneType)
+      # 对于只需要一个基因的：
+      geneInfo <- geneInfo[!is.na(gencodeId)]
+      geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & stringr::str_detect(chromosome, "Y"))]
+      geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & is.na(entrezGeneId))]
+      # geneInfoV19 <- xQTLquery_gene(genes=gene, geneType = geneType, gencodeVersion = "v19")
+      if(nrow(geneInfo)==0 || is.null(geneInfo)|| !exists("geneInfo") ){
+        stop("Invalid gene name or type, please correct your input, or set gene with gencodeId.")
+      }else{
+        geneInfo$gencodeIdUnv <-stringr::str_split(geneInfo$gencodeId, stringr::fixed("."))[[1]][1]
+        message("== Done.")
+      }
+    }
+
+    ##################### fetch geneInfo:
+    if( variantName!="" && variantType!= "auto"){
+      # construct url:
+      # aa<-"https://www.ebi.ac.uk/eqtl/api/associations/rs2302765?study=GTEx_V8&gene_id=ENSG00000238917&tissue=UBER_0001211"
+      url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/associations/",variantName,"?links=False",
+                     ifelse(gene !="", paste0("&gene_id=",geneInfo$gencodeIdUnv),""),
+                     ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
+                     ifelse(study!="", paste0("&study=",study),"")
+      )
+    }else if(gene!="" && geneType!="auto"){
+      # aa <-“https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000282458/associations?variant_id=chr19_80901_G_T&tissue=UBER_0001954&study=GTEx_V8”
+      url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/genes/",geneInfo$gencodeIdUnv,"/associations?links=False",
+                     ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
+                     ifelse(study!="", paste0("&study=",study),"")
+                     # ifelse(variantName!="",paste0("&variant_id=",variantName),"")
+      )
+    }else if( tissueLabel!=""  ){
+      # aa <- "https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000235/studies/Alasoo_2018/associations"
+      url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/",ebi_ST[tissue_label==tissueLabel]$tissue[1],
+                     ifelse(study!="", paste0("/studies/",study),""),
+                     "/associations?links=False"
+      )
+    }else if( study!="" ){
+      # aa <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations"
+      url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/", study, "/associations?links=False")
+    }
+
+    # for brain tissues with duplicated tissue id, "Brain - Cerebellar Hemisphere" and "Brain - Cerebellum"
+    if( tissueLabel == "Brain - Cerebellar Hemisphere" ){
+      qtl_groupStr <- paste0("&qtl_group=Brain_Cerebellar_Hemisphere")
+    }else if(tissueLabel == "Brain - Cerebellum"){
+      qtl_groupStr <- paste0("&qtl_group=Brain_Cerebellum")
+    }else{
+      qtl_groupStr <- ""
+    }
+    url1 <- paste0(url1, qtl_groupStr)
+    # message(url1)
+
+    message("== Start fetching associations...")
     # construct url:
-    # aa<-"https://www.ebi.ac.uk/eqtl/api/associations/rs2302765?study=GTEx_V8&gene_id=ENSG00000238917&tissue=UBER_0001211"
-    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/associations/",variantName,"?links=False",
-                   ifelse(gene !="", paste0("&gene_id=",geneInfo$gencodeIdUnv),""),
-                   ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
-                   ifelse(study!="", paste0("&study=",study),"")
-                   )
-  }else if(gene!="" && geneType!="auto"){
-    # aa <-“https://www.ebi.ac.uk/eqtl/api/genes/ENSG00000282458/associations?variant_id=chr19_80901_G_T&tissue=UBER_0001954&study=GTEx_V8”
-    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/genes/",geneInfo$gencodeIdUnv,"/associations?links=False",
-                   ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
-                   ifelse(study!="", paste0("&study=",study),"")
-                   # ifelse(variantName!="",paste0("&variant_id=",variantName),"")
-                   )
-  }else if( tissueLabel!=""  ){
-    # aa <- "https://www.ebi.ac.uk/eqtl/api/tissues/CL_0000235/studies/Alasoo_2018/associations"
-    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/tissues/",ebi_ST[tissue_label==tissueLabel]$tissue[1],
-                   ifelse(study!="", paste0("/studies/",study),""),
-                   "/associations?links=False"
-                   )
-  }else if( study!="" ){
-    # aa <- "https://www.ebi.ac.uk/eqtl/api/studies/GTEx_V8/associations"
-    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/studies/", study, "/associations?links=False")
-  }
 
-  # for brain tissues with duplicated tissue id, "Brain - Cerebellar Hemisphere" and "Brain - Cerebellum"
-  if( tissueLabel == "Brain - Cerebellar Hemisphere" ){
-    qtl_groupStr <- paste0("&qtl_group=Brain_Cerebellar_Hemisphere")
-  }else if(tissueLabel == "Brain - Cerebellum"){
-    qtl_groupStr <- paste0("&qtl_group=Brain_Cerebellum")
-  }else{
-    qtl_groupStr <- ""
-  }
-  url1 <- paste0(url1, qtl_groupStr)
-  # message(url1)
+    # # check network:
+    # bestFetchMethod <- apiEbi_ping()
+    # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
+    #   message("Note: EBI API server is busy or your network has latency, please try again later.")
+    #   return(NULL)
+    # }
+    # gtexAsoo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2],  termSize=1000)
+    gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=recordPerChunk)
+    if(is.null(gtexAsoo)){
+      return(NULL)
+    }
+    gtexAsooList <- do.call(c, gtexAsoo)
 
-  message("== Start fetching associations...")
-  # construct url:
-
-  # # check network:
-  # bestFetchMethod <- apiEbi_ping()
-  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-  #   message("Note: EBI API server is busy or your network has latency, please try again later.")
-  #   return(NULL)
-  # }
-  # gtexAsoo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2],  termSize=1000)
-  gtexAsoo <- fetchContentEbi(url1, method = "fromJSON", downloadMethod = "auto",  termSize=recordPerChunk)
-  if(is.null(gtexAsoo)){
-    return(NULL)
-  }
-  gtexAsooList <- do.call(c, gtexAsoo)
-
-  if(length(gtexAsooList)==0){
-    message("No association found!")
-    return(NULL)
-  }
-  gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variantId= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
-                                                               chrom=x$chromosome, pos=x$position,ref=x$ref, alt=x$alt,study_id=x$study_id,
-                                                               se=x$se, median_tpm=x$median_tpm, pValue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
-                                                               tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
-                                                               molecular_trait_id = x$molecular_trait_id, gene_id= x$gene_id
-                                                               ) })
-  gtexAsooDT <- data.table::rbindlist(gtexAsooList, fill=TRUE)
-  gtexAsooDT[,variantId:=.(paste0( "chr",stringr::str_remove_all(chrom, "chr"),"_",pos,"_",ref,"_",alt ))]
-  if( !("tissue_label" %in% names(gtexAsooDT)) ){
-    if(tissueLabel==""){
-      ebi_ST_tmp <- ebi_ST[tissue_label!="Brain - Cerebellum", .(tissue, tissue_label,study_id=study_accession)]
+    if(length(gtexAsooList)==0){
+      message("No association found!")
+      return(NULL)
+    }
+    gtexAsooList <- lapply(gtexAsooList, function(x){ data.table(variantId= x$variant, snpId=x$rsid,type=x$type,maf=x$maf,beta=x$beta,
+                                                                 chrom=x$chromosome, pos=x$position,ref=x$ref, alt=x$alt,study_id=x$study_id,
+                                                                 se=x$se, median_tpm=x$median_tpm, pValue=x$pvalue, totalAlleles=x$an, allelCounts=x$ac, imputationR2=x$r2,
+                                                                 tissue_label=x$tissue_label,tissue=x$tissue,qtl_group=x$qtl_group, condition=x$condition,
+                                                                 molecular_trait_id = x$molecular_trait_id, gene_id= x$gene_id
+    ) })
+    gtexAsooDT <- data.table::rbindlist(gtexAsooList, fill=TRUE)
+    gtexAsooDT[,variantId:=.(paste0( "chr",stringr::str_remove_all(chrom, "chr"),"_",pos,"_",ref,"_",alt ))]
+    if( !("tissue_label" %in% names(gtexAsooDT)) ){
+      if(tissueLabel==""){
+        ebi_ST_tmp <- ebi_ST[tissue_label!="Brain - Cerebellum", .(tissue, tissue_label,study_id=study_accession)]
       }else{ ebi_ST_tmp <-ebi_ST[tissue_label==tissueLabel,.(tissue, tissue_label,study_id=study_accession)]  }
-    gtexAsooDT <- merge(gtexAsooDT, ebi_ST_tmp, by = c("tissue","study_id"))
+      gtexAsooDT <- merge(gtexAsooDT, ebi_ST_tmp, by = c("tissue","study_id"))
+    }
+    gtexAsooDT <- cbind(gtexAsooDT[,-c("study_id", "tissue", "tissue_label", "qtl_group")], gtexAsooDT[,c("study_id", "tissue", "tissue_label", "qtl_group")])
+    if(gene!="" && geneType!="auto"){
+      gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
+      gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
+      # gtexAsooDT$gencodeId_GTEX_v7 <- ifelse( exists("geneInfoV19") && nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
+    }else{
+      geneInfo <- xQTLquery_gene(unique(gtexAsooDT$gene_id))
+      gtexAsooDT <- merge(gtexAsooDT[,], geneInfo[,.(gene_id=genes, geneSymbol, gencodeId_GTEX_v8=gencodeId)], by = "gene_id", all.x = TRUE)[,-c("gene_id")]
+    }
+    if(withB37VariantId){
+      # add dbSNP id and  hg19 cordinate:
+      gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), recordPerChunk = 250)
+      gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
+      gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
+      # gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+      # gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
+    }
+    gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
+    return(gtexAsooDT)
   }
-  gtexAsooDT <- cbind(gtexAsooDT[,-c("study_id", "tissue", "tissue_label", "qtl_group")], gtexAsooDT[,c("study_id", "tissue", "tissue_label", "qtl_group")])
-  if(gene!="" && geneType!="auto"){
-    gtexAsooDT$geneSymbol <- geneInfo$geneSymbol
-    gtexAsooDT$gencodeId_GTEX_v8 <- geneInfo$gencodeId
-    # gtexAsooDT$gencodeId_GTEX_v7 <- ifelse( exists("geneInfoV19") && nrow(geneInfoV19)>0, geneInfoV19$gencodeId, "")
-  }else{
-    geneInfo <- xQTLquery_gene(unique(gtexAsooDT$gene_id))
-    gtexAsooDT <- merge(gtexAsooDT[,], geneInfo[,.(gene_id=genes, geneSymbol, gencodeId_GTEX_v8=gencodeId)], by = "gene_id", all.x = TRUE)[,-c("gene_id")]
-  }
-  if(withB37VariantId){
-    # add dbSNP id and  hg19 cordinate:
-    gtexAsooDTb37 <- xQTLquery_varPos(chrom = paste0("chr",unique(gtexAsooDT$chrom)), pos = unique(gtexAsooDT$pos), recordPerChunk = 250)
-    gtexAsooDTb37$variantId <- unlist(lapply(gtexAsooDTb37$variantId, function(x){ splitInfo=stringr::str_split(x, stringr::fixed("_"))[[1]]; paste0(splitInfo[-5], collapse="_") }))
-    gtexAsooDT <- merge(gtexAsooDT, gtexAsooDTb37[,.(variantId, b37VariantId)], by=c("variantId"), all.x=TRUE )
-    # gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
-    # gtexAsooDT <- cbind(gtexAsooDT[,.(snpId, variantId, b37VariantId)], gtexAsooDT[,-c("snpId", "variantId", "b37VariantId", "chrom", "pos")])
-  }
-  gtexAsooDT$variantId <- paste0(gtexAsooDT$variantId,"_b38")
-  return(gtexAsooDT)
 }
 
 

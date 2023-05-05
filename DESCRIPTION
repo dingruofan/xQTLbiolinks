@@ -8,7 +8,7 @@ Authors@R: c(
     person(given = "Gao", family = "Wang",        email = "wang.gao@columbia.edu",   role  = c("aut","ctb")),
     person(given = "Lei", family = "Li",        email = "lei.li@szbl.ac.cn",   role  = c("aut","ctb", "cph"))
 	)
-Description: xQTLbiolinks is a well-developed R package that enables users-customized data retrieval, pre-processing, analysis, and data visualization of molecular QTLs (eQTLs, sQTLs and 3'aQTLs) and gene expression data from public resources through the application programming interface <https://gtexportal.org/home/api-docs/index.html> of 'GTEx'. 
+Description: This package is a well-developed R package that enables users-customized data retrieval, pre-processing, analysis, and data visualization of molecular QTLs (eQTLs, sQTLs and 3'aQTLs) and gene expression data from public resources through the application programming interface <https://gtexportal.org/home/api-docs/index.html> of 'GTEx'. 
 URL: https://github.com/dingruofan/xQTLbiolinks
 BugReports: https://github.com/dingruofan/xQTLbiolinks/issues
 License: GPL (>= 3)

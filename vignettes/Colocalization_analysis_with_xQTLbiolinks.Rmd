@@ -33,7 +33,7 @@ library(hyprcoloc)
 library(data.table)
 library(stringr)
 library(R.utils)
-library(TxDb.Hsapiens.UCsC.hg38.knownGene)
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 library(VariantAnnotation)
 ```
 
