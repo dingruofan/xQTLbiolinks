@@ -169,7 +169,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
     stop("Because the genome version of eqtl associations only support GRCH38, sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
     genecodeVersion = "v19"
     datasetId="gtex_v7"
-  }if(genomeVersion =="grch37" & !grch37To38  & tissueSiteDetail==""){
+  }else if(genomeVersion =="grch37" & !grch37To38  & tissueSiteDetail==""){
     genecodeVersion = "v19"
     datasetId="gtex_v7"
   }else if( genomeVersion =="grch37" & grch37To38){
