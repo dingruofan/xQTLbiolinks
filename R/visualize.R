@@ -1315,7 +1315,7 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
       legend.direction='horizontal'
       # legend.margin = margin(0.1,0.1,0.1,0.1,"cm"),
       # legend.background = element_rect(fill="white", size=0.5, linetype="solid",colour ="black")
-    )+xlab(expression(Expected -log["10"](p-value)))+  ylab(expression(Obeserved -log["10"](p-value)))+
+    )+xlab(expression(Expected -log["10"](p-value)))+  ylab(expression(Observed -log["10"](p-value)))+
     annotate("text", x = 0.2, y = max(summaryDT$observedLogP), label = paste0("Lamdba: ", round(lamdba_p,3)), colour = "black", size = 4.5, ,hjust=0)
 
   return(list(plot=P, lambda=lamdba_p))
