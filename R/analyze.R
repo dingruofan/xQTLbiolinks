@@ -87,8 +87,6 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
     gwasDF <- gwasDF[,.(rsid, chr, position, pValue, maf, beta, se)]
     message("== ",length(gwasRanges_hg38),"/",nrow(gwasDF)," left.")
     rm(gwasRanges, gwasRanges_hg38)
-  }else if(genomeVersion =="grch37" & !grch37To38){
-    stop("Please set \"grch37To38=TRUE\". Because the genome version of eqtl associations only support GRCH38, sentinel SNP should be converted to GRCH38 before colocalization analysis if GRCH37 is provided.")
   }else if(genomeVersion =="grch38" & grch37To38){
     stop("Only grch37 genome version can be converted to grch38!")
   }else if(!genomeVersion %in% c("grch38", "grch37")){
