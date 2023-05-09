@@ -577,7 +577,7 @@ xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNu
   # 去重：
   gwasDF <- gwasDF[order(rsid, pValue)][!duplicated(rsid)]
   # retain SNPs with rs id:
-  gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
+  # gwasDF <- gwasDF[stringr::str_detect(rsid,stringr::regex("^rs")),]
 
   message(nrow(gwasDF))
 
