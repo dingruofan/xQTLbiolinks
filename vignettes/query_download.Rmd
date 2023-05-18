@@ -155,7 +155,7 @@ eqtlAssos
 ### sQTL Download:
 #### **Download all sQTL associations for gene MMP7 and TP53 in Lung:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-sqtlAssos <- xQTLdownload_sqtlAllAsso(genes=c("MMP7","TP53"), tissue="Lung")
+sqtlAssos<-xQTLdownload_sqtlAllAsso(genes=c("MMP7","TP53"), geneType = "geneSymbol",  tissue="Lung")
 ```
 ```{r, eval=TRUE}
 sqtlAssos
