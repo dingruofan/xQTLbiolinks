@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -111,7 +111,7 @@ packages:</p>
 (GRCh38). We perform colocalization analysis in
 <code>Brain - Cerebellum</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://master.dl.sourceforge.net/project/exampledata/gwasDFsub.txt"</span><span class="op">)</span></span>
 <span><span class="va">tissueSiteDetail</span><span class="op">=</span><span class="st">"Brain - Cerebellum"</span></span></code></pre></div>
 <p>In this example, a data.table object of 16538 (rows) x 5 (cols) is
 loaded. Five columns are required (arbitrary column names is supported,
@@ -127,13 +127,13 @@ from chr1-chr22;</p>
 <p><code>Col 7</code>. “se” (numeric). standard error.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;         rsid chrom position   pValue     AF     beta      se</span></span>
-<span><span class="co">#&gt; 1 rs13120565     4 10702513 5.66e-10 0.6429  0.01825 0.00294</span></span>
-<span><span class="co">#&gt; 2  rs4697781     4 10703243 8.94e-10 0.6446  0.01803 0.00294</span></span>
-<span><span class="co">#&gt; 3  rs4697779     4 10701187 5.74e-09 0.3231 -0.01747 0.00300</span></span>
-<span><span class="co">#&gt; 4  rs4697780     4 10701381 5.95e-09 0.3231 -0.01746 0.00300</span></span>
-<span><span class="co">#&gt; 5  rs4547789     4 10702891 1.46e-08 0.3197 -0.01703 0.00300</span></span>
-<span><span class="co">#&gt; 6 rs11726285     4 10700944 1.47e-08 0.3214 -0.01702 0.00301</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;          rsid chrom position   pValue     AF     beta      se</span></span>
+<span><span class="co">#&gt; 1: rs13120565     4 10702513 5.66e-10 0.6429  0.01825 0.00294</span></span>
+<span><span class="co">#&gt; 2:  rs4697781     4 10703243 8.94e-10 0.6446  0.01803 0.00294</span></span>
+<span><span class="co">#&gt; 3:  rs4697779     4 10701187 5.74e-09 0.3231 -0.01747 0.00300</span></span>
+<span><span class="co">#&gt; 4:  rs4697780     4 10701381 5.95e-09 0.3231 -0.01746 0.00300</span></span>
+<span><span class="co">#&gt; 5:  rs4547789     4 10702891 1.46e-08 0.3197 -0.01703 0.00300</span></span>
+<span><span class="co">#&gt; 6: rs11726285     4 10700944 1.47e-08 0.3214 -0.01702 0.00301</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-2--identify-sentinel-snps-">Step 2. Identify sentinel snps.<a class="anchor" aria-label="anchor" href="#step-2--identify-sentinel-snps-"></a>
@@ -152,8 +152,8 @@ required).</p>
 this example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sentinelSnpDF</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;         rsid  chr position   pValue    maf    beta      se</span></span>
-<span><span class="co">#&gt; 1 rs13120565 chr4 10702513 5.66e-10 0.6429 0.01825 0.00294</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;          rsid  chr position   pValue    maf    beta      se</span></span>
+<span><span class="co">#&gt; 1: rs13120565 chr4 10702513 5.66e-10 0.6429 0.01825 0.00294</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-3--identify-trait-genes-for-each-sentinel-snps-">Step 3. Identify trait genes for each sentinel SNPs.<a class="anchor" aria-label="anchor" href="#step-3--identify-trait-genes-for-each-sentinel-snps-"></a>
@@ -171,32 +171,27 @@ overlap of eGenes and trait genes as the final output of the function
 detected</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">traitsAll</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;   chromosome geneStart  geneEnd geneStrand    geneSymbol          gencodeId</span></span>
-<span><span class="co">#&gt; 1       chr4  11393150 11429765          -        HS3ST1  ENSG00000002587.9</span></span>
-<span><span class="co">#&gt; 2       chr4  10486395 10684865          -          CLNK ENSG00000109684.14</span></span>
-<span><span class="co">#&gt; 3       chr4  10068089 10073019          - RP11-448G15.3  ENSG00000261490.1</span></span>
-<span><span class="co">#&gt;         rsid position   pValue    maf</span></span>
-<span><span class="co">#&gt; 1 rs13120565 10702513 5.66e-10 0.6429</span></span>
-<span><span class="co">#&gt; 2 rs13120565 10702513 5.66e-10 0.6429</span></span>
-<span><span class="co">#&gt; 3 rs13120565 10702513 5.66e-10 0.6429</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;          rsid  chr position   pValue    maf    beta      se       gencodeId</span></span>
+<span><span class="co">#&gt; 1: rs13120565 chr4 10702513 5.66e-10 0.6429 0.01825 0.00294 ENSG00000002587</span></span>
+<span><span class="co">#&gt; 2: rs13120565 chr4 10702513 5.66e-10 0.6429 0.01825 0.00294 ENSG00000109684</span></span>
+<span><span class="co">#&gt; 3: rs13120565 chr4 10702513 5.66e-10 0.6429 0.01825 0.00294 ENSG00000261490</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-4--conduct-colocalization-analysis-">Step 4. Conduct colocalization analysis.<a class="anchor" aria-label="anchor" href="#step-4--conduct-colocalization-analysis-"></a>
 </h2>
-<p><strong>For a single trait gene</strong>, like <em>CLNK</em> in above
-table, colocalization analysis (using <code>coloc</code> method) can be
-performed with:</p>
+<p><strong>For a single trait gene</strong>, like
+<em>ENSG00000109684</em> in above table, colocalization analysis (using
+<code>coloc</code> method) can be performed with:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="st">"CLNK"</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span> <span class="co"># using gene symbol</span></span></code></pre></div>
-<p><em>output</em> is a list, including three parts:
-<em>coloc_Out_summary</em>, <em>gwasEqtlInfo</em>, and
-<em>gwasEqtlInfo</em>.</p>
+<code class="sourceCode R"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="st">"ENSG00000109684"</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span> <span class="co"># using gene symbol</span></span></code></pre></div>
+<p><em>output</em> is a list, including two parts:
+<em>coloc_Out_summary</em> and <em>gwasEqtlInfo</em>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">output</span><span class="op">$</span><span class="va">coloc_Out_summary</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;   nsnps    PP.H0.abf   PP.H1.abf    PP.H2.abf  PP.H3.abf PP.H4.abf traitGene</span></span>
-<span><span class="co">#&gt; 1  7107 7.097893e-11 1.32221e-07 3.890211e-06 0.00625302  0.993743      CLNK</span></span>
-<span><span class="co">#&gt;   candidate_snp SNP.PP.H4</span></span>
-<span><span class="co">#&gt; 1    rs13120565 0.5328849</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;    nsnps    PP.H0.abf   PP.H1.abf    PP.H2.abf  PP.H3.abf PP.H4.abf</span></span>
+<span><span class="co">#&gt; 1:  7107 7.097893e-11 1.32221e-07 3.890211e-06 0.00625302  0.993743</span></span>
+<span><span class="co">#&gt;          traitGene candidate_snp SNP.PP.H4</span></span>
+<span><span class="co">#&gt; 1: ENSG00000109684    rs13120565 0.5328849</span></span></code></pre>
 <p><strong>For multiple trait genes</strong>, a for loop or lapply
 function can be used to get all genes’ outputs (using both
 <code>coloc</code> and <code>hyprcoloc</code> methods).</p>
@@ -207,27 +202,26 @@ function can be used to get all genes’ outputs (using both
 <em>coloc_Out_summary</em> of all genes.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outputs</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;            traitGene nsnps    PP.H0.abf    PP.H1.abf    PP.H2.abf  PP.H3.abf</span></span>
-<span><span class="co">#&gt; 1  ENSG00000002587.9  6452 1.730175e-05 3.218430e-02 6.603361e-05 0.12198838</span></span>
-<span><span class="co">#&gt; 2 ENSG00000109684.14  7107 7.097893e-11 1.322210e-07 3.890211e-06 0.00625302</span></span>
-<span><span class="co">#&gt; 3  ENSG00000261490.1  6601 5.287051e-05 9.848309e-02 4.801374e-04 0.89435622</span></span>
-<span><span class="co">#&gt;    PP.H4.abf candidate_snp SNP.PP.H4 hypr_posterior hypr_regional_prob</span></span>
-<span><span class="co">#&gt; 1 0.84574398    rs13120565 0.4140146         0.5685             0.9694</span></span>
-<span><span class="co">#&gt; 2 0.99374296    rs13120565 0.5328849         0.9793             0.9999</span></span>
-<span><span class="co">#&gt; 3 0.00662768    rs13120565 0.4219650         0.0000             0.0101</span></span>
-<span><span class="co">#&gt;   hypr_candidate_snp hypr_posterior_explainedBySnp</span></span>
-<span><span class="co">#&gt; 1         rs13120565                        0.2726</span></span>
-<span><span class="co">#&gt; 2         rs13120565                        0.4747</span></span>
-<span><span class="co">#&gt; 3         rs13120565                        0.4118</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;          traitGene nsnps    PP.H0.abf    PP.H1.abf    PP.H2.abf  PP.H3.abf</span></span>
+<span><span class="co">#&gt; 1: ENSG00000002587  6452 1.730175e-05 3.218430e-02 6.603361e-05 0.12198838</span></span>
+<span><span class="co">#&gt; 2: ENSG00000109684  7107 7.097893e-11 1.322210e-07 3.890211e-06 0.00625302</span></span>
+<span><span class="co">#&gt; 3: ENSG00000261490  6601 5.287051e-05 9.848309e-02 4.801374e-04 0.89435622</span></span>
+<span><span class="co">#&gt;     PP.H4.abf candidate_snp SNP.PP.H4 hypr_posterior hypr_regional_prob</span></span>
+<span><span class="co">#&gt; 1: 0.84574398    rs13120565 0.4140146         0.5685             0.9694</span></span>
+<span><span class="co">#&gt; 2: 0.99374296    rs13120565 0.5328849         0.9793             0.9999</span></span>
+<span><span class="co">#&gt; 3: 0.00662768    rs13120565 0.4219650         0.0000             0.0101</span></span>
+<span><span class="co">#&gt;    hypr_candidate_snp hypr_posterior_explainedBySnp</span></span>
+<span><span class="co">#&gt; 1:         rs13120565                        0.2726</span></span>
+<span><span class="co">#&gt; 2:         rs13120565                        0.4747</span></span>
+<span><span class="co">#&gt; 3:         rs13120565                        0.4118</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-5--visualization-of-the-results-">Step 5. Visualization of the results.<a class="anchor" aria-label="anchor" href="#step-5--visualization-of-the-results-"></a>
 </h2>
 <p>For the potential casual gene
-<strong><em>ENSG00000109684.14</em></strong>
-(PP4=<strong>0.9937</strong> &amp;
-hypr_posterior=<strong>0.9793</strong>), we can get its significant
-associations across tissues:</p>
+<strong><em>ENSG00000109684</em></strong> (PP4=<strong>0.9937</strong>
+&amp; hypr_posterior=<strong>0.9793</strong>), we can get its
+significant associations across tissues:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_eqtl.html">xQTLvisual_eqtl</a></span><span class="op">(</span><span class="st">"ENSG00000109684.14"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/quick_start/eQTL_multiple_tissue.png" width="80%" style="display: block; margin: auto;"></p>
@@ -235,7 +229,7 @@ associations across tissues:</p>
 comparison of the signals of GWAS and eQTL: We merge the variants of
 GWAS and eQTL by rsid first.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000109684.14"</span>, </span>
+<code class="sourceCode R"><span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000109684"</span>, </span>
 <span>                                     tissueLabel <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span>
 <span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">snpId</span>, position<span class="op">=</span><span class="va">pos</span>, <span class="va">maf</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                      by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>, <span class="st">"position"</span><span class="op">)</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -255,12 +249,12 @@ may fail at times. If this happens, please try running it again.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/quick_start/gwas_legendF.png" width="50%" style="display: block; margin: auto;"></p>
-<p>Locuszoom plot of eQTL signals:</p>
+<p>LocusZoom plot of eQTL signals:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>                     highlightSnp <span class="op">=</span> <span class="st">"rs13120565"</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/quick_start/eqtl_legendF.png" width="50%" style="display: block; margin: auto;"></p>
-<p>Violin plot of normalized exprssion of eQTL
+<p>Violin plot of normalized expression of eQTL
 (rs13120565-ENSG00000187323.11):</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_eqtlExp.html">xQTLvisual_eqtlExp</a></span><span class="op">(</span><span class="st">"rs13120565"</span>, <span class="st">"ENSG00000109684.14"</span>, tissueSiteDetail <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span></code></pre></div>
@@ -280,7 +274,7 @@ variant. We can visualize the correlation between p-values of eQTLs and
 LD across numerous tissues/cell types to easily distinguish this patten
 using <code>xQTLvisual_coloc</code>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">multi_tissue_coloc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_coloc.html">xQTLvisual_coloc</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000109684.14"</span>, variantName<span class="op">=</span><span class="st">"rs13120565"</span>, </span>
+<code class="sourceCode R"><span><span class="va">multi_tissue_coloc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_coloc.html">xQTLvisual_coloc</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000109684"</span>, variantName<span class="op">=</span><span class="st">"rs13120565"</span>, </span>
 <span>                                      tissueLabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Brain - Cerebellar Hemisphere"</span>, </span>
 <span>                                                        <span class="st">"Brain - Cerebellum"</span>, <span class="st">"Thyroid"</span>, <span class="st">"Lung"</span>,</span>
 <span>                                                        <span class="st">"Cells - EBV-transformed lymphocytes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

@@ -181,6 +181,9 @@
     <loc>/reference/xQTLdownload_ld.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLdownload_sc.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLdownload_sgene.html</loc>
   </url>
   <url>
@@ -212,6 +215,12 @@
   </url>
   <url>
     <loc>/reference/xQTLquery_sampleByTissue.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLquery_sc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLquery_scInfo.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLquery_sqtlSig.html</loc>
@@ -281,5 +290,8 @@
   </url>
   <url>
     <loc>/reference/xQTLvisual_sqtlExp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTL_export.html</loc>
   </url>
 </urlset>

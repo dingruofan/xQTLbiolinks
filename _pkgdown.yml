@@ -48,6 +48,8 @@ reference:
 
 news:
  releases:
+ - text: "xQLTbiolinks 1.5.3"
+   href: https://dingruofan.github.io/xQTLbiolinks/news/index.html#xqtlbiolinks-152
  - text: "xQLTbiolinks 1.4.2"
    href: https://dingruofan.github.io/xQTLbiolinks/news/index.html#xqtlbiolinks-142
  - text: "xQLTbiolinks 1.4.1"
