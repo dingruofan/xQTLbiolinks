@@ -731,7 +731,7 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #'
 #' @examples
 #' # load data:
-#' u1 <-"http://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasEqtldata.txt"
+#' u1 <-"https://master.dl.sourceforge.net/project/exampledata/gwas/AD/gwasEqtldata.txt"
 #' gwasEqtldata <- data.table::fread(u1)
 #' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){
@@ -1084,35 +1084,34 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
 #'
 #' @param snpHits A data.table object from result of xQTLanno_genomic
 #' @param pValueBy Cut step of pvlaue. Defaults: 5
-#' @param plotType "bar" (Default), or "pie"
+#' @param annoType "enrichment" or "overlapping"
 #' @return A ggplot object
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
 #' snpHits <- xQTLanno_genomic(snpInfo)
-#' xQTLvisual_anno(snpHits, plotType="bar")
+#'
 #' }
-xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
+xQTLvisual_anno <- function(snpHits, pValueBy=5, annoType="enrichment"){
   cutP <- Num <- Type <- NumSum <- prop <- Freq <- snpHitsCount<- Var1 <-NULL
   .<-NULL
-
   typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","nonsynonymous","utr3","utr5","tfCluster", "spliceSite", "ingergenic", "intron"),
                          Type = c("CpG island", "Enhancer", "Promoter", "Exon", "Nonsynonymous", "3'UTR", "5'UTR", "TFBS", "Splice site", "Intergenic", "Intron"))
 
-  snpHits$logP <- log(snpHits$pValue, base=10)*(-1)
-  snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
-  snpHits$cutP <- cut(snpHits$logP,breaks= ceiling(seq(0,max(snpHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
+  if(annoType == "overlapping"){
+    snpHits <- snpHits$snpHits
+    snpHits$logP <- log(snpHits$pValue, base=10)*(-1)
+    snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
+    snpHits$cutP <- cut(snpHits$logP,breaks= ceiling(seq(0,max(snpHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
 
-  snpHits_count <- as.data.table(as.data.frame(table(snpHits$type)))[,.(type=Var1, Num=Freq)]
-  snpHits_count <- merge(snpHits_count, typeLabel, by="type")
-  snpHits_count$prop <- round(snpHits_count$Num/(sum(snpHits_count$Num))*100,2)
-  snpHits_count <- snpHits_count[order(-prop)]
-  snpHits_count$legendLabel=paste(snpHits_count$Type," (",snpHits_count$prop,"%",")", sep="")
-
-  if(plotType=="bar"){
+    snpHits_count <- as.data.table(as.data.frame(table(snpHits$type)))[,.(type=Var1, Num=Freq)]
+    snpHits_count <- merge(snpHits_count, typeLabel, by="type")
+    snpHits_count$prop <- round(snpHits_count$Num/(sum(snpHits_count$Num))*100,2)
+    snpHits_count <- snpHits_count[order(-prop)]
+    snpHits_count$legendLabel=paste(snpHits_count$Type," (",snpHits_count$prop,"%",")", sep="")
 
     # a <- randomcoloR::distinctColorPalette(length(unique(snpHitsCount$Type)))
     # a <- randomcoloR::randomColor(length(unique(snpHitsCount$Type)))
@@ -1123,7 +1122,7 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
                          values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8", "#e27771")[1:length(as.character(unique(snpHits_count$Type)))],
                          labels= paste0(snpHits_count$Type)
                          # labels= paste0(snpHits_count$Type, "(",snpHits_count$prop,"%)")
-                         )+
+      )+
       theme_classic()+
       # ylim(c(0, max(snpHits_count$Num)+0.15*max(snpHits_count$Num)))+
       # geom_text(aes(label=paste(prop, "%")), position=position_dodge(width=0.9), hjust=0)+
@@ -1139,31 +1138,30 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
       ylab("Number of variants")+coord_flip()+guides(fill="none")
     plot(p1)
     return(p1)
-  }
-  if(plotType=="pie"){
+  }else if(annoType=="enrichment"){
+    # snpHitsCount <- snpHits$snpHits[,.(num_var = nrow(.SD)),by="type"]
+    # snpHitsCount$prop_var <- snpHitsCount$num_var / nrow(snpHits$gwasDF_sig)
+    # snpHitsCount <- merge(snpHitsCount, typeLabel, by="type", sort=FALSE)
+    snpEnrich <- snpHits$snpEnrich
+    snpEnrich <- merge(snpEnrich, typeLabel, by="type", sort=FALSE)
+    snpEnrich_OR <- snpEnrich[,.(median_OR= median(OR), median_p.value=median(p.value), conf_min=t.test(OR, conf.level=0.99)$conf.int[1], conf_max=t.test(OR, conf.level=0.99)$conf.int[2]), by = "Type"]
+    snpEnrich_OR$logP <- log(snpEnrich_OR$median_p.value, 10)*(-1)
 
-    p1 <- ggplot(snpHits_count, aes(x = "" ,y = prop, fill = Type)) +
-      geom_bar(stat = "identity", width=3, alpha=1 )+
-      scale_fill_manual( breaks=as.character(unique(snpHits_count$Type)),
-                         labels=snpHits_count$legendLabel,
-                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8")[1:length(as.character(unique(snpHits_count$Type)))])+
-      # geom_text(aes(y = prop/3 + c(0, cumsum(prop)[-length(prop)]),label = prop), size=5)+
-      theme_bw()+
-      theme(
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        panel.grid=element_blank(),
-        axis.ticks = element_blank(),
-        plot.title=element_text(size=14, face="bold")
-      )+
-      labs(title="")+
-      # guides(fill="none")+
-    coord_polar(theta = "y", start=0)
-    plot(p1)
+    # snpEnrich_OR$Type <- factor(snpEnrich_OR[order(logP, decreasing = TRUE)]$Type )
+    p1 <- ggplot(snpEnrich_OR,aes(x=median_OR, y = reorder(Type, logP, median))) + geom_point(aes(size=logP, color=Type))+
+      geom_vline(xintercept = 1, color="red", size=rel(1.1), linetype="dashed", alpha=0.5)+
+      ggforestplot::geom_stripes(odd = "#33333333", even = "#00000000")+
+      scale_size_continuous(range = c(3,6.5))+
+      theme_classic()+
+      ylab("")+
+      xlab("Enrichment(OR)")+
+      theme(axis.title = element_text(size=rel(1.2)),
+            axis.text = element_text(size=rel(1.1)))+
+      guides(color="none")
     return(p1)
   }
+
+
 }
 
 
@@ -1178,7 +1176,7 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, plotType="bar"){
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 #' snpInfo <- fread(url1, sep="\t")
 #' enrichHits <- xQTLanno_enrich(snpInfo, enrichElement="TF")
 #' xQTLvisual_enrich(enrichHits, plotType="density")
@@ -1242,7 +1240,7 @@ xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
 #' @return ggplot2 object
 #' @examples
 #' \donttest{
-#' url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+#' url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 #' snpInfo <- data.table::fread(url1, sep="\t")
 #' xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 #' }
@@ -1333,7 +1331,7 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
+#' url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwasDFsub_MMP7.txt"
 #' sumDT <- data.table::fread(url1, sep="\t")
 #' xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)], distribution_func="pchisq")
 #' }
@@ -1655,7 +1653,7 @@ xQTLvisual_coloc <-  function(gene="", geneType="auto", variantName="", variantT
 #' @examples
 #' \donttest{
 #' gwasDF <- data.table::fread(
-#'       "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasChr6Sub.txt")
+#'       "https://master.dl.sourceforge.net/project/exampledata/gwas/AD/gwasChr6Sub.txt")
 #' xQTLvisual_manhattan(gwasDF[,.(rsid, chr, position,P)])
 #' }
 xQTLvisual_manhattan <- function(gwasDF, pvalue_cutoff=1e-4, num_snp_selected=2000){

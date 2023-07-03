@@ -37,8 +37,8 @@ conduct colocalization analysis with customized QTL data
 }
 \examples{
 \donttest{
-url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
-url2 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
+url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwasDFsub_MMP7.txt"
+url2 <- "https://master.dl.sourceforge.net/project/exampledata/eqtl/MMP7_qtlDF.txt"
 gwasDF <- data.table::fread(url1)
 qtlDF <- data.table::fread(url2)
 output <- xQTLanalyze_coloc_diy(gwasDF = gwasDF, qtlDF=qtlDF, method="coloc")

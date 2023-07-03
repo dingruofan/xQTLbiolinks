@@ -22,7 +22,7 @@ Advanced CM plot of 11
 \examples{
 \donttest{
 gwasDF <- data.table::fread(
-      "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasChr6Sub.txt")
+      "https://master.dl.sourceforge.net/project/exampledata/gwas/AD/gwasChr6Sub.txt")
 xQTLvisual_manhattan(gwasDF[,.(rsid, chr, position,P)])
 }
 }

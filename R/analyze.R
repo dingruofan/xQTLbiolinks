@@ -32,7 +32,7 @@
 #'
 #' @examples
 #' \donttest{
-#' url<-"http://raw.githubusercontent.com/dingruofan/exampleData/master/GLGC.txt"
+#' url<-"https://master.dl.sourceforge.net/project/exampledata/GLGC.txt"
 #' gwasDF <- data.table::fread(url)
 #' gwasDF <- gwasDF[, .(rsid, chr, position, P, maf, beta, se)]
 #' sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF)
@@ -143,7 +143,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
 #' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
 #'                                    genomeVersion="grch37", grch37To38=TRUE)
 #' # with a egene file:
-#' egeneFile <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/egeneDF.txt"
+#' egeneFile <- "https://master.dl.sourceforge.net/project/exampledata/egeneDF.txt"
 #' egeneDF <- data.table::fread(egeneFile)
 #' traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e4,"Brain - Cerebellum",
 #'                                    genomeVersion="grch37", grch37To38=TRUE, egeneDF=egeneDF)
@@ -308,7 +308,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #'
 #' @examples
 #' \donttest{
-#' url1 <- "http://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
+#' url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwasDFsub_MMP7.txt"
 #' gwasDF <- data.table::fread(url1)
 #' output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "MMP7", tissueSiteDetail="Prostate")
 #' }
@@ -517,8 +517,8 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 #' @export
 #' @examples
 #' \donttest{
-#' url1 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasDFsub_MMP7.txt"
-#' url2 <- "https://raw.githubusercontent.com/dingruofan/exampleData/master/eqtl/MMP7_qtlDF.txt"
+#' url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwasDFsub_MMP7.txt"
+#' url2 <- "https://master.dl.sourceforge.net/project/exampledata/eqtl/MMP7_qtlDF.txt"
 #' gwasDF <- data.table::fread(url1)
 #' qtlDF <- data.table::fread(url2)
 #' output <- xQTLanalyze_coloc_diy(gwasDF = gwasDF, qtlDF=qtlDF, method="coloc")

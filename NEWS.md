@@ -1,3 +1,8 @@
+# xQTLbiolinks 1.5.3
+
+## Major changes
+* Add function for sc-eQTL data retrieval. 
+
 # xQTLbiolinks 1.4.3
 
 ## Major changes

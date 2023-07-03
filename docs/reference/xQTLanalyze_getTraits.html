@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -119,7 +119,7 @@
 <span><span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getTraits</span><span class="op">(</span><span class="va">sentinelSnpDF</span>, detectRange<span class="op">=</span><span class="fl">1e4</span>,<span class="st">"Brain - Cerebellum"</span>,</span>
 <span>                                   genomeVersion<span class="op">=</span><span class="st">"grch37"</span>, grch37To38<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># with a egene file:</span></span>
-<span><span class="va">egeneFile</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/dingruofan/exampleData/master/egeneDF.txt"</span></span>
+<span><span class="va">egeneFile</span> <span class="op">&lt;-</span> <span class="st">"https://master.dl.sourceforge.net/project/exampledata/egeneDF.txt"</span></span>
 <span><span class="va">egeneDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">egeneFile</span><span class="op">)</span></span>
 <span><span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu">xQTLanalyze_getTraits</span><span class="op">(</span><span class="va">sentinelSnpDF</span>, detectRange<span class="op">=</span><span class="fl">1e4</span>,<span class="st">"Brain - Cerebellum"</span>,</span>
 <span>                                   genomeVersion<span class="op">=</span><span class="st">"grch37"</span>, grch37To38<span class="op">=</span><span class="cn">TRUE</span>, egeneDF<span class="op">=</span><span class="va">egeneDF</span><span class="op">)</span></span>

@@ -36,6 +36,7 @@ reference:
   contents:
   - starts_with("xQTLanno_cal")
   - starts_with("xQTLanno_")
+  - starts_with("xQTL_export")
 - title: Analyze
   contents:
   - starts_with("xQTLanalyze_")

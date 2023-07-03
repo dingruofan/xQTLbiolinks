@@ -186,7 +186,7 @@ knitr::include_graphics("images/prostate/venn_coloc_hyprcoloc.png", error = FALS
 To save time and go through this case as soon as possible, you can get the above result directly with:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-colocResultAll <- fread("http://raw.githubusercontent.com/dingruofan/exampleData/master/colocResultAll.txt")
+colocResultAll <- fread("https://master.dl.sourceforge.net/project/exampledata/colocResultAll.txt")
 ```
 
 ## Step 4: Visualization of the results:
@@ -264,7 +264,7 @@ Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoo
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 t1 <- tempfile()
-utils::download.file("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwasEqtldata.txt", t1)
+utils::download.file("https://master.dl.sourceforge.net/project/exampledata/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
 close(file(t1))
 rm(t1)

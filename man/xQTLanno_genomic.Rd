@@ -21,7 +21,7 @@ annotate all signals in GWAS / QTL dataset by genome location
 }
 \examples{
 \donttest{
-url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 snpInfo <- data.table::fread(url1, sep="\t")
 snpHits <- xQTLanno_genomic(snpInfo)
 }

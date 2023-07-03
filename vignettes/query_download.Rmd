@@ -28,7 +28,7 @@ library(stringr)
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
-download.file("https://github.com/dingruofan/exampleData/raw/master/query_download_vignette.zip", temp1)
+download.file("https://master.dl.sourceforge.net/project/exampledata/query_download_vignette.zip", temp1)
 load(unz(temp1,"query_download_vignette.RData"))
 close(file(temp1))
 rm(temp1)
@@ -170,6 +170,14 @@ aqtlAssos <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
 aqtlAssos
 ```
 
+### Single-cell eQTLs (sc-eQTLs) Download:
+#### **Download Cell-type eQTLs for gene TP53 in B cell from study `Resztak2022biorxiv`:**
+```
+# Get details of sc-eQTL study:
+study_info <- xQTLquery_scInfo()
+sceQTLs <- xQTLdownload_sc(gene="TP53", cell_type = "B cell",
+                          qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
+```
 
 ## Query details of gene, variant, tissue and samples in GTEx:
 

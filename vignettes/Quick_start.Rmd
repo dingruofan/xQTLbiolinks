@@ -40,7 +40,7 @@ library(coloc)
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
-download.file("https://github.com/dingruofan/exampleData/raw/master/env.zip", temp1)
+download.file("https://master.dl.sourceforge.net/project/exampledata/env_new.zip", temp1)
 load(unz(temp1,"env.Rdata"))
 close(file(temp1))
 rm(temp1)
@@ -49,7 +49,7 @@ rm(temp1)
 Download and load an example file of summary statistics dataset (GRCh38). We perform colocalization analysis in `Brain - Cerebellum`.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-gwasDF <- fread("https://raw.githubusercontent.com/dingruofan/exampleData/master/gwas/AD/gwasDFsub.txt")
+gwasDF <- fread("https://master.dl.sourceforge.net/project/exampledata/gwasDFsub.txt")
 tissueSiteDetail="Brain - Cerebellum"
 ```
 
@@ -103,13 +103,13 @@ traitsAll
 
 ## Step 4. Conduct colocalization analysis.
 
-**For a single trait gene**, like *CLNK* in above table, colocalization analysis (using `coloc` method) can be performed with:
+**For a single trait gene**, like *ENSG00000109684* in above table, colocalization analysis (using `coloc` method) can be performed with:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-output <- xQTLanalyze_coloc(gwasDF, "CLNK", tissueSiteDetail=tissueSiteDetail) # using gene symbol
+output <- xQTLanalyze_coloc(gwasDF, "ENSG00000109684", tissueSiteDetail=tissueSiteDetail) # using gene symbol
 ```
 
-*output* is a list, including three parts: *coloc_Out_summary*, *gwasEqtlInfo*, and *gwasEqtlInfo*.
+*output* is a list, including two parts: *coloc_Out_summary* and *gwasEqtlInfo*.
 
 ```{r, eval=TRUE}
 output$coloc_Out_summary
@@ -130,7 +130,7 @@ outputs
 
 ## Step 5. Visualization of the results.
 
-For the potential casual gene ***ENSG00000109684.14*** (PP4=**0.9937** & hypr_posterior=**0.9793**), we can get its significant associations across tissues:
+For the potential casual gene ***ENSG00000109684*** (PP4=**0.9937** & hypr_posterior=**0.9793**), we can get its significant associations across tissues:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtl("ENSG00000109684.14")
@@ -144,7 +144,7 @@ knitr::include_graphics("images/quick_start/eQTL_multiple_tissue.png")
 For the purpose of visualization of p-value distribution and comparison of the signals of GWAS and eQTL: We merge the variants of GWAS and eQTL by rsid first.
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000109684.14", 
+eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000109684", 
                                      tissueLabel = tissueSiteDetail)
 gwasEqtldata <- merge(gwasDF, eqtlAsso[,.(rsid=snpId, position=pos, maf, pValue)],
                       by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
@@ -172,7 +172,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legen
 knitr::include_graphics("images/quick_start/gwas_legendF.png")
 ```
 
-Locuszoom plot of eQTL signals:
+LocusZoom plot of eQTL signals:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], 
@@ -183,7 +183,7 @@ xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)],
 knitr::include_graphics("images/quick_start/eqtl_legendF.png")
 ```
 
-Violin plot of normalized exprssion of eQTL (rs13120565-ENSG00000187323.11):
+Violin plot of normalized expression of eQTL (rs13120565-ENSG00000187323.11):
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtlExp("rs13120565", "ENSG00000109684.14", tissueSiteDetail = tissueSiteDetail)
@@ -207,7 +207,7 @@ knitr::include_graphics("images/quick_start/xQTLvisual_locusCombine.png")
 Colocalized loci should show a general pattern where SNPs in high LD will show strong associations with expression levels of the colocalized gene, and the eQTL associations will weaken for SNPs in lower LD. This pattern of the eQTL varies among different tissues / cell-types, the strength of which indicates the power of the regulatory effect of the variant. We can visualize the correlation between p-values of eQTLs and LD across numerous tissues/cell types to easily distinguish this patten using `xQTLvisual_coloc`:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-multi_tissue_coloc <- xQTLvisual_coloc(gene="ENSG00000109684.14", variantName="rs13120565", 
+multi_tissue_coloc <- xQTLvisual_coloc(gene="ENSG00000109684", variantName="rs13120565", 
                                       tissueLabels = c("Brain - Cerebellar Hemisphere", 
                                                         "Brain - Cerebellum", "Thyroid", "Lung",
                                                         "Cells - EBV-transformed lymphocytes"))

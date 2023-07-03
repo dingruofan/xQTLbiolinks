@@ -21,7 +21,7 @@ Visualizing enriched variants
 }
 \examples{
 \donttest{
-url1 <- "http://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
 enrichHits <- xQTLanno_enrich(snpInfo, enrichElement="TF")
 xQTLvisual_enrich(enrichHits, plotType="density")

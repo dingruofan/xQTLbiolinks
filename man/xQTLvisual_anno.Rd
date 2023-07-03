@@ -4,14 +4,14 @@
 \alias{xQTLvisual_anno}
 \title{Visualizing annotated variants}
 \usage{
-xQTLvisual_anno(snpHits, pValueBy = 5, plotType = "bar")
+xQTLvisual_anno(snpHits, pValueBy = 5, annoType = "enrichment")
 }
 \arguments{
 \item{snpHits}{A data.table object from result of xQTLanno_genomic}
 
 \item{pValueBy}{Cut step of pvlaue. Defaults: 5}
 
-\item{plotType}{"bar" (Default), or "pie"}
+\item{annoType}{"enrichment" or "overlapping"}
 }
 \value{
 A ggplot object
@@ -21,9 +21,9 @@ Visualizing annotated variants
 }
 \examples{
 \donttest{
-url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
 snpHits <- xQTLanno_genomic(snpInfo)
-xQTLvisual_anno(snpHits, plotType="bar")
+
 }
 }

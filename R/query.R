@@ -1944,3 +1944,69 @@ xQTLquery_sqtlSig <- function(variantName="", genes="", variantType="auto", gene
 
   return(outInfo)
 }
+
+
+#' @title query sc-eQTL study details
+#'
+#' @return A data.table object
+#' @export
+xQTLquery_scInfo <- function(){
+  path_sceQTL = system.file(package="xQTLbiolinks", "extdata", "sceQTL_study_info.txt")
+  study_info <-fread(path_sceQTL)
+  return(study_info)
+}
+
+
+#' @title query significant sc-eQTLs
+#'
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".
+#' @param cell_type (character)cell types supported in the list of study_info from 'xQTLquery_scInfo'
+#' @param cell_state (character)cell states supported in the list of study_info from 'xQTLquery_scInfo'
+#' @param qtl_type (character)QTL types supported in the list of study_info from 'xQTLquery_scInfo'
+#' @param study_name (character)study name supported in the list of study_info from 'xQTLquery_scInfo'
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  xQTLquery_sc(gene="TP53", cell_type = "B cell",
+#'               qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
+#' }
+xQTLquery_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocytes", cell_state="", qtl_type="Cell-type eQTL", study_name="Bryois2022NN"){
+  study_info <- xQTLquery_scInfo()
+
+  if(geneType=="gencodeId"){
+    gene_info <- xQTLquery_gene(gene)
+    if(nrow(gene_info)==0){message("invalid gene!");return(data.table())}
+    genename  <- gene_info$geneSymbol
+  }else if(geneType == "geneSymbol"){
+    genename <- gene
+  }
+  if( !(toupper(cell_type) %in% toupper(unique(study_info$cell_type_name))) ){
+    stop(" == cell type |",cell_type,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if( !(toupper(cell_state) %in% toupper(unique(study_info$cell_state))) ){
+    stop(" == cell state|",cell_state,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if( !(toupper(qtl_type) %in% toupper(unique(study_info$QTL.type))) ){
+    stop(" == QTL type|",qtl_type,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if( !(toupper(study_name) %in% toupper(unique(study_info$study))) ){
+    stop(" == study name|",study_name,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if(cell_state==""){cell_state <- "NA"}
+
+  url1 <- paste0("http://bioinfo.szbl.ac.cn/scQTLbase_backend/query_xQTLbiolinks_sig?geneName=",genename,"&cellType=",cell_type,"&cellState=",cell_state, "&study=",study_name,"&qtlType=",qtl_type )
+  url1 <- utils::URLencode(url1)
+  # print(url1)
+  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+  qtl_summary <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
+  if(nrow(tmp)==0){
+    message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
+    message("== Done.")
+    return(data.table::data.table())
+  }
+  return(qtl_summary)
+}

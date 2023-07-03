@@ -1,0 +1,305 @@
+study	study_abbr	DOI	cell_type_name	QTL.type	cell_state
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Astrocytes	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Endothelial Cell (Endo)	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Excitatory Neurons	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Inhibitory Neurons	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Microglia (Micro)	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Oligodendrocytes	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Oligodendrocyte Precursor Cell (OPC)	Cell-type eQTL	
+Bryois2022NN	Bryois-2022-Nat. Genet	10.1038/s41593-022-01128-z	Pericyte	Cell-type eQTL	
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Floor Plate Progenitors	Cell-type eQTL	Cell Proliferation On Day 11
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Proliferating Floor Plate Progenitors	Cell-type eQTL	Cell Proliferation On Day 11
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Dopaminergic Neurons	Cell-type eQTL	Cell Proliferation On Day 30
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Ependymal-like 1	Cell-type eQTL	Cell Proliferation On Day 30
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Proliferating Floor Plate Progenitors	Cell-type eQTL	Cell Proliferation On Day 30
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Serotonergic-like Neurons	Cell-type eQTL	Cell Proliferation On Day 30
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Astrocyte-like Cells	Response eQTL	Cell Proliferation On Day 52; Treated With Rotenone
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Astrocyte-like Cells	Cell-type eQTL	Cell Proliferation On Day 52
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Dopaminergic Neurons	Response eQTL	Cell Proliferation On Day 52; Treated With Rotenone
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Dopaminergic Neurons	Cell-type eQTL	Cell Proliferation On Day 52
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Ependymal-like 1	Response eQTL	Cell Proliferation On Day 52; Treated With Rotenone
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Ependymal-like 1	Cell-type eQTL	Cell Proliferation On Day 52
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Serotonergic-like Neurons	Response eQTL	Cell Proliferation On Day 52; Treated With Rotenone
+Jerber2021NG	Jerber-2021-Nat. Genet	10.1038/s41588-021-00801-6	Serotonergic-like Neurons	Cell-type eQTL	Cell Proliferation On Day 52
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	T Cell	Cell-type eQTL	
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	CD4+ T Cell	Cell-type eQTL	
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	CD8+ T Cell	Cell-type eQTL	
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	T Cell	Cell-type eQTL	CD4+ State
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	T Cell	Cell-type eQTL	CD8+ State
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	T Cell	Cell-type eQTL	Treg State
+Nathan2022Nature	Nathan-2022-Nature	10.1038/s41586-022-04713-1	T Cell	Cell-type eQTL	Tuberculosis
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Endothelial Cell (Endo)	Cell-type eQTL	Aerocyte Capillary
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Endothelial Cell (Endo)	Cell-type eQTL	Arteriole
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Endothelial Cell (Endo)	Cell-type eQTL	General Capillary
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Endothelial Cell (Endo)	Cell-type eQTL	Lymphatic
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Endothelial Cell (Endo)	Cell-type eQTL	Systemic Venous
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Endothelial Cell (Endo)	Cell-type eQTL	Venule
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Pulmonary Alveolar Type I
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Pulmonary Alveolar Type II
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Basal
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Ciliated
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Ciliated Differentiation
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	KRT5-KRT17+
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Proliferating
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Secretory-SCGB1A1+MUC5B+
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Secretory-SCGB1A1+SCGB3A2+
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Secretory-SCGB3A2+
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Epithelial	Cell-type eQTL	Transitional AT2
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Alveolar Macrophages	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	B Cell	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	CD4+ T Cell	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Mature NK T Cell	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Conventional Dendritic Cell	Cell-type eQTL	CDC1
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Conventional Dendritic Cell	Cell-type eQTL	CDC2
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Monocyte (Mono)	Cell-type eQTL	Inflammatory
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Interstitial Macrophages	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Mast	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Dendritic Cell (DC)	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Monocyte (Mono)	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Macrophages	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Natural Killer Cell (NK)	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Plasmacytoid Dendritic Cell (pDC)	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Plasma	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	T Proliferating	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Adventitial Fibroblast	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Alveolar Fibroblast	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Mesothelial	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Pericyte	Cell-type eQTL	
+Natri2023biorxiv	Natri-2023-bioRxiv	10.1101/2023.03.17.533161	Smooth Muscle Cell (SMC)	Cell-type eQTL	
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Fibroblast	Cell-type eQTL	SIX5+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Fibroblast	Cell-type eQTL	HOXC6+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Fibroblast	Cell-type eQTL	ATF1+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Fibroblast	Cell-type eQTL	TEAD2+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Fibroblast	Cell-type eQTL	KLF10+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Fibroblast	Cell-type eQTL	RXRB+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Induced Pluripotent Stem Cells (iPSC)	Cell-type eQTL	BRF2+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Induced Pluripotent Stem Cells (iPSC)	Cell-type eQTL	ATF2+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Induced Pluripotent Stem Cells (iPSC)	Cell-type eQTL	HIC2+
+Neavin2021GB	Neavin-2021-Genome Biol	10.1186/s13059-021-02293-3	Induced Pluripotent Stem Cells (iPSC)	Cell-type eQTL	CEBPG+
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Response eQTL	24 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Response eQTL	24 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Response eQTL	24 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Response eQTL	3 H C. Albicans (CA)-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Response eQTL	3 H M. Tuberculosis-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Response eQTL	3 H P. Aeruginosa-stimulated
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	B Cell	Cell-type eQTL	
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD4+ T Cell	Cell-type eQTL	
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	CD8+ T Cell	Cell-type eQTL	
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Dendritic Cell (DC)	Cell-type eQTL	
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Megakaryocytes	Cell-type eQTL	
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Monocyte (Mono)	Cell-type eQTL	
+Oelen2022NC	Oelen-2022-Nat. Commun	10.1038/s41467-022-30893-5	Natural Killer Cell (NK)	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Naive B Cell	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Naive B Cell	Response eQTL	Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Conventional Dendritic Cell	Cell-type eQTL	CDC1 / CDC2
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Conventional Dendritic Cell	Response eQTL	CDC1 / CDC2; Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD14+ Monocyte (CD14 Mono)	Response eQTL	Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD16+ Monocyte (CD16 Mono)	Response eQTL	Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD14+ Monocyte (CD14 Mono)	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD16+ Monocyte (CD16 Mono)	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Natural Killer Cell (NK)	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Natural Killer Cell (NK)	Response eQTL	Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Plasmacytoid Dendritic Cell (pDC)	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	Plasmacytoid Dendritic Cell (pDC)	Response eQTL	Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD4+ T Cell	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD4+ T Cell	Response eQTL	Type 1 Interferon Activation
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD8+ T Cell	Cell-type eQTL	
+Perez2022Science	Perez-2022-Science	10.1126/science.abf1970	CD8+ T Cell	Response eQTL	Type 1 Interferon Activation
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4 Memory	Cell-type eQTL	Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4 Memory	Cell-type eQTL	After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4 Memory	Cell-type eQTL	After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4 Memory	Cell-type eQTL	Resting State
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Harvested After 16 H Stimulation
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Harvested After 40 H Stimulation
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Harvested After 5 D Stimulation
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Harvested After 0 H Stimulation
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	HSP+; Before Dividing (16h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	Regulatory T (Treg)	Cell-type eQTL	Resting State
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	Regulatory T (Treg)	Cell-type eQTL	Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	Regulatory T (Treg)	Cell-type eQTL	After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	T Cell	Cell-type eQTL	Endoplasmic Reticulum (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Central Memory T	Cell-type eQTL	Resting State
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Central Memory T	Cell-type eQTL	Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Central Memory T	Cell-type eQTL	After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Central Memory T	Cell-type eQTL	After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Central Memory T	Cell-type eQTL	Lowly Active
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	Resting State
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	HLA+; After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	HLA+; After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	Lowly Active
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	CD45RA+; Resting State
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	CD45RA+; Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	CD45RA+; After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	CD45RA+; After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Effector Memory T	Cell-type eQTL	CD45RA+; Lowly Active
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	Memory T Cell	Cell-type eQTL	Cycling; After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	Memory T Cell	Cell-type eQTL	Endoplasmic Reticulum (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Resting State
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	Naive T Cell	Cell-type eQTL	Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Cycling; After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Cycling; After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	HSP+; After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	IFN; Before Dividing (16 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	IFN; After The First Cell Division (40 h)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	IFN; After Acquiring Effector Functions (5 D)
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	IFN; Lowly Active
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	Lowly Active
+Soskic2022NG	Soskic-2022-Nat. Genet	10.1038/s41588-022-01066-3	CD4+ Naive T	Cell-type eQTL	NFKB+
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD4+ Effector Memory T	Cell-type eQTL	CD45RA+
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD4+ Effector Memory T	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD4+ T Cell	Cell-type eQTL	SOX4+
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD8+ Effector Memory T	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD4+ Central Memory T	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD8+ T Cell	Cell-type eQTL	S100B+
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD14+ Monocyte (CD14 Mono)	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	Dendritic Cell (DC)	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	Memory B Cell	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	Naive B Cell	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	Natural Killer Cell (NK)	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	Natural Killer Recruiting Cell (NK R)	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	CD16+ Monocyte (CD16 Mono)	Cell-type eQTL	
+YAZAR2022Sci	YAZAR-2022-Science	10.1126/science.abf3041	Plasmablast	Cell-type eQTL	
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Induced Pluripotent Stem Cells (iPSC)	Dynamic eQTL	Response With Pseudotime
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Mesendoderm (mesendo)	Dynamic eQTL	Response With Pseudotime
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Definitive Endoderm (defendo)	Dynamic eQTL	Response With Pseudotime
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Induced Pluripotent Stem Cells (iPSC)	Cell-type eQTL	
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Mesendoderm (mesendo)	Cell-type eQTL	
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Definitive Endoderm (defendo)	Cell-type eQTL	
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Induced Pluripotent Stem Cells (iPSC)	Response eQTL	
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Mesendoderm (mesendo)	Response eQTL	G2/M
+cuomo2020NC	cuomo-2020-Nat. Commun	10.1038/s41467-020-14457-z	Definitive Endoderm (defendo)	Response eQTL	G2/M
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	B Cell	Cell-type eQTL	
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	CD14+ Monocyte (CD14 Mono)	Cell-type eQTL	Classical Monocyte
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	Dendritic Cell (DC)	Cell-type eQTL	
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	CD14+ Monocyte (CD14 Mono)	Cell-type eQTL	
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	CD14+ Monocyte (CD14 Mono)	Cell-type eQTL	Non-classical Monocyte
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	Natural Killer Cell (NK)	Cell-type eQTL	
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	CD4+ T Cell	Cell-type eQTL	
+vanderwijst2018NG	vanderwijst-2018-Nat. Genet	10.1038/s41588-018-0089-9	CD8+ T Cell	Cell-type eQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Cell-type eQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Cell-type vQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response vQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response eQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response vQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Dynamic eQTL	Lipopolysaccharide
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Dynamic eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response vQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response eQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Response vQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	B Cell	Dynamic eQTL	Phytohemagglutinin
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Cell-type eQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Cell-type vQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Dynamic eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response vQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response eQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response vQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Dynamic eQTL	Lipopolysaccharide
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response vQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response eQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Monocyte (Mono)	Response vQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Cell-type eQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Cell-type vQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Dynamic eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response vQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response eQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response vQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Dynamic eQTL	Lipopolysaccharide
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Dynamic eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response vQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response eQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Response vQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	Natural Killer Cell (NK)	Dynamic eQTL	Phytohemagglutinin
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Cell-type eQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Cell-type vQTL	
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Dynamic eQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response vQTL	Lipopolysaccharide - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response eQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response vQTL	Lipopolysaccharide - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Dynamic eQTL	Lipopolysaccharide
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Dynamic eQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response vQTL	Phytohemagglutinin - Dexamethasone
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response eQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Response vQTL	Phytohemagglutinin - Ethanol
+Resztak2022biorxiv	Resztak-2022-bioRxiv	10.1101/2022.12.06.517536	T Cell	Dynamic eQTL	Phytohemagglutinin
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	Naive B Cell	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ Naive T	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ Naive T	Cell-type eQTL	TCR-STIM
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD8+ Naive T	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD8+ Naive T	Cell-type eQTL	TCR-STIM
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	Monocyte (Mono)	Cell-type eQTL	Non-classical
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	Monocyte (Mono)	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	Natural Killer Cell (NK)	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ T Cell	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ T Cell	Cell-type eQTL	Classical T-helper 1
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ T Cell	Cell-type eQTL	Classical T-helper 17
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ T Cell	Cell-type eQTL	Classical T-helper 2
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	CD4+ T Cell	Cell-type eQTL	Classical T-helper 1 / T-helper 17
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	Memory Regulatory T	Cell-type eQTL	
+Schmiedel2022SI	Schmiedel-2022-Sci. Immunol	10.1126/sciimmunol.abm2508	Naive Regulatory T	Cell-type eQTL	
+Kang2017NBT	Kang-2017-Nat. Biotechnol	10.1038/nbt.4042	CD14+ Monocyte (CD14 Mono)	Cell-type eQTL	Type 1 Interferon Activation
+Kang2017NBT	Kang-2017-Nat. Biotechnol	10.1038/nbt.4042	CD16+ Monocyte (CD16 Mono)	Cell-type eQTL	Type 1 Interferon Activation
+Kang2017NBT	Kang-2017-Nat. Biotechnol	10.1038/nbt.4042	CD4+ T Cell	Cell-type eQTL	
+Kang2017NBT	Kang-2017-Nat. Biotechnol	10.1038/nbt.4042	CD8+ T Cell	Cell-type eQTL	
+Kang2017NBT	Kang-2017-Nat. Biotechnol	10.1038/nbt.4042	Dendritic Cell (DC)	Cell-type eQTL	
+Kang2017NBT	Kang-2017-Nat. Biotechnol	10.1038/nbt.4042	Natural Killer Cell (NK)	Cell-type eQTL	
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	B Cell	Cell-type eQTL	Influenza
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	B Cell	Cell-type eQTL	Mock Treatment
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	CD4+ T Cell	Cell-type eQTL	Influenza
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	CD4+ T Cell	Cell-type eQTL	Mock Treatment
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	CD8+ T Cell	Cell-type eQTL	Influenza
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	CD8+ T Cell	Cell-type eQTL	Mock Treatment
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	Monocyte (Mono)	Cell-type eQTL	Influenza
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	Monocyte (Mono)	Cell-type eQTL	Mock Treatment
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	Natural Killer Cell (NK)	Cell-type eQTL	Influenza
+Randolph2021Science	Randolph-2021-Science	10.1126/science.abg0928	Natural Killer Cell (NK)	Cell-type eQTL	Mock Treatment
+wills2013NBT	wills-2013-Nat. Biotechnol	10.1038/nbt.2642	B Cell	Response eQTL	Perturbed For 24 H With 10 ΜM SB216763
+wills2013NBT	wills-2013-Nat. Biotechnol	10.1038/nbt.2642	B Cell	Cell-type eQTL	

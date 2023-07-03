@@ -28,7 +28,7 @@ enrichment analysis for GWAS / QTL signals in functional elements, including enh
 }
 \examples{
 \donttest{
-url1 <- "https://github.com/dingruofan/exampleData/raw/master/gwas/gwasSub.txt.gz"
+url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
 snpInfo <- data.table::fread(url1, sep="\t")
 enrichHits <- xQTLanno_enrich(snpInfo,enrichElement="Enhancer")
 }
