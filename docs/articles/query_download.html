@@ -483,6 +483,33 @@ Lung:</strong><a class="anchor" aria-label="anchor" href="#download-all-3aqtl-as
 </div>
 </div>
 <div class="section level3">
+<h3 id="mqtl-download">mQTL Download:<a class="anchor" aria-label="anchor" href="#mqtl-download"></a>
+</h3>
+<div class="section level4">
+<h4 id="download-all-mqtl-associations-with-cgp_id-cg00000221-in-prostate">
+<strong>Download all mQTL associations with cgp_id “cg00000221” in
+Prostate:</strong><a class="anchor" aria-label="anchor" href="#download-all-mqtl-associations-with-cgp_id-cg00000221-in-prostate"></a>
+</h4>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mQTL_meta</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_mqtlmeta.html">xQTLdownload_mqtlmeta</a></span><span class="op">(</span><span class="st">"Prostate"</span><span class="op">)</span></span>
+<span><span class="va">mQTL_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_mQTL.html">xQTLdownload_mQTL</a></span><span class="op">(</span>cpg_id<span class="op">=</span><span class="st">"cg00000221"</span>, tissue_name<span class="op">=</span><span class="st">"Prostate"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="hqtl-download">hQTL Download:<a class="anchor" aria-label="anchor" href="#hqtl-download"></a>
+</h3>
+<div class="section level4">
+<h4 id="download-all-hqtl-associations-for-h3k4me1-in-t-cell">
+<strong>Download all hQTL associations for H3K4ME1 in T
+cell:</strong><a class="anchor" aria-label="anchor" href="#download-all-hqtl-associations-for-h3k4me1-in-t-cell"></a>
+</h4>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hqtlmeta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_hqtlmeta.html">xQTLdownload_hqtlmeta</a></span><span class="op">(</span>histone_type<span class="op">=</span><span class="st">"H3K4ME1"</span>, cell_type<span class="op">=</span><span class="st">"T cell"</span><span class="op">)</span></span>
+<span><span class="va">hQTL_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_hqtl.html">xQTLdownload_hqtl</a></span><span class="op">(</span>phenotype_id<span class="op">=</span><span class="st">"10:10458128-10465096"</span>, </span>
+<span>                             histone_type<span class="op">=</span><span class="st">"H3K4ME1"</span>, cell_type<span class="op">=</span><span class="st">"T cell"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
 <h3 id="single-cell-eqtls-sc-eqtls-download">Single-cell eQTLs (sc-eQTLs) Download:<a class="anchor" aria-label="anchor" href="#single-cell-eqtls-sc-eqtls-download"></a>
 </h3>
 <div class="section level4">
@@ -490,10 +517,11 @@ Lung:</strong><a class="anchor" aria-label="anchor" href="#download-all-3aqtl-as
 <strong>Download Cell-type eQTLs for gene TP53 in B cell from study
 <code>Resztak2022biorxiv</code>:</strong><a class="anchor" aria-label="anchor" href="#download-cell-type-eqtls-for-gene-tp53-in-b-cell-from-study-resztak2022biorxiv"></a>
 </h4>
-<pre><code><span><span class="co"># Get details of sc-eQTL study:</span></span>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get details of sc-eQTL study:</span></span>
 <span><span class="va">study_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_scInfo.html">xQTLquery_scInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">sceQTLs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_sc.html">xQTLdownload_sc</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"TP53"</span>, cell_type <span class="op">=</span> <span class="st">"B cell"</span>,</span>
-<span>                          qtl_type<span class="op">=</span><span class="st">"Cell-type eQTL"</span>, study_name <span class="op">=</span> <span class="st">"Resztak2022biorxiv"</span><span class="op">)</span></span></code></pre>
+<span><span class="va">sceQTL_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_sc.html">xQTLdownload_sc</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"TP53"</span>, cell_type <span class="op">=</span> <span class="st">"B Cell"</span>, cell_state<span class="op">=</span><span class="st">"-"</span>,</span>
+<span>                qtl_type<span class="op">=</span><span class="st">"Cell-type-specific eQTL"</span>, study_name <span class="op">=</span> <span class="st">"Resztak2022biorxiv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -505,11 +533,11 @@ Lung:</strong><a class="anchor" aria-label="anchor" href="#download-all-3aqtl-as
 <strong>Query gene details with gene symbols, versioned or
 unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#query-gene-details-with-gene-symbols-versioned-or-unversioned-gencode-id"></a>
 </h4>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span></span>
 <span><span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tp53"</span>,<span class="st">"naDK"</span>,<span class="st">"SDF4"</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="va">geneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000210195.2"</span>,<span class="st">"ENSG00000078808"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geneInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                genes        genesUpper geneSymbol          gencodeId</span></span>
 <span><span class="co">#&gt; 1: ENSG00000210195.2 ENSG00000210195.2      MT-TT  ENSG00000210195.2</span></span>
@@ -528,11 +556,11 @@ unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#que
 <h4 id="query-variants-using-dbsnp-id-or-variant-id">
 <strong>Query variants using dbSNP ID or variant ID:</strong><a class="anchor" aria-label="anchor" href="#query-variants-using-dbsnp-id-or-variant-id"></a>
 </h4>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">varInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_varId.html">xQTLquery_varId</a></span><span class="op">(</span><span class="st">"rs12596338"</span><span class="op">)</span></span>
 <span><span class="va">varInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_varId.html">xQTLquery_varId</a></span><span class="op">(</span><span class="st">"chr11_66561248_T_C_b38"</span><span class="op">)</span></span>
 <span><span class="va">varInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_varPos.html">xQTLquery_varPos</a></span><span class="op">(</span>chrom<span class="op">=</span><span class="st">"chr1"</span>, pos<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1102708</span>,<span class="fl">1105739</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">varInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               variantId      snpId      b37VariantId chromosome     pos ref alt</span></span>
 <span><span class="co">#&gt; 1: chr1_1102708_G_C_b38 rs66622470 1_1038088_G_C_b37       chr1 1102708   G   C</span></span>
@@ -543,10 +571,10 @@ unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#que
 <h4 id="query-tissue-using-tissue-name">
 <strong>Query tissue using tissue name:</strong><a class="anchor" aria-label="anchor" href="#query-tissue-using-tissue-name"></a>
 </h4>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tissueAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_tissue.html">xQTLquery_tissue</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># fetch all tissues in GTEx</span></span>
 <span><span class="va">Brain</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_tissue.html">xQTLquery_tissue</a></span><span class="op">(</span><span class="st">"Brain"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Brain</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     colorHex  colorRgb datasetId eGeneCount eqtlAgeMaxFemale eqtlAgeMaxMale</span></span>
 <span><span class="co">#&gt;  1:   EEEE00 238,238,0   gtex_v8       3726               70             70</span></span>
@@ -693,13 +721,13 @@ unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#que
 <h4 id="query-sample-using-tissue-name-or-sample-id">
 <strong>Query sample using tissue name or sample ID:</strong><a class="anchor" aria-label="anchor" href="#query-sample-using-tissue-name-or-sample-id"></a>
 </h4>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_sampleByTissue.html">xQTLquery_sampleByTissue</a></span><span class="op">(</span><span class="st">"Brain - Amygdala"</span> <span class="op">)</span></span>
 <span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_sampleByTissue.html">xQTLquery_sampleByTissue</a></span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span>, pathologyNotesCategories<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">sampleIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GTEX-11NUK-0011-R4a-SM-DO12B"</span>, <span class="st">"GTEX-11ONC-0011-R4b-SM-DO93H"</span>,</span>
 <span>               <span class="st">"GTEX-11DXY-0526-SM-5EGGQ"</span>, <span class="st">"GTEX-13OVJ-1026-SM-5IFGI"</span><span class="op">)</span></span>
 <span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_sampleBySampleId.html">xQTLquery_sampleBySampleId</a></span><span class="op">(</span><span class="va">sampleIds</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sampleInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    ageBracket aliquotId autolysisScore dataType datasetId</span></span>
 <span><span class="co">#&gt; 1:      60-69  SM-5EGGQ           Mild   RNASEQ   gtex_v8</span></span>
@@ -739,7 +767,7 @@ unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#que
 <strong>Download exp with variant-gene pair in different
 tissues:</strong><a class="anchor" aria-label="anchor" href="#download-exp-with-variant-gene-pair-in-different-tissues"></a>
 </h4>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eQTLexp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlExp.html">xQTLdownload_eqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1641513"</span>,gene<span class="op">=</span><span class="st">"TP53"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -747,10 +775,10 @@ tissues:</strong><a class="anchor" aria-label="anchor" href="#download-exp-with-
 <strong>Download expression using variant ID and gencode
 ID:</strong><a class="anchor" aria-label="anchor" href="#download-expression-using-variant-id-and-gencode-id"></a>
 </h4>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eQTLexp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlExp.html">xQTLdownload_eqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_14677_G_A_b38"</span>,gene<span class="op">=</span><span class="st">"ENSG00000228463.9"</span>,</span>
 <span>                                tissueSiteDetail<span class="op">=</span><span class="st">"Stomach"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eQTLexp</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;         normExp genotypes</span></span>
 <span><span class="co">#&gt;   1: -2.1600444         0</span></span>
@@ -775,7 +803,7 @@ pair.<a class="anchor" aria-label="anchor" href="#download-normalized-intron-exc
 <strong>Download normalized intron-excision ratio in different
 tissues:</strong><a class="anchor" aria-label="anchor" href="#download-normalized-intron-excision-ratio-in-different-tissues"></a>
 </h4>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sQTLratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_sqtlExp.html">xQTLdownload_sqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"rs1450891501"</span>,</span>
 <span>                                phenotypeId<span class="op">=</span><span class="st">"chr1:497299:498399:clu_54863:ENSG00000239906.1"</span>,</span>
 <span>                                tissueSiteDetail<span class="op">=</span><span class="st">"Lung"</span><span class="op">)</span></span></code></pre></div>
@@ -785,11 +813,11 @@ tissues:</strong><a class="anchor" aria-label="anchor" href="#download-normalize
 <strong>Dowload normalized intron-excision ratio using variant
 ID:</strong><a class="anchor" aria-label="anchor" href="#dowload-normalized-intron-excision-ratio-using-variant-id"></a>
 </h4>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sQTLratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_sqtlExp.html">xQTLdownload_sqtlExp</a></span><span class="op">(</span>variantName<span class="op">=</span><span class="st">"chr1_1259424_T_C_b38"</span>,</span>
 <span>                                phenotypeId<span class="op">=</span><span class="st">" chr1:1487914:1489204:clu_52051:ENSG00000160072.19"</span>,</span>
 <span>                                tissueSiteDetail<span class="op">=</span><span class="st">"Adipose - Subcutaneous"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sQTLratio</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;          normExp genotypes</span></span>
 <span><span class="co">#&gt;   1:  1.39907974         0</span></span>
@@ -813,10 +841,10 @@ ID:</strong><a class="anchor" aria-label="anchor" href="#dowload-normalized-intr
 <h3 id="download-details-of-egenes-eqtl-genes-for-a-specified-gene-or-a-tissue-">Download details of eGenes (eQTL Genes) for a specified gene or a
 tissue.<a class="anchor" aria-label="anchor" href="#download-details-of-egenes-eqtl-genes-for-a-specified-gene-or-a-tissue-"></a>
 </h3>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_egene.html">xQTLdownload_egene</a></span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Prostate"</span>, recordPerChunk<span class="op">=</span><span class="fl">2000</span><span class="op">)</span></span>
 <span><span class="va">eGeneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_egene.html">xQTLdownload_egene</a></span><span class="op">(</span><span class="st">"TP53"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eGeneInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;             gencodeId geneSymbol entrezGeneId       geneType chromosome   start</span></span>
 <span><span class="co">#&gt; 1: ENSG00000141510.16       TP53         7157 protein coding      chr17 7661779</span></span>
@@ -847,10 +875,10 @@ tissue.<a class="anchor" aria-label="anchor" href="#download-details-of-egenes-e
 <h3 id="download-details-of-sgenes-sqtl-genes-for-a-specified-gene-or-a-tissue-">Download details of sGenes (sQTL Genes) for a specified gene or a
 tissue.<a class="anchor" aria-label="anchor" href="#download-details-of-sgenes-sqtl-genes-for-a-specified-gene-or-a-tissue-"></a>
 </h3>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_sgene.html">xQTLdownload_sgene</a></span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span>
 <span><span class="va">sGeneInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_sgene.html">xQTLdownload_sgene</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"DDX11"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span> <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eGeneInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;             gencodeId geneSymbol entrezGeneId       geneType chromosome   start</span></span>
 <span><span class="co">#&gt; 1: ENSG00000141510.16       TP53         7157 protein coding      chr17 7661779</span></span>
@@ -889,7 +917,7 @@ specified tissue:<a class="anchor" aria-label="anchor" href="#download-normalize
 <h4 id="download-gene-expression-with-a-genecode-id">
 <strong>Download gene expression with a genecode ID:</strong><a class="anchor" aria-label="anchor" href="#download-gene-expression-with-a-genecode-id"></a>
 </h4>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_exp.html">xQTLdownload_exp</a></span><span class="op">(</span><span class="st">"ENSG00000210195.2"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -897,7 +925,7 @@ specified tissue:<a class="anchor" aria-label="anchor" href="#download-normalize
 <strong>Download gene expression into a SummarizedExperiment
 object:</strong><a class="anchor" aria-label="anchor" href="#download-gene-expression-into-a-summarizedexperiment-object"></a>
 </h4>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_exp.html">xQTLdownload_exp</a></span><span class="op">(</span><span class="st">"ENSG00000210195.2"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span>,</span>
 <span>               toSummarizedExperiment<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># extract expression profile from SummarizedExperiment object:</span></span>
@@ -910,7 +938,7 @@ object:</strong><a class="anchor" aria-label="anchor" href="#download-gene-expre
 <strong>Download gene expression profiles for multiple
 genes:</strong><a class="anchor" aria-label="anchor" href="#download-gene-expression-profiles-for-multiple-genes"></a>
 </h4>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_exp.html">xQTLdownload_exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tp53"</span>,<span class="st">"naDK"</span>,<span class="st">"SDF4"</span><span class="op">)</span>,</span>
 <span>                                tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Coronary"</span>,</span>
 <span>                                pathologyNotesCategories<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -920,10 +948,10 @@ genes:</strong><a class="anchor" aria-label="anchor" href="#download-gene-expres
 <strong>Download using versioned and unversioned gencode
 Id.</strong><a class="anchor" aria-label="anchor" href="#download-using-versioned-and-unversioned-gencode-id-"></a>
 </h4>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expProfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_exp.html">xQTLdownload_exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000141510.16"</span>,<span class="st">"ENSG00000008130.15"</span>,<span class="st">"ENSG00000078808"</span><span class="op">)</span>,</span>
 <span>                               tissueSiteDetail<span class="op">=</span><span class="st">"Artery - Coronary"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expProfiles</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            gencodeId              genes geneSymbol datasetId tissueSiteDetailId</span></span>
 <span><span class="co">#&gt; 1 ENSG00000141510.16 ENSG00000141510.16       TP53   gtex_v8    Artery_Coronary</span></span>
@@ -943,9 +971,9 @@ Id.</strong><a class="anchor" aria-label="anchor" href="#download-using-versione
 <h3 id="download-median-expression-of-all-samples-for-specified-genes-across-tissues-">Download median expression of all samples for specified genes across
 tissues.<a class="anchor" aria-label="anchor" href="#download-median-expression-of-all-samples-for-specified-genes-across-tissues-"></a>
 </h3>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geneMedExp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_geneMedExp.html">xQTLdownload_geneMedExp</a></span><span class="op">(</span>genes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP53"</span>, <span class="st">"IRF5"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geneMedExp</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               gencodeId geneSymbol   median             tissueSiteDetail</span></span>
 <span><span class="co">#&gt;   1: ENSG00000128604.19       IRF5  8.53482       Adipose - Subcutaneous</span></span>
