@@ -18,7 +18,5 @@ a data.table object includng all CpG ID
 download meta data of H3K4me1 and H3K27ac histone QTL (hQTL)
 }
 \examples{
-\donttest{
 hqtlmeta <- xQTLdownload_hqtlmeta(histone_type="H3K4ME1", cell_type="T cell")
-}
 }

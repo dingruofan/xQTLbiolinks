@@ -1797,9 +1797,7 @@ xQTL_export <- function(exp_object, out_format="to_clusterP"){
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' hqtlmeta <- xQTLdownload_hqtlmeta(histone_type="H3K4ME1", cell_type="T cell")
-#' }
 xQTLdownload_hqtlmeta <- function(histone_type="H3K27AC", cell_type="monocyte"){
   cell_dt <- data.table(cell_types = c("monocyte", "neutrophil", "T cell"), cell_abbr= c("mono", "neut", "tcel"))
   histone_dt <- data.table( histone_types = c("H3K27AC", "H3K4ME1"), histone_abbr=c("K27AC", "K4ME1"))
@@ -1831,9 +1829,7 @@ xQTLdownload_hqtlmeta <- function(histone_type="H3K27AC", cell_type="monocyte"){
 #' @export
 #'
 #' @examples
-#' \donttest{
 #'  hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", histone_type="H3K4ME1", cell_type="T cell")
-#' }
 xQTLdownload_hqtl <- function(phenotype_id="9:99773935-99776816", histone_type="H3K27AC", cell_type="monocyte", hqtlmeta=NULL ){
   #
   phenotype_id_ <- phenotype_id
@@ -1852,16 +1848,15 @@ xQTLdownload_hqtl <- function(phenotype_id="9:99773935-99776816", histone_type="
   return(hqtl)
 }
 
-#' @title Download summary statistics of DNA methylation QTL (mQTL) of a specified CpG location
+
+#' @title Download meta data of DNA methylation QTL (mQTL)
 #'
 #' @param tissue_name (String)  One of the tissues: BreastMammaryTissue, ColonTransverse, KidneyCortex, Lung, MuscleSkeletal, Ovary, Prostate, Testis and WholeBlood
 #' @return A data.table object
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' mQTL_meta<- xQTLdownload_mqtlmeta("Testis")
-#' }
 xQTLdownload_mqtlmeta <- function(tissue_name="BreastMammaryTissue"){
   tissues <- c("BreastMammaryTissue", "ColonTransverse", "KidneyCortex", "Lung", "MuscleSkeletal", "Ovary", "Prostate", "Testis", "WholeBlood")
   if(!(tissue_name %in% tissues)){ stop(paste0("Invalid tissue name, must be selected from ", paste0(tissues, collapse = ", "))) }
@@ -1882,7 +1877,8 @@ xQTLdownload_mqtlmeta <- function(tissue_name="BreastMammaryTissue"){
 
 }
 
-#' @title download meta data of DNA methylation QTL (mQTL)
+
+#' @title Download summary statistics of DNA methylation QTL (mQTL) of a specified CpG location
 #'
 #' @param cpg_id phenotype_id like: cg00000236, can be obtained using `xQTLdownload_mqtlmeta`
 #' @param tissue_name (String)  One of the tissues: BreastMammaryTissue, ColonTransverse, KidneyCortex, Lung, MuscleSkeletal, Ovary, Prostate, Testis and WholeBlood
@@ -1891,9 +1887,7 @@ xQTLdownload_mqtlmeta <- function(tissue_name="BreastMammaryTissue"){
 #' @export
 #'
 #' @examples
-#' \donttest{
-#' mQTL_dt <- xQTLdownload_mQTL(cpg_id="cg00000221",tissue_name="Prostate")
-#' }
+#' mQTL_dt <- xQTLdownload_mQTL(cpg_id="cg00000221", tissue_name="Prostate")
 xQTLdownload_mQTL <- function(cpg_id="cg00000221",tissue_name="WholeBlood", mQTL_meta=NULL){
   tissues <- c("BreastMammaryTissue", "ColonTransverse", "KidneyCortex", "Lung", "MuscleSkeletal", "Ovary", "Prostate", "Testis", "WholeBlood")
   if(!(tissue_name %in% tissues)){ stop(paste0("Invalid tissue name, must be selected from ", paste0(tissues, collapse = ", "))) }
