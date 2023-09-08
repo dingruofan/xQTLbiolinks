@@ -170,13 +170,31 @@ aqtlAssos <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
 aqtlAssos
 ```
 
+### mQTL Download:
+#### **Download all mQTL associations with cgp_id "cg00000221" in Prostate:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+mQTL_meta<- xQTLdownload_mqtlmeta("Prostate")
+mQTL_dt <- xQTLdownload_mQTL(cpg_id="cg00000221", tissue_name="Prostate")
+```
+
+
+
+### hQTL Download:
+#### **Download all hQTL associations for H3K4ME1 in T cell:**
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+hqtlmeta <- xQTLdownload_hqtlmeta(histone_type="H3K4ME1", cell_type="T cell")
+hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", 
+                             histone_type="H3K4ME1", cell_type="T cell")
+```
+
+
 ### Single-cell eQTLs (sc-eQTLs) Download:
 #### **Download Cell-type eQTLs for gene TP53 in B cell from study `Resztak2022biorxiv`:**
-```
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 # Get details of sc-eQTL study:
 study_info <- xQTLquery_scInfo()
-sceQTLs <- xQTLdownload_sc(gene="TP53", cell_type = "B cell",
-                          qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
+sceQTL_dt <- xQTLdownload_sc(gene="TP53", cell_type = "B Cell", cell_state="-",
+                qtl_type="Cell-type-specific eQTL", study_name = "Resztak2022biorxiv")
 ```
 
 ## Query details of gene, variant, tissue and samples in GTEx:
