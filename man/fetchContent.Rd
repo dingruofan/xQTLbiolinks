@@ -4,7 +4,13 @@
 \alias{fetchContent}
 \title{Fetch data using url by three methods}
 \usage{
-fetchContent(url1, method = "curl", downloadMethod = "auto", isJson = TRUE)
+fetchContent(
+  url1,
+  method = "curl",
+  downloadMethod = "auto",
+  isJson = TRUE,
+  retryTimes = 4
+)
 }
 \arguments{
 \item{url1}{A url string.}
@@ -14,6 +20,8 @@ fetchContent(url1, method = "curl", downloadMethod = "auto", isJson = TRUE)
 \item{downloadMethod}{The same methods from utils::download.file function.}
 
 \item{isJson}{Fetched content is a json file or not. Defaulst: TRUE.}
+
+\item{retryTimes}{retry times. Default:4}
 }
 \value{
 A json object.

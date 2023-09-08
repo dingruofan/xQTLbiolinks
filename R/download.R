@@ -274,6 +274,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE, data_source="eQTL_catalogue"){
   . <- geneInfoV19 <- pos <- ref<- alt<- tissue<-NULL
   chrom <- tissue_label <- study_accession <- variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
+  tissueSiteDetail <- tissueSiteDetailId <- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -282,7 +283,22 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
     tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissueLabel | tissueSiteDetailId==tissueLabel][1,]
     if(nrow(tissueDT)==0){ stop("tissue not found...")}
 
+    # check geneType
+    if( !(geneType %in% c("auto","geneSymbol", "gencodeId")) ){
+      stop("Parameter \"geneType\" should be choosen from \"auto\", \"geneSymbol\", and \"gencodeId\".")
+    }
+    if( length(gene)==1 && gene!=""){
+      # Automatically determine the type of variable:
+      if(geneType=="auto"){
+        if( all(unlist(lapply(gene, function(g){ str_detect(g, "^ENSG") }))) ){
+          geneType <- "gencodeId"
+        }else{
+          geneType <- "geneSymbol"
+        }
+      }
+    }
     # merge with genes:
+    message("==> ",geneType)
     if(geneType!="gencodeId"){
       message("==> Querying genes...")
       geneDT <- xQTLquery_gene(gene)
@@ -290,7 +306,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
     }else if(geneType=="gencodeId"){
       geneDT <- data.table(gencodeId= gene)
     }
-    if(nrow(geneDT)==0){ return(NULL)}
+    if(nrow(geneDT)==0){ message(0);return(NULL)}
     geneDT$url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/eQTL_b38_rsid_gene/", tissueDT$tissueSiteDetailId, "/",geneDT$gencodeId)
     geneDT$tmpFilePath <- paste(unlist(lapply(1:nrow(geneDT), function(x){tempfile(pattern = "eqtl_")})),"eQTL_",1:nrow(geneDT),".txt", sep="")
 
@@ -1371,7 +1387,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail=
                    "datasetId=",datasetId,"&",
                    "gencodeId=", genesURL[i,]$genesURL,
                    ifelse(tissueSiteDetail=="","&", paste0("&tissueSiteDetailId=", tissueSiteDetailId)),
-                   "format=json"
+                   "&format=json"
     )
     url1 <- utils::URLencode(url1)
     # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
@@ -1623,10 +1639,11 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="geneSymbol",  tissue=""
 #'
 #' @examples
 #' \donttest{
-#'  xQTLdownload_sc(gene="TP53", cell_type = "B cell",
-#'                  qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
+#'  sceQTL_dt <- xQTLdownload_sc(gene="TP53", cell_type = "B Cell", cell_state="-",
+#'                  qtl_type="Cell-type-specific eQTL", study_name = "Resztak2022biorxiv")
 #' }
 xQTLdownload_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocytes", cell_state="", qtl_type="Cell-type eQTL", study_name="Bryois2022NN"){
+  tmp <- tissueSiteDetail <- genes <- NULL
   study_info <- xQTLquery_scInfo()
 
   if(geneType=="gencodeId"){
@@ -1648,14 +1665,80 @@ xQTLdownload_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astroc
   if( !(toupper(study_name) %in% toupper(unique(study_info$study))) ){
     stop(" == study name|",study_name,"| is not in the list. please check using 'xQTLquery_scInfo'")
   }
-  if(cell_state==""){cell_state <- "NA"}
+  if(cell_state==""){cell_state <- "-"}
 
   url1 <- paste0("http://bioinfo.szbl.ac.cn/scQTLbase_backend/query_xQTLbiolinks?geneName=",genename,"&cellType=",cell_type,"&cellState=",cell_state, "&study=",study_name,"&qtlType=",qtl_type )
+  # message(url1)
   url1 <- utils::URLencode(url1)
+  url1 <- stringr::str_replace_all(url1, fixed("+"), fixed("%2B"))
+  url1 <- stringr::str_replace_all(url1, fixed("("), fixed("%28"))
+  url1 <- stringr::str_replace_all(url1, fixed(")"), fixed("%29"))
+  url1 <- stringr::str_replace_all(url1, fixed(";"), fixed("%3B"))
   # print(url1)
-  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto", retryTimes=11)
   qtl_summary <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
-  if(nrow(tmp)==0){
+  if(nrow(qtl_summary)==0){
+    message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
+    message("== Done.")
+    return(data.table::data.table())
+  }
+  return(qtl_summary)
+}
+
+
+#' @title download significant sc-eQTL associations
+#'
+#' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
+#' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".
+#' @param cell_type (character)cell types supported in the list of study_info from 'xQTLquery_scInfo'
+#' @param cell_state (character)cell states supported in the list of study_info from 'xQTLquery_scInfo'
+#' @param qtl_type (character)QTL types supported in the list of study_info from 'xQTLquery_scInfo'
+#' @param study_name (character)study name supported in the list of study_info from 'xQTLquery_scInfo'
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  sceQTL_dt <- xQTLdownload_scSig(gene="CNTNAP2", cell_type = "Definitive Endoderm (defendo)",
+#'    cell_state="Response With Pseudotime", qtl_type="Dynamic eQTL", study_name = "cuomo2020NC")
+#' }
+xQTLdownload_scSig <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocytes", cell_state="", qtl_type="Cell-type eQTL", study_name="Bryois2022NN"){
+  tmp <- tissueSiteDetail <- genes <- NULL
+  study_info <- xQTLquery_scInfo()
+
+  if(geneType=="gencodeId"){
+    gene_info <- xQTLquery_gene(gene)
+    if(nrow(gene_info)==0){message("invalid gene!");return(data.table())}
+    genename  <- gene_info$geneSymbol
+  }else if(geneType == "geneSymbol"){
+    genename <- gene
+  }
+  if( !(toupper(cell_type) %in% toupper(unique(study_info$cell_type_name))) ){
+    stop(" == cell type |",cell_type,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if( !(toupper(cell_state) %in% toupper(unique(study_info$cell_state))) ){
+    stop(" == cell state|",cell_state,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if( !(toupper(qtl_type) %in% toupper(unique(study_info$QTL.type))) ){
+    stop(" == QTL type|",qtl_type,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if( !(toupper(study_name) %in% toupper(unique(study_info$study))) ){
+    stop(" == study name|",study_name,"| is not in the list. please check using 'xQTLquery_scInfo'")
+  }
+  if(cell_state==""){cell_state <- "-"}
+
+  url1 <- paste0("http://bioinfo.szbl.ac.cn/scQTLbase_backend/query_xQTLbiolinks_sig?geneName=",genename,"&cellType=",cell_type,"&cellState=",cell_state, "&study=",study_name,"&qtlType=",qtl_type )
+  message(url1)
+  url1 <- utils::URLencode(url1)
+  url1 <- stringr::str_replace_all(url1, fixed("+"), fixed("%2B"))
+  url1 <- stringr::str_replace_all(url1, fixed("("), fixed("%28"))
+  url1 <- stringr::str_replace_all(url1, fixed(")"), fixed("%29"))
+  url1 <- stringr::str_replace_all(url1, fixed(";"), fixed("%3B"))
+  # print(url1)
+  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto", retryTimes=11)
+  qtl_summary <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
+  if(nrow(qtl_summary)==0){
     message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
     message("== Done.")
     return(data.table::data.table())
@@ -1665,7 +1748,7 @@ xQTLdownload_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astroc
 
 #' @title export expression object to specified format
 #'
-#' @param object expression object derived from `xQTLdownload_exp`
+#' @param exp_object expression object derived from `xQTLdownload_exp`
 #' @param out_format "to_clusterP", "to_wgcna" and to "to_deseq"
 #'
 #' @importFrom SummarizedExperiment assay
@@ -1702,5 +1785,136 @@ xQTL_export <- function(exp_object, out_format="to_clusterP"){
     return(gene_exp)
   }
 }
+
+
+
+#' @title download meta data of H3K4me1 and H3K27ac histone QTL (hQTL)
+#'
+#' @param histone_type (string) One of the histone types: "H3K27AC" or "H3K4ME1".
+#' @param cell_type (string) One of the cell types: "monocyte", "neutrophil" or "T cell".
+#'
+#' @return a data.table object includng all CpG ID
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' hqtlmeta <- xQTLdownload_hqtlmeta(histone_type="H3K4ME1", cell_type="T cell")
+#' }
+xQTLdownload_hqtlmeta <- function(histone_type="H3K27AC", cell_type="monocyte"){
+  cell_dt <- data.table(cell_types = c("monocyte", "neutrophil", "T cell"), cell_abbr= c("mono", "neut", "tcel"))
+  histone_dt <- data.table( histone_types = c("H3K27AC", "H3K4ME1"), histone_abbr=c("K27AC", "K4ME1"))
+  cell_abbr <- na.omit(cell_dt[cell_type, on="cell_types"])
+  if(nrow(cell_abbr)==0){stop("Invalid cell type, please select from: \"monocyte\", \"neutrophil\" or \"T cell\"")}
+  histone_abbr <- na.omit(histone_dt[histone_type, on = "histone_types"])
+  if(nrow(histone_abbr)==0){stop("Invalid histone type, please select from: \"H3K27AC\" or \"H3K4ME1\"")}
+  #
+  histone_cell <- paste0(cell_abbr$cell_abbr, "_", histone_abbr$histone_abbr, "_genes")
+  url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/haQTL/",histone_cell)
+  cat("== Downloading metadata of ",histone_type,"-", cell_type, "for hQTL...")
+  meta_hqtl <- fread(url1, header = TRUE)
+  meta_hqtl$type <- paste0(cell_abbr$cell_abbr, "_", histone_abbr$histone_abbr)
+  if(nrow(meta_hqtl)==0){
+    stop("Download fail because of unstable network")
+  }
+  return(meta_hqtl)
+}
+
+
+#' @title Download summary statistics of H3K4me1 and H3K27ac histone QTL (hQTL) of a specified location
+#'
+#' @param phenotype_id phenotype_id that formatted with genome location, like: 9-99773935-99776816, can be obtained using `xQTLdownload_hqtlmeta`
+#' @param histone_type (string) One of the histone types: "H3K27AC" or "H3K4ME1".
+#' @param cell_type (string) One of the cell types: "monocyte", "neutrophil" or "T cell".
+#' @param hqtlmeta A data.table object obtained via `xQTLdownload_hqtlmeta`.
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#'  hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", histone_type="H3K4ME1", cell_type="T cell")
+#' }
+xQTLdownload_hqtl <- function(phenotype_id="9:99773935-99776816", histone_type="H3K27AC", cell_type="monocyte", hqtlmeta=NULL ){
+  #
+  phenotype_id_ <- phenotype_id
+  if(is.null(hqtlmeta)){
+    meta_hqtl <- xQTLdownload_hqtlmeta(histone_type, cell_type)
+  }
+  meta_hqtl <- na.omit(meta_hqtl[phenotype_id==phenotype_id_,])
+  if(nrow(meta_hqtl)==0){stop("Invalid phenotype_id, please use `xQTLdownload_hqtlmeta` to obtain all CpG IDs")}
+
+  # re format:
+  phenotype_id_ <- stringr::str_split(phenotype_id_, stringr::regex("[:-]"))[[1]]
+  phenotype_id_ <- paste0(paste0(phenotype_id_, collapse = "-"),".txt")
+  #
+  url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/haQTL/", meta_hqtl$type, "/", phenotype_id_)
+  hqtl <- fread(url1)
+  return(hqtl)
+}
+
+#' @title Download summary statistics of DNA methylation QTL (mQTL) of a specified CpG location
+#'
+#' @param tissue_name (String)  One of the tissues: BreastMammaryTissue, ColonTransverse, KidneyCortex, Lung, MuscleSkeletal, Ovary, Prostate, Testis and WholeBlood
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' mQTL_meta<- xQTLdownload_mqtlmeta("Testis")
+#' }
+xQTLdownload_mqtlmeta <- function(tissue_name="BreastMammaryTissue"){
+  tissues <- c("BreastMammaryTissue", "ColonTransverse", "KidneyCortex", "Lung", "MuscleSkeletal", "Ovary", "Prostate", "Testis", "WholeBlood")
+  if(!(tissue_name %in% tissues)){ stop(paste0("Invalid tissue name, must be selected from ", paste0(tissues, collapse = ", "))) }
+  #
+  url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/mQTL/", tissue_name, "_cpg_id.txt")
+  temp_x <- tempfile()
+  download.file(url1, temp_x)
+  if(file.exists(temp_x)){
+    mqtl_meta <- fread(temp_x, header = FALSE)
+    file.remove(temp_x)
+    # mqtl_meta <- fread(url1, header=FALSE)
+    names(mqtl_meta) <- "cpg_id"
+    mqtl_meta$cpg_id <- str_remove(mqtl_meta$cpg_id, stringr::fixed(".txt"))
+    return(mqtl_meta)
+  }else{
+    stop("download failed")
+  }
+
+}
+
+#' @title download meta data of DNA methylation QTL (mQTL)
+#'
+#' @param cpg_id phenotype_id like: cg00000236, can be obtained using `xQTLdownload_mqtlmeta`
+#' @param tissue_name (String)  One of the tissues: BreastMammaryTissue, ColonTransverse, KidneyCortex, Lung, MuscleSkeletal, Ovary, Prostate, Testis and WholeBlood
+#'
+#' @return A data.table object
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' mQTL_dt <- xQTLdownload_mQTL(cpg_id="cg00000221",tissue_name="Prostate")
+#' }
+xQTLdownload_mQTL <- function(cpg_id="cg00000221",tissue_name="WholeBlood", mQTL_meta=NULL){
+  tissues <- c("BreastMammaryTissue", "ColonTransverse", "KidneyCortex", "Lung", "MuscleSkeletal", "Ovary", "Prostate", "Testis", "WholeBlood")
+  if(!(tissue_name %in% tissues)){ stop(paste0("Invalid tissue name, must be selected from ", paste0(tissues, collapse = ", "))) }
+  if(!is.null(mQTL_meta)){
+    cpg_id_ <- cpg_id
+    mQTL_meta <- na.omit(mQTL_meta[cpg_id==cpg_id_,])
+    if(nrow(mQTL_meta)==0){ stop("Invalid cpg_id in ", tissue_name)}
+  }
+  url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/mQTL/", tissue_name, "/",cpg_id,".txt")
+  temp_x <- tempfile()
+  download.file(url1, temp_x)
+
+  if(file.exists(temp_x)){
+    mqtl <- fread(temp_x, header = TRUE)
+    file.remove(temp_x)
+    return(mqtl)
+  }else{
+      stop("Download failed!")
+    }
+}
+
+
 
 

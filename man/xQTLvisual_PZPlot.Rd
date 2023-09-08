@@ -28,7 +28,7 @@ Compare P-values reported in the association result file to P-values calculated 
 }
 \examples{
 \donttest{
-url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwasDFsub_MMP7.txt"
+url1 <- "http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwasDFsub_MMP7.txt"
 sumDT <- data.table::fread(url1, sep="\t")
 xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)], distribution_func="pchisq")
 }

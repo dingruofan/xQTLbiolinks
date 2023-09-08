@@ -9,7 +9,15 @@ xQTLvisual_eqtlExp(
   gene = "",
   variantType = "auto",
   geneType = "auto",
-  tissueSiteDetail = ""
+  tissueSiteDetail = "",
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  xlab_text = "Genotypes",
+  ylab_text = "Normalized expression",
+  ylim_v = NULL,
+  title_text = "",
+  jitter_color = NULL
 )
 }
 \arguments{
@@ -22,6 +30,22 @@ xQTLvisual_eqtlExp(
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
 
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{xlab_text}{Lable for x-axis}
+
+\item{ylab_text}{for y-axis}
+
+\item{ylim_v}{Set scale limits}
+
+\item{title_text}{Title of the plot}
+
+\item{jitter_color}{(A character vector) Set the point color.}
 }
 \value{
 A list containing eQTL detail, expression profile and a ggplot object.
@@ -31,6 +55,11 @@ Boxplot of normalized expression among genotypes for eQTL.
 }
 \examples{
 \donttest{
-expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754",gene ="IRF5",tissueSiteDetail="Whole Blood")
+expEqtl<-xQTLvisual_eqtlExp(variantName="rs3778754", gene ="IRF5",
+                            tissueSiteDetail="Whole Blood", xlab_text="Genotypes",
+                            ylab_text="Expression", ylim_v=c(-2,2),
+                            axis_text_size=1.3, axis_title_size=1.3, title_size=1.4,
+                            title_text="Genotype-expression",
+                            jitter_color=c("#83bea5", "#e09069","#8f9dc6") )
 }
 }

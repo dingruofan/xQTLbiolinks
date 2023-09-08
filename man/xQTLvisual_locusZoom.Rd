@@ -12,6 +12,7 @@ xQTLvisual_locusZoom(
   legend = TRUE,
   ylim = NULL,
   legend_position = c("topright", "bottomright", "topleft"),
+  point_fill = NULL,
   snpLD = NULL
 )
 }
@@ -36,7 +37,9 @@ xQTLvisual_locusZoom(
 
 \item{ylim}{set the minimum and maximum values for the y-axis. By default, the function will automatically determine the y-axis limits based on the data being plotted.}
 
-\item{legend_position}{(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
+\item{legend_position}{(character, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
+
+\item{point_fill}{(character, optional) Customized color vectors (5 kinds of colors).}
 
 \item{snpLD}{A data.frame of LD matirx. Default is null.}
 }

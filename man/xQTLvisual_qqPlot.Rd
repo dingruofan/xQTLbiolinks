@@ -28,7 +28,7 @@ plot quantile-quantile plot with pvalue
 }
 \examples{
 \donttest{
-url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
+url1 <- "http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/gwasSub.txt.gz"
 snpInfo <- data.table::fread(url1, sep="\t")
 xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 }

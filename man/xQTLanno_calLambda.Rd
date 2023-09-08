@@ -17,7 +17,7 @@ calculate genomic control inflation factor for a QTL/GWAS summary statistics dat
 }
 \examples{
 \donttest{
-url1 <- "https://master.dl.sourceforge.net/project/exampledata/eqtl/MMP7_qtlDF.txt"
+url1 <- "http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/eqtl/MMP7_qtlDF.txt"
 qtl <- data.table::fread(url1, sep="\t")
 
 # calculate lambda value with all variants

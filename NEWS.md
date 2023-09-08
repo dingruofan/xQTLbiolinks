@@ -1,3 +1,8 @@
+# xQTLbiolinks 1.6.3
+
+## Major changes
+* Add function for DNA methylation QTLs (mQTLs) histone QTLs (hQTLs) retrieval. 
+
 # xQTLbiolinks 1.5.3
 
 ## Major changes

@@ -7,9 +7,9 @@
 xQTL_export(exp_object, out_format = "to_clusterP")
 }
 \arguments{
-\item{out_format}{"to_clusterP", "to_wgcna" and to "to_deseq"}
+\item{exp_object}{expression object derived from \code{xQTLdownload_exp}}
 
-\item{object}{expression object derived from \code{xQTLdownload_exp}}
+\item{out_format}{"to_clusterP", "to_wgcna" and to "to_deseq"}
 }
 \value{
 A data.frame/data.table object

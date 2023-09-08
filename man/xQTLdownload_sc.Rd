@@ -34,7 +34,7 @@ download all sc-eQTL associations
 }
 \examples{
 \donttest{
- xQTLdownload_sc(gene="TP53", cell_type = "B cell",
-                 qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
+ sceQTL_dt <- xQTLdownload_sc(gene="TP53", cell_type = "B Cell", cell_state="-",
+                 qtl_type="Cell-type-specific eQTL", study_name = "Resztak2022biorxiv")
 }
 }

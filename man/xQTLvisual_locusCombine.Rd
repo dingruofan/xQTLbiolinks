@@ -44,7 +44,7 @@ This function is rebuilt from \code{locuscompare.R} (https://github.com/boxiangl
 }
 \examples{
 # load data:
-u1 <-"https://master.dl.sourceforge.net/project/exampledata/gwas/AD/gwasEqtldata.txt"
+u1 <-"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/AD/gwasEqtldata.txt"
 gwasEqtldata <- data.table::fread(u1)
 xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
 }

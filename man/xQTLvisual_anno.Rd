@@ -21,9 +21,9 @@ Visualizing annotated variants
 }
 \examples{
 \donttest{
-url1 <- "https://master.dl.sourceforge.net/project/exampledata/gwas/gwasSub.txt.gz"
+url1 <- "http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/gwasSub.txt.gz"
 snpInfo <- fread(url1, sep="\t")
 snpHits <- xQTLanno_genomic(snpInfo)
-
+p <- xQTLvisual_anno(snpHits)
 }
 }

@@ -28,7 +28,7 @@ library(stringr)
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
-download.file("https://master.dl.sourceforge.net/project/exampledata/query_download_vignette.zip", temp1)
+download.file("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/query_download_vignette.zip", temp1)
 load(unz(temp1,"query_download_vignette.RData"))
 close(file(temp1))
 rm(temp1)

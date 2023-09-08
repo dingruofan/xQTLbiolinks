@@ -145,6 +145,9 @@
     <loc>/reference/xQTLanno_calLambda.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLanno_chippeak.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLanno_enrich.html</loc>
   </url>
   <url>
@@ -178,10 +181,25 @@
     <loc>/reference/xQTLdownload_geneMedExp.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLdownload_hqtl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLdownload_hqtlmeta.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLdownload_ld.html</loc>
   </url>
   <url>
+    <loc>/reference/xQTLdownload_mQTL.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLdownload_mqtlmeta.html</loc>
+  </url>
+  <url>
     <loc>/reference/xQTLdownload_sc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLdownload_scSig.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLdownload_sgene.html</loc>
@@ -257,6 +275,9 @@
   </url>
   <url>
     <loc>/reference/xQTLvisual_genesExp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xQTLvisual_genoBox.html</loc>
   </url>
   <url>
     <loc>/reference/xQTLvisual_locusCombine.html</loc>
