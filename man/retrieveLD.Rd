@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{retrieveLD}
 \alias{retrieveLD}
-\title{Retrive SNP pairwise LD from locuscompare database.}
+\title{Retrieve SNP pairwise LD from locuscompare database}
 \usage{
 retrieveLD(chr, snp, population)
 }

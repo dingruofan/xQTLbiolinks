@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_eqtlAllAssoPos}
 \alias{xQTLdownload_eqtlAllAssoPos}
-\title{Download summary statistics of eQTL with genome position.}
+\title{Download summary statistics data for eQTLs with genome positions.}
 \usage{
 xQTLdownload_eqtlAllAssoPos(
   chrom = "",
@@ -45,7 +45,7 @@ xQTLdownload_eqtlAllAssoPos(
 A data.table object
 }
 \description{
-Download summary statistics of eQTL with genome position.
+Download summary statistics data for eQTLs with genome positions.
 }
 \examples{
 \donttest{

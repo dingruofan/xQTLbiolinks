@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_eqtlExp}
 \alias{xQTLvisual_eqtlExp}
-\title{Boxplot of normalized expression among genotypes for eQTL.}
+\title{Boxplot of normalized expression stratified by genotypes for eQTL.}
 \usage{
 xQTLvisual_eqtlExp(
   variantName = "",
@@ -51,7 +51,7 @@ xQTLvisual_eqtlExp(
 A list containing eQTL detail, expression profile and a ggplot object.
 }
 \description{
-Boxplot of normalized expression among genotypes for eQTL.
+Boxplot of normalized expression stratified by genotypes for eQTL.
 }
 \examples{
 \donttest{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_tissue}
 \alias{xQTLquery_tissue}
-\title{Fetch all details of a specified tissue or all tissues}
+\title{Query details for a specified tissue}
 \usage{
 xQTLquery_tissue(tissueName = "")
 }

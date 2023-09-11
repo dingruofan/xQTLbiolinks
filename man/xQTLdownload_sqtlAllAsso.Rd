@@ -2,11 +2,11 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_sqtlAllAsso}
 \alias{xQTLdownload_sqtlAllAsso}
-\title{download summary statistics of sQTL of a specified gene in GTEx v8.}
+\title{Download summary statistics data for sQTLs with a specified gene or a tissue}
 \usage{
 xQTLdownload_sqtlAllAsso(
   genes = "",
-  geneType = "gencodeId",
+  geneType = "auto",
   tissue = "",
   clu_names = "",
   clu_geneid_DF = NULL
@@ -27,7 +27,7 @@ xQTLdownload_sqtlAllAsso(
 A data.table object of sQTL dataset.
 }
 \description{
-download summary statistics of sQTL of a specified gene in GTEx v8.
+Download summary statistics data for sQTLs with a specified gene or a tissue
 }
 \examples{
 \donttest{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_getSentinelSnp}
 \alias{xQTLanalyze_getSentinelSnp}
-\title{Detect sentinel SNPs in a given summary statistis dataset.}
+\title{Detect sentinel SNPs for GWAS using summary statistics data}
 \usage{
 xQTLanalyze_getSentinelSnp(
   gwasDF,

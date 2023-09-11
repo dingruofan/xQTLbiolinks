@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_locusZoom}
 \alias{xQTLvisual_locusZoom}
-\title{Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics}
+\title{Locuszoom plot for visualizing regional signals relative to genomic position with summary statistics data}
 \usage{
 xQTLvisual_locusZoom(
   DF,

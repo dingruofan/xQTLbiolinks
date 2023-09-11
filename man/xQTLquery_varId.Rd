@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_varId}
 \alias{xQTLquery_varId}
-\title{Query variant in GTEx with variant ID or dbSNP ID}
+\title{Query variant with variant ID or dbSNP ID}
 \usage{
 xQTLquery_varId(variantName = "", variantType = "auto")
 }
@@ -15,7 +15,7 @@ xQTLquery_varId(variantName = "", variantType = "auto")
 A data.table object.
 }
 \description{
-Query variant in GTEx with variant ID or dbSNP ID
+Query variant with variant ID or dbSNP ID
 }
 \examples{
 xQTLquery_varId("rs12596338")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_scSig}
 \alias{xQTLdownload_scSig}
-\title{download significant sc-eQTL associations}
+\title{Download significant sc-eQTL associations for a specified gene}
 \usage{
 xQTLdownload_scSig(
   gene = "BIN3",
@@ -30,7 +30,7 @@ xQTLdownload_scSig(
 A data.table object
 }
 \description{
-download significant sc-eQTL associations
+Download significant sc-eQTL associations for a specified gene
 }
 \examples{
 \donttest{

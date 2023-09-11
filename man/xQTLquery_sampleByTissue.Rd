@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_sampleByTissue}
 \alias{xQTLquery_sampleByTissue}
-\title{Query sample's details with tissue name}
+\title{Query details of samples by tissue name}
 \usage{
 xQTLquery_sampleByTissue(
   tissueSiteDetail = "Liver",
@@ -24,7 +24,7 @@ xQTLquery_sampleByTissue(
 returen a data.table object of samples' information
 }
 \description{
-Query sample's details with tissue name
+Query details of samples by tissue name
 }
 \examples{
 sampleInfo <- xQTLquery_sampleByTissue("Brain - Amygdala" )

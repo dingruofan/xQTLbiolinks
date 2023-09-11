@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_qqPlot}
 \alias{xQTLvisual_qqPlot}
-\title{plot quantile-quantile plot with pvalue}
+\title{Quantile-quantile plot with p-values from GWAS summary statistics data}
 \usage{
 xQTLvisual_qqPlot(
   summaryDT,
@@ -24,7 +24,7 @@ xQTLvisual_qqPlot(
 ggplot2 object
 }
 \description{
-plot quantile-quantile plot with pvalue
+Quantile-quantile plot with p-values from GWAS summary statistics data
 }
 \examples{
 \donttest{

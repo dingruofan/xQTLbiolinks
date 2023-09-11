@@ -28,7 +28,7 @@ library(stringr)
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 temp1 <- tempfile(fileext=".zip")
-download.file("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/query_download_vignette.zip", temp1)
+download.file("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/query_download_vignette_2.zip", temp1)
 load(unz(temp1,"query_download_vignette.RData"))
 close(file(temp1))
 rm(temp1)
@@ -170,11 +170,15 @@ aqtlAssos <- xQTLdownload_xqtlAllAsso(genes=c("MMP7"), tissue="Lung")
 aqtlAssos
 ```
 
+
 ### mQTL Download:
 #### **Download all mQTL associations with cgp_id "cg00000221" in Prostate:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 mQTL_meta<- xQTLdownload_mqtlmeta("Prostate")
 mQTL_dt <- xQTLdownload_mQTL(cpg_id="cg00000221", tissue_name="Prostate")
+```
+```{r, eval=TRUE}
+mQTL_dt
 ```
 
 
@@ -186,6 +190,9 @@ hqtlmeta <- xQTLdownload_hqtlmeta(histone_type="H3K4ME1", cell_type="T cell")
 hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", 
                              histone_type="H3K4ME1", cell_type="T cell")
 ```
+```{r, eval=TRUE}
+hQTL_dt
+```
 
 
 ### Single-cell eQTLs (sc-eQTLs) Download:
@@ -195,6 +202,9 @@ hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096",
 study_info <- xQTLquery_scInfo()
 sceQTL_dt <- xQTLdownload_sc(gene="TP53", cell_type = "B Cell", cell_state="-",
                 qtl_type="Cell-type-specific eQTL", study_name = "Resztak2022biorxiv")
+```
+```{r, eval=TRUE}
+sceQTL_dt
 ```
 
 ## Query details of gene, variant, tissue and samples in GTEx:

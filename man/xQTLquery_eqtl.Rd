@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_eqtl}
 \alias{xQTLquery_eqtl}
-\title{query multi-tissue eQTL metasoft results}
+\title{Query multi-tissue eQTL metasoft results}
 \usage{
 xQTLquery_eqtl(
   variantName = "",

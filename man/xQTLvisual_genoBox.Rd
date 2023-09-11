@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_genoBox}
 \alias{xQTLvisual_genoBox}
-\title{customized Boxplot with users' own data.}
+\title{Boxplot of values stratified by genotypes with customized data}
 \usage{
 xQTLvisual_genoBox(
   genoDT,
@@ -39,7 +39,7 @@ xQTLvisual_genoBox(
 A ggplot object.
 }
 \description{
-customized Boxplot with users' own data.
+Boxplot of values stratified by genotypes with customized data
 }
 \examples{
 \donttest{

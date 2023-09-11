@@ -1,4 +1,4 @@
-#' @title Download normalized gene expression at the sample level in a specified tissue.
+#' @title Download normalized gene expression at the sample level for a specified tissue.
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
@@ -236,7 +236,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 
 
 
-#' @title Download summary statistics of eQTL of a specified gene, variant, tissue or study.
+#' @title Download summary statistics data for eQTLs with a specified gene, variant, tissue or study
 #' @description
 #'  source of all eQTL associations is EBI eQTL category.
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
@@ -546,7 +546,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
 
 
 
-#' @title Download summary statistics of eQTL with genome position.
+#' @title Download summary statistics data for eQTLs with genome positions.
 #'
 #' @param chrom (character) name of chromesome, including chr1-chr22, chrX.
 #' @param pos_lower (integer) lower base pair location threshold, expressed as an integer
@@ -727,7 +727,7 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 }
 
 
-#' @title Download normalized expression of gene for a eQTL pair.
+#' @title Download normalized expression for gene with a variant-gene pair
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -877,7 +877,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 }
 
 
-#' @title Download normalized expression of intron for a sQTL pair.
+#' @title Download normalized PSI value of intron for a sQTL pair
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -1014,7 +1014,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 
 
 
-#' @title Download details of eGenes (eQTL Genes) for a specified gene or a tissue.
+#' @title Download eGenes (eQTL Genes) for a specified gene or a tissue
 #' @description
 #'  eGenes are genes that have at least one significant cis-eQTL acting upon them. Results can be filtered by tissue.
 #' @param gene  (character) gene symbol or gencode id (versioned or unversioned are both supported).
@@ -1285,7 +1285,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", tissueSiteDetail="", 
 }
 
 
-#' @title Download median expression of all samples for specified genes across tissues.
+#' @title Download median expressions for multiple genes in a specified tissue
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
@@ -1410,7 +1410,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail=
   return(outInfo)
 }
 
-#' @title Retrive SNP pairwise LD from locuscompare database.
+#' @title Retrieve SNP pairwise LD from locuscompare database
 #' @description
 #'  SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
 #'  For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.
@@ -1459,7 +1459,7 @@ retrieveLD = function(chr, snp, population){
 
 
 
-#' @title download summary statistics of sQTL of a specified gene in GTEx v8.
+#' @title Download summary statistics data for sQTLs with a specified gene or a tissue
 #'
 #' @param genes (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "gencodeId".
@@ -1476,7 +1476,7 @@ retrieveLD = function(chr, snp, population){
 #' \donttest{
 #' sQTL_DT <- xQTLdownload_sqtlAllAsso(genes=c("MMP7","TP53"), tissue="Lung")
 #' }
-xQTLdownload_sqtlAllAsso <- function(genes="", geneType="gencodeId", tissue="", clu_names="", clu_geneid_DF=NULL){
+xQTLdownload_sqtlAllAsso <- function(genes="", geneType="auto", tissue="", clu_names="", clu_geneid_DF=NULL){
   tissueSiteDetail <- clu_name<- tissueSiteDetailId <- gencodeId <- gencodeId_unv <- NULL
   # match tissue:
   if(tissue==""){ stop("tissue can not be null...") }
@@ -1540,7 +1540,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="gencodeId", tissue="", 
   return(sQTL_summary)
 }
 
-#' @title Download summary statistics of xQTL of a specified gene in GTEx v8, default:3'aQTL
+#' @title Download summary statistics of xQTL for a specified gene, default:3'aQTL
 #'
 #' @param genes (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".
@@ -1625,7 +1625,7 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="geneSymbol",  tissue=""
 }
 
 
-#' @title download all sc-eQTL associations
+#' @title Download all sc-eQTL associations for a specified gene
 #'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".
@@ -1668,17 +1668,17 @@ xQTLdownload_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astroc
   if(cell_state==""){cell_state <- "-"}
 
   url1 <- paste0("http://bioinfo.szbl.ac.cn/scQTLbase_backend/query_xQTLbiolinks?geneName=",genename,"&cellType=",cell_type,"&cellState=",cell_state, "&study=",study_name,"&qtlType=",qtl_type )
-  # message(url1)
+  message(url1)
   url1 <- utils::URLencode(url1)
   url1 <- stringr::str_replace_all(url1, fixed("+"), fixed("%2B"))
   url1 <- stringr::str_replace_all(url1, fixed("("), fixed("%28"))
   url1 <- stringr::str_replace_all(url1, fixed(")"), fixed("%29"))
   url1 <- stringr::str_replace_all(url1, fixed(";"), fixed("%3B"))
-  # print(url1)
+  print(url1)
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto", retryTimes=11)
   qtl_summary <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
   if(nrow(qtl_summary)==0){
-    message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
+    message("No QTL associations were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
     message("== Done.")
     return(data.table::data.table())
   }
@@ -1686,7 +1686,7 @@ xQTLdownload_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astroc
 }
 
 
-#' @title download significant sc-eQTL associations
+#' @title Download significant sc-eQTL associations for a specified gene
 #'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".
@@ -1746,7 +1746,7 @@ xQTLdownload_scSig <- function(gene="BIN3",geneType="geneSymbol", cell_type="Ast
   return(qtl_summary)
 }
 
-#' @title export expression object to specified format
+#' @title Export expression object to a specified format
 #'
 #' @param exp_object expression object derived from `xQTLdownload_exp`
 #' @param out_format "to_clusterP", "to_wgcna" and to "to_deseq"
@@ -1788,7 +1788,7 @@ xQTL_export <- function(exp_object, out_format="to_clusterP"){
 
 
 
-#' @title download meta data of H3K4me1 and H3K27ac histone QTL (hQTL)
+#' @title Download metadata for H3K4me1 and H3K27ac histone QTL (hQTL)
 #'
 #' @param histone_type (string) One of the histone types: "H3K27AC" or "H3K4ME1".
 #' @param cell_type (string) One of the cell types: "monocyte", "neutrophil" or "T cell".
@@ -1818,7 +1818,7 @@ xQTLdownload_hqtlmeta <- function(histone_type="H3K27AC", cell_type="monocyte"){
 }
 
 
-#' @title Download summary statistics of H3K4me1 and H3K27ac histone QTL (hQTL) of a specified location
+#' @title Download summary statistics data of H3K4me1 and H3K27ac histone QTL (hQTL) using a specified location
 #'
 #' @param phenotype_id phenotype_id that formatted with genome location, like: 9-99773935-99776816, can be obtained using `xQTLdownload_hqtlmeta`
 #' @param histone_type (string) One of the histone types: "H3K27AC" or "H3K4ME1".
@@ -1849,7 +1849,7 @@ xQTLdownload_hqtl <- function(phenotype_id="9:99773935-99776816", histone_type="
 }
 
 
-#' @title Download meta data of DNA methylation QTL (mQTL)
+#' @title Download metadata of DNA methylation QTL (mQTL)
 #'
 #' @param tissue_name (String)  One of the tissues: BreastMammaryTissue, ColonTransverse, KidneyCortex, Lung, MuscleSkeletal, Ovary, Prostate, Testis and WholeBlood
 #' @return A data.table object
@@ -1878,7 +1878,7 @@ xQTLdownload_mqtlmeta <- function(tissue_name="BreastMammaryTissue"){
 }
 
 
-#' @title Download summary statistics of DNA methylation QTL (mQTL) of a specified CpG location
+#' @title Download summary statistics data of DNA methylation QTL (mQTL) using CpG ID
 #'
 #' @param cpg_id phenotype_id like: cg00000236, can be obtained using `xQTLdownload_mqtlmeta`
 #' @param tissue_name (String)  One of the tissues: BreastMammaryTissue, ColonTransverse, KidneyCortex, Lung, MuscleSkeletal, Ovary, Prostate, Testis and WholeBlood

@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_mqtlmeta}
 \alias{xQTLdownload_mqtlmeta}
-\title{Download meta data of DNA methylation QTL (mQTL)}
+\title{Download metadata of DNA methylation QTL (mQTL)}
 \usage{
 xQTLdownload_mqtlmeta(tissue_name = "BreastMammaryTissue")
 }
@@ -13,7 +13,7 @@ xQTLdownload_mqtlmeta(tissue_name = "BreastMammaryTissue")
 A data.table object
 }
 \description{
-Download meta data of DNA methylation QTL (mQTL)
+Download metadata of DNA methylation QTL (mQTL)
 }
 \examples{
 mQTL_meta<- xQTLdownload_mqtlmeta("Testis")

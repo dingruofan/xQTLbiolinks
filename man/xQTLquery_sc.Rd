@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_sc}
 \alias{xQTLquery_sc}
-\title{query significant sc-eQTLs}
+\title{Query significant sc-eQTLs for a specified gene}
 \usage{
 xQTLquery_sc(
   gene = "BIN3",
@@ -30,7 +30,7 @@ xQTLquery_sc(
 A data.table object
 }
 \description{
-query significant sc-eQTLs
+Query significant sc-eQTLs for a specified gene
 }
 \examples{
 \donttest{

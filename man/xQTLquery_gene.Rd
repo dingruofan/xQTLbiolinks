@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_gene}
 \alias{xQTLquery_gene}
-\title{Query basic information (including name, symbol, position and description, etc. ) of genes.}
+\title{Query basic information for genes, including name, symbol, position and description}
 \usage{
 xQTLquery_gene(genes = "", geneType = "auto", recordPerChunk = 150)
 }
@@ -44,7 +44,7 @@ A data.table object of queried gene information. including following columns:
 }
 }
 \description{
-Query basic information (including name, symbol, position and description, etc. ) of genes.
+Query basic information for genes, including name, symbol, position and description
 }
 \examples{
 # query gene of gencode version v26/hg38

@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_varPos}
 \alias{xQTLquery_varPos}
-\title{Query varints in GTEx using genome position.}
+\title{Query variants using genome position.}
 \usage{
 xQTLquery_varPos(chrom = "", pos = numeric(0), recordPerChunk = 200)
 }
@@ -17,7 +17,7 @@ xQTLquery_varPos(chrom = "", pos = numeric(0), recordPerChunk = 200)
 A data.table object.
 }
 \description{
-Query varints in GTEx using genome position.
+Query variants using genome position.
 }
 \examples{
 xQTLquery_varPos(chrom="chr1", pos=c(1102708,1105739))

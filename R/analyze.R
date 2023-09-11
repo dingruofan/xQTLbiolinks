@@ -1,4 +1,4 @@
-#' @title Detect sentinel SNPs in a given summary statistis dataset.
+#' @title Detect sentinel SNPs for GWAS using summary statistics data
 #' @description
 #'  Return sentinel snps whose pValue < 5e-8(default) and SNP-to-SNP distance > 1e6 bp.
 #' @param gwasDF A data.frame or a data.table object. Five columns are required (arbitrary column names is supported):
@@ -503,7 +503,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
 }
 
 
-#' @title conduct colocalization analysis with customized QTL data
+#' @title Conduct colocalization analysis with customized QTL data
 #'
 #' @param gwasDF data.frame or data.table, required cols: rsid, chrom, position, pValue, maf, beta, se
 #' @param qtlDF data.frame or data.table, required cols:  rsid, chrom, position, pValue, maf, beta, se

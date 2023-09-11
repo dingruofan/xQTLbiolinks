@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_geneMedExp}
 \alias{xQTLdownload_geneMedExp}
-\title{Download median expression of all samples for specified genes across tissues.}
+\title{Download median expressions for multiple genes in a specified tissue}
 \usage{
 xQTLdownload_geneMedExp(
   genes = "",
@@ -24,7 +24,7 @@ xQTLdownload_geneMedExp(
 A data.table object.
 }
 \description{
-Download median expression of all samples for specified genes across tissues.
+Download median expressions for multiple genes in a specified tissue
 }
 \examples{
 geneMedExp <- xQTLdownload_geneMedExp(genes="LYNX1")

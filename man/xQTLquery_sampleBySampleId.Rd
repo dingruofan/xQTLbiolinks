@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_sampleBySampleId}
 \alias{xQTLquery_sampleBySampleId}
-\title{Query sample's details with samples' IDs.}
+\title{Query details of samples with GTEx IDs}
 \usage{
 xQTLquery_sampleBySampleId(
   sampleIds,
@@ -21,7 +21,7 @@ xQTLquery_sampleBySampleId(
 a data.table object of samples' information.
 }
 \description{
-Query sample's details with samples' IDs.
+Query details of samples with GTEx IDs
 }
 \examples{
 sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",

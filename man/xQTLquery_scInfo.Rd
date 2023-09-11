@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_scInfo}
 \alias{xQTLquery_scInfo}
-\title{query sc-eQTL study details}
+\title{Query metadata of sc-eQTLs}
 \usage{
 xQTLquery_scInfo()
 }
@@ -10,5 +10,5 @@ xQTLquery_scInfo()
 A data.table object
 }
 \description{
-query sc-eQTL study details
+Query metadata of sc-eQTLs
 }

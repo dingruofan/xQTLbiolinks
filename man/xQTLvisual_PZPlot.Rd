@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_PZPlot}
 \alias{xQTLvisual_PZPlot}
-\title{Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.}
+\title{Compare P-values reported to P-values calculated from Z statistics derived from the reported beta and standard error.}
 \usage{
 xQTLvisual_PZPlot(
   summaryDT,
@@ -24,7 +24,7 @@ xQTLvisual_PZPlot(
 a list containing a data.frame of estimated pvalues and A ggplot2 object
 }
 \description{
-Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.
+Compare P-values reported to P-values calculated from Z statistics derived from the reported beta and standard error.
 }
 \examples{
 \donttest{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_eqtlSig}
 \alias{xQTLquery_eqtlSig}
-\title{Download significant eQTL associations of a specified tissue or across all tissues.}
+\title{Query significant eQTL associations for a specified tissue or multiple tissues.}
 \usage{
 xQTLquery_eqtlSig(
   variantName = "",
@@ -27,7 +27,7 @@ xQTLquery_eqtlSig(
 A data.table object.
 }
 \description{
-Download significant eQTL associations of a specified tissue or across all tissues.
+Query significant eQTL associations for a specified tissue or multiple tissues.
 }
 \examples{
 \donttest{

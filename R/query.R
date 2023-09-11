@@ -1,4 +1,4 @@
-#' @title Query basic information (including name, symbol, position and description, etc. ) of genes.
+#' @title Query basic information for genes, including name, symbol, position and description
 #' @param genes A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
 #' \itemize{
 #'   \item \strong{gene symbol (Default)}.
@@ -259,7 +259,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
   }
 }
 
-#' @title Query sample's details with tissue name
+#' @title Query details of samples by tissue name
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
 #' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
@@ -427,7 +427,7 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 
 
 
-#' @title Query sample's details with samples' IDs.
+#' @title Query details of samples with GTEx IDs
 #' @param sampleIds A character vector or a string of sample ID.
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
@@ -523,7 +523,7 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 
 
 
-#' @title Fetch details of all genes supported in GTEx.
+#' @title Query all genes supported in GTEx
 #' @param gencodeVersion (character) options: "v26"(default, matched with gtex_v8) or "v19"
 #' @param recordPerChunk (integer) number of records fetched per request (default: 2000).
 #' @import utils
@@ -603,7 +603,7 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 }
 
 
-#' @title Query variant in GTEx with variant ID or dbSNP ID
+#' @title Query variant with variant ID or dbSNP ID
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
 #' @import data.table
@@ -696,7 +696,7 @@ xQTLquery_varId <- function(variantName="", variantType="auto"){
   return(outInfo)
 }
 
-#' @title Query varints in GTEx using genome position.
+#' @title Query variants using genome position.
 #' @param chrom (character) name of chromesome, including chr1-chr22, chrX, chrY.
 #' @param pos An integer array.
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
@@ -796,7 +796,7 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), recordPerChunk=200){
 }
 
 
-#' @title Fetch all details of a specified tissue or all tissues
+#' @title Query details for a specified tissue
 #' @description
 #'  Information includes tissue IDs, number of RNA-Seq samples, number of RNA-Seq samples with genotype, number of expressed genes, number of eGenes. Also includes tissueSiteDetail ID, name, abbreviation, uberon ID, and standard tissue colors. TissueSiteDetails are grouped by TissueSites. By default, this service reports from the latest GTEx release.
 #' @param tissueName Tissue name, tissue ID or tissue site name. Default return all tissues' information. Can be choonse from `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
@@ -1360,7 +1360,7 @@ EBIquery_allTerm <- function( term="genes", termSize=2000){
 
 
 
-#' @title Extract gene infor of specified genome from gencodeGeneInfoAllGranges
+#' @title Extract gene details from gencodeGeneInfoAllGranges object
 #'
 #' @param gencodeGeneInfoAllGranges from internal data
 #' @param genomeVersion "v26" (default) or "v19"
@@ -1393,7 +1393,7 @@ extractGeneInfo <- function(gencodeGeneInfoAllGranges, genomeVersion="v26"){
 
 
 
-#' @title Retrive SNP pairwise LD from LDlink database
+#' @title Retrieve SNP pairwise LD from LDlink database
 #'
 #' @param targetSnp target SNP, support dbSNP IP.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function LDlinkR::list_pop()
@@ -1447,7 +1447,7 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 
 
 
-#' @title query multi-tissue eQTL metasoft results
+#' @title Query multi-tissue eQTL metasoft results
 #' @description
 #'  can be quried with a gene/variant-gene pair.
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
@@ -1637,7 +1637,7 @@ xQTLquery_eqtl <- function(variantName="", gene="", variantType="auto", geneType
 }
 
 
-#' @title Download significant eQTL associations of a specified tissue or across all tissues.
+#' @title Query significant eQTL associations for a specified tissue or multiple tissues.
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param genes (character string or a character vector) gene symbols or gencode ids (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -1796,7 +1796,7 @@ xQTLquery_eqtlSig <- function(variantName="", genes="", variantType="auto", gene
 
 
 
-#' @title Download significant sQTL associations of a tissue or across all tissues
+#' @title Query significant sQTL associations for a tissue or multple tissues
 #' @description
 #'  Only GTEx v8 is supported.
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
@@ -1947,7 +1947,7 @@ xQTLquery_sqtlSig <- function(variantName="", genes="", variantType="auto", gene
 }
 
 
-#' @title query sc-eQTL study details
+#' @title Query metadata of sc-eQTLs
 #'
 #' @return A data.table object
 #' @export
@@ -1958,7 +1958,7 @@ xQTLquery_scInfo <- function(){
 }
 
 
-#' @title query significant sc-eQTLs
+#' @title Query significant sc-eQTLs for a specified gene
 #'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "geneSymbol".

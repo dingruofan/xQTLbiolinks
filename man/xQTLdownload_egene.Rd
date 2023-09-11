@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_egene}
 \alias{xQTLdownload_egene}
-\title{Download details of eGenes (eQTL Genes) for a specified gene or a tissue.}
+\title{Download eGenes (eQTL Genes) for a specified gene or a tissue}
 \usage{
 xQTLdownload_egene(
   gene = "",

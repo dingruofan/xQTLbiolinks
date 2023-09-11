@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_eqtlAllAsso}
 \alias{xQTLdownload_eqtlAllAsso}
-\title{Download summary statistics of eQTL of a specified gene, variant, tissue or study.}
+\title{Download summary statistics data for eQTLs with a specified gene, variant, tissue or study}
 \usage{
 xQTLdownload_eqtlAllAsso(
   gene = "",

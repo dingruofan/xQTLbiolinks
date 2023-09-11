@@ -1,4 +1,4 @@
-#' @title calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset.
+#' @title Calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset
 #'
 #' @param summaryDT A data.frame containing one or two columns: p-value (required) and group (optional)
 #' @import data.table
@@ -43,14 +43,13 @@ xQTLanno_calLambda <- function(summaryDT){
 }
 
 
-#' @title enrichment analysis for GWAS / QTL signals in functional elements, including enhancer, promoter, CPG, and TFs
+#' @title Annotate GWAS / QTL signals using bed4 format table object that provided by user
 #'
 #' @param snpInfo A data.table/data.frame with three columns: chromosome, position and p-value.
 #' @param genomeVersion "hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.
 #' @param enrichElement A data.table of data.frame object including 4 columns (consistent with bed4 format): chrom, start, end, name.
 #' @param distLimit Defaults: 0 (variants overlap with elements).
 #' @importFrom GenomicRanges distanceToNearest mcols
-#' @import TxDb.Hsapiens.UCSC.hg38.knownGene
 #' @import data.table
 #' @return A data.table object
 #' @export
@@ -134,7 +133,7 @@ xQTLanno_chippeak <- function(snpInfo="",  genomeVersion="hg38", enrichElement=N
 }
 
 
-#' @title annotate all signals in GWAS / QTL dataset by genome location
+#' @title Genomic annotation of significant signals from GWAS / QTL
 #'
 #' @param snpInfo A data.table/data.frame with three columns: chromosome, position, and P-value.
 #' @param genomeVersion "hg38" (default) or "hg19". Note: hg19 will be converted to hg38 automatically.
@@ -163,6 +162,9 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                             bg_ratio = c(0.017,    0.3,   0.98,   2.13,   1.09,       50.27,    1.1,          44.11)/100)
 
   .<- NULL
+
+  if( !requireNamespace("TxDb.Hsapiens.UCSC.hg38.knownGene") ){ stop("please install package \"TxDb.Hsapiens.UCSC.hg38.knownGene\" from BioConductor.") }
+
   message("==> Start checking variants...")
   # check snpinfo:
   snpInfo <- data.table::as.data.table(snpInfo[,1:3])
@@ -293,7 +295,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                           ignore.strand=TRUE ))
   intron_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[intron_hits_non_sig_all$queryHits]))
   intron_hits_non_sig_all$type<- "intron"
-  message("      intron hits: ",nrow(intronHits),"; none-hits: ",nrow(intron_hits_non_sig_all))
+  # message("      intron hits: ",nrow(intronHits),"; none-hits: ",nrow(intron_hits_non_sig_all))
   # rm(intronParts, intronAnno)
 
   # annotate snp with exons:
@@ -315,7 +317,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                         ignore.strand=TRUE ))
   exon_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[exon_hits_non_sig_all$queryHits]))
   exon_hits_non_sig_all$type <- "exon"
-  message("      exon hits: ",nrow(exonHits), "; none-hits: ", nrow(exon_hits_non_sig_all))
+  # message("      exon hits: ",nrow(exonHits), "; none-hits: ", nrow(exon_hits_non_sig_all))
   # rm(exonParts, exonAnno)
 
   # annotate snp with promoters:
@@ -333,7 +335,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   promoter_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[promoter_hits_non_sig_all$queryHits]))
   promoter_hits_non_sig_all$type <- "promoter"
 
-  message("      promoter hits: ",nrow(promoterHits), "; none-hits: ", nrow(promoter_hits_non_sig_all))
+  # message("      promoter hits: ",nrow(promoterHits), "; none-hits: ", nrow(promoter_hits_non_sig_all))
   # rm(promoterParts)
 
   # annotate snp with downstream:
@@ -351,7 +353,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   downstream_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[downstream_hits_non_sig_all$queryHits]))
   downstream_hits_non_sig_all$type <- "downstream"
 
-  message("      downstream hits: ",nrow(downstreamHits), "; none-hits: ", nrow(downstream_hits_non_sig_all))
+  # message("      downstream hits: ",nrow(downstreamHits), "; none-hits: ", nrow(downstream_hits_non_sig_all))
   # rm(promoterParts)
 
 
@@ -372,7 +374,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                                                  VariantAnnotation::FiveUTRVariants())) ))
   utr5_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[utr5_hits_non_sig_all$QUERYID]))
   utr5_hits_non_sig_all$type <- "utr5"
-  message("      5'utr hits: ",nrow(utr5Hits),"; none hits: ", nrow(utr5_hits_non_sig_all))
+  # message("      5'utr hits: ",nrow(utr5Hits),"; none hits: ", nrow(utr5_hits_non_sig_all))
 
   # annotate snp with 3 utr:
   utr3Hits <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
@@ -391,7 +393,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                                                           VariantAnnotation::ThreeUTRVariants())) ))
   utr3_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[utr3_hits_non_sig_all$QUERYID]))
   utr3_hits_non_sig_all$type <- "utr3"
-  message("      3'utr hits: ",nrow(utr3Hits),"; none-hits: ", nrow(utr3_hits_non_sig_all))
+  # message("      3'utr hits: ",nrow(utr3Hits),"; none-hits: ", nrow(utr3_hits_non_sig_all))
 
   # annotate snp with splice sites:
   splicingHits <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
@@ -410,7 +412,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                                                               VariantAnnotation::SpliceSiteVariants())) ))
   splicing_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[splicing_hits_non_sig_all$QUERYID]))
   splicing_hits_non_sig_all$type <- "spliceSite"
-  message("      splice site hits: ",nrow(splicingHits),"; none-hits: ", nrow(splicing_hits_non_sig_all))
+  # message("      splice site hits: ",nrow(splicingHits),"; none-hits: ", nrow(splicing_hits_non_sig_all))
 
   intergenicHits <- suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
                                                                                       txdb,
@@ -431,7 +433,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
                                                                                       VariantAnnotation::IntergenicVariants(), ignore.strand=TRUE)) )
   intergenicHits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[intergenicHits_non_sig_all$QUERYID]))
   intergenicHits_non_sig_all$type <- "intergenic"
-  message("      Intergenic hits: ",nrow(promoterHits), "; none-hits: ", nrow(intergenicHits_non_sig_all))
+  # message("      Intergenic hits: ",nrow(promoterHits), "; none-hits: ", nrow(intergenicHits_non_sig_all))
   # rm(txinfo)
 
   # combine all hits:

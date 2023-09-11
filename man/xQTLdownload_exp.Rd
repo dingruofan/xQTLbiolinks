@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_exp}
 \alias{xQTLdownload_exp}
-\title{Download normalized gene expression at the sample level in a specified tissue.}
+\title{Download normalized gene expression at the sample level for a specified tissue.}
 \usage{
 xQTLdownload_exp(
   genes = "",
@@ -30,7 +30,7 @@ xQTLdownload_exp(
 return a SummarizedExperiment or a data.table object harbing gene expression profiles and samples' information.
 }
 \description{
-Download normalized gene expression at the sample level in a specified tissue.
+Download normalized gene expression at the sample level for a specified tissue.
 }
 \examples{
 \donttest{

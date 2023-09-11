@@ -2,7 +2,7 @@
 % Please edit documentation in R/anno.R
 \name{xQTLanno_calLambda}
 \alias{xQTLanno_calLambda}
-\title{calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset.}
+\title{Calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset}
 \usage{
 xQTLanno_calLambda(summaryDT)
 }
@@ -13,7 +13,7 @@ xQTLanno_calLambda(summaryDT)
 A data.table object
 }
 \description{
-calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset.
+Calculate genomic control inflation factor for a QTL/GWAS summary statistics dataset
 }
 \examples{
 \donttest{

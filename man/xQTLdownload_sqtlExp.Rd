@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_sqtlExp}
 \alias{xQTLdownload_sqtlExp}
-\title{Download normalized expression of intron for a sQTL pair.}
+\title{Download normalized PSI value of intron for a sQTL pair}
 \usage{
 xQTLdownload_sqtlExp(
   variantName = "",
@@ -24,7 +24,7 @@ xQTLdownload_sqtlExp(
 A data.table object.
 }
 \description{
-Download normalized expression of intron for a sQTL pair.
+Download normalized PSI value of intron for a sQTL pair
 }
 \examples{
 # Download sQTL expression in different tissues:

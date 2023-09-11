@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_geneAll}
 \alias{xQTLquery_geneAll}
-\title{Fetch details of all genes supported in GTEx.}
+\title{Query all genes supported in GTEx}
 \usage{
 xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 }
@@ -15,5 +15,5 @@ xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 A data.table object of all genes' information.
 }
 \description{
-Fetch details of all genes supported in GTEx.
+Query all genes supported in GTEx
 }

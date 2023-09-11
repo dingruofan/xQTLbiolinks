@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_sqtlExp}
 \alias{xQTLvisual_sqtlExp}
-\title{Boxplot of normalized expression among genotypes for sQTL.}
+\title{Boxplot of normalized PSI stratified by genotypes for sQTL.}
 \usage{
 xQTLvisual_sqtlExp(
   variantName = "",
@@ -48,7 +48,7 @@ xQTLvisual_sqtlExp(
 A list containing variant detail, expression profile and a ggplot object.
 }
 \description{
-Boxplot of normalized expression among genotypes for sQTL.
+Boxplot of normalized PSI stratified by genotypes for sQTL.
 }
 \examples{
 expSqtl <-xQTLvisual_sqtlExp(variantName="chr11_66561248_T_C_b38",

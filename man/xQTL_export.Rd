@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTL_export}
 \alias{xQTL_export}
-\title{export expression object to specified format}
+\title{Export expression object to a specified format}
 \usage{
 xQTL_export(exp_object, out_format = "to_clusterP")
 }
@@ -15,7 +15,7 @@ xQTL_export(exp_object, out_format = "to_clusterP")
 A data.frame/data.table object
 }
 \description{
-export expression object to specified format
+Export expression object to a specified format
 }
 \examples{
 \donttest{

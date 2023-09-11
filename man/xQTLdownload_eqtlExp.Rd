@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_eqtlExp}
 \alias{xQTLdownload_eqtlExp}
-\title{Download normalized expression of gene for a eQTL pair.}
+\title{Download normalized expression for gene with a variant-gene pair}
 \usage{
 xQTLdownload_eqtlExp(
   variantName = "",
@@ -27,7 +27,7 @@ xQTLdownload_eqtlExp(
 A data.table object.
 }
 \description{
-Download normalized expression of gene for a eQTL pair.
+Download normalized expression for gene with a variant-gene pair
 }
 \examples{
 \donttest{

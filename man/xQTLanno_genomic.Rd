@@ -2,7 +2,7 @@
 % Please edit documentation in R/anno.R
 \name{xQTLanno_genomic}
 \alias{xQTLanno_genomic}
-\title{annotate all signals in GWAS / QTL dataset by genome location}
+\title{Genomic annotation of significant signals from GWAS / QTL}
 \usage{
 xQTLanno_genomic(snpInfo = "", p_cutoff = 5e-08, genomeVersion = "hg38")
 }
@@ -17,7 +17,7 @@ xQTLanno_genomic(snpInfo = "", p_cutoff = 5e-08, genomeVersion = "hg38")
 A data.table object of variants' genomics distribution
 }
 \description{
-annotate all signals in GWAS / QTL dataset by genome location
+Genomic annotation of significant signals from GWAS / QTL
 }
 \examples{
 \donttest{

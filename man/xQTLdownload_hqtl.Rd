@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_hqtl}
 \alias{xQTLdownload_hqtl}
-\title{Download summary statistics of H3K4me1 and H3K27ac histone QTL (hQTL) of a specified location}
+\title{Download summary statistics data of H3K4me1 and H3K27ac histone QTL (hQTL) using a specified location}
 \usage{
 xQTLdownload_hqtl(
   phenotype_id = "9:99773935-99776816",
@@ -24,7 +24,7 @@ xQTLdownload_hqtl(
 A data.table object
 }
 \description{
-Download summary statistics of H3K4me1 and H3K27ac histone QTL (hQTL) of a specified location
+Download summary statistics data of H3K4me1 and H3K27ac histone QTL (hQTL) using a specified location
 }
 \examples{
  hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", histone_type="H3K4ME1", cell_type="T cell")

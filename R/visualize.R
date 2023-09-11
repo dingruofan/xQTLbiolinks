@@ -1,4 +1,4 @@
-#' @title Boxplot of normalized expression among genotypes for eQTL.
+#' @title Boxplot of normalized expression stratified by genotypes for eQTL.
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -204,7 +204,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
   return(list(eqtl=eqtlInfo, exp=genoLable, p=p))
 }
 
-#' @title customized Boxplot with users' own data.
+#' @title Boxplot of values stratified by genotypes with customized data
 #' @param genoDT (Data.framt) including two columns, "value" and "genotypes"
 #' @param axis_text_size (numberic) text size of the axis labels
 #' @param axis_title_size (numberic) text size of the axis title
@@ -279,7 +279,7 @@ xQTLvisual_genoBox <- function(genoDT, axis_text_size=1.3,axis_title_size=1.3, t
 }
 
 
-#' @title Boxplot of normalized expression among genotypes for sQTL.
+#' @title Boxplot of normalized PSI stratified by genotypes for sQTL.
 #' @param variantName (character) name of variant, dbsnp ID and variant id is supported, eg. "rs138420351" and "chr17_7796745_C_T_b38".
 #' @param phenotypeId A character string. Format like: "chr1:497299:498399:clu_54863:ENSG00000239906.1"
 #' @param variantType (character) options: "auto", "snpId" or "variantId". Default: "auto".
@@ -457,7 +457,7 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 
 
 
-#' @title Locuszoom plot for visualizing regional signals relative to genomic position with a file of summary statistics
+#' @title Locuszoom plot for visualizing regional signals relative to genomic position with summary statistics data
 #' @description
 #' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param DF A data.frame or a data.table object. Four columns are required (arbitrary column names is supported):
@@ -669,7 +669,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   return(p)
 }
 
-#' @title Dotplot of comparing regional signals between GWAS and xQTL.
+#' @title Dotplot of comparing regional signals between GWAS and xQTL
 #' @description This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param eqtlDF A data.frame or data.table with two columns: dbSNP id and p-value.
 #' @param gwasDF A data.frame or data.table with two columns: dbSNP id and p-value.
@@ -833,8 +833,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 }
 
 
-#
-#' @title Generate a combined figure including locuszoom and locuscompare plot object.
+
+#' @title Generate a combined figure including locusZoom and locuscompare plot
 #' @description
 #' This function is rebuilt from `locuscompare.R` (https://github.com/boxiangliu/locuscomparer/blob/master/R/locuscompare.R).
 #' @param gwasEqtldata A data.frame or a data.table that including signals from both GWAS and eQTL. Five columns are required (arbitrary column names is supported):
@@ -922,7 +922,7 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 }
 
 
-#' @title Density plot of expression profiles of the gene
+#' @title Density plot of expression profiles for multiple genes
 #' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
@@ -1210,7 +1210,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
 
 
 
-#' @title Visualizing annotated variants
+#' @title Visualize enrichment of variants derived from `xQTLanno_genomic`
 #'
 #' @param snpHits A data.table object from result of xQTLanno_genomic
 #' @param pValueBy Cut step of pvlaue. Defaults: 5
@@ -1298,70 +1298,8 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, annoType="enrichment"){
 }
 
 
-#' @title Visualizing enriched variants
-#'
-#' @param enrichHits A data.table object from result of xQTLanno_enrich
-#' @param pValueBy Cutoff of pvlaue. Defaults: 5
-#' @param plotType "boxplot", or "density"
-#'
-#' @return A ggplot object
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' url1 <- "http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/gwasSub.txt.gz"
-#' snpInfo <- fread(url1, sep="\t")
-#' enrichHits <- xQTLanno_enrich(snpInfo, enrichElement="TF")
-#' xQTLvisual_enrich(enrichHits, plotType="density")
-#' }
-xQTLvisual_enrich <- function(enrichHits, pValueBy=10, plotType="boxplot"){
-  cutP <- NULL
-  .<-NULL
 
-  enrichHits$logP <- log(enrichHits$pValue, base=10)*(-1)
-  enrichHits$logP <- ifelse(enrichHits$logP==0, 1e-6, enrichHits$logP)
-  enrichHits$cutP <- cut(enrichHits$logP,breaks= ceiling(seq(0,max(enrichHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
-  enrichHits[dist==0,"dist"]<-1
-
-  if(plotType=="boxplot"){
-    p1 <- ggplot(enrichHits)+
-      geom_boxplot(aes(x=cutP,y=dist,fill=cutP))+
-      scale_y_log10(breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))) )+
-      theme_classic()+
-      xlab(expression(-log["10"]("p-value")))+
-      ylab(paste("Distance",sep=""))+
-      theme(axis.text.x = element_text(size = rel(1.3), angle=30, hjust=1, vjust=1),
-            axis.text.y = element_text(size=rel(1.3)),
-            axis.title = element_text(size=rel(1.4)),
-            legend.position = "none",
-            legend.title = element_blank(),
-            legend.background = element_rect(fill="white",
-                                             size=0.5, linetype="solid",
-                                             colour ="white")
-      )
-    print(p1)
-    return(p1)
-  }else if(plotType=="density"){
-    p1 <- ggplot(enrichHits, aes(x=dist))+
-      geom_density(aes(color=cutP,fill=cutP),alpha=0.3)+ #添加密度图层
-      # scale_fill_manual(name=expression(-log["10"]("p-value")))+
-      scale_x_log10(limits = c(1,(max(enrichHits$dist)+100)),breaks=10^c(0:floor(log(max(enrichHits$dist),10))), labels= as.character(as.integer(10^c(0:floor(log(max(enrichHits$dist),10))))))+
-      xlab("Distance")+
-      ylab("density")+
-      theme_classic()+
-      theme(
-        axis.text = element_text(size=rel(1.3)),
-        axis.title = element_text(size=rel(1.4)),
-        panel.grid = element_blank(),
-        legend.position = "none"
-      )
-    #+ scale_x_log10()
-    print(p1)
-    return(p1)
-  }
-}
-
-#' @title plot quantile-quantile plot with pvalue
+#' @title Quantile-quantile plot with p-values from GWAS summary statistics data
 #'
 #' @param summaryDT A data.frame of one col required: pval.
 #' @param legend_p TRUE or FALSE, or legend position, including: top, bottom, left and right.
@@ -1453,7 +1391,7 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 }
 
 
-#' @title Compare P-values reported in the association result file to P-values calculated from Z statistics derived from the reported beta and standard error.
+#' @title Compare P-values reported to P-values calculated from Z statistics derived from the reported beta and standard error.
 #'
 #' @param summaryDT A data.frame with three cols: pval,  beta, se.
 #' @param binCutLogP To speed up the rendering process of the plot for tens of millions of GWAS variants, variants with a p-value below a specified threshold (binCutLogP) are randomly sampled for display.
@@ -1527,7 +1465,7 @@ xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000, distribut
 }
 
 
-#' @title heatmap of LD-p-value of the QTL
+#' @title Heatmap plot of the LD-p-value relationship of the eQTL
 #'
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
@@ -1779,7 +1717,7 @@ xQTLvisual_coloc <-  function(gene="", geneType="auto", variantName="", variantT
 
 
 
-#' @title Advanced CM plot of 11
+#' @title Manhattan plot for a GWAS summary statistics dataset
 #' @param gwasDF A data.frame of summary statistics data, including four cols arranged in the following order: SNP name, chomosome, position, p-value.
 #' @param pvalue_cutoff Default: 1e-4. The Manhattan plot is a helpful tool for visualizing genome-wide association study results. However, when there are a large number of SNPs, the plot can become difficult to render and generate a large file size. This is due to the stacking of non-significant SNPs at the bottom of the plot. To address this issue, we can choose to filter out some of the non-significant SNPs or randomly select a subset of them to plot. This will improve the readability of the plot and reduce the file size.
 #' @param num_snp_selected Default: 2000. Number of SNPs randomly selected for each chromosome.

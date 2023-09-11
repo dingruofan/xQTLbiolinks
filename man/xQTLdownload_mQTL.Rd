@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_mQTL}
 \alias{xQTLdownload_mQTL}
-\title{Download summary statistics of DNA methylation QTL (mQTL) of a specified CpG location}
+\title{Download summary statistics data of DNA methylation QTL (mQTL) using CpG ID}
 \usage{
 xQTLdownload_mQTL(
   cpg_id = "cg00000221",
@@ -19,7 +19,7 @@ xQTLdownload_mQTL(
 A data.table object
 }
 \description{
-Download summary statistics of DNA methylation QTL (mQTL) of a specified CpG location
+Download summary statistics data of DNA methylation QTL (mQTL) using CpG ID
 }
 \examples{
 mQTL_dt <- xQTLdownload_mQTL(cpg_id="cg00000221", tissue_name="Prostate")

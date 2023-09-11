@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_genesExp}
 \alias{xQTLvisual_genesExp}
-\title{Density plot of expression profiles of the gene}
+\title{Density plot of expression profiles for multiple genes}
 \usage{
 xQTLvisual_genesExp(genes, geneType = "auto", tissueSiteDetail = "")
 }
@@ -17,7 +17,7 @@ xQTLvisual_genesExp(genes, geneType = "auto", tissueSiteDetail = "")
 A ggplot object.
 }
 \description{
-Density plot of expression profiles of the gene
+Density plot of expression profiles for multiple genes
 }
 \examples{
 \donttest{

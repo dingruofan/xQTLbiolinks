@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{xQTLdownload_hqtlmeta}
 \alias{xQTLdownload_hqtlmeta}
-\title{download meta data of H3K4me1 and H3K27ac histone QTL (hQTL)}
+\title{Download metadata for H3K4me1 and H3K27ac histone QTL (hQTL)}
 \usage{
 xQTLdownload_hqtlmeta(histone_type = "H3K27AC", cell_type = "monocyte")
 }
@@ -15,7 +15,7 @@ xQTLdownload_hqtlmeta(histone_type = "H3K27AC", cell_type = "monocyte")
 a data.table object includng all CpG ID
 }
 \description{
-download meta data of H3K4me1 and H3K27ac histone QTL (hQTL)
+Download metadata for H3K4me1 and H3K27ac histone QTL (hQTL)
 }
 \examples{
 hqtlmeta <- xQTLdownload_hqtlmeta(histone_type="H3K4ME1", cell_type="T cell")

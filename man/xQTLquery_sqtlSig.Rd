@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{xQTLquery_sqtlSig}
 \alias{xQTLquery_sqtlSig}
-\title{Download significant sQTL associations of a tissue or across all tissues}
+\title{Query significant sQTL associations for a tissue or multple tissues}
 \usage{
 xQTLquery_sqtlSig(
   variantName = "",

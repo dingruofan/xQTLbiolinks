@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_manhattan}
 \alias{xQTLvisual_manhattan}
-\title{Advanced CM plot of 11}
+\title{Manhattan plot for a GWAS summary statistics dataset}
 \usage{
 xQTLvisual_manhattan(gwasDF, pvalue_cutoff = 1e-04, num_snp_selected = 2000)
 }
@@ -17,7 +17,7 @@ xQTLvisual_manhattan(gwasDF, pvalue_cutoff = 1e-04, num_snp_selected = 2000)
 A pdf format figure.
 }
 \description{
-Advanced CM plot of 11
+Manhattan plot for a GWAS summary statistics dataset
 }
 \examples{
 \donttest{

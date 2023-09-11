@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{xQTLvisual_coloc}
 \alias{xQTLvisual_coloc}
-\title{heatmap of LD-p-value of the QTL}
+\title{Heatmap plot of the LD-p-value relationship of the eQTL}
 \usage{
 xQTLvisual_coloc(
   gene = "",
@@ -33,7 +33,7 @@ xQTLvisual_coloc(
 A list containing a data.table object and a ggplot object
 }
 \description{
-heatmap of LD-p-value of the QTL
+Heatmap plot of the LD-p-value relationship of the eQTL
 }
 \examples{
 \donttest{

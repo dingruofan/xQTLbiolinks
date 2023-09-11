@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyze.R
 \name{xQTLanalyze_coloc_diy}
 \alias{xQTLanalyze_coloc_diy}
-\title{conduct colocalization analysis with customized QTL data}
+\title{Conduct colocalization analysis with customized QTL data}
 \usage{
 xQTLanalyze_coloc_diy(
   gwasDF,
@@ -33,7 +33,7 @@ xQTLanalyze_coloc_diy(
 A list
 }
 \description{
-conduct colocalization analysis with customized QTL data
+Conduct colocalization analysis with customized QTL data
 }
 \examples{
 \donttest{

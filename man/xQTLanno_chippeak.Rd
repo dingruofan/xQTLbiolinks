@@ -2,7 +2,7 @@
 % Please edit documentation in R/anno.R
 \name{xQTLanno_chippeak}
 \alias{xQTLanno_chippeak}
-\title{enrichment analysis for GWAS / QTL signals in functional elements, including enhancer, promoter, CPG, and TFs}
+\title{Annotate GWAS / QTL signals using bed4 format table object that provided by user}
 \usage{
 xQTLanno_chippeak(
   snpInfo = "",
@@ -24,7 +24,7 @@ xQTLanno_chippeak(
 A data.table object
 }
 \description{
-enrichment analysis for GWAS / QTL signals in functional elements, including enhancer, promoter, CPG, and TFs
+Annotate GWAS / QTL signals using bed4 format table object that provided by user
 }
 \examples{
 \donttest{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/query.R
 \name{retrieveLD_LDproxy}
 \alias{retrieveLD_LDproxy}
-\title{Retrive SNP pairwise LD from LDlink database}
+\title{Retrieve SNP pairwise LD from LDlink database}
 \usage{
 retrieveLD_LDproxy(
   targetSnp = "",
@@ -33,7 +33,7 @@ retrieveLD_LDproxy(
 A data.table object.
 }
 \description{
-Retrive SNP pairwise LD from LDlink database
+Retrieve SNP pairwise LD from LDlink database
 }
 \examples{
 # snpLD <- retrieveLD_LDproxy("rs3", windowSize=5000)
