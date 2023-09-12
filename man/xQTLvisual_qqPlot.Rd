@@ -8,7 +8,12 @@ xQTLvisual_qqPlot(
   summaryDT,
   legend_p = FALSE,
   binCutLogP = 3,
-  binNumber = 1000
+  binNumber = 1000,
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  title_text = "",
+  point_color = "#5A90BE"
 )
 }
 \arguments{
@@ -19,6 +24,16 @@ xQTLvisual_qqPlot(
 \item{binCutLogP}{SNPs whose logP great than this will be binned, other than not binned.}
 
 \item{binNumber}{Number of bins.}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{title_text}{(character) title of the plot}
+
+\item{point_color}{(character) Color of the point, default: #5A90BE}
 }
 \value{
 ggplot2 object

@@ -1407,6 +1407,11 @@ xQTLvisual_anno <- function(snpHits,
 #' @param legend_p TRUE or FALSE, or legend position, including: top, bottom, left and right.
 #' @param binCutLogP SNPs whose logP great than this will be binned, other than not binned.
 #' @param binNumber Number of bins.
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param title_text (character) title of the plot
+#' @param point_color (character) Color of the point, default: #5A90BE
 #' @import ggplot2
 #'
 #' @export
@@ -1417,7 +1422,8 @@ xQTLvisual_anno <- function(snpHits,
 #' snpInfo <- data.table::fread(url1, sep="\t")
 #' xQTLvisual_qqPlot(snpInfo[,.(pValue)],binCutLogP=5, binNumber=10000)
 #' }
-xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber=1000){
+xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber=1000,
+                              axis_text_size=1.3,axis_title_size=1.3, title_size=1.4,  title_text ="", point_color= "#5A90BE"){
   pval <- observedLogP <- expectedLogP <- NULL
   .<- NULL
 
@@ -1466,27 +1472,31 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 
   message("== plotting...", date())
   P <- ggplot(summaryDT_all[,.(expectedLogP, observedLogP)])+
-    geom_point(aes(x=expectedLogP, y= observedLogP ),  color="#5A90BE", size=rel(1.4), alpha=0.8)+
+    geom_point(aes(x=expectedLogP, y= observedLogP ),  color=point_color, size=rel(1.4), alpha=0.8)+
     # geom_line(aes(x= expectedLogP, y= observedLogP),color="#5A90BE",size=rel(1.2), alpha=0.8)+
     # scale_shape_manual(values=c(22,21,23,24))+
     geom_abline(intercept = 0, slope = 1, colour = "#f23321", size = 0.7, alpha=0.7)+
     theme_classic()+
     ylim(0, max(summaryDT_all$observedLogP)+1)+
     xlim(0, max(summaryDT_all$expectedLogP)+1)+
+    labs(title = title_text)+
     theme(
-      axis.text = element_text(size = rel(1.1)),
+      axis.text = element_text(size = rel(axis_text_size)),
       panel.grid.major.x = element_blank(), #设置面板网格
       panel.grid.major.y = element_blank(),
       panel.grid.minor.x = element_blank(),
-      axis.title=element_text(size=rel(1.3)),
+      axis.title=element_text(size=rel(axis_title_size)),
       legend.title = element_blank(),
       legend.text = element_text(size=rel(1.1)),
       legend.position = legend_p,
       legend.justification = 'left',
-      legend.direction='horizontal'
+      legend.direction='horizontal',
+      plot.title = element_text(size=rel(title_size), hjust=0.5)
       # legend.margin = margin(0.1,0.1,0.1,0.1,"cm"),
       # legend.background = element_rect(fill="white", size=0.5, linetype="solid",colour ="black")
-    )+xlab(expression(Expected -log["10"](p-value)))+  ylab(expression(Observed -log["10"](p-value)))+
+    )+
+    xlab(expression(Expected -log["10"](p-value)))+
+    ylab(expression(Observed -log["10"](p-value)))+
     annotate("text", x = 0.2, y = max(summaryDT$observedLogP), label = paste0("Lamdba: ", round(lamdba_p,3)), colour = "black", size = 4.5, ,hjust=0)
 
   return(list(plot=P, lambda=lamdba_p))
@@ -1499,6 +1509,10 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 #' @param binCutLogP To speed up the rendering process of the plot for tens of millions of GWAS variants, variants with a p-value below a specified threshold (binCutLogP) are randomly sampled for display.
 #' @param binNumber The number of points randomly selected for plotting.
 #' @param distribution_func "pnorm"(default) or "pchisq"
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param title_text (character) title of the plot
 #' @return a list containing a data.frame of estimated pvalues and A ggplot2 object
 #' @export
 #'
@@ -1508,7 +1522,9 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
 #' sumDT <- data.table::fread(url1, sep="\t")
 #' xQTLvisual_PZPlot(sumDT[,.(pValue, beta, se)], distribution_func="pchisq")
 #' }
-xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000, distribution_func="pnorm"){
+xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000, distribution_func="pnorm",
+                              axis_text_size=1.3,axis_title_size=1.3, title_size=1.4,  title_text ="", point_color= "#5A90BE"
+                              ){
   se <- pval <- pZtest <- logPZ <- cutF <- logP <- NULL
   . <-NULL
   summaryDT <- na.omit(summaryDT)
@@ -1557,10 +1573,12 @@ xQTLvisual_PZPlot <- function(summaryDT, binCutLogP=4, binNumber=2000, distribut
     scale_y_continuous(expand = c(0, 0))+
     ylab(expression(Raw -log["10"](p-value)))+
     xlab(expression(Estimated -log["10"](p-value)))+
+    labs(title=title_text)+
     theme_classic()+
     theme(
-      axis.text = element_text(size = rel(1.3)),
-      axis.title = element_text(size= rel(1.4))
+      axis.text = element_text(size = rel(axis_text_size)),
+      axis.title = element_text(size= rel(axis_title_size)),
+      plot.title = element_text(size=rel(title_size), hjust=0.5)
     )
   print(p)
   return(list(summaryDT=summaryDT, p=p))

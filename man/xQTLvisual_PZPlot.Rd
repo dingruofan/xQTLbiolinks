@@ -8,7 +8,12 @@ xQTLvisual_PZPlot(
   summaryDT,
   binCutLogP = 4,
   binNumber = 2000,
-  distribution_func = "pnorm"
+  distribution_func = "pnorm",
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  title_text = "",
+  point_color = "#5A90BE"
 )
 }
 \arguments{
@@ -19,6 +24,14 @@ xQTLvisual_PZPlot(
 \item{binNumber}{The number of points randomly selected for plotting.}
 
 \item{distribution_func}{"pnorm"(default) or "pchisq"}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{title_text}{(character) title of the plot}
 }
 \value{
 a list containing a data.frame of estimated pvalues and A ggplot2 object
