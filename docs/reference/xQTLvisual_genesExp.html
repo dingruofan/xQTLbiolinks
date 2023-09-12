@@ -62,7 +62,18 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType <span class="op">=</span> <span class="st">"auto"</span>, tissueSiteDetail <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span></span>
+<span>  <span class="va">genes</span>,</span>
+<span>  geneType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  tissueSiteDetail <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  axis_text_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  axis_title_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  title_size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>  xlab_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  ylab_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  title_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  color_map <span class="op">=</span> <span class="st">"C"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,7 +87,35 @@
 
 
 <dt>tissueSiteDetail</dt>
-<dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code> or <code>tissueSiteDetailGTExv7</code></p></dd>
+<dd><p>(character) details of tissues in GTEx can be listed using <code>tissueSiteDetailGTExv8</code></p></dd>
+
+
+<dt>axis_text_size</dt>
+<dd><p>(numberic) text size of the axis labels</p></dd>
+
+
+<dt>axis_title_size</dt>
+<dd><p>(numberic) text size of the axis title</p></dd>
+
+
+<dt>title_size</dt>
+<dd><p>(numberic) text size of the title of the plot</p></dd>
+
+
+<dt>xlab_text</dt>
+<dd><p>(character) Lable for x-axis</p></dd>
+
+
+<dt>ylab_text</dt>
+<dd><p>(character) Lable for x-axis</p></dd>
+
+
+<dt>title_text</dt>
+<dd><p>(character) Title of the plot</p></dd>
+
+
+<dt>color_map</dt>
+<dd><p>A character string indicating the color map option to use. Eight options are available: "A", "B", "C", "D", "E", "F", "G", and "H"</p></dd>
 
 </dl></div>
     <div id="value">
@@ -97,7 +136,7 @@
 <span>           <span class="st">"ENSG00000179021.9"</span>,<span class="st">"ENSG00000176678.5"</span>,<span class="st">"ENSG00000166260.10"</span>,<span class="st">"ENSG00000142748.12"</span>,</span>
 <span>           <span class="st">"ENSG00000107201.9"</span>,<span class="st">"ENSG00000205403.12"</span>,<span class="st">"ENSG00000214782.7"</span>,<span class="st">"ENSG00000166321.13"</span>,</span>
 <span>           <span class="st">"ENSG00000197576.13"</span>,<span class="st">"ENSG00000100987.14"</span><span class="op">)</span></span>
-<span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_genesExp</span><span class="op">(</span><span class="va">genes</span>, geneType<span class="op">=</span><span class="st">"gencodeId"</span>, tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span>,  axis_text_size<span class="op">=</span><span class="fl">1.6</span>,axis_title_size<span class="op">=</span><span class="fl">1.6</span>, title_size<span class="op">=</span><span class="fl">1.8</span>, xlab_text<span class="op">=</span><span class="st">"xxxx"</span>, ylab_text<span class="op">=</span><span class="st">"yyyy"</span>, title_text <span class="op">=</span><span class="st">"tttt"</span>, color_map<span class="op">=</span><span class="st">"E"</span><span class="op">)</span></span>
 <span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>

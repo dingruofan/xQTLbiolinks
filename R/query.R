@@ -1023,13 +1023,20 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
   #   }
   #   return(url1GetText2Json)
   # }
-
+  url2 <- str_replace(url1,fixed("https://"), fixed("http://"))
   if(method == "fromJSON"){
     if(isJson){
-
       for (downloadTime in 1:retryTimes){
-        # because of the limitation of the length of the url (<2084), so I rebulit the function.
-        df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
+
+        # first time: using http not https. second time: using raw url.
+        if(downloadTime == 1){
+          # because of the limitation of the length of the url (<2084), so I rebulit the function.
+          df <- try( url1GetText2Json <- jsonlite::fromJSON(url2, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
+        }else{
+          # because of the limitation of the length of the url (<2084), so I rebulit the function.
+          df <- try( url1GetText2Json <- jsonlite::fromJSON(url1, simplifyDataFrame=TRUE, flatten = TRUE), silent=TRUE)
+        }
+
         # methods::is(df, 'try-error')
         if( !(inherits(df, "try-error")) && exists("url1GetText2Json") ){
           break()
@@ -1072,7 +1079,14 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       if(downloadTime>1){message("=> Download failed and try again...",downloadTime-1,"/",(retryTimes-1))}
       if(downloadTime>(retryTimes-1)){message("=> Your connection is unstable, please download  in brower directly using following url: ")
         message(url1)}
-      df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+
+      # first time using http. second using raw!
+      if(downloadTime == 1){
+        df <- try(suppressWarnings(utils::download.file(url = url2, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+      }else{
+        df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+      }
+
       if(!(inherits(df, "try-error"))) break
     }
     # suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE ))

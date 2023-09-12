@@ -475,7 +475,13 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #' @param ylim set the minimum and maximum values for the y-axis. By default, the function will automatically determine the y-axis limits based on the data being plotted.
 #' @param legend (boolean, optional) Should the legend be shown? Default: TRUE.
 #' @param legend_position (character, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
-#' @param point_fill (character, optional) Customized color vectors (5 kinds of colors).
+#' @param point_color (character, optional) Customized color vectors (5 kinds of colors).
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
 #' @param snpLD A data.frame of LD matirx. Default is null.
 #' @import data.table
 #' @import stringr
@@ -504,7 +510,8 @@ xQTLvisual_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto
 #'                      posRange="chr6:47.3e6-47.9e6")
 #' }
 xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRange="", legend = TRUE, ylim=NULL,
-                                  legend_position = c('topright','bottomright','topleft'), point_fill=NULL,
+                                  legend_position = c('topright','bottomright','topleft'), point_color=NULL,
+                                  axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",
                                   snpLD=NULL){
   snpId <- pos <- pValue <- logP <- pointShape<- NULL
   chrom <- x <- y<- RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
@@ -552,8 +559,9 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population),snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)])
     data.table::setDT(snpLD)
 
+  }else{
+    data.table::setDT(snpLD)
   }
-
 
   # Set LD SNP color:
   if( nrow(snpLD)>0 ){
@@ -581,11 +589,11 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   DF[snpId == highlightSnp, "sizeP"] <- "most"
 
   # set color:
-  if(!is.null(point_fill)){
-    if(length(point_fill)<5){ pointFill_my<-c(rep("blue4",5-length(point_fill)), point_fill)
-    }else{ point_fill <- point_fill[1:5] }
+  if(!is.null(point_color)){
+    if(length(point_color)<5){ pointFill_my<-c(rep("blue4",5-length(point_color)), point_fill)
+    }else{ pointFill_my <- point_color[1:5] }
   }else{
-    pointFill_my= c('blue4','skyblue','darkgreen','orange','red')
+    pointFill_my = c('blue4','skyblue','darkgreen','orange','red')
     }
   colorDT <- data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
                          pointFill= pointFill_my,
@@ -614,10 +622,16 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
   }else{
     posUnit <- "Bb"
   }
-  yLab <- expression(-log["10"]("p-value"))
+
+  # ylab:
+  if(ylab_text==""){
+    ylab_text <- expression(-log["10"]("p-value"))
+  }
 
   # xlab:
-  xLab <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
+  if(xlab_text == ""){
+    xlab_text <- paste0(ifelse(stringr::str_detect(P_chrom, stringr::regex("^chr")),P_chrom, paste0("chr", P_chrom))," (",posUnit,")")
+  }
 
 
   p <- ggplot2::ggplot(DF)+
@@ -630,13 +644,13 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
     scale_fill_manual(expression("R"^2),breaks=colorDT$r2Cut, labels = colorDT$r2Cut, values = colorDT$pointFill) +
     # geom_text(aes(x=pos, y=logP, label=snpId ))+
     ggrepel::geom_label_repel(data=DF[snpId==highlightSnp,], aes(x=pos, y=logP, label=snpId) )+
-    # labs(title = plotTitle )+
-    xlab( xLab )+
-    ylab( yLab )+
+    labs(title = title_text )+
+    xlab( xlab_text )+
+    ylab( ylab_text )+
     theme_classic()+
-    theme(axis.text=element_text(size=rel(1.3), color = "black"),
-          axis.title=element_text(size=rel(1.4), color = "black"),
-          plot.title = element_text(hjust=0.5),
+    theme(axis.text=element_text(size=rel(axis_text_size), color = "black"),
+          axis.title=element_text(size=rel(axis_title_size), color = "black"),
+          plot.title = element_text(size=rel(title_size), hjust=0.5),
           legend.position = "none"
     )+ guides( shape="none", color="none", size="none", fill = "none" )
   if(!is.null(ylim)){
@@ -677,6 +691,13 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.#' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param legend (boolean, optional) Should the legend be shown? Default: TRUE.
 #' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
+#' @param point_color (character, optional) Customized color vectors (5 kinds of colors).
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
 #' @param snpLD A data.frame object of LD matrix. Default is null.
 #' @import data.table
 #' @import ggplot2
@@ -695,7 +716,9 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 #' # visualize:
 #' xQTLvisual_locusCompare( eqtlDF, gwasDF, legend_position="topleft")
 #' }
-xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'),  snpLD=NULL ){
+xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'), point_color=NULL,
+                                    axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",
+                                    snpLD=NULL ){
   x <- y<- genomeVersion <- NULL
 
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
@@ -744,7 +767,8 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
     try(snpLD <- retrieveLD(highlightSnpInfo$chromosome, highlightSnp, population))
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population), snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)])
     data.table::setDT(snpLD)
-
+  }else{
+    data.table::setDT(snpLD)
   }
 
 
@@ -762,12 +786,19 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   message("== Done.")
 
   # set color:
+  # set color:
+  if(!is.null(point_color)){
+    if(length(point_color)<5){ pointFill_my<-c(rep("blue4",5-length(point_color)), point_fill)
+    }else{ pointFill_my <- point_color[1:5] }
+  }else{
+    pointFill_my = c('blue4','skyblue','darkgreen','orange','red')
+  }
   gwas_eqtl <- merge(DF, snpLD[,.(snpId=SNP_B, r2Cut)], by ="snpId", all.x=TRUE, sort=FALSE)
   gwas_eqtl[is.na(r2Cut),"r2Cut"]<- "(0.0-0.2]"
   gwas_eqtl[snpId==highlightSnp,"r2Cut"] <- "(0.8-1.0]"
   # set color:
   colorDT <- data.table::data.table( r2Cut = as.character(cut(c(0.2,0.4,0.6,0.8,1),breaks=c(0,0.2,0.4,0.6,0.8,1), labels=c('(0.0-0.2]','(0.2-0.4]','(0.4-0.6]','(0.6-0.8]','(0.8-1.0]'), include.lowest=TRUE)),
-                                     pointFill= c('blue4','skyblue','darkgreen','orange','red'),
+                                     pointFill= pointFill_my,
                                      pointColor = c('black','black','black','black','black')
                                      )
   colorDT <- merge(colorDT, unique(gwas_eqtl[,.(r2Cut)]), by="r2Cut",all.x=TRUE)[order(-r2Cut)]
@@ -783,8 +814,12 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
   plotTitle <- paste0(nrow(gwas_eqtl)," snps")
 
   # Xlab and ylab:
-  xLab <- expression(-log["10"]("p-value") (QTL))
-  yLab <- expression(-log["10"]("p-value") (GWAS))
+  if(xlab_text==""){
+    xlab_text <- expression(-log["10"]("p-value") (QTL))
+  }
+  if(ylab_text==""){
+    ylab_text <- expression(-log["10"]("p-value") (GWAS))
+  }
 
   if( requireNamespace("ggplot2") ){
     p <- ggplot(gwas_eqtl)+
@@ -795,13 +830,13 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
       scale_size_manual("Highlight",breaks = c('normal', "highlight"), values =  c(3,3.5) )+
       # geom_text(aes(x=pos, y=logP, label=snpId ))+
       geom_label_repel(data=gwas_eqtl[snpId==highlightSnp,], aes(x=logP.eqtl, y=logP.gwas, label=snpId) )+
-      # labs(title = plotTitle )+
-      xlab( xLab )+
-      ylab( yLab )+
+      labs(title = title_text )+
+      xlab( xlab_text )+
+      ylab( ylab_text )+
       theme_classic()+
-      theme(axis.text=element_text(size=rel(1.3), color = "black"),
-            axis.title=element_text(size=rel(1.5),color = "black"),
-            plot.title = element_text(hjust=0.5),
+      theme(axis.text=element_text(size=rel(axis_text_size), color = "black"),
+            axis.title=element_text(size=rel(axis_title_size),color = "black"),
+            plot.title = element_text(size=rel(title_size), hjust=0.5),
             legend.title = element_text(size=rel(1.3)),
             legend.text = element_text(size=rel(1.2))
       )+ guides( shape="none", color="none", size="none", fill = "none" )
@@ -853,6 +888,13 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' @param population One of the 5 popuations from 1000 Genomes: 'AFR', 'AMR', 'EAS', 'EUR', and 'SAS'.
 #' @param highlightSnp Default is the snp that with lowest p-value.
 #' @param legend_position (string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.
+#' @param point_color (character, optional) Customized color vectors (5 kinds of colors).
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
 #' @param snpLD A data.frame object of LD matrix. Default is null.
 #' @import data.table
 #' @import stringr
@@ -864,7 +906,9 @@ xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population=
 #' u1 <-"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/AD/gwasEqtldata.txt"
 #' gwasEqtldata <- data.table::fread(u1)
 #' xQTLvisual_locusCombine(gwasEqtldata, highlightSnp="rs13120565")
-xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", snpLD=NULL){
+xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR", highlightSnp="", legend_position="bottomright", point_color=NULL,
+                                    axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",
+                                    snpLD=NULL){
   position <- distance <- rsid <- pValue.eqtl <- pValue.gwas <- chrom <- NULL
   . <- NULL
 
@@ -905,15 +949,23 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
     try( snpLD <- retrieveLD(DF[1,]$chrom, highlightSnp, population) )
     # try(snpLD <- retrieveLD_LDproxy(highlightSnp,population = population),snpLD <- snpLD[,.(SNP_A=highlightSnp, SNP_B=RS_Number, R2)])
     data.table::setDT(snpLD)
-
+  }else{
+    data.table::setDT(snpLD)
   }
   message("Start plotting locuscomappre...")
   p_scatter<- xQTLvisual_locusCompare(gwasEqtldata[,.(rsid, pValue.eqtl)], gwasEqtldata[,.(rsid, pValue.gwas)],
-                                      highlightSnp=highlightSnp, population = population, legend_position = legend_position, snpLD = snpLD)
+                                      highlightSnp=highlightSnp, population = population, legend_position = legend_position,
+                                      point_color = point_color,
+                                      axis_text_size=axis_text_size,axis_title_size=axis_title_size, title_size=title_size, xlab_text=xlab_text, ylab_text=ylab_text, title_text =title_text,
+                                      snpLD = snpLD)
   message("Start plotting locuszoom for gwas...")
-  p_gwas <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE, highlightSnp = highlightSnp, population = population, snpLD = snpLD)
+  p_gwas <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.gwas)], legend=FALSE, highlightSnp = highlightSnp, population = population,
+                                 point_color=point_color,  axis_text_size=axis_text_size, axis_title_size=axis_title_size, title_size=title_size, xlab_text=xlab_text, ylab_text=ylab_text, title_text =title_text,
+                                 snpLD = snpLD)
   message("Start plotting locuszoom for eQTL... ")
-  p_eqtl <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE, highlightSnp = highlightSnp, population = population, snpLD = snpLD)
+  p_eqtl <- xQTLvisual_locusZoom(gwasEqtldata[,.(rsid, chrom, position, pValue.eqtl)], legend=FALSE, highlightSnp = highlightSnp, population = population,
+                                 point_color=point_color,  axis_text_size=axis_text_size, axis_title_size=axis_title_size, title_size=title_size, xlab_text=xlab_text, ylab_text=ylab_text, title_text =title_text,
+                                 snpLD = snpLD)
 
   p_gwas_new = p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
   p_gwas_eqtl = cowplot::plot_grid(p_gwas_new, p_eqtl, align = "v", nrow = 2, rel_heights=c(0.8,1))
@@ -925,7 +977,14 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #' @title Density plot of expression profiles for multiple genes
 #' @param genes (character string or a character vector) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
-#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
+#' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8`
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
+#' @param color_map A character string indicating the color map option to use. Eight options are available: "A", "B", "C", "D", "E", "F", "G", and "H"
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -944,9 +1003,9 @@ xQTLvisual_locusCombine <- function(gwasEqtldata, posRange="", population="EUR",
 #'            "ENSG00000179021.9","ENSG00000176678.5","ENSG00000166260.10","ENSG00000142748.12",
 #'            "ENSG00000107201.9","ENSG00000205403.12","ENSG00000214782.7","ENSG00000166321.13",
 #'            "ENSG00000197576.13","ENSG00000100987.14")
-#' xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver")
+#' xQTLvisual_genesExp(genes, geneType="gencodeId", tissueSiteDetail="Liver",  axis_text_size=1.6,axis_title_size=1.6, title_size=1.8, xlab_text="xxxx", ylab_text="yyyy", title_text ="tttt", color_map="E")
 #' }
-xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = ""){
+xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="", color_map="C"){
   `..density..`<-geneSymbol <- NULL
   datasetId="gtex_v8"
   # Automatically determine the type of variable:
@@ -957,6 +1016,12 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = ""){
       geneType <- "geneSymbol"
     }
   }
+  if(xlab_text == ""){
+    xlab_text =expression("Gene expression -log"["10"]("TPM"))
+  }
+  if(ylab_text==""){
+    ylab_text="Gene symbol"
+  }
 
   expProfiles <- xQTLdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, toSummarizedExperiment=TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), SummarizedExperiment::assay(expProfiles) ))
@@ -964,15 +1029,18 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = ""){
   p <- ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
     ggridges::geom_density_ridges_gradient( gradient_lwd = 1, scale = 1.4, rel_min_height = 0.05, size = 0.3) +
     # scale_fill_gradientn( colours = colorRampPalette(c("white", "blue", "red"))(27) )+
-    viridis::scale_fill_viridis(name = "WCAE per SOC", option = "C")+
-    xlab(expression("Gene expression -log"["10"]("TPM")))+
-    ylab("Gene symbol")+
+    viridis::scale_fill_viridis(name = "", option = color_map)+
+    labs(title = title_text)+
+    xlab( xlab_text )+
+    ylab( ylab_text )+
     theme_bw()+
     theme( legend.title = element_blank(),
-           axis.text.x=element_text(size=rel(1.1),face="bold"),
-           axis.text.y = element_text(size=rel(1.1),face="bold"),
-           axis.title.x = element_text(size=rel(1.1),face="bold"),
-           axis.title.y = element_blank())
+           axis.text.x=element_text(size=rel(axis_text_size),face="bold"),
+           axis.text.y = element_text(size=rel(axis_text_size),face="bold"),
+           axis.title.x = element_text(size=rel(axis_title_size),face="bold"),
+           axis.title.y = element_blank(),
+           plot.title = element_text(size=rel(title_size), hjust=0.5)
+           )
   print(p)
   return(p)
 }
@@ -983,6 +1051,13 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = ""){
 #' @title Box plot with jittered points for showing number and significance of eQTL associations
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
+#' @param violin_color A character vector of violin plot color
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -991,9 +1066,9 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = ""){
 #'
 #' @examples
 #' \donttest{
-#' xQTLvisual_eqtl("KIF15")
+#' xQTLvisual_eqtl(gene = "KIF15")
 #' }
-xQTLvisual_eqtl <- function(gene, geneType="auto" ){
+xQTLvisual_eqtl <- function(gene, geneType="auto", axis_text_size=1.3, axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",violin_color=NULL ){
   variantId <- tissueSiteDetail <- pValue <- logP <- NULL
   . <- NULL
   datasetId = "gtex_v8"
@@ -1018,19 +1093,28 @@ xQTLvisual_eqtl <- function(gene, geneType="auto" ){
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)
-  p<- ggplot(geneEqtlSub, aes(x=reorder(tissueSiteDetail, -logP, median),y=logP))+
+  #
+  if(xlab_text==""){
+    xlab_text <- ""
+  }
+  if(ylab_text==""){
+    ylab_text <- expression(-log["10"]("p-value"))
+  }
+  p <- ggplot(geneEqtlSub, aes(x=reorder(tissueSiteDetail, -logP, median),y=logP))+
     PupillometryR::geom_flat_violin(data=geneEqtlSub, mapping=aes(fill=tissueSiteDetail), position=position_nudge(x=0.25), color="black", scale = "width")+
     geom_jitter(aes(color=tissueSiteDetail), width = 0.1)+
-    geom_boxplot(width=0.15, position = position_nudge(x=0.25), fill="white", size=0.1)+
+    geom_boxplot(width=0.15, position = position_nudge(x=0.25), fill="white", linewidth=0.1)+
     coord_flip() +
-    ylab(expression(-log["10"]("p-value")))+
+    ylab(ylab_text)+
     xlab("") +
+    labs(title=title_text)+
     theme_classic() +
     theme(
-      axis.text.x=element_text(size=rel(1.2),face="bold"),
-      axis.text.y = element_text(size=rel(1.2),face="bold"),
-      axis.title.x = element_text(size=rel(1.3),face="bold"),
-      axis.title.y = element_blank()
+      axis.text.x=element_text(size=rel(axis_text_size),face="bold"),
+      axis.text.y = element_text(size=rel(axis_text_size),face="bold"),
+      axis.title.x = element_text(size=rel(axis_title_size),face="bold"),
+      axis.title.y = element_blank(),
+      plot.title = element_text(size=rel(title_size), hjust=0.5)
     )+
     guides(fill="none", color="none")
   print(p)
@@ -1041,6 +1125,13 @@ xQTLvisual_eqtl <- function(gene, geneType="auto" ){
 #' @title Box plot with jittered points for showing number and significance of sQTL associations
 #' @param gene (character) gene symbol or gencode id (versioned or unversioned are both supported).
 #' @param geneType (character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
+#' @param violin_color A character vector of violin plot color
 #' @import data.table
 #' @import stringr
 #' @import ggplot2
@@ -1049,9 +1140,9 @@ xQTLvisual_eqtl <- function(gene, geneType="auto" ){
 #'
 #' @examples
 #' \donttest{
-#' xQTLvisual_sqtl("KIF15")
+#' xQTLvisual_sqtl(gene="KIF15")
 #' }
-xQTLvisual_sqtl <- function(gene, geneType="auto" ){
+xQTLvisual_sqtl <- function(gene, geneType="auto", axis_text_size=1.3, axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",violin_color=NULL ){
   variantId <- tissueSiteDetail <- pValue <- logP <- NULL
   . <- NULL
   datasetId = "gtex_v8"
@@ -1076,21 +1167,33 @@ xQTLvisual_sqtl <- function(gene, geneType="auto" ){
   geneEqtlSub <- geneEqtl[,.(variantId, tissueSiteDetail, pValue)]
   geneEqtlSub$logP <- -log(geneEqtlSub$pValue, 10)
   setDF(geneEqtlSub)
+  #
+  if(xlab_text==""){
+    xlab_text <- ""
+  }
+  if(ylab_text==""){
+    ylab_text <- expression(-log["10"]("p-value"))
+  }
   p<- ggplot(geneEqtlSub, aes(x=reorder(tissueSiteDetail, -logP, median),y=logP))+
     PupillometryR::geom_flat_violin(data=geneEqtlSub, mapping=aes(fill=tissueSiteDetail), position=position_nudge(x=0.25), color="black", scale = "width")+
     geom_jitter(aes(color=tissueSiteDetail), width = 0.1)+
     geom_boxplot(width=0.15, position = position_nudge(x=0.25), fill="white", size=0.1)+
     coord_flip() +
-    ylab(expression(-log["10"]("p-value")))+
-    xlab("") +
+    ylab(ylab_text)+
+    xlab(xlab_text) +
+    labs(title=title_text)+
     theme_bw() +
     theme(
-      axis.text.x=element_text(size=rel(1.2),face="bold"),
-      axis.text.y = element_text(size=rel(1.2),face="bold"),
-      axis.title.x = element_text(size=rel(1.3),face="bold"),
-      axis.title.y = element_blank()
+      axis.text.x=element_text(size=rel(axis_text_size),face="bold"),
+      axis.text.y = element_text(size=rel(axis_text_size),face="bold"),
+      axis.title.x = element_text(size=rel(axis_title_size),face="bold"),
+      axis.title.y = element_blank(),
+      plot.title = element_text(size=rel(title_size), hjust=0.5)
     )+
     guides(fill="none", color="none")
+  if(!is.null(violin_color)){
+    p <- p+scale_fill_manual(values=violin_color)
+  }
   print(p)
   return(p)
 }
@@ -1103,6 +1206,12 @@ xQTLvisual_sqtl <- function(gene, geneType="auto" ){
 #' @param tissues A character string or a vector. "All" (default) means that all tissues is included.
 #' @param log10y Display values of expression in log scale. Default: FALSE.
 #' @param toTissueSite TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
 #'
 #' @return A list containing expression profile and a ggplot object.
 #' @export
@@ -1112,7 +1221,8 @@ xQTLvisual_sqtl <- function(gene, geneType="auto" ){
 #' # Display gene expression in specified tissues.
 #' geneExpTissues <- xQTLvisual_geneExpTissues("TP53", tissues=c("Lung", "Brain","Ovary"))
 #' }
-xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", log10y=FALSE, toTissueSite=FALSE){
+xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", log10y=FALSE, toTissueSite=FALSE,
+                                      axis_text_size=1.3, axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text =""){
   colorHex <- tissueSite <- expTPM <- NULL
   .<-NULL
   datasetId="gtex_v8"
@@ -1163,23 +1273,31 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
   expProfilesMelt$expTPM <- as.numeric(expProfilesMelt$expTPM)
   expProfilesMelt <- merge(expProfilesMelt, tissueSiteDetail, by="tissueSiteDetail")
 
+  if(xlab_text==""){
+    xlab_text <-""
+  }
+  if(ylab_text==""){
+    ylab_text <- "Expression (TPM)"
+  }
   if(log10y==TRUE){
     expProfilesMelt[expTPM==0,"expTPM"]<-1
   }
+  tissueSiteDetail <- tissueSiteDetail[,.(tissueSite, colorHex)][,.(colorHex=colorHex[1]), by="tissueSite"]
   if(toTissueSite){
-    tissueSiteDetail <- tissueSiteDetail[,.(tissueSite, colorHex)][,.(colorHex=colorHex[1]), by="tissueSite"]
-
     p1 <- ggplot(expProfilesMelt,aes(x=tissueSite, y=(expTPM), fill=tissueSite))+
       geom_violin(color="white", width=0.88, trim=FALSE, alpha=0.9, scale="width")+
       geom_boxplot(width=0.2,  alpha=0.9, outlier.size = 0.8, outlier.alpha = 0.4, outlier.shape = 21)+
-      scale_fill_manual(breaks = tissueSiteDetail$tissueSite, values = tissueSiteDetail$colorHex)+
+      scale_fill_manual(breaks = tissueSiteDetail$tissueSite, values = tissueSiteDetail$colorHex )+
       theme_classic()+	#分组绘制
-      ylab("Expression (TPM)")+
+      ylab(ylab_text)+
+      xlab(xlab_text)+
+      labs(title=title_text)+
       # scale_y_log10()+
-      theme(axis.text.x=element_text(size=rel(1.3), angle = 300, hjust = 0, vjust=0.5),
-            axis.text.y = element_text(size=rel(1.3)),
-            axis.title.x = element_blank(),
-            axis.title.y = element_text(size=rel(1.3)),
+      theme(axis.text.x=element_text(size=rel(axis_text_size), angle = 300, hjust = 0, vjust=0.5),
+            axis.text.y = element_text(size=rel(axis_text_size)),
+            axis.title.x = element_text(size=rel(axis_title_size)),
+            axis.title.y = element_text(size=rel(axis_title_size)),
+            plot.title = element_text(size=rel(title_size)),
             legend.position = "none"
       )
     # + geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
@@ -1189,12 +1307,15 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
       geom_boxplot(width=0.2,  alpha=0.9, outlier.size = 0.8, outlier.alpha = 0.4, outlier.shape = 21)+
       scale_fill_manual(breaks = tissueSiteDetail$tissueSiteDetail, values = tissueSiteDetail$colorHex)+
       theme_classic()+
-      ylab("Expression (TPM)")+
+      ylab(ylab_text)+
+      xlab(xlab_text)+
+      labs(title=title_text)+
       # scale_y_log10()+
-      theme(axis.text.x=element_text(size=rel(1.3), angle = 300, hjust = 0, vjust=0.5),
-            axis.text.y = element_text(size=rel(1.1)),
-            axis.title.x = element_blank(),
-            axis.title.y = element_text(size=rel(1.2)),
+      theme(axis.text.x=element_text(size=rel(axis_text_size), angle = 300, hjust = 0, vjust=0.5),
+            axis.text.y = element_text(size=rel(axis_text_size)),
+            axis.title.x = element_text(size=rel(axis_title_size)),
+            axis.title.y = element_text(size=rel(axis_title_size)),
+            plot.title = element_text(size=rel(title_size)),
             legend.position = "none",
             plot.margin=unit(c(0.3,2,0.3,0.3),"cm")
       )
@@ -1202,7 +1323,6 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
   if(log10y){
     p1 <- p1 + scale_y_log10()
   }
-
 
   print(p1)
   return(list(expProfiles=expProfiles, plot=p1))
@@ -1215,6 +1335,13 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
 #' @param snpHits A data.table object from result of xQTLanno_genomic
 #' @param pValueBy Cut step of pvlaue. Defaults: 5
 #' @param annoType "enrichment" or "overlapping"
+#' @param axis_text_size (numberic) text size of the axis labels
+#' @param axis_title_size (numberic) text size of the axis title
+#' @param legend_text_size (numberic) text size of the legend text
+#' @param title_size (numberic) text size of the title of the plot
+#' @param xlab_text (character) Lable for x-axis
+#' @param ylab_text (character) Lable for x-axis
+#' @param title_text (character) Title of the plot
 #'
 #' @return A ggplot object
 #' @export
@@ -1226,7 +1353,8 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
 #' snpHits <- xQTLanno_genomic(snpInfo)
 #' p <- xQTLvisual_anno(snpHits)
 #' }
-xQTLvisual_anno <- function(snpHits, pValueBy=5, annoType="enrichment"){
+xQTLvisual_anno <- function(snpHits,
+                            axis_text_size=1.3, axis_title_size=1.3, legend_text_size=1.1, title_size=1.4, xlab_text="", ylab_text="", title_text ="", point_color=NULL){
   OR <- p.value <- median_OR <- logP <- cutP <- Num <- Type <- NumSum <- prop <- Freq <- snpHitsCount<- Var1 <-NULL
   .<-NULL
 
@@ -1235,66 +1363,40 @@ xQTLvisual_anno <- function(snpHits, pValueBy=5, annoType="enrichment"){
   typeLabel <-data.table(type=c("cpg","enhancer","promoter","exon","nonsynonymous","utr3","utr5","tfCluster", "spliceSite", "intergenic", "intron", "downstream"),
                          Type = c("CpG island", "Enhancer", "Promoter", "Exon", "Nonsynonymous", "3'UTR", "5'UTR", "TFBS", "Splice site", "Intergenic", "Intron", "Downstream"))
 
-  if(annoType == "overlapping"){
-    snpHits <- snpHits$snpHits
-    snpHits$logP <- log(snpHits$pValue, base=10)*(-1)
-    snpHits$logP <- ifelse(snpHits$logP==0, 1e-6, snpHits$logP)
-    snpHits$cutP <- cut(snpHits$logP,breaks= ceiling(seq(0,max(snpHits$log)+pValueBy, by=pValueBy)), include.lowest=TRUE, right=FALSE )
+  # snpHitsCount <- snpHits$snpHits[,.(num_var = nrow(.SD)),by="type"]
+  # snpHitsCount$prop_var <- snpHitsCount$num_var / nrow(snpHits$gwasDF_sig)
+  # snpHitsCount <- merge(snpHitsCount, typeLabel, by="type", sort=FALSE)
+  snpEnrich <- snpHits$snpEnrich
+  snpEnrich <- merge(snpEnrich, typeLabel, by="type", sort=FALSE)
+  snpEnrich$logP <- log(snpEnrich$p.value, 10)*(-1)
 
-    snpHits_count <- as.data.table(as.data.frame(table(snpHits$type)))[,.(type=Var1, Num=Freq)]
-    snpHits_count <- merge(snpHits_count, typeLabel, by="type")
-    snpHits_count$prop <- round(snpHits_count$Num/(sum(snpHits_count$Num))*100,2)
-    snpHits_count <- snpHits_count[order(-prop)]
-    snpHits_count$legendLabel=paste(snpHits_count$Type," (",snpHits_count$prop,"%",")", sep="")
-
-    # a <- randomcoloR::distinctColorPalette(length(unique(snpHitsCount$Type)))
-    # a <- randomcoloR::randomColor(length(unique(snpHitsCount$Type)))
-    p1 <- ggplot(snpHits_count, aes(x = reorder(Type, Num, mean) ,y = Num,fill=Type)) +
-      geom_bar(stat = "identity", position =position_dodge(0.9), width = 0.7, alpha=1)+
-      # scale_y_log10( breaks=c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))), labels= as.character((c(0.5,10^c(0:floor(log(max(snpHitsCount$Num),10)))))) )+
-      scale_fill_manual( breaks=as.character(unique(snpHits_count$Type)),
-                         values=c("#D08C65","#C851DB","#DBD861","#DE80AB","#7DDDC1","#D4DDB6","#9A85D8","#8BE56B","#ABC1D8", "#e27771")[1:length(as.character(unique(snpHits_count$Type)))],
-                         labels= paste0(snpHits_count$Type)
-                         # labels= paste0(snpHits_count$Type, "(",snpHits_count$prop,"%)")
-      )+
-      theme_classic()+
-      # ylim(c(0, max(snpHits_count$Num)+0.15*max(snpHits_count$Num)))+
-      # geom_text(aes(label=paste(prop, "%")), position=position_dodge(width=0.9), hjust=0)+
-      theme(axis.text.x = element_text(size=rel(1.3)),
-            axis.text.y = element_text(size=rel(1.3)),
-            axis.title = element_text(size=rel(1.3)),
-            legend.title = element_text(face="bold",size=rel(1.1)),
-            legend.text = element_text(size=rel(1.1)),
-            legend.position = "right"
-      )+
-      # xlab(expression(-log["10"]("p-value")))+
-      xlab("")+
-      ylab("Number of variants")+coord_flip()+guides(fill="none")
-    plot(p1)
-    return(p1)
-  }else if(annoType=="enrichment"){
-    # snpHitsCount <- snpHits$snpHits[,.(num_var = nrow(.SD)),by="type"]
-    # snpHitsCount$prop_var <- snpHitsCount$num_var / nrow(snpHits$gwasDF_sig)
-    # snpHitsCount <- merge(snpHitsCount, typeLabel, by="type", sort=FALSE)
-    snpEnrich <- snpHits$snpEnrich
-    snpEnrich <- merge(snpEnrich, typeLabel, by="type", sort=FALSE)
-    snpEnrich$logP <- log(snpEnrich$p.value, 10)*(-1)
-
-    # snpEnrich_OR$Type <- factor(snpEnrich_OR[order(logP, decreasing = TRUE)]$Type )
-    p1 <- ggplot(snpEnrich,aes(x=enrichment, y = reorder(Type, enrichment, median))) +
-      geom_point(aes(size=logP, color=Type))+
-      geom_vline(xintercept = 1, color="red", linewidth=rel(1.1), linetype="dashed", alpha=0.5)+
-      ggforestplot::geom_stripes(odd = "#33333333", even = "#00000000")+
-      scale_size_continuous( range = c(2,6.5))+
-      theme_classic()+
-      ylab("")+
-      xlab("Fold Enrichment")+
-      theme(axis.title = element_text(size=rel(1.2)),
-            axis.text = element_text(size=rel(1.2)),
-            legend.text = element_text(size=rel(1.1)))+
-      guides(color="none")
-    return(p1)
+  if(ylab_text!=""){
+    ylab_text <- ""
   }
+  if(xlab_text!=""){
+    xlab_text <- "Fold Enrichment"
+  }
+
+  # snpEnrich_OR$Type <- factor(snpEnrich_OR[order(logP, decreasing = TRUE)]$Type )
+  p1 <- ggplot(snpEnrich,aes(x=enrichment, y = reorder(Type, enrichment, median))) +
+    geom_point(aes(size=logP, color=Type))+
+    geom_vline(xintercept = 1, color="red", linewidth=rel(1.1), linetype="dashed", alpha=0.5)+
+    ggforestplot::geom_stripes(odd = "#33333333", even = "#00000000")+
+    scale_size_continuous( range = c(2,6.5))+
+    theme_classic()+
+    ylab(ylab_text)+
+    xlab(xlab_text)+
+    labs(title = title_text)+
+    theme(axis.title = element_text(size=rel(axis_title_size)),
+          axis.text = element_text(size=rel(axis_text_size)),
+          legend.text = element_text(size=rel(legend_text_size)),
+          plot.title = element_text(size=rel(title_size), hjust=0.5))+
+    guides(color="none")
+  if(!is.null(point_color)){
+    p1 <- p1 + scale_color_manual(values = point_color)
+  }
+  print(p1)
+  return(p1)
 }
 
 

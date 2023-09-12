@@ -4,12 +4,36 @@
 \alias{xQTLvisual_eqtl}
 \title{Box plot with jittered points for showing number and significance of eQTL associations}
 \usage{
-xQTLvisual_eqtl(gene, geneType = "auto")
+xQTLvisual_eqtl(
+  gene,
+  geneType = "auto",
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  xlab_text = "",
+  ylab_text = "",
+  title_text = "",
+  violin_color = NULL
+)
 }
 \arguments{
 \item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{xlab_text}{(character) Lable for x-axis}
+
+\item{ylab_text}{(character) Lable for x-axis}
+
+\item{title_text}{(character) Title of the plot}
+
+\item{violin_color}{A character vector of violin plot color}
 }
 \value{
 A ggplot object.
@@ -19,6 +43,6 @@ Box plot with jittered points for showing number and significance of eQTL associ
 }
 \examples{
 \donttest{
-xQTLvisual_eqtl("KIF15")
+xQTLvisual_eqtl(gene = "KIF15")
 }
 }

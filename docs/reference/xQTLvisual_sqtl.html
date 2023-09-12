@@ -62,7 +62,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_sqtl</span><span class="op">(</span><span class="va">gene</span>, geneType <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_sqtl</span><span class="op">(</span></span>
+<span>  <span class="va">gene</span>,</span>
+<span>  geneType <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  axis_text_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  axis_title_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  title_size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>  xlab_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  ylab_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  title_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  violin_color <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,6 +83,34 @@
 
 <dt>geneType</dt>
 <dd><p>(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".</p></dd>
+
+
+<dt>axis_text_size</dt>
+<dd><p>(numberic) text size of the axis labels</p></dd>
+
+
+<dt>axis_title_size</dt>
+<dd><p>(numberic) text size of the axis title</p></dd>
+
+
+<dt>title_size</dt>
+<dd><p>(numberic) text size of the title of the plot</p></dd>
+
+
+<dt>xlab_text</dt>
+<dd><p>(character) Lable for x-axis</p></dd>
+
+
+<dt>ylab_text</dt>
+<dd><p>(character) Lable for x-axis</p></dd>
+
+
+<dt>title_text</dt>
+<dd><p>(character) Title of the plot</p></dd>
+
+
+<dt>violin_color</dt>
+<dd><p>A character vector of violin plot color</p></dd>
 
 </dl></div>
     <div id="value">
@@ -85,7 +123,7 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
-<span><span class="fu">xQTLvisual_sqtl</span><span class="op">(</span><span class="st">"KIF15"</span><span class="op">)</span></span>
+<span><span class="fu">xQTLvisual_sqtl</span><span class="op">(</span>gene<span class="op">=</span><span class="st">"KIF15"</span><span class="op">)</span></span>
 <span><span class="co"># }</span></span></code></pre></div>
     </div>
   </div>

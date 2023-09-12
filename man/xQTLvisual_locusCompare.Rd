@@ -11,6 +11,13 @@ xQTLvisual_locusCompare(
   population = "EUR",
   legend = TRUE,
   legend_position = c("topright", "bottomright", "topleft"),
+  point_color = NULL,
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  xlab_text = "",
+  ylab_text = "",
+  title_text = "",
   snpLD = NULL
 )
 }
@@ -26,6 +33,20 @@ xQTLvisual_locusCompare(
 \item{legend}{(boolean, optional) Should the legend be shown? Default: TRUE.}
 
 \item{legend_position}{(string, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
+
+\item{point_color}{(character, optional) Customized color vectors (5 kinds of colors).}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{xlab_text}{(character) Lable for x-axis}
+
+\item{ylab_text}{(character) Lable for x-axis}
+
+\item{title_text}{(character) Title of the plot}
 
 \item{snpLD}{A data.frame object of LD matrix. Default is null.}
 }

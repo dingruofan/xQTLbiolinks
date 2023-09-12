@@ -62,13 +62,51 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_anno</span><span class="op">(</span><span class="va">snpHits</span>, pValueBy <span class="op">=</span> <span class="fl">5</span>, annoType <span class="op">=</span> <span class="st">"enrichment"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xQTLvisual_anno</span><span class="op">(</span></span>
+<span>  <span class="va">snpHits</span>,</span>
+<span>  axis_text_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  axis_title_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  legend_text_size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  title_size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>  xlab_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  ylab_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  title_text <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  point_color <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>snpHits</dt>
 <dd><p>A data.table object from result of xQTLanno_genomic</p></dd>
+
+
+<dt>axis_text_size</dt>
+<dd><p>(numberic) text size of the axis labels</p></dd>
+
+
+<dt>axis_title_size</dt>
+<dd><p>(numberic) text size of the axis title</p></dd>
+
+
+<dt>legend_text_size</dt>
+<dd><p>(numberic) text size of the legend text</p></dd>
+
+
+<dt>title_size</dt>
+<dd><p>(numberic) text size of the title of the plot</p></dd>
+
+
+<dt>xlab_text</dt>
+<dd><p>(character) Lable for x-axis</p></dd>
+
+
+<dt>ylab_text</dt>
+<dd><p>(character) Lable for x-axis</p></dd>
+
+
+<dt>title_text</dt>
+<dd><p>(character) Title of the plot</p></dd>
 
 
 <dt>pValueBy</dt>

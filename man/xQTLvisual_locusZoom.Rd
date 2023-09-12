@@ -12,7 +12,13 @@ xQTLvisual_locusZoom(
   legend = TRUE,
   ylim = NULL,
   legend_position = c("topright", "bottomright", "topleft"),
-  point_fill = NULL,
+  point_color = NULL,
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  xlab_text = "",
+  ylab_text = "",
+  title_text = "",
   snpLD = NULL
 )
 }
@@ -39,7 +45,19 @@ xQTLvisual_locusZoom(
 
 \item{legend_position}{(character, optional) Either 'bottomright','topright', or 'topleft'. Default: 'bottomright'.}
 
-\item{point_fill}{(character, optional) Customized color vectors (5 kinds of colors).}
+\item{point_color}{(character, optional) Customized color vectors (5 kinds of colors).}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{xlab_text}{(character) Lable for x-axis}
+
+\item{ylab_text}{(character) Lable for x-axis}
+
+\item{title_text}{(character) Title of the plot}
 
 \item{snpLD}{A data.frame of LD matirx. Default is null.}
 }

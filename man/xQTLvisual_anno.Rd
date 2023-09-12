@@ -4,10 +4,34 @@
 \alias{xQTLvisual_anno}
 \title{Visualize enrichment of variants derived from \code{xQTLanno_genomic}}
 \usage{
-xQTLvisual_anno(snpHits, pValueBy = 5, annoType = "enrichment")
+xQTLvisual_anno(
+  snpHits,
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  legend_text_size = 1.1,
+  title_size = 1.4,
+  xlab_text = "",
+  ylab_text = "",
+  title_text = "",
+  point_color = NULL
+)
 }
 \arguments{
 \item{snpHits}{A data.table object from result of xQTLanno_genomic}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{legend_text_size}{(numberic) text size of the legend text}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{xlab_text}{(character) Lable for x-axis}
+
+\item{ylab_text}{(character) Lable for x-axis}
+
+\item{title_text}{(character) Title of the plot}
 
 \item{pValueBy}{Cut step of pvlaue. Defaults: 5}
 

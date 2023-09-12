@@ -9,7 +9,13 @@ xQTLvisual_geneExpTissues(
   geneType = "auto",
   tissues = "All",
   log10y = FALSE,
-  toTissueSite = FALSE
+  toTissueSite = FALSE,
+  axis_text_size = 1.3,
+  axis_title_size = 1.3,
+  title_size = 1.4,
+  xlab_text = "",
+  ylab_text = "",
+  title_text = ""
 )
 }
 \arguments{
@@ -22,6 +28,18 @@ xQTLvisual_geneExpTissues(
 \item{log10y}{Display values of expression in log scale. Default: FALSE.}
 
 \item{toTissueSite}{TRUE or FALSE, display all subtissues or tissue Site. Default: TURE.}
+
+\item{axis_text_size}{(numberic) text size of the axis labels}
+
+\item{axis_title_size}{(numberic) text size of the axis title}
+
+\item{title_size}{(numberic) text size of the title of the plot}
+
+\item{xlab_text}{(character) Lable for x-axis}
+
+\item{ylab_text}{(character) Lable for x-axis}
+
+\item{title_text}{(character) Title of the plot}
 }
 \value{
 A list containing expression profile and a ggplot object.
