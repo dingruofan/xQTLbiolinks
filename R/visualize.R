@@ -1282,12 +1282,12 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
   if(log10y==TRUE){
     expProfilesMelt[expTPM==0,"expTPM"]<-1
   }
-  tissueSiteDetail <- tissueSiteDetail[,.(tissueSite, colorHex)][,.(colorHex=colorHex[1]), by="tissueSite"]
-  if(toTissueSite){
-    p1 <- ggplot(expProfilesMelt,aes(x=tissueSite, y=(expTPM), fill=tissueSite))+
+
+  if(!toTissueSite){
+    p1 <- ggplot(expProfilesMelt,aes(x=tissueSiteDetail, y=(expTPM), fill=tissueSiteDetail))+
       geom_violin(color="white", width=0.88, trim=FALSE, alpha=0.9, scale="width")+
       geom_boxplot(width=0.2,  alpha=0.9, outlier.size = 0.8, outlier.alpha = 0.4, outlier.shape = 21)+
-      scale_fill_manual(breaks = tissueSiteDetail$tissueSite, values = tissueSiteDetail$colorHex )+
+      scale_fill_manual(breaks = tissueSiteDetail$tissueSiteDetail, values = tissueSiteDetail$colorHex )+
       theme_classic()+	#分组绘制
       ylab(ylab_text)+
       xlab(xlab_text)+
@@ -1297,12 +1297,14 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
             axis.text.y = element_text(size=rel(axis_text_size)),
             axis.title.x = element_text(size=rel(axis_title_size)),
             axis.title.y = element_text(size=rel(axis_title_size)),
+            plot.margin = margin(c(0.1,1.5,0.1,0.1), unit = "cm"),
             plot.title = element_text(size=rel(title_size)),
             legend.position = "none"
       )
     # + geom_text(aes(x=ifelse(length(unique(genoLable$genoLabels))==3, 2, 1.5), y=max(genoLable$normExp+1.2), label=paste0("P-value: ",signif(eqtlInfo$pValue, 3)) ))
   }else{
-    p1 <- ggplot(expProfilesMelt, aes(x=tissueSiteDetail, y=(expTPM), fill=tissueSiteDetail))+
+    tissueSiteDetail <- tissueSiteDetail[,.(tissueSite, colorHex)][,.(colorHex=colorHex[1]), by="tissueSite"]
+    p1 <- ggplot(expProfilesMelt, aes(x=tissueSite, y=(expTPM), fill=tissueSite))+
       geom_violin(color="white", width=0.88, trim=FALSE, alpha=0.9, scale="width")+
       geom_boxplot(width=0.2,  alpha=0.9, outlier.size = 0.8, outlier.alpha = 0.4, outlier.shape = 21)+
       scale_fill_manual(breaks = tissueSiteDetail$tissueSiteDetail, values = tissueSiteDetail$colorHex)+
@@ -1317,7 +1319,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
             axis.title.y = element_text(size=rel(axis_title_size)),
             plot.title = element_text(size=rel(title_size)),
             legend.position = "none",
-            plot.margin=unit(c(0.3,2,0.3,0.3),"cm")
+            plot.margin = margin(c(0.1,1.5,0.1,0.1), unit = "cm")
       )
   }
   if(log10y){
@@ -1369,6 +1371,7 @@ xQTLvisual_anno <- function(snpHits,
   snpEnrich <- snpHits$snpEnrich
   snpEnrich <- merge(snpEnrich, typeLabel, by="type", sort=FALSE)
   snpEnrich$logP <- log(snpEnrich$p.value, 10)*(-1)
+  # snpEnrich$logP[logP>10,]
 
   if(ylab_text!=""){
     ylab_text <- ""
@@ -1382,7 +1385,7 @@ xQTLvisual_anno <- function(snpHits,
     geom_point(aes(size=logP, color=Type))+
     geom_vline(xintercept = 1, color="red", linewidth=rel(1.1), linetype="dashed", alpha=0.5)+
     ggforestplot::geom_stripes(odd = "#33333333", even = "#00000000")+
-    scale_size_continuous( range = c(2,6.5))+
+    scale_size_continuous( breaks=c(0,10,20,40), range = c(2.5,6))+
     theme_classic()+
     ylab(ylab_text)+
     xlab(xlab_text)+

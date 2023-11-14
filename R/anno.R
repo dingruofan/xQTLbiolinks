@@ -335,6 +335,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   promoter_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[promoter_hits_non_sig_all$queryHits]))
   promoter_hits_non_sig_all$type <- "promoter"
 
+
   # message("      promoter hits: ",nrow(promoterHits), "; none-hits: ", nrow(promoter_hits_non_sig_all))
   # rm(promoterParts)
 
