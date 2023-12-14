@@ -27,5 +27,6 @@ A data.table object
 Download summary statistics data of H3K4me1 and H3K27ac histone QTL (hQTL) using a specified location
 }
 \examples{
- hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", histone_type="H3K4ME1", cell_type="T cell")
+ hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096",
+                              histone_type="H3K4ME1", cell_type="T cell")
 }

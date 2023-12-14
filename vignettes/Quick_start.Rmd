@@ -130,7 +130,7 @@ outputs
 
 ## Step 5. Visualization of the results.
 
-For the potential casual gene ***ENSG00000109684*** (PP4=**0.9937** & hypr_posterior=**0.9793**), we can get its significant associations across tissues:
+For the potential casual gene ***ENSG00000109684*** (PP4=**0.9937** & hypr_posterior=**0.9999**), we can get its significant associations across tissues:
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 xQTLvisual_eqtl("ENSG00000109684")
@@ -145,9 +145,8 @@ For the purpose of visualization of p-value distribution and comparison of the s
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="ENSG00000109684", 
-                                     tissueLabel = tissueSiteDetail)
-gwasEqtldata <- merge(gwasDF, eqtlAsso[,.(rsid=snpId, position=pos, maf, pValue)],
-                      by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
+                                     tissueLabel = tissueSiteDetail, data_source = "liLab")
+gwasEqtldata <- merge(gwasDF, eqtlAsso, by="rsid", suffixes = c(".gwas",".eqtl"))
 ```
 
 

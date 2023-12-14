@@ -297,13 +297,41 @@ NULL
 
 #' @title data for vignette
 #' @description
+#'  xx
+#' @docType data
+#' @keywords internal
+#' @name example_Coloc_outGenes
+#' @format A Data.table
+#' \describe{
+#'   \item{genes}{A character vector}
+#'   \item{genesUpper}{A character vector}
+#'   \item{geneSymbol}{A character vector}
+#'   \item{gencodeId}{A character vector}
+#'   \item{entrezGeneId}{A numeric vector}
+#'   \item{geneType}{A numeric vector}
+#'   \item{chromosome}{A numeric vector}
+#'   \item{start}{A numeric vector}
+#'   \item{end}{A numeric vector}
+#'   \item{strand}{A numeric vector}
+#'   \item{tss}{A numeric vector}
+#'   \item{gencodeVersion}{A numeric vector}
+#'   \item{genomeBuild}{A numeric vector}
+#'   \item{description}{A numeric vector}
+#' }
+#' @source xQTLanalyze_coloc
+NULL
+
+
+#' @title data for vignette
+#' @description
 #'  head 6 rows of traitsAll of significant results from xQTLanalyze_coloc
 #' @docType data
 #' @keywords internal
 #' @name example_Coloc_colocResultsig
 #' @format A Data.table
 #' \describe{
-#'   \item{traitGene}{A character vector}
+#'   \item{geneSymbol}{A character vector}
+#'   \item{gencodeId}{A character vector}
 #'   \item{nsnps}{A character vector}
 #'   \item{PP.H0.abf}{A numeric vector}
 #'   \item{PP.H1.abf}{A numeric vector}
@@ -349,4 +377,4 @@ utils::globalVariables("example_Coloc_traitsAll")
 utils::globalVariables("example_Coloc_colocResultAll")
 utils::globalVariables("example_Coloc_colocResultsig")
 utils::globalVariables("example_Coloc_hyprcolocResultAll")
-
+utils::globalVariables("example_Coloc_outGenes")

@@ -73,11 +73,11 @@ The genomic inflation factor (lambda) is labeled in the top left of the QQ-plot,
 Right is the PZ plot, the observed p-values on the y-axis and the corresponding p-values derived from z-scores that estimated by beta and se on the x-axis. A strong concordance can be observed between the observed p-values and those calculated from Z-scores.
 
 Genomic annotation of the significant signals can be conducted using `xQTLanno_genomic`:
-```{r, results = 'hide', echo=TRUE, message=FALSE, out.width = "70%", warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=TRUE, message=FALSE, out.width = "70%", warning=FALSE, eval=FALSE, include=FALSE}
 snpHits <- xQTLanno_genomic(gwasDF[,.(chrom=paste0("chr",chrom), position, pValue)])
 xQTLvisual_anno(snpHits)
 ```
-```{r, anno.png, fig.align = 'center', out.width = "35%", echo=FALSE}
+```{r, anno.png, fig.align = 'center', out.width = "35%", echo=FALSE, include=FALSE}
 knitr::include_graphics("images/prostate/anno.png")
 ```
 
@@ -128,19 +128,27 @@ Following three steps of colocalization analysis are encapsulated in one functio
 2.  Merge the data.frame of GWAS and eQTL by rsid.
 3.  Perform colocalization analysis using `coloc` and `hyprcoloc` methods.
 
-For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several hours):
+For above 835 trait genes, a for loop can be used to get these genes' outputs of colocalization analysis (this may take several minutes):
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 # All genes:
-genesAll<- unique(traitsAll$gencodeId)
+genesAll<- xQTLquery_gene(unique(traitsAll$gencodeId))
+setindex(gwasDF, rsid) # speed up merging
 # A data.table to save results:
 colocResultAll <- data.table()
-for(i in 1:length(genesAll)){
-  colocResult <- xQTLanalyze_coloc(gwasDF, 
-                                   genomeVersion = "grch37", method="Both",
-                                   genesAll[i], tissueSiteDetail=tissueSiteDetail)
-  if(!is.null(colocResult)){ colocResultAll <- rbind(colocResultAll, colocResult$colocOut)}
-  message(format(Sys.time(), "== %Y-%b-%d %H:%M:%S ")," == Id:",i,"/",length(genesAll)," == Gene:",genesAll[i])
+for(i in 1:nrow(genesAll)){
+  # eQTL of the gene i
+  eQTL_i <- xQTLdownload_eqtlAllAsso(genesAll[i]$gencodeId, geneType = "gencodeId", tissueLabel=tissueSiteDetail, withB37VariantId = FALSE, data_source="liLab")
+  gwasDF_i <- gwasDF[rsid  %in% eQTL_i$rsid,]
+  eQTL_i <- merge(eQTL_i, gwasDF_i[,.(rsid, chrom, position)], by ="rsid")[,.(rsid, chrom, position, pValue, maf, beta, se)]
+  # using both method coloc and hyprcoloc to perform colocalization analysis
+  colocResult_i <- xQTLanalyze_coloc_diy(gwasDF = gwasDF_i, qtlDF = eQTL_i, method="Both")
+  # 
+  if(!is.null(colocResult)){ 
+      colocResult_i <- colocResult_i$coloc_Out_summary
+      colocResult_i <- cbind(genesAll[i,c("geneSymbol","gencodeId")], colocResult_i)
+      colocResultAll <- rbind(colocResultAll, colocResult_i)}
+  message(" == Id: ",i,"/",nrow(genesAll)," == Gene:",genesAll[i]$gencodeId)
 }
 ```
 
@@ -165,12 +173,12 @@ Output is a data.table object that combined all results of `colocOut` of all gen
 head(colocResultAll)
 ```
 
-We can see that the two methodologies' outcomes are quite consistent. With a threshold of 0.75 for `coloc` and 0.5 for `hyprcoloc`, a total of 24 colocalized genes are shared.
+We can see that the two methodologies' outcomes are quite consistent. With a threshold of 0.75 for `coloc` and 0.5 for `hyprcoloc`, a total of 26 colocalized genes are shared.
 
-```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, results = 'hide', echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE, include=FALSE}
 library(VennDiagram)
-T <- venn.diagram( list(colocOut = colocResultAll[PP.H4.abf>=0.75]$traitGene, 
-                   hyprcolocOut = colocResultAll[hypr_posterior>=0.5]$traitGene),
+T <- venn.diagram( list(colocOut = colocResultAll[PP.H4.abf>=0.75]$geneSymbol, 
+                   hyprcolocOut = colocResultAll[hypr_posterior>=0.5]$geneSymbol),
                    filename = NULL,lwd=1,lty=1, width = 8000, height = 10000,
                    fill=c('#ff7a45','#597ef7'), col=c('red','blue'), cat.col=c('red','blue'),
                    main.cex = 0.45, sub.cex= 0.1,
@@ -178,7 +186,7 @@ T <- venn.diagram( list(colocOut = colocResultAll[PP.H4.abf>=0.75]$traitGene,
 grid.draw(T)
 ```
 
-```{r, venn_coloc_hyprcoloc, fig.align = 'center', out.width = "30%", echo=FALSE}
+```{r, venn_coloc_hyprcoloc, fig.align = 'center', out.width = "30%", echo=FALSE, include=FALSE}
 knitr::include_graphics("images/prostate/venn_coloc_hyprcoloc.png", error = FALSE)
 ```
 
@@ -193,8 +201,9 @@ colocResultAll <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/coloc
 
 We considered colocalization tests with a posterior probability of hypothesis 4 (PPH4.ABF) > 0.75 & hypr_posterior > 0.5 as having strong or moderate evidence for colocalization.
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
-colocResultsig <- example_Coloc_colocResultsig
+
+```{r, message=FALSE, warning=FALSE, include=FALSE, eval=TRUE}
+colocResultsig <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/example_Coloc_colocResultsig.txt")
 ```
 
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
@@ -210,14 +219,15 @@ head(colocResultsig)
 All these genes' details can be fetched with `xQTLquery_gene`:
 
 ```{r eval=TRUE, message=FALSE}
-outGenes <- xQTLquery_gene(colocResultsig$traitGene)
+outGenes <- xQTLquery_gene(colocResultsig$gencodeId)
 ```
+
 
 Add the value of PPH4 for each gene, and remove non-protein-coding genes:
 
 ```{r, eval=TRUE}
-outGenes <- merge(colocResultsig[,.(gencodeId= traitGene, PP.H4.abf, candidate_snp, SNP.PP.H4, hypr_posterior)], 
-                  outGenes[,.(geneSymbol, gencodeId, entrezGeneId, geneType)], by="gencodeId", sort=FALSE)
+outGenes <- merge(colocResultsig[,c("gencodeId", "PP.H4.abf", "candidate_snp", "SNP.PP.H4", "hypr_posterior")], 
+                  outGenes[,c("geneSymbol", "gencodeId", "entrezGeneId", "geneType")], by="gencodeId", sort=FALSE)
 outGenes <- outGenes[geneType =="protein coding"]
 ```
 

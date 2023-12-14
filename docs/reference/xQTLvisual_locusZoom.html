@@ -159,7 +159,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span><span class="co"># For GWAS dataset:</span></span>
-<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span></span>
 <span><span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span></span>
 <span><span class="co"># Zoom in:</span></span>
 <span><span class="fu">xQTLvisual_locusZoom</span><span class="op">(</span><span class="va">gwasDF</span>, posRange<span class="op">=</span><span class="st">"chr6:4.7e7-4.8e7"</span>, population <span class="op">=</span><span class="st">"EUR"</span><span class="op">)</span></span>

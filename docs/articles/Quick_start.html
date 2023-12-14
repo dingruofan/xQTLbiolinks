@@ -111,7 +111,7 @@ packages:</p>
 (GRCh38). We perform colocalization analysis in
 <code>Brain - Cerebellum</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwasDFsub.txt"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwasDFsub.txt"</span><span class="op">)</span></span>
 <span><span class="va">tissueSiteDetail</span><span class="op">=</span><span class="st">"Brain - Cerebellum"</span></span></code></pre></div>
 <p>In this example, a data.table object of 16538 (rows) x 5 (cols) is
 loaded. Five columns are required (arbitrary column names is supported,
@@ -196,7 +196,7 @@ detected</p>
 function can be used to get all genes’ outputs (using both
 <code>coloc</code> and <code>hyprcoloc</code> methods).</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="co"># using gencode ID.</span></span>
+<code class="sourceCode R"><span><span class="va">outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="co"># using gencode ID.</span></span>
 <span>           <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">x</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span>, method <span class="op">=</span> <span class="st">"Both"</span><span class="op">)</span><span class="op">$</span><span class="va">colocOut</span> <span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><em>outputs</em> is a data.table that combined all results of
 <em>coloc_Out_summary</em> of all genes.</p>
@@ -220,7 +220,7 @@ function can be used to get all genes’ outputs (using both
 </h2>
 <p>For the potential casual gene
 <strong><em>ENSG00000109684</em></strong> (PP4=<strong>0.9937</strong>
-&amp; hypr_posterior=<strong>0.9793</strong>), we can get its
+&amp; hypr_posterior=<strong>0.9999</strong>), we can get its
 significant associations across tissues:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_eqtl.html">xQTLvisual_eqtl</a></span><span class="op">(</span><span class="st">"ENSG00000109684"</span><span class="op">)</span></span></code></pre></div>
@@ -230,9 +230,8 @@ comparison of the signals of GWAS and eQTL: We merge the variants of
 GWAS and eQTL by rsid first.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"ENSG00000109684"</span>, </span>
-<span>                                     tissueLabel <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span>
-<span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">snpId</span>, position<span class="op">=</span><span class="va">pos</span>, <span class="va">maf</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>                      by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>, <span class="st">"position"</span><span class="op">)</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>                                     tissueLabel <span class="op">=</span> <span class="va">tissueSiteDetail</span>, data_source <span class="op">=</span> <span class="st">"liLab"</span><span class="op">)</span></span>
+<span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">eqtlAsso</span>, by<span class="op">=</span><span class="st">"rsid"</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Function <code>xQTLvisual_locusCompare</code> displays the candidate
 SNP <strong><em>rs13120565</em></strong>
 (SNP.PP.H4=<strong>0.5328849</strong> &amp;

@@ -8,7 +8,7 @@ xQTLquery_sc(
   gene = "BIN3",
   geneType = "geneSymbol",
   cell_type = "Astrocytes",
-  cell_state = "",
+  cell_state = "-",
   qtl_type = "Cell-type eQTL",
   study_name = "Bryois2022NN"
 )
@@ -31,10 +31,4 @@ A data.table object
 }
 \description{
 Query significant sc-eQTLs for a specified gene
-}
-\examples{
-\donttest{
- xQTLquery_sc(gene="TP53", cell_type = "B cell",
-              qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
-}
 }

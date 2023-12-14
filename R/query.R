@@ -1983,13 +1983,10 @@ xQTLquery_scInfo <- function(){
 #'
 #' @return A data.table object
 #' @export
-#'
-#' @examples
-#' \donttest{
-#'  xQTLquery_sc(gene="TP53", cell_type = "B cell",
-#'               qtl_type="Cell-type eQTL", study_name = "Resztak2022biorxiv")
-#' }
-xQTLquery_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocytes", cell_state="", qtl_type="Cell-type eQTL", study_name="Bryois2022NN"){
+xQTLquery_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocytes", cell_state="-", qtl_type="Cell-type eQTL", study_name="Bryois2022NN"){
+
+  tmp <- tissueSiteDetail <- genes <- NULL
+  .<-NULL
   study_info <- xQTLquery_scInfo()
 
   if(geneType=="gencodeId"){

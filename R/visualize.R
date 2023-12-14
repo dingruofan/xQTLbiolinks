@@ -229,7 +229,7 @@ xQTLvisual_eqtlExp <- function(variantName="", gene="", variantType="auto", gene
 #' box_plot <- xQTLvisual_genoBox(genoDT, title_size=1.6, title_text="Geno-Exp association" )
 #' }
 xQTLvisual_genoBox <- function(genoDT, axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="Genotypes", ylab_text="Normalized expression", ylim_v=NULL, title_text ="", jitter_color=NULL){
-  genoLabels <- normExp <- labelNum <- p <- NULL
+  genoLabels <- genotypes <- phenoValues <- normExp <- labelNum <- p <- NULL
 
   data.table::setDT(genoDT)
   names(genoDT) <- c("genotypes", "phenoValues")
@@ -513,7 +513,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
                                   legend_position = c('topright','bottomright','topleft'), point_color=NULL,
                                   axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",
                                   snpLD=NULL){
-  snpId <- pos <- pValue <- logP <- pointShape<- NULL
+  point_fill <- snpId <- pos <- pValue <- logP <- pointShape<- NULL
   chrom <- x <- y<- RS_Number <- R2 <- SNP_B <- r2Cut <-genome<- .<-NULL
   # highlightSnp=""
   # population="EUR"
@@ -719,7 +719,7 @@ xQTLvisual_locusZoom <- function( DF , highlightSnp="", population="EUR", posRan
 xQTLvisual_locusCompare <- function(eqtlDF, gwasDF, highlightSnp="", population="EUR", legend = TRUE, legend_position = c('topright','bottomright','topleft'), point_color=NULL,
                                     axis_text_size=1.3,axis_title_size=1.3, title_size=1.4, xlab_text="", ylab_text="", title_text ="",
                                     snpLD=NULL ){
-  x <- y<- genomeVersion <- NULL
+  x <- y<- point_fill <- genomeVersion <- NULL
 
   pValue <- snpId <- distance <- logP.gwas <- logP.eqtl <- NULL
   RS_Number <- R2 <- SNP_B <- r2Cut <- pointShape<- .<-NULL
@@ -1357,7 +1357,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
 #' }
 xQTLvisual_anno <- function(snpHits,
                             axis_text_size=1.3, axis_title_size=1.3, legend_text_size=1.1, title_size=1.4, xlab_text="", ylab_text="", title_text ="", point_color=NULL){
-  OR <- p.value <- median_OR <- logP <- cutP <- Num <- Type <- NumSum <- prop <- Freq <- snpHitsCount<- Var1 <-NULL
+  enrichment <- OR <- p.value <- annoType <-pValueBy <- median_OR <- logP <- cutP <- Num <- Type <- NumSum <- prop <- Freq <- snpHitsCount<- Var1 <-NULL
   .<-NULL
 
   if( !requireNamespace("ggforestplot") ){ stop("please install package \"ggforestplot\".") }

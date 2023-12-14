@@ -303,11 +303,16 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
       message("==> Querying genes...")
       geneDT <- xQTLquery_gene(gene)
       geneDT <- geneDT[,c("gencodeId")]
-    }else if(geneType=="gencodeId"){
+    }else if(geneType=="gencodeId" & all(unlist(lapply(gene, function(g){ str_detect(g, stringr::fixed(".")) }))) ){
       geneDT <- data.table(gencodeId= gene)
+    }else{
+      message("==> require gencodeId...")
+      geneDT <- xQTLquery_gene(gene)
+      geneDT <- geneDT[,c("gencodeId")]
     }
     if(nrow(geneDT)==0){ message(0);return(NULL)}
     geneDT$url1 <- paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/eQTL_b38_rsid_gene/", tissueDT$tissueSiteDetailId, "/",geneDT$gencodeId)
+    # message("==> download url: ",geneDT$url1)
     geneDT$tmpFilePath <- paste(unlist(lapply(1:nrow(geneDT), function(x){tempfile(pattern = "eqtl_")})),"eQTL_",1:nrow(geneDT),".txt", sep="")
 
     # download sQTL by clu:
@@ -319,7 +324,7 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
                                                       quiet = TRUE )), silent=TRUE)
       if(!file.exists(geneDT[i,]$tmpFilePath)){ cat("    > Failed...") }
       cat("   > Success!")
-      message("")
+      message("\n")
     }
 
     message("== combine results...")
@@ -1829,7 +1834,8 @@ xQTLdownload_hqtlmeta <- function(histone_type="H3K27AC", cell_type="monocyte"){
 #' @export
 #'
 #' @examples
-#'  hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096", histone_type="H3K4ME1", cell_type="T cell")
+#'  hQTL_dt <- xQTLdownload_hqtl(phenotype_id="10:10458128-10465096",
+#'                               histone_type="H3K4ME1", cell_type="T cell")
 xQTLdownload_hqtl <- function(phenotype_id="9:99773935-99776816", histone_type="H3K27AC", cell_type="monocyte", hqtlmeta=NULL ){
   #
   phenotype_id_ <- phenotype_id
@@ -1858,6 +1864,7 @@ xQTLdownload_hqtl <- function(phenotype_id="9:99773935-99776816", histone_type="
 #' @examples
 #' mQTL_meta<- xQTLdownload_mqtlmeta("Testis")
 xQTLdownload_mqtlmeta <- function(tissue_name="BreastMammaryTissue"){
+  mQTL_meta <- . <- NULL
   tissues <- c("BreastMammaryTissue", "ColonTransverse", "KidneyCortex", "Lung", "MuscleSkeletal", "Ovary", "Prostate", "Testis", "WholeBlood")
   if(!(tissue_name %in% tissues)){ stop(paste0("Invalid tissue name, must be selected from ", paste0(tissues, collapse = ", "))) }
   #

@@ -7,7 +7,8 @@
 \format{
 A Data.table
 \describe{
-\item{traitGene}{A character vector}
+\item{geneSymbol}{A character vector}
+\item{gencodeId}{A character vector}
 \item{nsnps}{A character vector}
 \item{PP.H0.abf}{A numeric vector}
 \item{PP.H1.abf}{A numeric vector}

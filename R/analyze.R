@@ -299,6 +299,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' @param mafThreshold Cutoff of maf to remove rare variants.
 #' @param population Supported population is consistent with the LDlink, which can be listed using function "LDlinkR::list_pop()"
 #' @param gwasSampleNum Sample number of GWAS dataset. Default:50000.
+#' @param data_source "eQTL_catalogue" or "liLab" (default)
 #' @param token LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess
 #' @param method (character) options: "coloc"(default) or "hyprcoloc". Package `coloc` or `hyprcoloc` is required.
 #' @param bb.alg For `hyprcoloc`, branch and bound algorithm: TRUE, employ BB algorithm; FALSE, do not. Default: FALSE.
@@ -312,7 +313,7 @@ xQTLanalyze_getTraits <- function(sentinelSnpDF, detectRange=1e6, tissueSiteDeta
 #' gwasDF <- data.table::fread(url1)
 #' output <- xQTLanalyze_coloc(gwasDF = gwasDF, traitGene= "MMP7", tissueSiteDetail="Prostate")
 #' }
-xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", study="gtex_v8", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", token="9246d2db7917", bb.alg=FALSE){
+xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion="grch38", tissueSiteDetail="", study="gtex_v8", mafThreshold=0.01, population="EUR", gwasSampleNum=50000, method="coloc", data_source="liLab", token="9246d2db7917", bb.alg=FALSE){
   rsid <- chr <- position <- se <- pValue <- snpId <- maf <- pos <- i <- variantId <- se.eqtl <- se.gwas <-SNP.PP.H4 <- beta.eqtl <- beta.gwas <- posterior_prob <- regional_prob <-candidate_snp <- posterior_explained_by_snp  <- NULL
   qtl_group <- NULL
   . <- NULL
@@ -348,43 +349,18 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     }
   }
 
-  # eqtl dataset:
-  eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, study=study, withB37VariantId = FALSE)
-
-  if( !exists("eqtlInfo") || is.null(eqtlInfo)){
-    message(i," | gene", traitGene, "has no eqtl associations, next!")
-    message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
-    return(NULL)
-  }
-  # 如果有有多个 qtl_group, 只保留第一个。
-  eqtlInfo <- eqtlInfo[ qtl_group ==eqtlInfo[1,]$qtl_group,]
-  eqtlInfo[,position:=.(pos)]
-
-  # chromosome:
-  P_chrom <- paste0("chr",eqtlInfo[1,]$chrom)
-
-  eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
-  # 去重：
-  eqtlInfo <- eqtlInfo[order(snpId, pValue)][!duplicated(snpId)]
-  # subset:
-  eqtlInfo <- na.omit( eqtlInfo[,.(rsid=snpId, maf=as.numeric(maf), beta, se, pValue=as.numeric(pValue), position=as.numeric(position))] )
-
-  if(nrow(eqtlInfo)==0){
-    message("Number of eQTL association is <1")
-    return(NULL)
-  }
-
-  message("Data processing...")
-
   ##################### gwas dataset:
+  message("Data processing...")
   gwasDF <- gwasDF[,1:7]
   data.table::setDT(gwasDF)
   names(gwasDF) <- c("rsid", "chr", "position", "pValue", "maf", "beta", "se")
   # gwas subset:
   gwasDF <- na.omit(gwasDF)
 
-  p_chrom_tmp <- ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"),P_chrom, stringr::str_remove(P_chrom, "chr"))
-  gwasDF <- gwasDF[chr==p_chrom_tmp,]
+  # chromosome refer to the first record of GWAS dataset, avoid multiple chrome in a gwas dataset.
+  # p_chrom_tmp <- ifelse(stringr::str_detect(gwasDF[1,]$chr, "chr"), gwasDF[1,]$chr, stringr::str_remove(gwasDF[1,]$chr, "chr"))
+  # P_chrom <- p_chrom_tmp
+  # gwasDF <- gwasDF[chr==p_chrom_tmp,]
   # convert variable class:
   gwasDF[,c("position", "pValue", "maf", "beta", "se"):=.(as.numeric(position), as.numeric(pValue), as.numeric(maf), as.numeric(beta), as.numeric(se))]
   # MAF filter:
@@ -423,20 +399,85 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     message("== ",length(dataRanges_hg38),"/",nrow(gwasDF)," (",round(length(dataRanges_hg38)/nrow(gwasDF)*100,2),"%)"," left.")
     gwasDFnew <- cbind(data.table::data.table(rsid = dataRanges_hg38$rsid, maf=dataRanges_hg38$maf, pValue=dataRanges_hg38$pValue, beta=dataRanges_hg38$beta, se=dataRanges_hg38$se),
                        data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(dataRanges_hg38)), position=as.data.table(IRanges::ranges(dataRanges_hg38))$start ))
-    gwasDF <- gwasDFnew[chr==P_chrom,.(rsid, chr, position, pValue, maf, beta, se)]
+    gwasDF <- gwasDFnew[,.(rsid, chr, position, pValue, maf, beta, se)]
     rm(dataRanges, dataRanges_hg38, gwasDFnew)
   }
 
 
-  #
-  tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
-  gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position,beta, se)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
-  gwasEqtlInfo <- gwasEqtlInfo[se.eqtl !=0 & se.gwas !=0, ]
+  # perform coloc with eQTL summary data from different source:
+  if(data_source == "liLab"){
+    # eqtl dataset:
+    eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, study=study, withB37VariantId = FALSE, data_source="liLab")
+    if( !exists("eqtlInfo") || is.null(eqtlInfo)){
+      message(i," | gene", traitGene, "has no eqtl associations, next!")
+      message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
+      return(NULL)
+    }
+    names(eqtlInfo) <- c("rsid", "gene_id", "maf", "pValue", "beta", "se", "gencodeId_GTEX_v8")
 
-  if(nrow(gwasEqtlInfo)==0){
-    message("No shared variants between eQTL and GWAS, please check your input!.")
-    return(NULL)
+    # chromosome:
+    # P_chrom <- p_chrom_tmp
+
+    eqtlInfo <- eqtlInfo[rsid !="."]
+    eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
+    # 去重：
+    eqtlInfo <- eqtlInfo[order(rsid, pValue)][!duplicated(rsid)]
+
+    # subset:
+    eqtlInfo <- na.omit( eqtlInfo[,.(rsid, maf=as.numeric(maf), beta, se, pValue=as.numeric(pValue))] )
+
+    if(nrow(eqtlInfo)==0){
+      message("Number of eQTL association is <1")
+      return(NULL)
+    }
+
+    # merge with GWAS:
+    tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+    gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue,beta, se)], by=c("rsid"), suffixes = c(".gwas",".eqtl"))
+    gwasEqtlInfo <- gwasEqtlInfo[se.eqtl !=0 & se.gwas !=0, ]
+
+    if(nrow(gwasEqtlInfo)==0){
+      message("No shared variants between eQTL and GWAS, please check your input!.")
+      return(NULL)
+    }
+
+  }else{
+    eqtlInfo <- xQTLdownload_eqtlAllAsso(traitGene, geneType = geneType, tissueLabel=tissueSiteDetail, study=study, withB37VariantId = FALSE)
+
+    if( !exists("eqtlInfo") || is.null(eqtlInfo)){
+      message(i," | gene", traitGene, "has no eqtl associations, next!")
+      message(" = None eQTL associations obtained of gene [",traitGene,"], please change the gene name or ENSEMBLE ID.")
+      return(NULL)
+    }
+    # 如果有有多个 qtl_group, 只保留第一个。
+    eqtlInfo <- eqtlInfo[ qtl_group ==eqtlInfo[1,]$qtl_group,]
+    eqtlInfo[,position:=.(pos)]
+
+    # chromosome:
+    P_chrom <- paste0("chr",eqtlInfo[1,]$chrom)
+
+    eqtlInfo<- eqtlInfo[maf>mafThreshold & maf <1,]
+    # 去重：
+    eqtlInfo <- eqtlInfo[order(snpId, pValue)][!duplicated(snpId)]
+    # subset:
+    eqtlInfo <- na.omit( eqtlInfo[,.(rsid=snpId, maf=as.numeric(maf), beta, se, pValue=as.numeric(pValue), position=as.numeric(position))] )
+
+    if(nrow(eqtlInfo)==0){
+      message("Number of eQTL association is <1")
+      return(NULL)
+    }
+
+    #
+    tissueSiteDetailId <- tissueSiteDetailGTExv8[tissueSiteDetail, on="tissueSiteDetail"]$tissueSiteDetailId
+    gwasEqtlInfo <- merge(gwasDF, eqtlInfo[,.(rsid, maf, pValue, position,beta, se)], by=c("rsid", "position"), suffixes = c(".gwas",".eqtl"))
+    gwasEqtlInfo <- gwasEqtlInfo[se.eqtl !=0 & se.gwas !=0, ]
+
+    if(nrow(gwasEqtlInfo)==0){
+      message("No shared variants between eQTL and GWAS, please check your input!.")
+      return(NULL)
+    }
   }
+
   message("== Start the colocalization analysis of gene [", traitGene,"]")
 
   if(method=="coloc"){
@@ -622,7 +663,7 @@ xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNu
     message(hyprcoloc_Out_summary)
     message("== Done")
 
-    return(list(hyprcoloc_Out_summary=hyprcoloc_Out_summary, gwasEqtlInfo=gwasEqtlInfo))
+    return(list(coloc_Out_summary=hyprcoloc_Out_summary, gwasEqtlInfo=gwasEqtlInfo))
   }else if( method=="Both"){
     message("== Using methods: coloc AND hyprcoloc.")
     # coloc:
@@ -648,7 +689,7 @@ xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNu
     print(colocOut)
 
     message("== Done")
-    return(list(colocOut=colocOut, gwasEqtlInfo=gwasEqtlInfo))
+    return(list(coloc_Out_summary=colocOut, gwasEqtlInfo=gwasEqtlInfo))
   }
 }
 

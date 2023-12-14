@@ -15,6 +15,7 @@ xQTLanalyze_coloc(
   population = "EUR",
   gwasSampleNum = 50000,
   method = "coloc",
+  data_source = "liLab",
   token = "9246d2db7917",
   bb.alg = FALSE
 )
@@ -39,6 +40,8 @@ xQTLanalyze_coloc(
 \item{gwasSampleNum}{Sample number of GWAS dataset. Default:50000.}
 
 \item{method}{(character) options: "coloc"(default) or "hyprcoloc". Package \code{coloc} or \code{hyprcoloc} is required.}
+
+\item{data_source}{"eQTL_catalogue" or "liLab" (default)}
 
 \item{token}{LDlink provided user token, default = NULL, register for token at https://ldlink.nci.nih.gov/?tab=apiaccess}
 

@@ -63,7 +63,7 @@ xQTLanno_calLambda <- function(summaryDT){
 #' variants_hit_enhancer <- xQTLanno_chippeak(snpInfo, enrichElement=enhancerDT)
 #' }
 xQTLanno_chippeak <- function(snpInfo="",  genomeVersion="hg38", enrichElement=NULL, distLimit=1){
-  chrom <- pValue <- tx_name <- distance <- V1 <- V2 <- V3 <- NULL
+  chrom <- chr <- chromStart <- chromEnd <- elementType <- pValue <- tx_name <- distance <- V1 <- V2 <- V3 <- NULL
   . <- NULL
 
   message("==> Start checking variants...")
@@ -155,6 +155,7 @@ xQTLanno_chippeak <- function(snpInfo="",  genomeVersion="hg38", enrichElement=N
 #' }
 xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
 
+  width <- N <- enrichment <- p.value <- NULL
   chrom <- pValue <- V1 <- V2 <- V3 <- tx_name <- anno <- TXID <- tx_id <- type <- pos <- proportion <- NULL
   nrow_id <- rep_id<- NULL
 

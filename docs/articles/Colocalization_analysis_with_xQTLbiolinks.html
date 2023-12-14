@@ -119,7 +119,7 @@ of prostate cancer from GWAS category and load the dataset in R with
 (start with <code>rs</code>), and a data.table object named
 <code>gwasDF</code> of 13,498,990 (rows) x 7 (cols) is loaded.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"29892016-GCST006085-EFO_0001663-build37.f.tsv.gz"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"29892016-GCST006085-EFO_0001663-build37.f.tsv.gz"</span><span class="op">)</span></span>
 <span><span class="co"># extract columns.</span></span>
 <span><span class="va">gwasDF</span><span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">variant_id</span>, <span class="st">"^rs"</span><span class="op">)</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">variant_id</span>, chrom<span class="op">=</span><span class="va">chromosome</span>, position<span class="op">=</span> <span class="va">base_pair_location</span>, pValue<span class="op">=</span><span class="va">p_value</span>, AF<span class="op">=</span><span class="va">effect_allele_frequency</span>, <span class="va">beta</span>, se<span class="op">=</span> <span class="va">standard_error</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># tissue:</span></span>
@@ -154,10 +154,6 @@ concordance can be observed between the observed p-values and those
 calculated from Z-scores.</p>
 <p>Genomic annotation of the significant signals can be conducted using
 <code>xQTLanno_genomic</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">snpHits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanno_genomic.html">xQTLanno_genomic</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>chrom<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chr"</span>,<span class="va">chrom</span><span class="op">)</span>, <span class="va">position</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/xQTLvisual_anno.html">xQTLvisual_anno</a></span><span class="op">(</span><span class="va">snpHits</span><span class="op">)</span></span></code></pre></div>
-<p><img src="images/prostate/anno.png" width="35%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="step-1-identify-sentinel-snps">Step 1: Identify sentinel SNPs:<a class="anchor" aria-label="anchor" href="#step-1-identify-sentinel-snps"></a>
@@ -172,11 +168,11 @@ of genome version is required, and can be conducted using
 <code>xQTLanalyze_getSentinelSnp</code> with
 <code>genomeVersion="grch37"</code> and <code>grch37To38=TRUE</code>
 (package <code>rtracklayer</code>is required):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sentinelSnpDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_getSentinelSnp.html">xQTLanalyze_getSentinelSnp</a></span><span class="op">(</span><span class="va">gwasDF</span>, centerRange<span class="op">=</span><span class="fl">1e6</span>,</span>
 <span>                                            genomeVersion<span class="op">=</span><span class="st">"grch37"</span>, grch37To38<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>A total of 94 sentinel SNPs are detected.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sentinelSnpDF</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;           rsid  chr  position    pValue    maf    beta     se</span></span>
 <span><span class="co">#&gt; 1:  rs55664108 chr1 204587862 8.572e-25 0.7157  0.0912 0.0089</span></span>
@@ -194,11 +190,11 @@ be changed with parameter <code>detectRange</code>) of sentinel SNPs. In
 order to reduce the number of trait genes and thus reduce the running
 time, we take the overlap of eGenes and trait genes as the final output
 of the function <code>xQTLanalyze_getTraits</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">traitsAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_getTraits.html">xQTLanalyze_getTraits</a></span><span class="op">(</span><span class="va">sentinelSnpDF</span>, detectRange<span class="op">=</span><span class="fl">1e6</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span></span></code></pre></div>
 <p>Totally, 898 associations between 835 traits genes and 92 sentinel
 SNPs are detected</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    chromosome geneStart   geneEnd geneStrand geneSymbol          gencodeId</span></span>
 <span><span class="co">#&gt; 1:       chr1 205086142 205122015          -      RBBP5 ENSG00000117222.13</span></span>
@@ -228,18 +224,26 @@ gene.</li>
 <code>hyprcoloc</code> methods.</li>
 </ol>
 <p>For above 835 trait genes, a for loop can be used to get these genes’
-outputs of colocalization analysis (this may take several hours):</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+outputs of colocalization analysis (this may take several minutes):</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># All genes:</span></span>
-<span><span class="va">genesAll</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span></span>
+<span><span class="va">genesAll</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setindex</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">rsid</span><span class="op">)</span> <span class="co"># speed up merging</span></span>
 <span><span class="co"># A data.table to save results:</span></span>
-<span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="va">colocResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc.html">xQTLanalyze_coloc</a></span><span class="op">(</span><span class="va">gwasDF</span>, </span>
-<span>                                   genomeVersion <span class="op">=</span> <span class="st">"grch37"</span>, method<span class="op">=</span><span class="st">"Both"</span>,</span>
-<span>                                   <span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span></span>
-<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">colocResult</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> <span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">colocResultAll</span>, <span class="va">colocResult</span><span class="op">$</span><span class="va">colocOut</span><span class="op">)</span><span class="op">}</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"== %Y-%b-%d %H:%M:%S "</span><span class="op">)</span>,<span class="st">" == Id:"</span>,<span class="va">i</span>,<span class="st">"/"</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">)</span>,<span class="st">" == Gene:"</span>,<span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co"># eQTL of the gene i</span></span>
+<span>  <span class="va">eQTL_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">$</span><span class="va">gencodeId</span>, geneType <span class="op">=</span> <span class="st">"gencodeId"</span>, tissueLabel<span class="op">=</span><span class="va">tissueSiteDetail</span>, withB37VariantId <span class="op">=</span> <span class="cn">FALSE</span>, data_source<span class="op">=</span><span class="st">"liLab"</span><span class="op">)</span></span>
+<span>  <span class="va">gwasDF_i</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span><span class="va">rsid</span>  <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="va">eQTL_i</span><span class="op">$</span><span class="va">rsid</span>,<span class="op">]</span></span>
+<span>  <span class="va">eQTL_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">eQTL_i</span>, <span class="va">gwasDF_i</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span><span class="st">"rsid"</span><span class="op">)</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue</span>, <span class="va">maf</span>, <span class="va">beta</span>, <span class="va">se</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="co"># using both method coloc and hyprcoloc to perform colocalization analysis</span></span>
+<span>  <span class="va">colocResult_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc_diy.html">xQTLanalyze_coloc_diy</a></span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF_i</span>, qtlDF <span class="op">=</span> <span class="va">eQTL_i</span>, method<span class="op">=</span><span class="st">"Both"</span><span class="op">)</span></span>
+<span>  <span class="co"># </span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">colocResult</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> </span>
+<span>      <span class="va">colocResult_i</span> <span class="op">&lt;-</span> <span class="va">colocResult_i</span><span class="op">$</span><span class="va">coloc_Out_summary</span></span>
+<span>      <span class="va">colocResult_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">[</span><span class="va">i</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geneSymbol"</span>,<span class="st">"gencodeId"</span><span class="op">)</span><span class="op">]</span>, <span class="va">colocResult_i</span><span class="op">)</span></span>
+<span>      <span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">colocResultAll</span>, <span class="va">colocResult_i</span><span class="op">)</span><span class="op">}</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">" == Id: "</span>,<span class="va">i</span>,<span class="st">"/"</span>,<span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">)</span>,<span class="st">" == Gene:"</span>,<span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>In this case, we invoke two methods to conduct colocalization
 analysis, (1). <code>coloc</code> that estimates the posterior support
@@ -257,7 +261,7 @@ variant</li>
 probability that all traits share a causal variant.</p>
 <p>Output is a data.table object that combined all results of
 <code>colocOut</code> of all genes.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">colocResultAll</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;             traitGene nsnps    PP.H0.abf    PP.H1.abf    PP.H2.abf  PP.H3.abf</span></span>
 <span><span class="co">#&gt; 1: ENSG00000001167.14  6205 2.072318e-15 0.2592617382 5.785196e-15 0.72375223</span></span>
@@ -282,21 +286,11 @@ probability that all traits share a causal variant.</p>
 <span><span class="co">#&gt; 6:          rs2189681                        0.1829</span></span></code></pre>
 <p>We can see that the two methodologies’ outcomes are quite consistent.
 With a threshold of 0.75 for <code>coloc</code> and 0.5 for
-<code>hyprcoloc</code>, a total of 24 colocalized genes are shared.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">VennDiagram</span><span class="op">)</span></span>
-<span><span class="cn">T</span> <span class="op">&lt;-</span> <span class="fu">venn.diagram</span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>colocOut <span class="op">=</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">PP.H4.abf</span><span class="op">&gt;=</span><span class="fl">0.75</span><span class="op">]</span><span class="op">$</span><span class="va">traitGene</span>, </span>
-<span>                   hyprcolocOut <span class="op">=</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">hypr_posterior</span><span class="op">&gt;=</span><span class="fl">0.5</span><span class="op">]</span><span class="op">$</span><span class="va">traitGene</span><span class="op">)</span>,</span>
-<span>                   filename <span class="op">=</span> <span class="cn">NULL</span>,lwd<span class="op">=</span><span class="fl">1</span>,lty<span class="op">=</span><span class="fl">1</span>, width <span class="op">=</span> <span class="fl">8000</span>, height <span class="op">=</span> <span class="fl">10000</span>,</span>
-<span>                   fill<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'#ff7a45'</span>,<span class="st">'#597ef7'</span><span class="op">)</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'red'</span>,<span class="st">'blue'</span><span class="op">)</span>, cat.col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'red'</span>,<span class="st">'blue'</span><span class="op">)</span>,</span>
-<span>                   main.cex <span class="op">=</span> <span class="fl">0.45</span>, sub.cex<span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>                   disable.logging <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">grid.draw</span><span class="op">(</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><img src="images/prostate/venn_coloc_hyprcoloc.png" width="30%" style="display: block; margin: auto;"></p>
+<code>hyprcoloc</code>, a total of 26 colocalized genes are shared.</p>
 <p>To save time and go through this case as soon as possible, you can
 get the above result directly with:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/colocResultAll.txt"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/colocResultAll.txt"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-4-visualization-of-the-results">Step 4: Visualization of the results:<a class="anchor" aria-label="anchor" href="#step-4-visualization-of-the-results"></a>
@@ -304,94 +298,98 @@ get the above result directly with:</p>
 <p>We considered colocalization tests with a posterior probability of
 hypothesis 4 (PPH4.ABF) &gt; 0.75 &amp; hypr_posterior &gt; 0.5 as
 having strong or moderate evidence for colocalization.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">colocResultsig</span> <span class="op">&lt;-</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">PP.H4.abf</span><span class="op">&gt;</span><span class="fl">0.75</span> <span class="op">&amp;</span> <span class="va">hypr_posterior</span><span class="op">&gt;</span><span class="fl">0.5</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">PP.H4.abf</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <p>There are 24 trait genes that are associated and share a single
 causal variant:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">colocResultsig</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;             traitGene nsnps    PP.H0.abf    PP.H1.abf    PP.H2.abf   PP.H3.abf</span></span>
-<span><span class="co">#&gt; 1:  ENSG00000137673.8  7108 3.722120e-16 7.637674e-04 1.159909e-15 0.001382244</span></span>
-<span><span class="co">#&gt; 2: ENSG00000167641.10  5034 2.405778e-32 1.349362e-05 8.271165e-30 0.003642818</span></span>
-<span><span class="co">#&gt; 3: ENSG00000184058.12  6045 1.551367e-07 1.220850e-05 1.078421e-04 0.007494261</span></span>
-<span><span class="co">#&gt; 4: ENSG00000115486.11  5389 1.594413e-24 5.835862e-07 2.875803e-20 0.009535535</span></span>
-<span><span class="co">#&gt; 5: ENSG00000179409.10  6154 4.387457e-18 6.631626e-03 6.233624e-18 0.008437170</span></span>
-<span><span class="co">#&gt; 6:  ENSG00000277744.1  4616 1.043225e-19 1.214959e-02 6.298351e-20 0.006353677</span></span>
-<span><span class="co">#&gt;    PP.H4.abf candidate_snp SNP.PP.H4 hypr_posterior hypr_regional_prob</span></span>
-<span><span class="co">#&gt; 1: 0.9978540    rs11568818 0.9999999         0.9993             0.9998</span></span>
-<span><span class="co">#&gt; 2: 0.9963437     rs7247241 0.2491879         0.9911             1.0000</span></span>
-<span><span class="co">#&gt; 3: 0.9923855     rs2238775 0.3010829         0.9778             0.9995</span></span>
-<span><span class="co">#&gt; 4: 0.9904639    rs10175792 0.2836228         0.9830             1.0000</span></span>
-<span><span class="co">#&gt; 5: 0.9849312     rs2740358 0.9401973         0.9869             0.9960</span></span>
-<span><span class="co">#&gt; 6: 0.9814967     rs2079811 0.9999034         0.9924             0.9943</span></span>
-<span><span class="co">#&gt;    hypr_candidate_snp hypr_posterior_explainedBySnp</span></span>
-<span><span class="co">#&gt; 1:         rs11568818                        1.0000</span></span>
-<span><span class="co">#&gt; 2:          rs4802297                        0.2738</span></span>
-<span><span class="co">#&gt; 3:          rs2238775                        0.3230</span></span>
-<span><span class="co">#&gt; 4:         rs10175792                        0.3449</span></span>
-<span><span class="co">#&gt; 5:          rs2740358                        0.8927</span></span>
-<span><span class="co">#&gt; 6:          rs2079811                        1.0000</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;       geneSymbol          gencodeId nsnps    PP.H0.abf    PP.H1.abf</span></span>
+<span><span class="co">#&gt; 1:          MMP7  ENSG00000137673.8  7108 4.037711e-17 8.285257e-05</span></span>
+<span><span class="co">#&gt; 2: CTC-435M10.12  ENSG00000277744.1  4676 2.078933e-20 2.421163e-03</span></span>
+<span><span class="co">#&gt; 3:      PPP1R14A ENSG00000167641.10  5034 5.328594e-34 2.988721e-07</span></span>
+<span><span class="co">#&gt; 4:        GEMIN4 ENSG00000179409.10  6169 9.325967e-19 1.409617e-03</span></span>
+<span><span class="co">#&gt; 5:          GGCX ENSG00000115486.11  5389 9.622300e-27 3.521949e-09</span></span>
+<span><span class="co">#&gt; 6:          TBX1 ENSG00000184058.12  6044 1.851045e-09 1.456683e-07</span></span>
+<span><span class="co">#&gt;       PP.H2.abf    PP.H3.abf PP.H4.abf candidate_snp SNP.PP.H4 hypr_posterior</span></span>
+<span><span class="co">#&gt; 1: 6.360696e-16 0.0003055833 0.9996116    rs11568818 1.0000000         0.9993</span></span>
+<span><span class="co">#&gt; 2: 1.588664e-20 0.0008534614 0.9967254     rs2079811 0.9999764         0.9923</span></span>
+<span><span class="co">#&gt; 3: 8.166955e-30 0.0035842959 0.9964154     rs4802297 0.2683674         0.9911</span></span>
+<span><span class="co">#&gt; 4: 2.672611e-18 0.0030440968 0.9955463     rs2740358 0.9493232         0.9869</span></span>
+<span><span class="co">#&gt; 5: 2.411952e-20 0.0078360511 0.9921639    rs10175792 0.3177452         0.9830</span></span>
+<span><span class="co">#&gt; 6: 2.233151e-04 0.0165906223 0.9831859     rs2238775 0.2005480         0.9778</span></span>
+<span><span class="co">#&gt;    hypr_regional_prob hypr_candidate_snp hypr_posterior_explainedBySnp</span></span>
+<span><span class="co">#&gt; 1:             0.9998         rs11568818                        1.0000</span></span>
+<span><span class="co">#&gt; 2:             0.9943          rs2079811                        1.0000</span></span>
+<span><span class="co">#&gt; 3:             1.0000          rs4802297                        0.2738</span></span>
+<span><span class="co">#&gt; 4:             0.9960          rs2740358                        0.8927</span></span>
+<span><span class="co">#&gt; 5:             1.0000         rs10175792                        0.3449</span></span>
+<span><span class="co">#&gt; 6:             0.9995          rs2238775                        0.3230</span></span></code></pre>
 <p>All these genes’ details can be fetched with
 <code>xQTLquery_gene</code>:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="va">colocResultsig</span><span class="op">$</span><span class="va">traitGene</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="va">colocResultsig</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span></span></code></pre></div>
 <p>Add the value of PPH4 for each gene, and remove non-protein-coding
 genes:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">colocResultsig</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>gencodeId<span class="op">=</span> <span class="va">traitGene</span>, <span class="va">PP.H4.abf</span>, <span class="va">candidate_snp</span>, <span class="va">SNP.PP.H4</span>, <span class="va">hypr_posterior</span><span class="op">)</span><span class="op">]</span>, </span>
-<span>                  <span class="va">outGenes</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">geneSymbol</span>, <span class="va">gencodeId</span>, <span class="va">entrezGeneId</span>, <span class="va">geneType</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="st">"gencodeId"</span>, sort<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outGenes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">colocResultsig</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gencodeId"</span>, <span class="st">"PP.H4.abf"</span>, <span class="st">"candidate_snp"</span>, <span class="st">"SNP.PP.H4"</span>, <span class="st">"hypr_posterior"</span><span class="op">)</span><span class="op">]</span>, </span>
+<span>                  <span class="va">outGenes</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geneSymbol"</span>, <span class="st">"gencodeId"</span>, <span class="st">"entrezGeneId"</span>, <span class="st">"geneType"</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="st">"gencodeId"</span>, sort<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">outGenes</span> <span class="op">&lt;-</span> <span class="va">outGenes</span><span class="op">[</span><span class="va">geneType</span> <span class="op">==</span><span class="st">"protein coding"</span><span class="op">]</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outGenes</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              gencodeId PP.H4.abf candidate_snp  SNP.PP.H4 hypr_posterior</span></span>
-<span><span class="co">#&gt;  1:  ENSG00000137673.8 0.9978540    rs11568818 0.99999989         0.9993</span></span>
-<span><span class="co">#&gt;  2: ENSG00000167641.10 0.9963437     rs7247241 0.24918793         0.9911</span></span>
-<span><span class="co">#&gt;  3: ENSG00000184058.12 0.9923855     rs2238775 0.30108289         0.9778</span></span>
-<span><span class="co">#&gt;  4: ENSG00000115486.11 0.9904639    rs10175792 0.28362278         0.9830</span></span>
-<span><span class="co">#&gt;  5: ENSG00000179409.10 0.9849312     rs2740358 0.94019727         0.9869</span></span>
-<span><span class="co">#&gt;  6: ENSG00000117280.12 0.9701717      rs708723 0.31910829         0.9428</span></span>
-<span><span class="co">#&gt;  7: ENSG00000184012.11 0.9652282     rs6517673 0.37410718         0.9127</span></span>
-<span><span class="co">#&gt;  8: ENSG00000069275.12 0.9625282      rs823154 0.29904947         0.9364</span></span>
-<span><span class="co">#&gt;  9: ENSG00000099331.13 0.9607259    rs11666569 0.24161844         0.9293</span></span>
-<span><span class="co">#&gt; 10: ENSG00000155749.12 0.9538274     rs7560328 0.20927651         0.8966</span></span>
-<span><span class="co">#&gt; 11: ENSG00000118961.14 0.9294589     rs9306895 0.48924035         0.7300</span></span>
-<span><span class="co">#&gt; 12: ENSG00000101751.10 0.9271138     rs3730783 0.08842167         0.8321</span></span>
-<span><span class="co">#&gt; 13:  ENSG00000172613.7 0.9099755    rs35826789 0.69464894         0.9038</span></span>
-<span><span class="co">#&gt; 14:  ENSG00000180535.3 0.8941134     rs6465657 0.15229260         0.8643</span></span>
-<span><span class="co">#&gt; 15: ENSG00000003400.14 0.8932643    rs12620010 0.23152548         0.7922</span></span>
-<span><span class="co">#&gt; 16: ENSG00000115648.13 0.8889021    rs72620824 0.35924147         0.7378</span></span>
-<span><span class="co">#&gt; 17: ENSG00000162877.12 0.8849219     rs1772159 0.28436834         0.5931</span></span>
-<span><span class="co">#&gt; 18: ENSG00000204536.13 0.8733027     rs2517985 0.12887177         0.7333</span></span>
-<span><span class="co">#&gt; 19: ENSG00000136819.15 0.8365468    rs13300897 0.12522776         0.7313</span></span>
-<span><span class="co">#&gt; 20: ENSG00000065060.16 0.7937810   rs112283401 0.02533245         0.6114</span></span>
-<span><span class="co">#&gt; 21: ENSG00000198625.12 0.7695907     rs2169137 0.12300108         0.6086</span></span>
+<span><span class="co">#&gt;  1:  ENSG00000137673.8 0.9996116    rs11568818 0.99999996         0.9993</span></span>
+<span><span class="co">#&gt;  2: ENSG00000167641.10 0.9964154     rs4802297 0.26836743         0.9911</span></span>
+<span><span class="co">#&gt;  3: ENSG00000179409.10 0.9955463     rs2740358 0.94932317         0.9869</span></span>
+<span><span class="co">#&gt;  4: ENSG00000115486.11 0.9921639    rs10175792 0.31774517         0.9830</span></span>
+<span><span class="co">#&gt;  5: ENSG00000184058.12 0.9831859     rs2238775 0.20054800         0.9778</span></span>
+<span><span class="co">#&gt;  6: ENSG00000069275.12 0.9728258      rs823154 0.42379078         0.9364</span></span>
+<span><span class="co">#&gt;  7: ENSG00000117280.12 0.9715855      rs708723 0.36167886         0.9428</span></span>
+<span><span class="co">#&gt;  8: ENSG00000099331.13 0.9713063    rs11666569 0.25871794         0.9293</span></span>
+<span><span class="co">#&gt;  9: ENSG00000184012.11 0.9660070     rs6517673 0.38159830         0.9127</span></span>
+<span><span class="co">#&gt; 10:  ENSG00000172613.7 0.9576434    rs35826789 0.92558434         0.9038</span></span>
+<span><span class="co">#&gt; 11: ENSG00000155749.12 0.9561720     rs7560328 0.22497345         0.8966</span></span>
+<span><span class="co">#&gt; 12: ENSG00000204536.13 0.9366182     rs2517985 0.13110756         0.7333</span></span>
+<span><span class="co">#&gt; 13:  ENSG00000180535.3 0.9361589     rs6465657 0.17430973         0.8643</span></span>
+<span><span class="co">#&gt; 14: ENSG00000003400.14 0.9105858    rs12620010 0.37295865         0.7922</span></span>
+<span><span class="co">#&gt; 15: ENSG00000101751.10 0.9084474     rs3730783 0.09578602         0.8321</span></span>
+<span><span class="co">#&gt; 16: ENSG00000152601.17 0.8906783    rs73011743 0.03316094         0.7482</span></span>
+<span><span class="co">#&gt; 17: ENSG00000136819.15 0.8812364    rs13300897 0.15189809         0.7313</span></span>
+<span><span class="co">#&gt; 18: ENSG00000115648.13 0.8654407    rs72620824 0.54349674         0.7378</span></span>
+<span><span class="co">#&gt; 19: ENSG00000198625.12 0.8209748     rs2169137 0.14030719         0.6086</span></span>
+<span><span class="co">#&gt; 20: ENSG00000162877.12 0.8115885     rs1772159 0.39272007         0.5931</span></span>
+<span><span class="co">#&gt; 21: ENSG00000065060.16 0.7949202   rs112283401 0.03978575         0.6114</span></span>
+<span><span class="co">#&gt; 22: ENSG00000080546.13 0.7811190     rs6935782 0.08037725         0.6257</span></span>
+<span><span class="co">#&gt; 23: ENSG00000118961.14 0.7700294     rs9306895 0.54356363         0.7300</span></span>
 <span><span class="co">#&gt;              gencodeId PP.H4.abf candidate_snp  SNP.PP.H4 hypr_posterior</span></span>
 <span><span class="co">#&gt;     geneSymbol entrezGeneId       geneType</span></span>
 <span><span class="co">#&gt;  1:       MMP7         4316 protein coding</span></span>
 <span><span class="co">#&gt;  2:   PPP1R14A        94274 protein coding</span></span>
-<span><span class="co">#&gt;  3:       TBX1         6899 protein coding</span></span>
+<span><span class="co">#&gt;  3:     GEMIN4        50628 protein coding</span></span>
 <span><span class="co">#&gt;  4:       GGCX         2677 protein coding</span></span>
-<span><span class="co">#&gt;  5:     GEMIN4        50628 protein coding</span></span>
-<span><span class="co">#&gt;  6:      RAB29         8934 protein coding</span></span>
-<span><span class="co">#&gt;  7:    TMPRSS2         7113 protein coding</span></span>
-<span><span class="co">#&gt;  8:     NUCKS1        64710 protein coding</span></span>
-<span><span class="co">#&gt;  9:      MYO9B         4650 protein coding</span></span>
-<span><span class="co">#&gt; 10:   ALS2CR12       130540 protein coding</span></span>
-<span><span class="co">#&gt; 11:       LDAH        60526 protein coding</span></span>
-<span><span class="co">#&gt; 12:       POLI        11201 protein coding</span></span>
-<span><span class="co">#&gt; 13:      RAD9A         5883 protein coding</span></span>
-<span><span class="co">#&gt; 14:    BHLHA15       168620 protein coding</span></span>
-<span><span class="co">#&gt; 15:     CASP10          843 protein coding</span></span>
-<span><span class="co">#&gt; 16:       MLPH        79083 protein coding</span></span>
-<span><span class="co">#&gt; 17:     PM20D1       148811 protein coding</span></span>
-<span><span class="co">#&gt; 18:     CCHCR1        54535 protein coding</span></span>
-<span><span class="co">#&gt; 19:    C9orf78        51759 protein coding</span></span>
-<span><span class="co">#&gt; 20:   UHRF1BP1        54887 protein coding</span></span>
-<span><span class="co">#&gt; 21:       MDM4         4194 protein coding</span></span>
+<span><span class="co">#&gt;  5:       TBX1         6899 protein coding</span></span>
+<span><span class="co">#&gt;  6:     NUCKS1        64710 protein coding</span></span>
+<span><span class="co">#&gt;  7:      RAB29         8934 protein coding</span></span>
+<span><span class="co">#&gt;  8:      MYO9B         4650 protein coding</span></span>
+<span><span class="co">#&gt;  9:    TMPRSS2         7113 protein coding</span></span>
+<span><span class="co">#&gt; 10:      RAD9A         5883 protein coding</span></span>
+<span><span class="co">#&gt; 11:   ALS2CR12       130540 protein coding</span></span>
+<span><span class="co">#&gt; 12:     CCHCR1        54535 protein coding</span></span>
+<span><span class="co">#&gt; 13:    BHLHA15       168620 protein coding</span></span>
+<span><span class="co">#&gt; 14:     CASP10          843 protein coding</span></span>
+<span><span class="co">#&gt; 15:       POLI        11201 protein coding</span></span>
+<span><span class="co">#&gt; 16:      MBNL1         4154 protein coding</span></span>
+<span><span class="co">#&gt; 17:    C9orf78        51759 protein coding</span></span>
+<span><span class="co">#&gt; 18:       MLPH        79083 protein coding</span></span>
+<span><span class="co">#&gt; 19:       MDM4         4194 protein coding</span></span>
+<span><span class="co">#&gt; 20:     PM20D1       148811 protein coding</span></span>
+<span><span class="co">#&gt; 21:   UHRF1BP1        54887 protein coding</span></span>
+<span><span class="co">#&gt; 22:      SESN1        27244 protein coding</span></span>
+<span><span class="co">#&gt; 23:       LDAH        60526 protein coding</span></span>
 <span><span class="co">#&gt;     geneSymbol entrezGeneId       geneType</span></span></code></pre>
 <p>Ridgeline plot can be used to compare the expressions among these
 genes:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_genesExp.html">xQTLvisual_genesExp</a></span><span class="op">(</span><span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_geneExpInOneTissue.png" width="50%" style="display: block; margin: auto;"></p>
 <p>Trait gene <strong><code>MMP7</code></strong> that with the highest
@@ -406,28 +404,28 @@ Resent literature has shown that serum MMP7 levels could guide
 metastatic therapy for prostate cancer.</p>
 <p>Expression of MMP7 in multiple tissues can be plotted with
 <code>xQTLvisual_geneExpTissues</code>:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geneExpTissues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_geneExpTissues.html">xQTLvisual_geneExpTissues</a></span><span class="op">(</span><span class="st">"MMP7"</span>, log10y <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_exp_multissues.png" width="90%" style="display: block; margin: auto;"></p>
 <p>The number and significance of eQTLs in distinguished tissues are
 capable of showing a tissue-specific effect or a ubiquitous effect. The
 function <code>xQTLvisual_eqtl</code> can be used to indicate whether
 the gene is widely regulation in various tissues.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_eqtl.html">xQTLvisual_eqtl</a></span><span class="op">(</span><span class="st">"MMP7"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_eqtlTissues.png" width="90%" style="display: block; margin: auto;"></p>
 <p>Besides, we provide functions <code>xQTLvisual_locusCompare</code>
 and <code>xQTLvisual_locusZoom</code> to visualize the colocalization
 between the GWAS and the eQTL dataset for a specified gene, we take the
 gene <code>MMP7</code> as an example:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download all eQTL associations of gene  MMP7 in prostate:</span></span>
 <span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>,tissueLabel <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span>
 <span><span class="co"># Merge the variants of GWAS and eQTL dataset by rsid:</span></span>
 <span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AF"</span><span class="op">)</span><span class="op">]</span>, <span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">snpId</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                      by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span><span class="op">)</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Five retained fields are required:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gwasEqtldata</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;             rsid chrom position pValue.gwas pValue.eqtl</span></span>
 <span><span class="co">#&gt;    1: rs10000104  chr4 10190142      0.2830   0.4986640</span></span>
@@ -443,27 +441,27 @@ gene <code>MMP7</code> as an example:</p>
 <span><span class="co">#&gt; 8011:  rs9999767  chr4 10127270      0.8730   0.1902930</span></span></code></pre>
 <p>Visualization of p-value distribution and comparison of the signals
 of GWAS and eQTL:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_locusCompare.html">xQTLvisual_locusCompare</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>                        <span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend_position <span class="op">=</span> <span class="st">"bottomright"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_locuscompare.png" width="50%" style="display: block; margin: auto;"></p>
 <p>Locuszoom plot of GWAS signals:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.gwas</span><span class="op">)</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_locuszoom_gwas.png" width="50%" style="display: block; margin: auto;"></p>
 <p>Locuszoom plot of eQTL signals:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue.eqtl</span><span class="op">)</span><span class="op">]</span>, legend<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_locuszoom_eqtl.png" width="50%" style="display: block; margin: auto;"></p>
 <p>We can also combine locuscompare and locuszoom plot using function
 <code>xQTLvisual_locusCombine</code>:</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span>,<span class="st">"chrom"</span>, <span class="st">"position"</span>, <span class="st">"pValue.gwas"</span>, <span class="st">"pValue.eqtl"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_combined.png" width="90%" style="display: block; margin: auto;"></p>
 <p>From the above figures, we can see that the SNP
 <code>rs11568818</code> is potential causal variant, and we can use a
 violin plot to show the normalized effect size of it:</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_eqtlExp.html">xQTLvisual_eqtlExp</a></span><span class="op">(</span><span class="st">"rs11568818"</span>, <span class="st">"MMP7"</span>, tissueSiteDetail <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/prostate/prostate_eQTL_exp.png" width="40%" style="display: block; margin: auto;"></p>
 </div>
@@ -476,19 +474,19 @@ we can conduct exploratory analysis, like co-expression analysis, and
 gene ontology enrichment analyses.</p>
 <p>First we download expression profiles of the genes with higher value
 of PPH4 (&gt;0.75) &amp; hypr_posterior (&gt;0.5) in prostate.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_exp.html">xQTLdownload_exp</a></span><span class="op">(</span><span class="va">outGenes</span><span class="op">$</span><span class="va">gencodeId</span>, tissueSiteDetail<span class="op">=</span><span class="va">tissueSiteDetail</span>, toSummarizedExperiment <span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Pearson coefficient can be calculated with the expression matrix for
 each gene:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corDT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">expMat</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="op">-</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">corDT</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">corDT</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">outGenes</span><span class="op">$</span><span class="va">geneSymbol</span></span></code></pre></div>
 <p>R package <code>corrplot</code> is used to display this correlation
 matrix:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/taiyun/corrplot" class="external-link">corrplot</a></span><span class="op">)</span> </span>
-<span><span class="fu">corrplot</span><span class="op">(</span><span class="va">corDT</span>, method<span class="op">=</span><span class="st">"color"</span>,  </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html" class="external-link">corrplot</a></span><span class="op">(</span><span class="va">corDT</span>, method<span class="op">=</span><span class="st">"color"</span>,  </span>
 <span>         type<span class="op">=</span><span class="st">"upper"</span>,    </span>
 <span>         order <span class="op">=</span> <span class="st">"hclust"</span>,</span>
 <span>         addCoef.col <span class="op">=</span> <span class="st">"#ff0099"</span>, </span>
@@ -496,7 +494,7 @@ matrix:</p>
 <p><img src="images/prostate/prostate_cor.png" width="90%" style="display: block; margin: auto;"></p>
 <p>R package <code>clusterProfiler</code> is used for gene functional
 annotation:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/biomedical-knowledge-mining-book/" class="external-link">clusterProfiler</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
 <span><span class="va">ego</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html" class="external-link">enrichGO</a></span><span class="op">(</span>gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">outGenes</span><span class="op">$</span><span class="va">entrezGeneId</span><span class="op">)</span>,</span>

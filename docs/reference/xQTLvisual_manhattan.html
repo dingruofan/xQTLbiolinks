@@ -89,7 +89,7 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># \donttest{</span></span>
-<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span></span>
 <span>      <span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/AD/gwasChr6Sub.txt"</span><span class="op">)</span></span>
 <span><span class="fu">xQTLvisual_manhattan</span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chr</span>, <span class="va">position</span>,<span class="va">P</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co"># }</span></span></code></pre></div>
