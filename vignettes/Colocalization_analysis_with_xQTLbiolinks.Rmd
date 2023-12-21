@@ -41,6 +41,15 @@ Prostate cancer is one of the most common cancers in men. Prostate cancer pathog
 
 For data preparation, we download summary statistics dataset of a GWAS study ([GCST006085](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST006001-GCST007000/GCST006085/harmonised/29892016-GCST006085-EFO_0001663-build37.f.tsv.gz)) of prostate cancer from GWAS category and load the dataset in R with `data.table` package. Correspondingly, we chose tissue `Prostate` for study. We retain the variants with dbSNP id (start with `rs`), and a data.table object named `gwasDF` of 13,498,990 (rows) x 7 (cols) is loaded.
 
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+t1 <- tempfile()
+utils::download.file("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/2023_1_21/prostate_coloc_2023_12_21.zip", t1)
+load(unz(t1,"prostate_coloc_2023_12_21.RData"))
+close(file(t1))
+rm(t1)
+```
+
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 gwasDF <- fread("29892016-GCST006085-EFO_0001663-build37.f.tsv.gz")
 # extract columns.
@@ -91,7 +100,7 @@ sentinelSnpDF <- xQTLanalyze_getSentinelSnp(gwasDF, centerRange=1e6,
                                             genomeVersion="grch37", grch37To38=TRUE)
 ```
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE, echo=FALSE}
 sentinelSnpDF <- example_Coloc_sentinelSNP
 ```
 
@@ -111,10 +120,11 @@ traitsAll <- xQTLanalyze_getTraits(sentinelSnpDF, detectRange=1e6, tissueSiteDet
 
 Totally, 898 associations between 835 traits genes and 92 sentinel SNPs are detected
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE, eval=FALSE}
 tissueSiteDetail="Prostate"
 traitsAll <- example_Coloc_traitsAll
 ```
+
 
 ```{r, eval=TRUE}
 head(traitsAll)
@@ -140,11 +150,12 @@ for(i in 1:nrow(genesAll)){
   # eQTL of the gene i
   eQTL_i <- xQTLdownload_eqtlAllAsso(genesAll[i]$gencodeId, geneType = "gencodeId", tissueLabel=tissueSiteDetail, withB37VariantId = FALSE, data_source="liLab")
   gwasDF_i <- gwasDF[rsid  %in% eQTL_i$rsid,]
+  if(is.null(eQTL_i)){next()}; if(nrow(gwasDF_i)==0){next()}
   eQTL_i <- merge(eQTL_i, gwasDF_i[,.(rsid, chrom, position)], by ="rsid")[,.(rsid, chrom, position, pValue, maf, beta, se)]
   # using both method coloc and hyprcoloc to perform colocalization analysis
   colocResult_i <- xQTLanalyze_coloc_diy(gwasDF = gwasDF_i, qtlDF = eQTL_i, method="Both")
   # 
-  if(!is.null(colocResult)){ 
+  if(!is.null(colocResult_i)){ 
       colocResult_i <- colocResult_i$coloc_Out_summary
       colocResult_i <- cbind(genesAll[i,c("geneSymbol","gencodeId")], colocResult_i)
       colocResultAll <- rbind(colocResultAll, colocResult_i)}
@@ -152,7 +163,7 @@ for(i in 1:nrow(genesAll)){
 }
 ```
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE, eval=FALSE}
 colocResultAll <- example_Coloc_colocResultAll
 ```
 
@@ -202,7 +213,7 @@ colocResultAll <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/coloc
 We considered colocalization tests with a posterior probability of hypothesis 4 (PPH4.ABF) > 0.75 & hypr_posterior > 0.5 as having strong or moderate evidence for colocalization.
 
 
-```{r, message=FALSE, warning=FALSE, include=FALSE, eval=TRUE}
+```{r, message=FALSE, warning=FALSE, include=FALSE, eval=FALSE}
 colocResultsig <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/example_Coloc_colocResultsig.txt")
 ```
 
@@ -210,7 +221,7 @@ colocResultsig <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/examp
 colocResultsig <- colocResultAll[PP.H4.abf>0.75 & hypr_posterior>0.5][order(-PP.H4.abf)]
 ```
 
-There are 24 trait genes that are associated and share a single causal variant:
+There are 26 trait genes that are associated and share a single causal variant:
 
 ```{r, eval=TRUE}
 head(colocResultsig)
@@ -218,14 +229,14 @@ head(colocResultsig)
 
 All these genes' details can be fetched with `xQTLquery_gene`:
 
-```{r eval=TRUE, message=FALSE}
+```{r eval=FALSE, message=FALSE}
 outGenes <- xQTLquery_gene(colocResultsig$gencodeId)
 ```
 
 
 Add the value of PPH4 for each gene, and remove non-protein-coding genes:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 outGenes <- merge(colocResultsig[,c("gencodeId", "PP.H4.abf", "candidate_snp", "SNP.PP.H4", "hypr_posterior")], 
                   outGenes[,c("geneSymbol", "gencodeId", "entrezGeneId", "geneType")], by="gencodeId", sort=FALSE)
 outGenes <- outGenes[geneType =="protein coding"]
@@ -272,7 +283,7 @@ knitr::include_graphics("images/prostate/prostate_eqtlTissues.png")
 
 Besides, we provide functions `xQTLvisual_locusCompare` and `xQTLvisual_locusZoom` to visualize the colocalization between the GWAS and the eQTL dataset for a specified gene, we take the gene `MMP7` as an example:
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE, eval=FALSE}
 t1 <- tempfile()
 utils::download.file("http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwasEqtldata.txt", t1)
 gwasEqtldata <- data.table::fread(t1)
@@ -283,6 +294,7 @@ rm(t1)
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 # Download all eQTL associations of gene  MMP7 in prostate:
 eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = tissueSiteDetail)
+eqtlAsso <- data.table::as.data.table(eqtlAsso)
 # Merge the variants of GWAS and eQTL dataset by rsid:
 gwasEqtldata <- merge(gwasDF[,-c("AF")], eqtlAsso[,.(rsid=snpId, pValue)],
                       by=c("rsid"), suffixes = c(".gwas",".eqtl"))

@@ -131,6 +131,12 @@ eqtlAssos <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", s
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 eqtlAssos <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
 ```
+##### A more fast way to download eQTL association for a given gene is using "liLab" data source with paramater `data_source="liLab"` (only support GTEx tissues)
+```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+eqtlAssos <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal", data_source = "liLab")
+# gencode ID is recommended:
+eqtlAssos <- xQTLdownload_eqtlAllAsso("ENSG00000058063.15", tissueLabel="Muscle - Skeletal", data_source = "liLab")
+```
 
 #### **Download all eQTL associations for SNP rs11568818 in all tissues from all supported studies:**
 ```{r, results = 'hide', echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}

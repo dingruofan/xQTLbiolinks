@@ -196,20 +196,13 @@ of the function <code>xQTLanalyze_getTraits</code>:</p>
 SNPs are detected</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;    chromosome geneStart   geneEnd geneStrand geneSymbol          gencodeId</span></span>
-<span><span class="co">#&gt; 1:       chr1 205086142 205122015          -      RBBP5 ENSG00000117222.13</span></span>
-<span><span class="co">#&gt; 2:       chr1 205142505 205211566          -      DSTYK ENSG00000133059.16</span></span>
-<span><span class="co">#&gt; 3:       chr1 205336065 205357090          -    KLHDC8A ENSG00000162873.14</span></span>
-<span><span class="co">#&gt; 4:       chr1 204828651 205022822          +      NFASC ENSG00000163531.15</span></span>
-<span><span class="co">#&gt; 5:       chr1 204190341 204196486          -      KISS1  ENSG00000170498.8</span></span>
-<span><span class="co">#&gt; 6:       chr1 204198160 204214092          -     GOLT1A  ENSG00000174567.7</span></span>
-<span><span class="co">#&gt;          rsid  position    pValue    maf</span></span>
-<span><span class="co">#&gt; 1: rs55664108 204587862 8.572e-25 0.7157</span></span>
-<span><span class="co">#&gt; 2: rs55664108 204587862 8.572e-25 0.7157</span></span>
-<span><span class="co">#&gt; 3: rs55664108 204587862 8.572e-25 0.7157</span></span>
-<span><span class="co">#&gt; 4: rs55664108 204587862 8.572e-25 0.7157</span></span>
-<span><span class="co">#&gt; 5: rs55664108 204587862 8.572e-25 0.7157</span></span>
-<span><span class="co">#&gt; 6: rs55664108 204587862 8.572e-25 0.7157</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;          rsid  chr  position    pValue    maf    beta     se       gencodeId</span></span>
+<span><span class="co">#&gt; 1: rs34848415 chr1 205762038 2.893e-09 0.5231 -0.0501 0.0084 ENSG00000261000</span></span>
+<span><span class="co">#&gt; 2: rs34848415 chr1 205762038 2.893e-09 0.5231 -0.0501 0.0084 ENSG00000263528</span></span>
+<span><span class="co">#&gt; 3: rs34848415 chr1 205762038 2.893e-09 0.5231 -0.0501 0.0084 ENSG00000162877</span></span>
+<span><span class="co">#&gt; 4: rs34848415 chr1 205762038 2.893e-09 0.5231 -0.0501 0.0084 ENSG00000117280</span></span>
+<span><span class="co">#&gt; 5: rs34848415 chr1 205762038 2.893e-09 0.5231 -0.0501 0.0084 ENSG00000069275</span></span>
+<span><span class="co">#&gt; 6: rs55664108 chr1 204587862 8.572e-25 0.7157  0.0912 0.0089 ENSG00000281406</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-3-conduct-colocalization-analysis-with-eqtl">Step 3: Conduct colocalization analysis with eQTL:<a class="anchor" aria-label="anchor" href="#step-3-conduct-colocalization-analysis-with-eqtl"></a>
@@ -235,11 +228,12 @@ outputs of colocalization analysis (this may take several minutes):</p>
 <span>  <span class="co"># eQTL of the gene i</span></span>
 <span>  <span class="va">eQTL_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">$</span><span class="va">gencodeId</span>, geneType <span class="op">=</span> <span class="st">"gencodeId"</span>, tissueLabel<span class="op">=</span><span class="va">tissueSiteDetail</span>, withB37VariantId <span class="op">=</span> <span class="cn">FALSE</span>, data_source<span class="op">=</span><span class="st">"liLab"</span><span class="op">)</span></span>
 <span>  <span class="va">gwasDF_i</span> <span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span><span class="va">rsid</span>  <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="va">eQTL_i</span><span class="op">$</span><span class="va">rsid</span>,<span class="op">]</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">eQTL_i</span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="kw">next</span><span class="op">(</span><span class="op">)</span><span class="op">}</span>; <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gwasDF_i</span><span class="op">)</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">{</span><span class="kw">next</span><span class="op">(</span><span class="op">)</span><span class="op">}</span></span>
 <span>  <span class="va">eQTL_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">eQTL_i</span>, <span class="va">gwasDF_i</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span><span class="st">"rsid"</span><span class="op">)</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">rsid</span>, <span class="va">chrom</span>, <span class="va">position</span>, <span class="va">pValue</span>, <span class="va">maf</span>, <span class="va">beta</span>, <span class="va">se</span><span class="op">)</span><span class="op">]</span></span>
 <span>  <span class="co"># using both method coloc and hyprcoloc to perform colocalization analysis</span></span>
 <span>  <span class="va">colocResult_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLanalyze_coloc_diy.html">xQTLanalyze_coloc_diy</a></span><span class="op">(</span>gwasDF <span class="op">=</span> <span class="va">gwasDF_i</span>, qtlDF <span class="op">=</span> <span class="va">eQTL_i</span>, method<span class="op">=</span><span class="st">"Both"</span><span class="op">)</span></span>
 <span>  <span class="co"># </span></span>
-<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">colocResult</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> </span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">colocResult_i</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> </span>
 <span>      <span class="va">colocResult_i</span> <span class="op">&lt;-</span> <span class="va">colocResult_i</span><span class="op">$</span><span class="va">coloc_Out_summary</span></span>
 <span>      <span class="va">colocResult_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">[</span><span class="va">i</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geneSymbol"</span>,<span class="st">"gencodeId"</span><span class="op">)</span><span class="op">]</span>, <span class="va">colocResult_i</span><span class="op">)</span></span>
 <span>      <span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">colocResultAll</span>, <span class="va">colocResult_i</span><span class="op">)</span><span class="op">}</span></span>
@@ -263,27 +257,27 @@ probability that all traits share a causal variant.</p>
 <code>colocOut</code> of all genes.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">colocResultAll</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;             traitGene nsnps    PP.H0.abf    PP.H1.abf    PP.H2.abf  PP.H3.abf</span></span>
-<span><span class="co">#&gt; 1: ENSG00000001167.14  6205 2.072318e-15 0.2592617382 5.785196e-15 0.72375223</span></span>
-<span><span class="co">#&gt; 2: ENSG00000002919.14  4883 2.252628e-42 0.0004579085 4.916915e-39 0.99949789</span></span>
-<span><span class="co">#&gt; 3: ENSG00000003393.14  3901 4.134900e-03 0.5826462177 2.588394e-03 0.36468313</span></span>
-<span><span class="co">#&gt; 4: ENSG00000003400.14  4549 7.800693e-05 0.0111580704 6.692117e-04 0.09483042</span></span>
-<span><span class="co">#&gt; 5: ENSG00000005020.12  5271 1.551832e-32 0.4907383003 1.308029e-32 0.41354432</span></span>
-<span><span class="co">#&gt; 6: ENSG00000005379.15  4413 9.273629e-03 0.4357011132 1.079004e-02 0.50690919</span></span>
-<span><span class="co">#&gt;       PP.H4.abf candidate_snp SNP.PP.H4 hypr_posterior hypr_regional_prob</span></span>
-<span><span class="co">#&gt; 1: 1.698603e-02     rs9369290 0.2487894         0.0000             0.0079</span></span>
-<span><span class="co">#&gt; 2: 4.420283e-05   rs138467395 1.0000000         0.0000             0.0174</span></span>
-<span><span class="co">#&gt; 3: 4.594735e-02    rs59308963 0.1405084         0.0003             0.0126</span></span>
-<span><span class="co">#&gt; 4: 8.932643e-01    rs12620010 0.2315255         0.7922             0.9931</span></span>
-<span><span class="co">#&gt; 5: 9.571738e-02    rs17156041 0.6731519         0.0005             0.0373</span></span>
-<span><span class="co">#&gt; 6: 3.732603e-02     rs2189681 0.3030656         0.0002             0.0129</span></span>
-<span><span class="co">#&gt;    hypr_candidate_snp hypr_posterior_explainedBySnp</span></span>
-<span><span class="co">#&gt; 1:          rs9369290                        0.2752</span></span>
-<span><span class="co">#&gt; 2:        rs138467395                        1.0000</span></span>
-<span><span class="co">#&gt; 3:         rs59308963                        0.1434</span></span>
-<span><span class="co">#&gt; 4:         rs12620010                        0.3882</span></span>
-<span><span class="co">#&gt; 5:         rs17156041                        0.6855</span></span>
-<span><span class="co">#&gt; 6:          rs2189681                        0.1829</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;       geneSymbol          gencodeId nsnps    PP.H0.abf    PP.H1.abf</span></span>
+<span><span class="co">#&gt; 1: RP11-534L20.5  ENSG00000261000.1  4472 2.179842e-12 4.815048e-09</span></span>
+<span><span class="co">#&gt; 2:         IKBKE  ENSG00000263528.7  4505 5.794749e-05 1.280001e-01</span></span>
+<span><span class="co">#&gt; 3:        PM20D1 ENSG00000162877.12  5007 3.101352e-13 6.851499e-10</span></span>
+<span><span class="co">#&gt; 4:         RAB29 ENSG00000117280.12  4998 2.696451e-11 5.957032e-08</span></span>
+<span><span class="co">#&gt; 5:        NUCKS1 ENSG00000069275.12  5002 2.005928e-07 4.431533e-04</span></span>
+<span><span class="co">#&gt; 6:       BLACAT1  ENSG00000281406.1  5011 4.875521e-19 4.875783e-01</span></span>
+<span><span class="co">#&gt;       PP.H2.abf  PP.H3.abf    PP.H4.abf candidate_snp  SNP.PP.H4 hypr_posterior</span></span>
+<span><span class="co">#&gt; 1: 4.522413e-04 0.99895403 0.0005937237     rs6693843 0.19259384         0.0001</span></span>
+<span><span class="co">#&gt; 2: 3.939882e-04 0.87027865 0.0012693057      rs823121 0.07040552         0.0000</span></span>
+<span><span class="co">#&gt; 3: 8.561368e-05 0.18832593 0.8115884566     rs1772159 0.39272007         0.5931</span></span>
+<span><span class="co">#&gt; 4: 1.329558e-05 0.02840117 0.9715854781      rs708723 0.36167886         0.9428</span></span>
+<span><span class="co">#&gt; 5: 1.253436e-05 0.02671831 0.9728258014      rs823154 0.42379078         0.9364</span></span>
+<span><span class="co">#&gt; 6: 4.805752e-19 0.48056911 0.0318526046      rs930947 0.12798834         0.0039</span></span>
+<span><span class="co">#&gt;    hypr_regional_prob hypr_candidate_snp hypr_posterior_explainedBySnp</span></span>
+<span><span class="co">#&gt; 1:             0.2374          rs6693843                        0.2379</span></span>
+<span><span class="co">#&gt; 2:             0.0057           rs823121                        0.0661</span></span>
+<span><span class="co">#&gt; 3:             0.9995          rs1772159                        0.3313</span></span>
+<span><span class="co">#&gt; 4:             1.0000           rs708723                        0.4030</span></span>
+<span><span class="co">#&gt; 5:             0.9993           rs823154                        0.4423</span></span>
+<span><span class="co">#&gt; 6:             0.0353          rs4245739                        0.1158</span></span></code></pre>
 <p>We can see that the two methodologies’ outcomes are quite consistent.
 With a threshold of 0.75 for <code>coloc</code> and 0.5 for
 <code>hyprcoloc</code>, a total of 26 colocalized genes are shared.</p>
@@ -300,7 +294,7 @@ hypothesis 4 (PPH4.ABF) &gt; 0.75 &amp; hypr_posterior &gt; 0.5 as
 having strong or moderate evidence for colocalization.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">colocResultsig</span> <span class="op">&lt;-</span> <span class="va">colocResultAll</span><span class="op">[</span><span class="va">PP.H4.abf</span><span class="op">&gt;</span><span class="fl">0.75</span> <span class="op">&amp;</span> <span class="va">hypr_posterior</span><span class="op">&gt;</span><span class="fl">0.5</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">PP.H4.abf</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<p>There are 24 trait genes that are associated and share a single
+<p>There are 26 trait genes that are associated and share a single
 causal variant:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">colocResultsig</span><span class="op">)</span></span></code></pre></div>
@@ -421,24 +415,25 @@ gene <code>MMP7</code> as an example:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download all eQTL associations of gene  MMP7 in prostate:</span></span>
 <span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>,tissueLabel <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span>
+<span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">eqtlAsso</span><span class="op">)</span></span>
 <span><span class="co"># Merge the variants of GWAS and eQTL dataset by rsid:</span></span>
 <span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AF"</span><span class="op">)</span><span class="op">]</span>, <span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">snpId</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                      by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span><span class="op">)</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Five retained fields are required:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gwasEqtldata</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;             rsid chrom position pValue.gwas pValue.eqtl</span></span>
-<span><span class="co">#&gt;    1: rs10000104  chr4 10190142      0.2830   0.4986640</span></span>
-<span><span class="co">#&gt;    2: rs10000248  chr4 10720872      0.0359   0.6089460</span></span>
-<span><span class="co">#&gt;    3: rs10000318  chr4 11613397      0.5810   0.3734920</span></span>
-<span><span class="co">#&gt;    4: rs10000369  chr4 11234631      0.0453   0.6642180</span></span>
-<span><span class="co">#&gt;    5: rs10000399  chr4 11595842      0.2370   0.0948472</span></span>
-<span><span class="co">#&gt;   ---                                                  </span></span>
-<span><span class="co">#&gt; 8007:  rs9999345  chr4 10895379      0.0861   0.0100352</span></span>
-<span><span class="co">#&gt; 8008:  rs9999470  chr4 10315399      0.2300   0.0700527</span></span>
-<span><span class="co">#&gt; 8009:  rs9999523  chr4 11410463      0.9930   0.2258890</span></span>
-<span><span class="co">#&gt; 8010:  rs9999669  chr4 10852509      0.2470   0.0441530</span></span>
-<span><span class="co">#&gt; 8011:  rs9999767  chr4 10127270      0.8730   0.1902930</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;             rsid chrom  position pValue.gwas    beta     se pValue.eqtl</span></span>
+<span><span class="co">#&gt;    1:  rs1004352    11 101777151   0.1901000 -0.0108 0.0083    0.175397</span></span>
+<span><span class="co">#&gt;    2: rs10047467    11 101761011   0.4854000 -0.0096 0.0138    0.870120</span></span>
+<span><span class="co">#&gt;    3: rs10047477    11 101696584   0.0791000  0.0147 0.0084    0.570213</span></span>
+<span><span class="co">#&gt;    4: rs10047501    11 101696582   0.0755500 -0.0148 0.0083    0.570213</span></span>
+<span><span class="co">#&gt;    5:  rs1006330    11 101626601   0.0564300  0.0169 0.0089    0.715533</span></span>
+<span><span class="co">#&gt;   ---                                                                  </span></span>
+<span><span class="co">#&gt; 7530:   rs996999    11 102667063   0.7268000 -0.0036 0.0102    0.309526</span></span>
+<span><span class="co">#&gt; 7531:   rs998379    11 101587510   0.8520000 -0.0024 0.0126    0.156798</span></span>
+<span><span class="co">#&gt; 7532:  rs9988826    11 101673906   0.7874000  0.0027 0.0101    0.117728</span></span>
+<span><span class="co">#&gt; 7533:  rs9988861    11 101438758   0.0006782 -0.0306 0.0090    0.404080</span></span>
+<span><span class="co">#&gt; 7534:  rs9988919    11 102876923   0.2217000  0.0331 0.0271    0.020295</span></span></code></pre>
 <p>Visualization of p-value distribution and comparison of the signals
 of GWAS and eQTL:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
