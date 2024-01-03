@@ -2,6 +2,10 @@
 
 **`xQTLbiolinks`** is a end-to-end bioinformatic tool for efficient mining and analyzing public and user-customized xQTLs data for the discovery of disease susceptibility genes. xQTLbiolinks consists of tailored functions that can be grouped into four modules: **Data retrieval**, **Pre-processing**, **Analysis** and **Visualization**.
 
+***
+## **NOTE! The GTEx Portal API update has caused some functions of xQTLbioliks to malfunction. The package will be updated within one week to address this issue.**
+***
+
 Instructions, documentation, and tutorials can be found at [**here**](https://dingruofan.github.io/xQTLbiolinks/index.html).
 
 <img src="https://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/Overview.png" alt="Overview" width="100%" height="100%"/>
