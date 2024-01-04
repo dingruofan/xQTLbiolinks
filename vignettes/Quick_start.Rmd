@@ -23,6 +23,10 @@ xQTLbiolinks has provided a pipeline for disease target gene discovery through c
 knitr::include_graphics("images/quick_start/colocalization_framework.png")
 ```
 
+***
+## **NOTE! The GTEx Portal API update has caused some functions of xQTLbioliks to malfunction. The package will be updated within one week to address this issue.**
+***
+
 ## Before we start
 
 To perform colocalization analysis using xQTLbiolinks, users need to provide their own **GWAS summary statistics data**, specify the **tissue** of interest and import following packages:
