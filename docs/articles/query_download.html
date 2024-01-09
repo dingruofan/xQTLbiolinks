@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xQTLbiolinks</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -339,9 +339,11 @@ Skeletal from GTEx_V8:</strong><a class="anchor" aria-label="anchor" href="#down
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eqtlAssos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span><span class="st">"ATP11B"</span>, tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level5">
-<h5 id="a-more-fast-way-to-download-eqtl-association-for-a-given-gene-is-using-lilab-data-source-with-paramater-data_sourcelilab-only-support-gtex-tissues">A more fast way to download eQTL association for a given gene is
-using “liLab” data source with paramater
-<code>data_source="liLab"</code> (only support GTEx tissues)<a class="anchor" aria-label="anchor" href="#a-more-fast-way-to-download-eqtl-association-for-a-given-gene-is-using-lilab-data-source-with-paramater-data_sourcelilab-only-support-gtex-tissues"></a>
+<h5 id="a-more-fast-way-to-download-eqtl-association-for-a-given-gene-is-using-lilab-data-source-with-paramater-data_sourcelilab-only-support-gtex-tissues">
+<strong>A more fast way to download eQTL association for a given
+gene is using “liLab” data source with paramater
+<code>data_source="liLab"</code> (only support GTEx
+tissues)</strong><a class="anchor" aria-label="anchor" href="#a-more-fast-way-to-download-eqtl-association-for-a-given-gene-is-using-lilab-data-source-with-paramater-data_sourcelilab-only-support-gtex-tissues"></a>
 </h5>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eqtlAssos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span><span class="st">"ATP11B"</span>, tissueLabel<span class="op">=</span><span class="st">"Muscle - Skeletal"</span>, data_source <span class="op">=</span> <span class="st">"liLab"</span><span class="op">)</span></span>
@@ -823,7 +825,7 @@ unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#que
 <span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_sampleByTissue.html">xQTLquery_sampleByTissue</a></span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span>, pathologyNotesCategories<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">sampleIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GTEX-11NUK-0011-R4a-SM-DO12B"</span>, <span class="st">"GTEX-11ONC-0011-R4b-SM-DO93H"</span>,</span>
 <span>               <span class="st">"GTEX-11DXY-0526-SM-5EGGQ"</span>, <span class="st">"GTEX-13OVJ-1026-SM-5IFGI"</span><span class="op">)</span></span>
-<span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_sampleBySampleId.html">xQTLquery_sampleBySampleId</a></span><span class="op">(</span><span class="va">sampleIds</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/xQTLbiolinks/man/xQTLquery_sampleBySampleId.html" class="external-link">xQTLquery_sampleBySampleId</a></span><span class="op">(</span><span class="va">sampleIds</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sampleInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    ageBracket aliquotId autolysisScore dataType datasetId</span></span>

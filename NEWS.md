@@ -1,3 +1,8 @@
+# xQTLbiolinks 1.7.3
+## Major changes
+* update the package with the new API links,
+
+
 # xQTLbiolinks 1.6.3
 
 ## Major changes

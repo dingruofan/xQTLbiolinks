@@ -41,7 +41,8 @@ eqtlInfo <- xQTLquery_eqtl(gene="TP53")
 eqtl_v8 <- xQTLquery_eqtl(gene="ENSG00000141510")
 
 # In a specific tissue:
-xQTLquery_eqtl(gene="ENSG00000141510", geneType="gencodeId",  tissueSiteDetail="Thyroid" )
+xQTLquery_eqtl(gene="ENSG00000141510", geneType="gencodeId",
+               tissueSiteDetail="Thyroid" )
 
 # Query with a variant-gene pair:
 xQTLquery_eqtl(variantName="rs1641513",gene="TP53")

@@ -14,7 +14,7 @@ xQTLquery_sampleByTissue(
 \arguments{
 \item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
-\item{dataType}{A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".}
+\item{dataType}{A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI", "EXCLUDE".}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 200).}
 

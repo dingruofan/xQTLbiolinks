@@ -363,6 +363,30 @@ NULL
 #' @source \url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api} or EBIquery_allTerm
 NULL
 
+#' @title data for ebi datasets summary
+#' @description
+#'  a dataset containing all datasets collected in EBI catalogue
+#' @docType data
+#' @keywords internal
+#' @name ebi_datasets
+#' @format A Data.table
+#' \describe{
+#'   \item{study_id}{A character vector}
+#'   \item{quant_method}{A character vector}
+#'   \item{sample_group}{A character vector}
+#'   \item{tissue_id}{A character vector}
+#'   \item{study_label}{A character vector}
+#'   \item{tissue_label}{A character vector}
+#'   \item{condition_label}{A character vector}
+#'   \item{dataset_id}{A character vector}
+#'   \item{sample_size}{A integer vector}
+#'
+#' }
+#' @source \url{https://www.ebi.ac.uk/eqtl/api-docs/#accessing-the-api} or EBIquery_allTerm
+NULL
+
+
+
 utils::globalVariables("tissueSiteDetailGTExv8")
 utils::globalVariables("tissueSiteDetailGTExv7")
 utils::globalVariables("sampleNum")

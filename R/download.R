@@ -122,7 +122,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   # for gene of the same name but with different gencodeID, like BTBD8 with entrezGeneId is NA, remove.
   geneInfo <- geneInfo[!(genes %in% geneInfo[duplicated(geneSymbol), ]$genes & is.na(entrezGeneId))]
   # retain source is Source:NCBI
-  geneInfo[(genes %in% geneInfo[duplicated(geneSymbol), ]$genes)]
+  # geneInfo[(genes %in% geneInfo[duplicated(geneSymbol), ]$genes)]
 
   # duplicates, only warning first duplicate:
   # test: genes = c("LYNX1", "TP53")
@@ -157,7 +157,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   geneInfo <- cbind(geneInfo, data.table::data.table(cutF = cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+cutNum,cutNum) ) ))
   data.table::setDT(geneInfo)
   geneInfo$genesUpper <- toupper(geneInfo$genes)
-  genesURL <- geneInfo[,.(genesURL=paste0(gencodeId[!is.na(gencodeId)],collapse = "%2C")),by=c("cutF")]
+  genesURL <- geneInfo[,.(genesURL=paste0(gencodeId[!is.na(gencodeId)],collapse = ",")),by=c("cutF")]
   if( any(unlist(lapply(genesURL$genesURL, nchar)) >3900) ){
     stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")
   }
@@ -170,17 +170,16 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
   # message("GTEx API successfully accessed!")
   for(i in 1:nrow(genesURL)){
     # construct url:
-    url1 <- paste0("https://gtexportal.org/rest/v1/expression/geneExpression?",
+    url1 <- paste0("https://gtexportal.org/api/v2/expression/geneExpression?",
                    "datasetId=", datasetId,"&",
-                   "gencodeId=", genesURL[i,]$genesURL, "&",
-                   "tissueSiteDetailId=", tissueSiteDetailId,"&",
-                   "&format=json"
+                   "gencodeId=", stringr::str_replace_all(genesURL[i,]$genesURL, ",","&gencodeId=" ), "&",
+                   "tissueSiteDetailId=", tissueSiteDetailId
     )
     url1 <- utils::URLencode(url1)
     # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-    tmp <- data.table::as.data.table(url1GetText2Json$geneExpression)
+    tmp <- data.table::as.data.table(url1GetText2Json$data)
     if(nrow(tmp)==0){
       message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
       message("== Done.")
@@ -248,6 +247,7 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @param study (character) name of studies can be listed using "ebi_study_tissues". If the study is null, use all studies (Default).
 #' @param withB37VariantId a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.
 #' @param data_source "eQTL_catalogue"(default) or "liLab"
+#' @param API_version "v1"(default) or "v2"(not working)
 #' @import data.table
 #' @import stringr
 #' @return A data.table object.
@@ -256,25 +256,25 @@ xQTLdownload_exp <- function(genes="", geneType="auto", tissueSiteDetail="Liver"
 #' @examples
 #' \donttest{
 #' # Download all eQTL associations of MLH1-rs13315355 pair in all tissues from all studies:
-#' eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study="")
+#' eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355")
 #'
 #' # Download eQTL associations of gene ATP11B in CD4+ T cell from all supported studies:
-#' geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
+#' geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell")
 #'
 #' # Download eQTL associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:
 #' geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
 #'
-#' # Download all eQTL associations of SNP rs11568818 in all tissues from all supported studies.
-#' varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")
-#
 #' # Download eQTL associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
 #' varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
 #'                                     tissueLabel="Muscle - Skeletal")
+#'
+#' # Download all eQTL associations of SNP rs11568818 in all tissues from all supported studies.
+#' varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818")
 #' }
-xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE, data_source="eQTL_catalogue"){
+xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", variantType="auto", tissueLabel="", study="", recordPerChunk=1000, withB37VariantId=FALSE, data_source="eQTL_catalogue", API_version="v1" ){
   . <- geneInfoV19 <- pos <- ref<- alt<- tissue<-NULL
   chrom <- tissue_label <- study_accession <- variantId <- variant <- gencodeId <- genes<- entrezGeneId <- chromosome<- geneSymbol<- b37VariantId <- snpId <- NULL
-  tissueSiteDetail <- tissueSiteDetailId <- NULL
+  tissueSiteDetail <- tissueSiteDetailId <- study_label <- sample_group<- NULL
   # gene="CYP2W1"
   # geneType="geneSymbol"
   # tissueSiteDetail="Lung"
@@ -347,10 +347,43 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
     }
   }
 
-  if(data_source=="eQTL_catalogue"){
-    ebi_ST <-copy(ebi_study_tissues)
+  if(data_source=="eQTL_catalogue" & API_version=="v2"){
+    # https://www.ebi.ac.uk/eqtl/api/v2/datasets/QTD000118/associations?size=10&start=1&variant=chr1_109274570_A_G&gene_id=ENSG00000134243
+    ebi_DT <- copy(ebi_datasets)
 
     # check study:
+    if(study==""){
+      stop("study must be specified, please select form `xQTLbiolinks::ebi_datasets`")
+    }else if(length(study) ==1 && study!=""){
+      if(toupper(study) %in% toupper(unique(ebi_DT$study_label)) ){
+        study <- unique(ebi_DT$study_label)[ toupper(unique(ebi_DT$study_label)) == toupper(study) ]
+        message("== Study [", study, "] detected...")
+      }else{
+        message("ID\tstudy\ttissueLabel")
+        a <- unique(ebi_DT[,.(study_label , sample_group)])
+        for(i in 1:nrow(a)){ message(i,"\t", paste(a[i ,.(study_label , sample_group)], collapse = " \t ")) }
+        stop("== Study [",study,"] can not be correctly matched, please choose from above list: ")
+      }
+    }
+
+    # check tissue:
+    if(tissueLabel==""){
+      stop("tissueLabel must be specified, please select form `xQTLbiolinks::ebi_datasets`")
+    }else if( length(tissueLabel)==1 && tissueLabel!="" ){
+      if( toupper(tissueLabel) %in% toupper(unique(ebi_DT$tissue_label)) ){
+        message("== Tissue label [", tissueLabel, "] detected...")
+        tissueLabel <- unique(ebi_DT$tissue_label)[ toupper(unique(ebi_DT$tissue_label)) == toupper(tissueLabel) ]
+      }else{
+        message("ID\tstudy\ttissueLabel")
+        for(i in 1:nrow(ebi_DT)){ message(i,"\t", paste(ebi_study_tissues[i ,.(study_accession, tissue_label)], collapse = " \t ")) }
+        stop("== tissueLabel [",tissueLabel,"] can not be correctly matched, please choose from above list: ")
+      }
+    }
+  }
+
+  if(data_source=="eQTL_catalogue" & API_version=="v1"){
+    ebi_ST <-copy(ebi_study_tissues)
+
     if( length(study) ==1 && study!="" ){
       if(toupper(study) %in% toupper(unique(ebi_ST$study_accession))){
         study <- unique(ebi_ST$study_accession)[ toupper(unique(ebi_ST$study_accession)) == toupper(study) ]
@@ -573,9 +606,9 @@ xQTLdownload_eqtlAllAsso <- function(gene="", geneType="auto", variantName="", v
 #' @examples
 #' \donttest{
 #' eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr11",
-#'                                         pos_lower=101398614, pos_upper = 101402313,
+#'                                         pos_lower=101400000, pos_upper = 101400013,
 #'                                         tissueLabel="Brain - Cerebellar Hemisphere",
-#'                                         p_upper=1e-1)
+#'                                         )
 #' }
 xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_upper=numeric(0), p_lower=0, p_upper=1.1,  gene="", geneType="auto", tissueLabel="", study="gtex_v8", recordPerChunk=1000, withB37VariantId=FALSE){
   .<-NULL
@@ -670,13 +703,15 @@ xQTLdownload_eqtlAllAssoPos <- function(chrom="", pos_lower=numeric(0), pos_uppe
 
   message("== Start fetching associations...", format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
   # url1 <- "https://www.ebi.ac.uk/eqtl/api/chromosomes/11/associations?study=GTEx_V8&gene_id=ENSG00000137673&bp_lower=101798614&bp_upper=103462313&p_upper=1e-1"
+  # url1 <- "https://www.ebi.ac.uk/eqtl/api/v2/datasets/QTD000266/associations?pos=1:123456-124456"
+
   url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/chromosomes/", chrom, "/associations?links=False",
                  "&bp_lower=",as.character(as.integer(pos_lower)), "&bp_upper=",as.character(as.integer(pos_upper)), "&p_upper=",p_upper, "&p_lower=",p_lower,
                  ifelse(gene !="", paste0("&gene_id=",geneInfo$gencodeIdUnv),""),
                  ifelse(tissueLabel!="", paste0("&tissue=",ebi_ST[tissue_label==tissueLabel]$tissue[1]),""),
                  ifelse(study!="", paste0("&study=",study),"")
                  )
-
+  message(url1)
   # for brain tissues with duplicated tissue id, "Brain - Cerebellar Hemisphere" and "Brain - Cerebellum"
   if( tissueLabel == "Brain - Cerebellar Hemisphere" ){
     qtl_groupStr <- paste0("&qtl_group=Brain_Cerebellar_Hemisphere")
@@ -850,7 +885,7 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
   # }
   # construct url
   ########## construct url for sig association
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/dyneqtl?",
+  url1 <- paste0("https://gtexportal.org/api/v2/association/dyneqtl?",
                  "gencodeId=",geneInfo$gencodeId,"&",
                  "variantId=",varInfo$variantId,"&",
                  "tissueSiteDetailId=",tissueSiteDetailId,"&",
@@ -901,9 +936,9 @@ xQTLdownload_eqtlExp <- function(variantName="", gene="", variantType="auto", ge
 #'                      tissueSiteDetail="Lung")
 #'
 #' # Dowload sQTL expression using variant ID.
-#' xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
-#'                      phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
-#'                      tissueSiteDetail="Adipose - Subcutaneous")
+#' xQTLdownload_sqtlExp(variantName="chr1_14677_G_A_b38",
+#'                      phenotypeId="chr1:15947:16607:clu_40980:ENSG00000227232.5",
+#'                      tissueSiteDetail="Whole Blood")
 xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="auto", tissueSiteDetail=""){
   # variantName="chr1_739465_TTTTG_T_b38"
   # phenotypeId="chr1:497299:498399:clu_54863:ENSG00000239906.1"
@@ -986,7 +1021,7 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
   # }
   # construct url
   ########## construct url for sig association
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/dynsqtl?",
+  url1 <- paste0("https://gtexportal.org/api/v2/association/dynsqtl?",
                  "phenotypeId=",phenotypeId,"&",
                  "variantId=",varInfo$variantId,"&",
                  "tissueSiteDetailId=",tissueSiteDetailId,"&",
@@ -1034,10 +1069,10 @@ xQTLdownload_sqtlExp <- function(variantName="", phenotypeId="", variantType="au
 #'
 #' @examples
 #' \donttest{
-#' eGeneInfo <- xQTLdownload_egene("TP53")
-#' eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
+#' eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", gene="CICP3")
+#' eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate")
 #' }
-xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="", recordPerChunk=2000){
+xQTLdownload_egene <- function(tissueSiteDetail="", gene = "", geneType="auto", recordPerChunk=2000){
   .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   # gene="DDX11"
@@ -1065,7 +1100,7 @@ xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="",
   }
 
   # check tissueSiteDetail:
-  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail))){
+  if( is.null(tissueSiteDetail) ||  any(is.na(tissueSiteDetail))  ){
     stop("Parameter \"tissueSiteDetail\" can not be NULL or NA!")
   }else if(length(tissueSiteDetail)!=1){
     stop("Parameter \"tissueSiteDetail\" should be a character string!")
@@ -1099,11 +1134,11 @@ xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="",
   }
 
   message("Downloading eGenes..")
-  # url1 <- "https://gtexportal.org/rest/v1/association/egene?pageSize=250&searchTerm=ENSG00000013573.16&sortBy=log2AllelicFoldChange&sortDirection=asc&tissueSiteDetailId=Thyroid&datasetId=gtex_v8"
+  # url1 <- "https://gtexportal.org/api/v2/association/egene?itemsPerPage=250&searchTerm=ENSG00000013573.16&sortBy=log2AllelicFoldChange&sortDirection=asc&tissueSiteDetailId=Thyroid&datasetId=gtex_v8"
   outInfo <- data.table::data.table()
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/egene?",
+  url1 <- paste0("https://gtexportal.org/api/v2/association/egene?",
                  "page=",page_tmp,"&",
-                 "pageSize=",pageSize_tmp,
+                 "itemsPerPage=",pageSize_tmp,
                  ifelse(gene=="","",paste0("&searchTerm=",geneInfo$gencodeId)),
                  "&sortBy=log2AllelicFoldChange&sortDirection=asc",
                  ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
@@ -1117,14 +1152,14 @@ xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="",
   # message("GTEx API successfully accessed!")
   # suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-  tmp <- data.table::as.data.table(url1GetText2Json$egene)
+  tmp <- data.table::as.data.table(url1GetText2Json$data)
   outInfo <- rbind(outInfo, tmp)
-  message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+  message("Records: ",nrow(outInfo),"/",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
   page_tmp<-page_tmp+1
-  while( page_tmp <= (url1GetText2Json$numPages-1) ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/association/egene?",
+  while( page_tmp <= (url1GetText2Json$paging_info$numberOfPages-1) ){
+    url1 <- paste0("https://gtexportal.org/api/v2/association/egene?",
                    "page=",page_tmp,"&",
-                   "pageSize=",pageSize_tmp,
+                   "itemsPerPage=",pageSize_tmp,
                    ifelse(gene=="","&",paste0("&searchTerm=",geneInfo$gencodeId)),
                    "sortBy=log2AllelicFoldChange&sortDirection=asc",
                    ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
@@ -1132,9 +1167,9 @@ xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="",
     url1 <- utils::URLencode(url1)
     # suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-    tmp <- data.table::as.data.table(url1GetText2Json$egene)
+    tmp <- data.table::as.data.table(url1GetText2Json$data)
     outInfo <- rbind(outInfo, tmp)
-    message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+    message("Records: ",nrow(outInfo),"/",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
     page_tmp <- page_tmp+1
   }
   outInfo <- merge(outInfo, tissueSiteDetailGTEx, by="tissueSiteDetailId")
@@ -1168,9 +1203,9 @@ xQTLdownload_egene <- function(gene = "", geneType="auto",  tissueSiteDetail="",
 #' @examples
 #' \donttest{
 #' sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver")
-#' sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Liver" )
+#' sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver", gene="DDX11" )
 #' }
-xQTLdownload_sgene <- function(gene = "", geneType="auto", tissueSiteDetail="", recordPerChunk=2000){
+xQTLdownload_sgene <- function( tissueSiteDetail="", gene = "", geneType="auto", recordPerChunk=2000){
   phenotypeId <- nPhenotypes <- .<-NULL
   gencodeId <- geneSymbol <- entrezGeneId <- chromosome <- tss <- log2AllelicFoldChange <- empiricalPValue <- pValue <- pValueThreshold <- qValue <-NULL
   datasetId = "gtex_v8"
@@ -1234,11 +1269,11 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", tissueSiteDetail="", 
 
   message("Downloading sgenes...")
 
-  # url1 <- "https://gtexportal.org/rest/v1/association/egene?pageSize=250&searchTerm=ENSG00000013573.16&sortBy=log2AllelicFoldChange&sortDirection=asc&tissueSiteDetailId=Thyroid&datasetId=gtex_v8"
+  # url1 <- "https://gtexportal.org/api/v2/association/egene?itemsPerPage=250&searchTerm=ENSG00000013573.16&sortBy=log2AllelicFoldChange&sortDirection=asc&tissueSiteDetailId=Thyroid&datasetId=gtex_v8"
   outInfo <- data.table::data.table()
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/sgene?",
+  url1 <- paste0("https://gtexportal.org/api/v2/association/sgene?",
                  "page=",page_tmp,"&",
-                 "pageSize=",pageSize_tmp,
+                 "itemsPerPage=",pageSize_tmp,
                  "&sortBy=empiricalPValue&sortDirection=asc&",
                  "datasetId=",datasetId,
                  ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
@@ -1254,14 +1289,14 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", tissueSiteDetail="", 
   # message("GTEx API successfully accessed!")
   # suppressMessages(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-  tmp <- data.table::as.data.table(url1GetText2Json$sgene)
+  tmp <- data.table::as.data.table(url1GetText2Json$data)
   outInfo <- rbind(outInfo, tmp)
-  message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+  message("Records: ",nrow(outInfo),"/",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
   page_tmp<-page_tmp+1
-  while( page_tmp <= (url1GetText2Json$numPages-1) ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/association/sgene?",
+  while( page_tmp <= (url1GetText2Json$paging_info$numberOfPages-1) ){
+    url1 <- paste0("https://gtexportal.org/api/v2/association/sgene?",
                    "page=",page_tmp,"&",
-                   "pageSize=",pageSize_tmp,
+                   "itemsPerPage=",pageSize_tmp,
                    "&sortBy=empiricalPValue&sortDirection=asc&",
                    "datasetId=",datasetId,
                    ifelse(tissueSiteDetail=="","&",paste0("&tissueSiteDetailId=",tissueSiteDetailId)),
@@ -1272,7 +1307,7 @@ xQTLdownload_sgene <- function(gene = "", geneType="auto", tissueSiteDetail="", 
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
     tmp <- data.table::as.data.table(url1GetText2Json$sgene)
     outInfo <- rbind(outInfo, tmp)
-    message("Records: ",nrow(outInfo),"/",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+    message("Records: ",nrow(outInfo),"/",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
     page_tmp <- page_tmp+1
   }
   outInfo <- merge(outInfo, tissueSiteDetailGTEx, by="tissueSiteDetailId")
@@ -1375,7 +1410,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail=
   #
   outInfo <- data.table::data.table()
   genesCut <- data.table::data.table(gencodeId=geneInfo$gencodeId, ID=1:nrow(geneInfo), cutF = as.character(cut(1:nrow(geneInfo),breaks=seq(0,nrow(geneInfo)+recordPerChunk,recordPerChunk) )) )
-  genesURL <- genesCut[,.(genesURL=paste0(gencodeId,collapse = "%2C")),by=c("cutF")]
+  genesURL <- genesCut[,.(genesURL=paste0(gencodeId,collapse = ",")),by=c("cutF")]
   if( any(unlist(lapply(genesURL$genesURL, nchar)) >3900) ){
     stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input genes.")
   }
@@ -1388,16 +1423,15 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail=
   # message("GTEx API successfully accessed!")
   for(i in 1:nrow(genesURL)){
     # construct url:
-    url1 <- paste0("https://gtexportal.org/rest/v1/expression/medianGeneExpression?",
+    url1 <- paste0("https://gtexportal.org/api/v2/expression/medianGeneExpression?",
                    "datasetId=",datasetId,"&",
-                   "gencodeId=", genesURL[i,]$genesURL,
-                   ifelse(tissueSiteDetail=="","&", paste0("&tissueSiteDetailId=", tissueSiteDetailId)),
-                   "&format=json"
+                   "gencodeId=", str_replace_all(genesURL[i,]$genesURL,",", "&gencodeId="),
+                   ifelse(tissueSiteDetail=="","&", paste0("&tissueSiteDetailId=", tissueSiteDetailId))
     )
     url1 <- utils::URLencode(url1)
     # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$medianGeneExpression)
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
     if( nrow(url1GetText2Json2DT)==0 ){
       message( "0 record fatched!" )
       return(NULL)
@@ -1492,7 +1526,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="auto", tissue="", clu_n
     setDT(clu_geneid_DF)
     clu_geneid<-clu_geneid_DF
   }else{
-    clu_geneid <- fread(paste0("http://bioinfo.szbl.ac.cn/aQTL/for_xQTLbiolinks/sQTL_clu_gene2/sQTL_intron_gene_id_",tissueDT$tissueSiteDetailId,".txt"), header=FALSE)
+    clu_geneid <- fread(paste0("http://bioinfo.szbl.ac.cn/xQTL_biolinks/sQTL_clu_gene2/sQTL_intron_gene_id_",tissueDT$tissueSiteDetailId,".txt"), header=FALSE)
     if(!exists("clu_geneid") || nrow(clu_geneid)==0){ stop("tissue not found...") }
   }
   names(clu_geneid) <- c("clu_name","gencodeId")
@@ -1765,7 +1799,8 @@ xQTLdownload_scSig <- function(gene="BIN3",geneType="geneSymbol", cell_type="Ast
 #' \donttest{
 #' expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
 #'                                tissueSiteDetail="Artery - Coronary",
-#'                                pathologyNotesCategories=TRUE, toSummarizedExperiment = TRUE)
+#'                                pathologyNotesCategories=TRUE, toSummarizedExperiment = FALSE)
+#' xQTL_export(expProfiles)
 #' }
 xQTL_export <- function(exp_object, out_format="to_clusterP"){
   if(out_format == "to_clusterP"){

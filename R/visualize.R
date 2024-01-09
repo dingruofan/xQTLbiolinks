@@ -1026,7 +1026,7 @@ xQTLvisual_genesExp <- function(genes, geneType="auto", tissueSiteDetail = "", a
   expProfiles <- xQTLdownload_exp(genes=genes, geneType = geneType, tissueSiteDetail = tissueSiteDetail, toSummarizedExperiment=TRUE)
   expData <- as.data.table(cbind( data.table(geneSymbol=rownames(expProfiles)), SummarizedExperiment::assay(expProfiles) ))
   expData1 <- melt(expData, id.vars="geneSymbol", variable.name = "sampleId", value.name="exp")
-  p <- ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = ..density..))+
+  p <- ggplot( expData1, aes(x = log(exp+1,10), y = reorder(geneSymbol, -exp, median), fill = after_stat(density)))+
     ggridges::geom_density_ridges_gradient( gradient_lwd = 1, scale = 1.4, rel_min_height = 0.05, size = 0.3) +
     # scale_fill_gradientn( colours = colorRampPalette(c("white", "blue", "red"))(27) )+
     viridis::scale_fill_viridis(name = "", option = color_map)+
@@ -1249,7 +1249,7 @@ xQTLvisual_geneExpTissues <- function(gene="", geneType="auto", tissues="All", l
   if( length(tissues) ==1 && tissues=="All" ){
     tissueSiteDetail_ <- tissueSiteDetail$tissueSiteDetail
   }else{
-    tissueSiteDetail_ <- rbind(tissueSiteDetail[tissueSiteDetail %in% tissues], tissueSiteDetail[tissueSite %in% tissues])$tissueSiteDetail
+    tissueSiteDetail_ <- unique(rbind(tissueSiteDetail[tissueSiteDetail %in% tissues], tissueSiteDetail[tissueSite %in% tissues]))$tissueSiteDetail
   }
   message("== Start fetching expression profiles of gene [",gene,"] in following tissues...")
   for( tt in 1:length(tissueSiteDetail_)){

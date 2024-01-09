@@ -50,8 +50,8 @@ Download summary statistics data for eQTLs with genome positions.
 \examples{
 \donttest{
 eqtlAssos <- xQTLdownload_eqtlAllAssoPos(chrom = "chr11",
-                                        pos_lower=101398614, pos_upper = 101402313,
+                                        pos_lower=101400000, pos_upper = 101400013,
                                         tissueLabel="Brain - Cerebellar Hemisphere",
-                                        p_upper=1e-1)
+                                        )
 }
 }

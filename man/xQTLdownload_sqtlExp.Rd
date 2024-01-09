@@ -33,7 +33,7 @@ xQTLdownload_sqtlExp(variantName="rs1450891501",
                      tissueSiteDetail="Lung")
 
 # Dowload sQTL expression using variant ID.
-xQTLdownload_sqtlExp(variantName="chr1_1259424_T_C_b38",
-                     phenotypeId=" chr1:1487914:1489204:clu_52051:ENSG00000160072.19",
-                     tissueSiteDetail="Adipose - Subcutaneous")
+xQTLdownload_sqtlExp(variantName="chr1_14677_G_A_b38",
+                     phenotypeId="chr1:15947:16607:clu_40980:ENSG00000227232.5",
+                     tissueSiteDetail="Whole Blood")
 }

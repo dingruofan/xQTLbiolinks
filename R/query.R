@@ -46,7 +46,7 @@
 #' geneInfo <- xQTLquery_gene("TP53")
 #' geneInfo <- xQTLquery_gene(c("tp53","naDK","SDF4") )
 #' geneInfo <- xQTLquery_gene(c("ENSG00000210195.2","ENSG00000078808"))
-xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
+xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=100){
   geneSymbol <- gencodeId <- entrezGeneId <- chromosome <- start <- end <- strand <- tss <- description <- cutF <- genesUpper <- NULL
   .<-NULL
   page_tmp <- 0
@@ -117,25 +117,11 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
     # API处理GENE，单个字符串模糊匹配，多个字符串精确匹配:
     if( length(genes)==1 ){
       # construct url:
-      if( stringr::str_detect(genes,stringr::regex("^ENSG00000")) ){
-        url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                       "geneId=", genes,"&",
-                       "gencodeVersion=", gencodeVersion,"&",
-                       "genomeBuild=",genomeBuild,"&",
-                       "page=",page_tmp,"&",
-                       "pageSize=", pageSize_tmp,"&",
-                       "format=json"
-        )
-      }else{
-        url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                       "geneId=^", genes,"$&",
-                       "gencodeVersion=", gencodeVersion,"&",
-                       "genomeBuild=",genomeBuild,"&",
-                       "page=",page_tmp,"&",
-                       "pageSize=", pageSize_tmp,"&",
-                       "format=json"
-        )
-      }
+      url1 <- paste0("https://gtexportal.org/api/v2/reference/gene?",
+                     "geneId=", genes,"&",
+                     "gencodeVersion=", gencodeVersion,"&",
+                     "genomeBuild=",genomeBuild
+      )
       url1 <- utils::URLencode(url1)
       outInfo <- data.table::data.table()
 
@@ -150,7 +136,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
       # download with "download" method and retry 3 times.
       url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-      url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+      url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
       if( nrow(url1GetText2Json2DT)==0 ){
         message( "0 record fatched!" )
         return(data.table::data.table())
@@ -182,13 +168,12 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
       for(i in 1: nrow(genesURL) ){
         tmp_all <- data.table()
         # construct url:
-        url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                       "geneId=", genesURL[i,]$genesURL,"&",
+        url1 <- paste0("https://gtexportal.org/api/v2/reference/gene?",
+                       "geneId=", stringr::str_replace_all(genesURL[i,]$genesURL, ",", "&geneId="),"&",
                        "gencodeVersion=", gencodeVersion,"&",
                        "genomeBuild=",genomeBuild,"&",
                        "page=",page_tmp,"&",
-                       "pageSize=", pageSize_tmp,"&",
-                       "format=json"
+                       "itemsPerPage=", pageSize_tmp
         )
         url1 <- utils::URLencode(url1)
 
@@ -197,7 +182,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
         url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
 
-        url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+        url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
         if( nrow(url1GetText2Json2DT)==0 ){
           message( "0 record fatched!" )
           return(data.table::data.table())
@@ -206,23 +191,22 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
         tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
         tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
         tmp_all <- rbind(tmp_all, tmp)
-        message("Batch ",i,"/",nrow(genesURL),". Downloaded  page", url1GetText2Json$page+1, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
+        message("Batch ",i,"/",nrow(genesURL),". Downloaded  page", url1GetText2Json$page+1, "/",url1GetText2Json$paging_info$numberOfPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
 
         # if more pages:
         page_tmp<-page_tmp+1
-        while( page_tmp <= (url1GetText2Json$numPages-1) ){
-          url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                         "geneId=", genesURL[i,]$genesURL,"&",
+        while( page_tmp <= (url1GetText2Json$paging_info$numberOfPages-1) ){
+          url1 <- paste0("https://gtexportal.org/api/v2/reference/gene?",
+                         "geneId=", stringr::str_replace_all(genesURL[i,]$genesURL, ",", "&geneId="),"&",
                          "gencodeVersion=", gencodeVersion,"&",
                          "genomeBuild=",genomeBuild,"&",
                          "page=",page_tmp,"&",
-                         "pageSize=", pageSize_tmp,"&",
-                         "format=json"
+                         "itemsPerPage=", pageSize_tmp
           )
           url1 <- utils::URLencode(url1)
           # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
           url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-          url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+          url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
           if( nrow(url1GetText2Json2DT)==0 ){
             message( "0 record fatched!" )
             break()
@@ -231,7 +215,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
           tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
           tmp$genesUpper <- toupper(unlist(tmp[,geneType,with=FALSE]))
           tmp_all <- rbind(tmp_all, tmp)
-          message("Batch ",i,". Downloaded  ", url1GetText2Json$page+1, "/",url1GetText2Json$numPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
+          message("Batch ",i,". Downloaded  ", url1GetText2Json$page+1, "/",url1GetText2Json$paging_info$numberOfPages,"; ", length(na.omit(outInfo$gencodeId))+nrow(url1GetText2Json2DT), " records.")
           page_tmp <- page_tmp+1
         }
         # because of versioned and unversioned gencodeID, merge separately is needed!
@@ -261,7 +245,7 @@ xQTLquery_gene <- function(genes="", geneType="auto", recordPerChunk=150){
 
 #' @title Query details of samples by tissue name
 #' @param tissueSiteDetail (character) details of tissues in GTEx can be listed using `tissueSiteDetailGTExv8` or `tissueSiteDetailGTExv7`
-#' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI".
+#' @param dataType A character string. Options: "RNASEQ" (default), "WGS", "WES", "OMNI", "EXCLUDE".
 #' @param recordPerChunk (integer) number of records fetched per request (default: 200).
 #' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
 #' @import data.table
@@ -333,27 +317,27 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 
   ########## construct api url:
   if( tissueSiteDetail =="All"){
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/sample?",
                    "datasetId=", datasetId,"&",
                    "tissueSiteDetail=", "All","&",
                    "dataType=",dataType,"&",
                    "page=",page_tmp,"&",
-                   "pageSize=", pageSize_tmp, "&",
+                   "itemsPerPage=", pageSize_tmp, "&",
                    "sortBy=sampleId&sortDirection=asc"
     )
   }else{
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/sample?",
                    "datasetId=", datasetId,"&",
                    "tissueSiteDetailId=", tissueSiteDetailId,"&",
                    "dataType=",dataType,"&",
                    "page=",page_tmp,"&",
-                   "pageSize=", pageSize_tmp, "&",
+                   "itemsPerPage=", pageSize_tmp, "&",
                    "sortBy=sampleId&sortDirection=asc"
     )
   }
   url1 <- utils::URLencode(url1)
-  # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetailId=Liver&dataType=RNASEQ&format=json&page=0&pageSize=2000&sortBy=sampleId&sortDirection=asc"
-  # url1 <- "https://gtexportal.org/rest/v1/dataset/sample?datasetId=gtex_v8&tissueSiteDetail=All&dataType=RNASEQ&format=json&page=0&pageSize=200&sortBy=sampleId&sortDirection=asc"
+  # url1 <- "https://gtexportal.org/api/v2/dataset/sample?datasetId=gtex_v8&tissueSiteDetailId=Liver&dataType=RNASEQ&format=json&page=0&temsPerPage=2000&sortBy=sampleId&sortDirection=asc"
+  # url1 <- "https://gtexportal.org/api/v2/dataset/sample?datasetId=gtex_v8&tissueSiteDetail=All&dataType=RNASEQ&format=json&page=0&temsPerPage=200&sortBy=sampleId&sortDirection=asc"
   outInfo <- data.table::data.table()
 
   # bestFetchMethod <- apiAdmin_ping()
@@ -367,35 +351,35 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
   # download with "download" method and retry 3 times.
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-  if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
+  if( ncol(url1GetText2Json$data$pathologyNotesCategories)==0){
     pathologyNotesCategories <- FALSE
     message(" == No pathologyNotesCategories information found in tissue [", tissueSiteDetail, "] samples!" )
-    tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
+    tmp <- data.table::as.data.table( url1GetText2Json$data[,which(names(url1GetText2Json$data) != "pathologyNotesCategories")] )
     outInfo <- rbind(outInfo, tmp)
   }else{
-    tmp <- data.table::as.data.table( url1GetText2Json$sample )
+    tmp <- data.table::as.data.table( url1GetText2Json$data )
     outInfo <- rbind(outInfo, tmp)
   }
 
-  message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+  message(" ==> Total records: " ,url1GetText2Json$paging_info$totalNumberOfItems, "; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
   page_tmp<-page_tmp+1
-  while( page_tmp <= (url1GetText2Json$numPages-1)){
+  while( page_tmp <= (url1GetText2Json$paging_info$numberOfPages-1)){
     if( tissueSiteDetail =="All"){
-      url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+      url1 <- paste0("https://gtexportal.org/api/v2/dataset/sample?",
                      "datasetId=", datasetId,"&",
                      "tissueSiteDetail=", "All","&",
                      "dataType=",dataType,"&",
                      "page=",page_tmp,"&",
-                     "pageSize=", pageSize_tmp, "&",
+                     "itemsPerPage=", pageSize_tmp, "&",
                      "sortBy=sampleId&sortDirection=asc"
       )
     }else{
-      url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
+      url1 <- paste0("https://gtexportal.org/api/v2/dataset/sample?",
                      "datasetId=", datasetId,"&",
                      "tissueSiteDetailId=", tissueSiteDetailId,"&",
                      "dataType=",dataType,"&",
                      "page=",page_tmp,"&",
-                     "pageSize=", pageSize_tmp, "&",
+                     "itemsPerPage=", pageSize_tmp, "&",
                      "sortBy=sampleId&sortDirection=asc"
       )
     }
@@ -405,15 +389,15 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
     # download with "download" method and retry 3 times.
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-    if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
-      tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
+    if( ncol(url1GetText2Json$data$pathologyNotesCategories)==0){
+      tmp <- data.table::as.data.table( url1GetText2Json$data[,which(names(url1GetText2Json$data) != "pathologyNotesCategories")] )
       outInfo <- rbind(outInfo, tmp)
     }else{
-      tmp <- data.table::as.data.table( url1GetText2Json$sample )
+      tmp <- data.table::as.data.table( url1GetText2Json$data )
       outInfo <- rbind(outInfo, tmp)
     }
 
-    message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+    message(" ==> Total records: ",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
     page_tmp <- page_tmp+1
   }
   if(pathologyNotesCategories){
@@ -427,99 +411,99 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 
 
 
-#' @title Query details of samples with GTEx IDs
-#' @param sampleIds A character vector or a string of sample ID.
-#' @param recordPerChunk (integer) number of records fetched per request (default: 200).
-#' @param pathologyNotesCategories Default: pathologyNotes info is ignored.
-#'
-#' @return a data.table object of samples' information.
-#' @export
-#'
-#' @examples
-#' sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
-#'                "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
-#' sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
-xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNotesCategories=FALSE ){
-  . <- NULL
-
-  sampleIds <- unique(sampleIds)
-  if(!all(str_detect(sampleIds, "^GTEX-"))){
-    stop("Samples ID should be start with \"GTEx-\", please check your input!")
-  }
-
-  pageSize_tmp <- as.integer(recordPerChunk)
-  cutNum <- as.integer(recordPerChunk)
-
-  # 分批下载防止样本量太大：
-  samplesCut <- data.table::data.table(sampleIds=sampleIds, ID=1:length(sampleIds), cutF = as.character(cut(1:length(sampleIds),breaks=seq(0,length(sampleIds)+cutNum,cutNum) )) )
-  samplesURL <- samplesCut[,.(samplesURL=paste0(sampleIds,collapse = ",")),by=c("cutF")]
-  if( any(unlist(lapply(samplesURL$samplesURL, nchar)) >3900) ){
-    stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input samples")
-  }
-
-
-  message("Querying samples by sampleId...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
-
-  tmp_all <- data.table()
-  for(i in 1: nrow(samplesURL) ){
-    # 每个批次都得初始化page
-    page_tmp <- 0
-    message("== Batch ",i)
-
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
-                   "sampleId=",samplesURL[i,]$samplesURL,"&",
-                   "page=",page_tmp,"&",
-                   "pageSize=", pageSize_tmp
-    )
-    url1 <- utils::URLencode(url1)
-    outInfo <- data.table::data.table()
-
-    # download with "download" method and retry 3 times.
-    url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-
-    if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
-      pathologyNotesCategories <- FALSE
-      message(" == No pathologyNotesCategories information found." )
-      tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
-      outInfo <- rbind(outInfo, tmp)
-    }else{
-      tmp <- data.table::as.data.table( url1GetText2Json$sample )
-      outInfo <- rbind(outInfo, tmp)
-    }
-    message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
-    page_tmp<-page_tmp+1
-
-    while( page_tmp <= (url1GetText2Json$numPages-1)){
-      url1 <- paste0("https://gtexportal.org/rest/v1/dataset/sample?",
-                     "sampleId=",samplesURL[i,]$samplesURL,
-                     "page=",page_tmp,"&",
-                     "pageSize=", pageSize_tmp
-      )
-      url1 <- utils::URLencode(url1)
-
-      # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-      # download with "download" method and retry 3 times.
-      url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-
-      if( ncol(url1GetText2Json$sample$pathologyNotesCategories)==0){
-        tmp <- data.table::as.data.table( url1GetText2Json$sample[,which(names(url1GetText2Json$sample) != "pathologyNotesCategories")] )
-        outInfo <- rbind(outInfo, tmp)
-      }else{
-        tmp <- data.table::as.data.table( url1GetText2Json$sample )
-        outInfo <- rbind(outInfo, tmp)
-      }
-
-      message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
-      page_tmp <- page_tmp+1
-    }
-    if(pathologyNotesCategories){
-      tmp_all <- rbind(tmp_all,cbind(outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE], outInfo[,names(outInfo)[str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE]), fill=TRUE)
-    }else{
-      tmp_all<- rbind(tmp_all, outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE])
-    }
-  }
-  return(tmp_all)
-}
+# @title Query details of samples with GTEx IDs
+# @param sampleIds A character vector or a string of sample ID.
+# @param recordPerChunk (integer) number of records fetched per request (default: 200).
+# @param pathologyNotesCategories Default: pathologyNotes info is ignored.
+#
+# @return a data.table object of samples' information.
+# @export
+#
+# @examples
+# sampleIds <- c("GTEX-11NUK-0011-R4a-SM-DO12B", "GTEX-11ONC-0011-R4b-SM-DO93H",
+#                "GTEX-11DXY-0526-SM-5EGGQ", "GTEX-13OVJ-1026-SM-5IFGI")
+# sampleInfo <- xQTLquery_sampleBySampleId(sampleIds)
+# xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNotesCategories=FALSE ){
+#   . <- NULL
+#
+#   sampleIds <- unique(sampleIds)
+#   if(!all(str_detect(sampleIds, "^GTEX-"))){
+#     stop("Samples ID should be start with \"GTEx-\", please check your input!")
+#   }
+#
+#   pageSize_tmp <- as.integer(recordPerChunk)
+#   cutNum <- as.integer(recordPerChunk)
+#
+#   # 分批下载防止样本量太大：
+#   samplesCut <- data.table::data.table(sampleIds=sampleIds, ID=1:length(sampleIds), cutF = as.character(cut(1:length(sampleIds),breaks=seq(0,length(sampleIds)+cutNum,cutNum) )) )
+#   samplesURL <- samplesCut[,.(samplesURL=paste0(sampleIds,collapse = ",")),by=c("cutF")]
+#   if( any(unlist(lapply(samplesURL$samplesURL, nchar)) >3900) ){
+#     stop("Too many queried genes, please lower the value of \"recordPerChunk\", or reduce your input samples")
+#   }
+#
+#
+#   message("Querying samples by sampleId...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
+#
+#   tmp_all <- data.table()
+#   for(i in 1: nrow(samplesURL) ){
+#     # 每个批次都得初始化page
+#     page_tmp <- 0
+#     message("== Batch ",i)
+#
+#     url1 <- paste0("https://gtexportal.org/api/v2/dataset/sample?",
+#                    "sampleId=",samplesURL[i,]$samplesURL,"&",
+#                    "page=",page_tmp,"&",
+#                    "itemsPerPage=", pageSize_tmp
+#     )
+#     url1 <- utils::URLencode(url1)
+#     outInfo <- data.table::data.table()
+#
+#     # download with "download" method and retry 3 times.
+#     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+#
+#     if( ncol(url1GetText2Json$data$pathologyNotesCategories)==0){
+#       pathologyNotesCategories <- FALSE
+#       message(" == No pathologyNotesCategories information found." )
+#       tmp <- data.table::as.data.table( url1GetText2Json$data[,which(names(url1GetText2Json$data) != "pathologyNotesCategories")] )
+#       outInfo <- rbind(outInfo, tmp)
+#     }else{
+#       tmp <- data.table::as.data.table( url1GetText2Json$data )
+#       outInfo <- rbind(outInfo, tmp)
+#     }
+#     message("Total records: ",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
+#     page_tmp<-page_tmp+1
+#
+#     while( page_tmp <= (url1GetText2Json$paging_info$numberOfPages-1)){
+#       url1 <- paste0("https://gtexportal.org/api/v2/dataset/sample?",
+#                      "sampleId=",samplesURL[i,]$samplesURL,
+#                      "page=",page_tmp,"&",
+#                      "itemsPerPage=", pageSize_tmp
+#       )
+#       url1 <- utils::URLencode(url1)
+#
+#       # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+#       # download with "download" method and retry 3 times.
+#       url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+#
+#       if( ncol(url1GetText2Json$data$pathologyNotesCategories)==0){
+#         tmp <- data.table::as.data.table( url1GetText2Json$data[,which(names(url1GetText2Json$data) != "pathologyNotesCategories")] )
+#         outInfo <- rbind(outInfo, tmp)
+#       }else{
+#         tmp <- data.table::as.data.table( url1GetText2Json$data )
+#         outInfo <- rbind(outInfo, tmp)
+#       }
+#
+#       message("Total records: ",url1GetText2Json$paging_info$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
+#       page_tmp <- page_tmp+1
+#     }
+#     if(pathologyNotesCategories){
+#       tmp_all <- rbind(tmp_all,cbind(outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE], outInfo[,names(outInfo)[str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE]), fill=TRUE)
+#     }else{
+#       tmp_all<- rbind(tmp_all, outInfo[,names(outInfo)[!str_detect(names(outInfo), stringr::regex("^pathologyNotesCategories."))], with=FALSE])
+#     }
+#   }
+#   return(tmp_all)
+# }
 
 
 
@@ -529,6 +513,7 @@ xQTLquery_sampleBySampleId <- function(sampleIds,recordPerChunk=150, pathologyNo
 #' @import utils
 #' @import data.table
 #' @return A data.table object of all genes' information.
+#' 58191
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
@@ -550,54 +535,46 @@ xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
 
   message("Querying all genes...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
 
-  # construct url:
-  url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                 "geneId=", "[a-zA-Z0-9]","&",
-                 "gencodeVersion=", gencodeVersion,"&",
-                 "genomeBuild=",genomeBuild,"&",
-                 "page=",page_tmp,"&",
-                 "pageSize=", pageSize_tmp,"&",
-                 "format=json"
-  )
-  url1 <- utils::URLencode(url1)
   outInfo <- data.table::data.table()
-
-  # use internal function: apiAdmin_ping
-  # bestFetchMethod <- apiAdmin_ping()
-  # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
-  #   # message("Note: API server is busy or your network has latency, please try again later.")
-  #   return(NULL)
-  # }
-  # # message("GTEx API successfully accessed!")
-  # suppressWarnings(url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2]))
-
-  # download with "download" method and retry 3 times.
-  url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-
-  url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
-  url1GetText2Json2DT$genomeBuild <- genomeBuild
-  tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
-  outInfo <- rbind(outInfo, tmp)
-  message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
-  page_tmp <- page_tmp+1
-  while( page_tmp <= (url1GetText2Json$numPages-1) ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/reference/gene?",
-                   "geneId=", "[a-zA-Z0-9]","&",
+  LETTERS <- c(LETTERS, 5,7)
+  for( g in  1:length(LETTERS)){
+    page_tmp <- 0
+    # construct url:
+    url1 <- paste0("https://gtexportal.org/api/v2/reference/geneSearch?",
+                   "geneId=", LETTERS[g],"&",
                    "gencodeVersion=", gencodeVersion,"&",
                    "genomeBuild=",genomeBuild,"&",
                    "page=",page_tmp,"&",
-                   "pageSize=", pageSize_tmp,"&",
-                   "format=json"
+                   "itemsPerPage=", pageSize_tmp
     )
     url1 <- utils::URLencode(url1)
-    # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+
+    # download with "download" method and retry 3 times.
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$gene)
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
     url1GetText2Json2DT$genomeBuild <- genomeBuild
     tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
-    outInfo <- rbind(outInfo, tmp)
-    message("Total records: ",url1GetText2Json$recordsFiltered,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$numPages)
+    outInfo <- rbind(outInfo, tmp, fill=TRUE)
+    message(" ==> Total records for batch ",g,"/", length(LETTERS),": ",url1GetText2Json$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
     page_tmp <- page_tmp+1
+    while( page_tmp <= (url1GetText2Json$paging_info$numberOfPages-1) ){
+      url1 <- paste0("https://gtexportal.org/api/v2/reference/geneSearch?",
+                     "geneId=", LETTERS[g],"&",
+                     "gencodeVersion=", gencodeVersion,"&",
+                     "genomeBuild=",genomeBuild,"&",
+                     "page=",page_tmp,"&",
+                     "itemsPerPage=", pageSize_tmp
+      )
+      url1 <- utils::URLencode(url1)
+      # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
+      url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
+      url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
+      url1GetText2Json2DT$genomeBuild <- genomeBuild
+      tmp <- url1GetText2Json2DT[,.(geneSymbol, gencodeId, entrezGeneId, geneType, chromosome, start, end, strand, tss, gencodeVersion,genomeBuild, description)]
+      outInfo <- rbind(outInfo, tmp, fill=TRUE)
+      message(" ==> Total records for batch ",g,"/", length(LETTERS),": ",url1GetText2Json$totalNumberOfItems,"; downloaded: ", page_tmp+1, "/", url1GetText2Json$paging_info$numberOfPages)
+      page_tmp <- page_tmp+1
+    }
   }
   return(outInfo)
 }
@@ -657,20 +634,20 @@ xQTLquery_varId <- function(variantName="", variantType="auto"){
 
   ############# if variantType is "snpId":
   if( variantType == "snpId" ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
-                   "datasetId=", datasetId,"&",
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/variant?datasetId=",
+                   datasetId,"&",
                    "snpId=", variantName)
     ############# if variantType is "variantId":
   }else if( variantType == "variantId" ){
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
-                   "datasetId=", datasetId,"&",
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/variant?datasetId=",
+                   datasetId,"&",
                    "variantId=", variantName)
   }
 
   message("Querying variant...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
 
 
-  # url1 <- "https://gtexportal.org/rest/v1/dataset/variant?format=json&datasetId=gtex_v8&snpId=rs12596338"
+  # url1 <- "https://gtexportal.org/api/v2/dataset/variant?format=json&datasetId=gtex_v8&snpId=rs12596338"
   url1 <- utils::URLencode(url1)
   # test api server accessibility:
   # bestFetchMethod <- apiAdmin_ping()
@@ -683,7 +660,7 @@ xQTLquery_varId <- function(variantName="", variantType="auto"){
   # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2] )
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-  tmp <- data.table::as.data.table(url1GetText2Json$variant)
+  tmp <- data.table::as.data.table(url1GetText2Json$data)
   if(nrow(tmp)==0){
     message("No variant found, please check your input.")
     return(data.table::data.table())
@@ -760,10 +737,10 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), recordPerChunk=200){
   outInfo <- data.table::data.table()
   for( ii in 1:nrow(var_tmpCut)){
     message("   Got varints: ",nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)),"/",nrow(var_tmp), " (",paste0(round( (nrow(outInfo)+length(unlist(var_tmpCut[ii,]$posLis)))/nrow(var_tmp),4)*100,"%"),")")
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/variant?format=json","&",
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/variant?",
                    "datasetId=", datasetId,"&",
                    "chromosome=", chrom, "&",
-                   "pos=",paste0(unlist(var_tmpCut[ii,]$posLis),collapse=",") )
+                   "pos=",paste0(unlist(var_tmpCut[ii,]$posLis),collapse="&pos=") )
     url1 <- utils::URLencode(url1)
     if(nchar(url1)>4000){
       stop("Too many positions were received, please reduce the number of positions or recordPerChunk.")
@@ -771,7 +748,7 @@ xQTLquery_varPos <- function(chrom="", pos=numeric(0), recordPerChunk=200){
     # fetch data:
     # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-    tmp <- data.table::as.data.table(url1GetText2Json$variant)
+    tmp <- data.table::as.data.table(url1GetText2Json$data)
     if(nrow(tmp)<1){
       message("No variants were found at thses positions.")
       return(NULL)
@@ -815,7 +792,7 @@ xQTLquery_tissue <- function(tissueName=""){
 
   #  if tissue name is null:
   if(tissueName==""){
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/tissueSiteDetail?",
                    "datasetId=", datasetId)
     url1 <- utils::URLencode(url1)
     # bestFetchMethod <- apiAdmin_ping()
@@ -828,7 +805,7 @@ xQTLquery_tissue <- function(tissueName=""){
     # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$tissueInfo)
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
     return(url1GetText2Json2DT)
   }else{
     if(datasetId == "gtex_v8"){
@@ -846,9 +823,10 @@ xQTLquery_tissue <- function(tissueName=""){
         tissueSite = unique(t1_tmp$tissueSite)
       }
     }
-    url1 <- paste0("https://gtexportal.org/rest/v1/dataset/tissueInfo?format=json","&",
-                   "datasetId=", datasetId,"&",
-                   "tissueSite=", tissueSite)
+    url1 <- paste0("https://gtexportal.org/api/v2/dataset/tissueSiteDetail?",
+                   "datasetId=", datasetId
+                   # "&","tissueSite=", tissueSite
+                   )
     url1 <- utils::URLencode(url1)
     # bestFetchMethod <- apiAdmin_ping()
     # if( !exists("bestFetchMethod") || is.null(bestFetchMethod) ){
@@ -859,7 +837,9 @@ xQTLquery_tissue <- function(tissueName=""){
     # url1Get <- httr::GET(url1, httr::progress())
     # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
     url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$tissueInfo)
+    url1GetText2Json2DT <- data.table::as.data.table(url1GetText2Json$data)
+    tissueSite_ <- tissueSite
+    url1GetText2Json2DT <- url1GetText2Json2DT[tissueSite==tissueSite_,]
     return(url1GetText2Json2DT)
   }
 }
@@ -872,7 +852,7 @@ xQTLquery_tissue <- function(tissueName=""){
 #' @return A character string of fetchContent method.
 #' @keywords internal
 apiAdmin_ping <- function(fetchMethod=""){
-  url1 <- "https://gtexportal.org/rest/v1/admin/ping"
+  url1 <- "https://gtexportal.org/api/v2/"
 
   # platform-depend methods ordr:
   if( .Platform$OS.type =="unix"){
@@ -920,7 +900,7 @@ apiAdmin_ping <- function(fetchMethod=""){
               },error=function(e){
                   # cat("ERROR :",conditionMessage(e), "\n")
                 } )
-              if( exists("outInfo") && outInfo=="Ping!"){
+              if( exists("outInfo") && outInfo$name=="GTEx Portal V2 API"){
                 # print(fetchMethod[i])
                 message("== GTEx API successfully accessed!")
                 return(c(fetchMethod[i], downloadMethod[downM]))
@@ -932,7 +912,7 @@ apiAdmin_ping <- function(fetchMethod=""){
           )
         }
         #
-        if( exists("outInfo") && outInfo=="Ping!"){
+        if(  exists("outInfo") && outInfo$name=="GTEx Portal V2 API"){
           # print(fetchMethod[i])
           message("== GTEx API successfully accessed!")
           return(c(fetchMethod[i], downloadMethod))
@@ -1083,6 +1063,10 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       # first time using http. second using raw!
       if(downloadTime == 1){
         df <- try(suppressWarnings(utils::download.file(url = url2, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+        a <- suppressWarnings(readLines(tmpFile, n=3)); if(str_detect(a[1], '<html>')){
+          df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
+        }
+        rm(a)
       }else{
         df <- try(suppressWarnings(utils::download.file(url = url1, destfile=tmpFile, method=downloadMethod,quiet = TRUE )), silent=TRUE)
       }
@@ -1094,7 +1078,8 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
       url1GetText2Json <-""
       if( file.exists(tmpFile) ){
         # url1GetText <- fread(tmpFile,sep="\n", header=FALSE)
-        url1GetText <- readLines(tmpFile)
+        suppressWarnings(url1GetText <- readLines(tmpFile))
+        # url1GetText <- jsonlite::fromJSON(tmpFile)
         # replace NAN with NULL:
         url1GetText <- stringr::str_replace_all(url1GetText, stringr::fixed("\":NaN,\""), "\":\"\",\"")
         url1GetText2Json <- jsonlite::fromJSON(url1GetText)
@@ -1148,10 +1133,11 @@ fetchContent <- function(url1, method="curl", downloadMethod="auto", isJson=TRUE
 #' @param downloadMethod The same methods from utils::download.file function.
 #' @param termSize Number of records per request.
 #' @param termStart Start position per request.
+#' @param API_version API version of EBI catalogue, default:v1
 #' @import data.table
 #' @keywords internal
 #' @return A data.table object.
-fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0){
+fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", termSize=1000, termStart=0, API_version="v1"){
   # method="curl"
   # downloadMethod="auto"
   # termSize=1000
@@ -1166,51 +1152,79 @@ fetchContentEbi <- function(url1, method="fromJSON", downloadMethod="auto", term
   #   cat( warn(argsTest),"\n" )
   # }
 
-  embeddedList <- list()
-  # If do not append size and start.
-  if( termSize ==0 ){
-    urlGot <- url1
-    contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
-    embeddedList <- c(embeddedList,contentGot[[1]])
-    embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
-    contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
-    message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
-
-  # 这个API 有点问题，如果fetch 多个组织的结果，如果该组织剩下不足1000，就会将剩下的附加到这次fetch，导致 _links 里没有next，进而终止检索，所以再没有 next后，额外再fetch一次，如果有next则继续。
-  }else if(termSize > 0){
-    for(i in 1:99999999){
-      urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
-                       "size=",as.integer(termSize),
-                       "&start=",as.integer(termStart))
+  if(API_version =="v1"){
+    embeddedList <- list()
+    # If do not append size and start.
+    if( termSize ==0 ){
+      urlGot <- url1
       contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
-      if( !is.null(contentGot$status) && contentGot$status==404 ){
-        print(i)
-        return(NULL)
-      }else if( length(contentGot$`_embedded`$associations)==0 ){
-        # is.null( contentGot$`_links` $`next`$href)
-        embeddedList <- c(embeddedList,contentGot[[1]])
-        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
-        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
-        message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
-        break()
-      }else{
-        embeddedList <- c(embeddedList,contentGot[[1]])
-        embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
-        contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
-        message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
-        termStart <- termStart+as.integer(contentGotCount)
-      }
-    }
-  }else{
-    return(NULL)
-  }
-  if(length(embeddedList)>0){
-    return(embeddedList)
-  }else{
-    return(NULL)
-  }
-}
+      embeddedList <- c(embeddedList,contentGot[[1]])
+      embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
+      contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
+      message("Got records: ",contentGotCount,"; Total records: ", embeddedListCount )
 
+      # 这个API 有点问题，如果fetch 多个组织的结果，如果该组织剩下不足1000，就会将剩下的附加到这次fetch，导致 _links 里没有next，进而终止检索，所以再没有 next后，额外再fetch一次，如果有next则继续。
+    }else if(termSize > 0){
+      for(i in 1:99999999){
+        urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
+                         "size=",as.integer(termSize),
+                         "&start=",as.integer(termStart))
+        contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
+        if( !is.null(contentGot$status) && contentGot$status==404 ){
+          print(i)
+          return(NULL)
+        }else if( length(contentGot$`_embedded`$associations)==0 ){
+          # is.null( contentGot$`_links` $`next`$href)
+          embeddedList <- c(embeddedList,contentGot[[1]])
+          embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
+          contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
+          message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+          break()
+        }else{
+          embeddedList <- c(embeddedList,contentGot[[1]])
+          embeddedListCount <- sum(unlist(lapply(embeddedList, function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} })))
+          contentGotCount <- unlist(lapply(contentGot[[1]], function(x){ if(inherits(x, "data.frame")){return(nrow(x))}else{ return(length(x))} }))
+          message("Request: ",i,"; Got records: ",contentGotCount,"; Total records: ", embeddedListCount)
+          termStart <- termStart+as.integer(contentGotCount)
+        }
+      }
+    }else{
+      return(NULL)
+    }
+    if(length(embeddedList)>0){
+      return(embeddedList)
+    }else{
+      return(NULL)
+    }
+  }else if(API_version=="v2"){
+    embeddedList <- list()
+    # If do not append size and start.
+    if( termSize ==0 ){
+      urlGot <- url1
+      contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)
+      return(contentGot)
+      # 这个API 有点问题，如果fetch 多个组织的结果，如果该组织剩下不足1000，就会将剩下的附加到这次fetch，导致 _links 里没有next，进而终止检索，所以再没有 next后，额外再fetch一次，如果有next则继续。
+    }else if(termSize > 0){
+      contentGot_all <- data.table()
+      for(i in 1:99999999){
+        urlGot <- paste0(url1, ifelse(stringr::str_detect(url1,stringr::fixed("?")),"&","?"),
+                         "size=",as.integer(termSize),
+                         "&start=",as.integer(termStart))
+        suppressWarnings(suppressMessages(contentGot <- fetchContent(url1 = urlGot, method =method, downloadMethod = downloadMethod)))
+        if( is.null(contentGot) ){
+          return(contentGot_all)
+        }else{
+          contentGot_all <- rbind(contentGot_all, contentGot)
+          message(" ==> ",i," | Start: ",termStart," | size: ",as.integer(termSize) ," | Got ", nrow(contentGot)," | total: ", nrow(contentGot_all))
+          termStart <- nrow(contentGot_all)
+        }
+      }
+    }else{
+      return(NULL)
+    }
+  }
+
+}
 
 
 #' @title retrieve snps from dbSNP using coordinate.
@@ -1334,6 +1348,10 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  {
 #'
 #' # Fetch genes:
 #' geneList <- EBIquery_allTerm("genes", termSize=10)
+#'
+#' # Fetch datasets (API v2):
+#' datasets <- EBIquery_allTerm("datasets", termSize=100)
+#' datasets[datasets$study_label=="GTEx" & datasets$quant_method=="ge", ]
 #' }
 EBIquery_allTerm <- function( term="genes", termSize=2000){
   bestFetchMethod <- apiEbi_ping()
@@ -1346,28 +1364,25 @@ EBIquery_allTerm <- function( term="genes", termSize=2000){
 
   message("Querying term...",format(Sys.time(), " | %Y-%b-%d %H:%M:%S "))
 
-
-  url1 <- "https://www.ebi.ac.uk/eqtl/api/"
-  # allTerms <- fetchContent(url1,method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
-  # allTerms <- names(allTerms$`_links`)
-  # if( !(term %in% allTerms) ){
-  #   message("Parameter \"term\" must be chosen from \"", paste0(allTerms, collapse = "\", \""),".")
-  # }
-  #
-  url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/", term)
-  termInfo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2], termSize = termSize)
-  # studies:
-  if(term == "studies"){
-    termInfo <- data.table::rbindlist(lapply(termInfo$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
-    termInfo <- termInfo[,c("study_accession")]
-  }else if(term == "tissues"){
-    termInfo <- termInfo$tissues
-    termInfo$tissueType <- unlist(lapply(termInfo$tissue, function(x){ splitOut <- stringr::str_split(x, stringr::fixed("_"))[[1]]; splitOut[1] }))
-  }else if(term =="genes"){
-    termInfo <- do.call(rbind, lapply(termInfo, function(x){x['gene']}))
-    row.names(termInfo) <- NULL
+  if(term == "datasets"){
+    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/v2/", term)
+    termInfo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2], termSize = termSize, API_version="v2")
   }else{
-    termInfo <- termInfo[[1]]
+    url1 <- paste0("https://www.ebi.ac.uk/eqtl/api/", term)
+    termInfo <- fetchContentEbi(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2], termSize = termSize)
+    # studies:
+    if(term == "studies"){
+      termInfo <- data.table::rbindlist(lapply(termInfo$studies, function(x){ cbind(data.table(study_accession=x[[1]]),x[[2]]) }))
+      termInfo <- termInfo[,c("study_accession")]
+    }else if(term == "tissues"){
+      termInfo <- termInfo$tissues
+      termInfo$tissueType <- unlist(lapply(termInfo$tissue, function(x){ splitOut <- stringr::str_split(x, stringr::fixed("_"))[[1]]; splitOut[1] }))
+    }else if(term =="genes"){
+      termInfo <- do.call(rbind, lapply(termInfo, function(x){x['gene']}))
+      row.names(termInfo) <- NULL
+    }else{
+      termInfo <- termInfo[[1]]
+    }
   }
   return(termInfo)
 }
@@ -1485,7 +1500,8 @@ retrieveLD_LDproxy <- function(targetSnp="", population="EUR" , windowSize=50000
 #' eqtl_v8 <- xQTLquery_eqtl(gene="ENSG00000141510")
 #'
 #' # In a specific tissue:
-#' xQTLquery_eqtl(gene="ENSG00000141510", geneType="gencodeId",  tissueSiteDetail="Thyroid" )
+#' xQTLquery_eqtl(gene="ENSG00000141510", geneType="gencodeId",
+#'                tissueSiteDetail="Thyroid" )
 #'
 #' # Query with a variant-gene pair:
 #' xQTLquery_eqtl(variantName="rs1641513",gene="TP53")
@@ -1596,10 +1612,10 @@ xQTLquery_eqtl <- function(variantName="", gene="", variantType="auto", geneType
     }
   }
 
-  # url1 <- "https://gtexportal.org/rest/v1/association/metasoft?gencodeId=ENSG00000141510.16&datasetId=gtex_v8"
+  # url1 <- "https://gtexportal.org/api/v2/association/metasoft?gencodeId=ENSG00000141510.16&datasetId=gtex_v8"
   message("== Querying eQTL associations from API server:")
   ########## construct url for sig association
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/metasoft?",
+  url1 <- paste0("https://gtexportal.org/api/v2/association/metasoft?",
                  "&datasetId=",datasetId,
                  ifelse(variantName=="","",paste0("&variantId=",varInfo$variantId)),
                  "&gencodeId=",geneInfo$gencodeId
@@ -1608,13 +1624,13 @@ xQTLquery_eqtl <- function(variantName="", gene="", variantType="auto", geneType
   # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
 
-  if( length(url1GetText2Json$metasoft)==0 ){
+  if( length(url1GetText2Json$data)==0 ){
     message("No eQTL association found for gene [",gene,"]",ifelse(variantName=="","",paste0(" - variant [",variantName,"].")))
     return( data.table::data.table() )
   }else{
     message("== Done.")
   }
-  tmp <- url1GetText2Json$metasoft
+  tmp <- url1GetText2Json$data
 
   tmp_info <- data.table::data.table( gencodeId=tmp$gencodeId, variantId=tmp$variantId, datasetId=tmp$datasetId, metaP=tmp$metaP )
   tmp <- tmp[,-which(names(tmp) %in% c("datasetId", "gencodeId", "metaP","variantId"))]
@@ -1777,8 +1793,8 @@ xQTLquery_eqtlSig <- function(variantName="", genes="", variantType="auto", gene
   # }
   message("== Start downloading significant eQTL associations:")
   ########## construct url for sig association
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/singleTissueEqtl?format=json",
-                 "&datasetId=",datasetId,
+  url1 <- paste0("https://gtexportal.org/api/v2/association/singleTissueEqtl?",
+                 "datasetId=",datasetId,
                  ifelse(variantName=="","",paste0("&variantId=",varInfo$variantId)),
                  ifelse(all(genes==""),"",paste0("&gencodeId=",paste0(geneInfo$gencodeId, collapse = ","))),
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
@@ -1793,7 +1809,7 @@ xQTLquery_eqtlSig <- function(variantName="", genes="", variantType="auto", gene
   # }
   # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-  tmp <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
+  tmp <- data.table::as.data.table(url1GetText2Json$data)
   if( !exists("tmp")||nrow(tmp)==0){
     message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & genes!="","-",""),ifelse(genes=="","",paste0(" gene [", genes,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
     return(data.table::data.table())
@@ -1930,10 +1946,10 @@ xQTLquery_sqtlSig <- function(variantName="", genes="", variantType="auto", gene
   # }
   message("== Querying significant sQTL associations from API server:")
   ########## construct url for sig association
-  url1 <- paste0("https://gtexportal.org/rest/v1/association/singleTissueSqtl?format=json",
-                 "&datasetId=",datasetId,
+  url1 <- paste0("https://gtexportal.org/api/v2/association/singleTissueSqtl?",
+                 "datasetId=",datasetId,
                  ifelse(variantName=="","",paste0("&variantId=",varInfo$variantId)),
-                 ifelse(all(genes==""),"",paste0("&gencodeId=",paste0(geneInfo$gencodeId, collapse = ","))),
+                 ifelse(all(genes==""),"",paste0("&gencodeId=",paste0(geneInfo$gencodeId, collapse = "&gencodeId="))),
                  ifelse(tissueSiteDetail=="","",paste0("&tissueSiteDetailId=",tissueSiteDetailId))
   )
   # check network:
@@ -1945,7 +1961,7 @@ xQTLquery_sqtlSig <- function(variantName="", genes="", variantType="auto", gene
   url1 <- utils::URLencode(url1)
   # url1GetText2Json <- fetchContent(url1, method = bestFetchMethod[1], downloadMethod = bestFetchMethod[2])
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
-  tmp <- data.table::as.data.table(url1GetText2Json$singleTissueSqtl)
+  tmp <- data.table::as.data.table(url1GetText2Json$data)
   if(!exists("tmp")||nrow(tmp)==0){
     message("No significant associations were found for", ifelse(variantName=="","",paste0(" variant [", variantName,"]")), ifelse(variantName!="" & genes!="","-",""),ifelse(genes=="","",paste0(" gene [", genes,"]")),ifelse(tissueSiteDetail=="",paste0(" in ",length(unique(tmp$tissueSiteDetail)),ifelse(length(unique(tmp$tissueSiteDetail))==1," tissue", " tissues")), paste0(" in ", tissueSiteDetail)), " in ",datasetId)
     return(data.table::data.table())
@@ -2012,7 +2028,6 @@ xQTLquery_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocyte
 
   url1 <- paste0("http://bioinfo.szbl.ac.cn/scQTLbase_backend/query_xQTLbiolinks_sig?geneName=",genename,"&cellType=",cell_type,"&cellState=",cell_state, "&study=",study_name,"&qtlType=",qtl_type )
   url1 <- utils::URLencode(url1)
-  # print(url1)
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
   qtl_summary <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
   if(nrow(tmp)==0){

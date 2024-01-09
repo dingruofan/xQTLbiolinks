@@ -5,18 +5,18 @@
 \title{Download details of sGenes (sQTL Genes) for a specified gene or a tissue.}
 \usage{
 xQTLdownload_sgene(
+  tissueSiteDetail = "",
   gene = "",
   geneType = "auto",
-  tissueSiteDetail = "",
   recordPerChunk = 2000
 )
 }
 \arguments{
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
+
 \item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported). Can be null.}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
-
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
@@ -29,6 +29,6 @@ sGenes are genes that have at least one significant sQTL acting upon them. Resul
 \examples{
 \donttest{
 sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver")
-sGeneInfo <- xQTLdownload_sgene(gene="DDX11", tissueSiteDetail="Liver" )
+sGeneInfo <- xQTLdownload_sgene(tissueSiteDetail="Liver", gene="DDX11" )
 }
 }

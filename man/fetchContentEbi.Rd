@@ -9,7 +9,8 @@ fetchContentEbi(
   method = "fromJSON",
   downloadMethod = "auto",
   termSize = 1000,
-  termStart = 0
+  termStart = 0,
+  API_version = "v1"
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ fetchContentEbi(
 \item{termSize}{Number of records per request.}
 
 \item{termStart}{Start position per request.}
+
+\item{API_version}{API version of EBI catalogue, default:v1}
 }
 \value{
 A data.table object.

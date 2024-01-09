@@ -39,5 +39,9 @@ qtl_groups <- EBIquery_allTerm("qtl_groups")
 
 # Fetch genes:
 geneList <- EBIquery_allTerm("genes", termSize=10)
+
+# Fetch datasets (API v2):
+datasets <- EBIquery_allTerm("datasets", termSize=100)
+datasets[datasets$study_label=="GTEx" & datasets$quant_method=="ge", ]
 }
 }

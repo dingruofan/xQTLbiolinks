@@ -10,10 +10,11 @@ xQTLdownload_eqtlAllAsso(
   variantName = "",
   variantType = "auto",
   tissueLabel = "",
-  study = "gtex_v8",
+  study = "",
   recordPerChunk = 1000,
   withB37VariantId = FALSE,
-  data_source = "eQTL_catalogue"
+  data_source = "eQTL_catalogue",
+  API_version = "v1"
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ xQTLdownload_eqtlAllAsso(
 \item{withB37VariantId}{a logical value indicating whether to return the genome location(GTEx v7) of variants. Default: FALSE.}
 
 \item{data_source}{"eQTL_catalogue"(default) or "liLab"}
+
+\item{API_version}{"v1"(default) or "v2"(not working)}
 }
 \value{
 A data.table object.
@@ -44,18 +47,19 @@ source of all eQTL associations is EBI eQTL category.
 \examples{
 \donttest{
 # Download all eQTL associations of MLH1-rs13315355 pair in all tissues from all studies:
-eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355", study="")
+eqtlAsso <- xQTLdownload_eqtlAllAsso(gene="MLH1", variantName = "rs13315355")
 
 # Download eQTL associations of gene ATP11B in CD4+ T cell from all supported studies:
-geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell", study="")
+geneAsso <- xQTLdownload_eqtlAllAsso(gene="MMP7",tissueLabel = "CD4+ T cell")
 
 # Download eQTL associations of gene ATP11B in Muscle - Skeletal from GTEx_V8:
 geneAsso <- xQTLdownload_eqtlAllAsso("ATP11B", tissueLabel="Muscle - Skeletal")
 
-# Download all eQTL associations of SNP rs11568818 in all tissues from all supported studies.
-varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818", study="")
 # Download eQTL associations of SNP rs11568818 in Muscle - Skeletal from GTEx_V8:
 varAsso <- xQTLdownload_eqtlAllAsso(variantName="chr11_102530930_T_C_b38",
                                     tissueLabel="Muscle - Skeletal")
+
+# Download all eQTL associations of SNP rs11568818 in all tissues from all supported studies.
+varAsso <- xQTLdownload_eqtlAllAsso(variantName="rs11568818")
 }
 }

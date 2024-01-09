@@ -1,6 +1,6 @@
 Package: xQTLbiolinks
 Title: An R Package for Integrative Analysis of Quantitative Trait Locus Data of 'xQTL'
-Version: 1.6.3
+Version: 1.7.3
 Authors@R: c(
     person(given = "Ruofan", family = "Ding",        email = "dingruofan1@foxmail.com",   role  = c("aut", "cre")),
     person(given = "Xudong", family = "Zou",        email = "zouxd@szbl.ac.cn",   role  = c("aut","ctb")),

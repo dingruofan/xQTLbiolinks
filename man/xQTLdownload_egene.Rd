@@ -5,18 +5,18 @@
 \title{Download eGenes (eQTL Genes) for a specified gene or a tissue}
 \usage{
 xQTLdownload_egene(
+  tissueSiteDetail = "",
   gene = "",
   geneType = "auto",
-  tissueSiteDetail = "",
   recordPerChunk = 2000
 )
 }
 \arguments{
+\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
+
 \item{gene}{(character) gene symbol or gencode id (versioned or unversioned are both supported).}
 
 \item{geneType}{(character) options: "auto","geneSymbol" or "gencodeId". Default: "auto".}
-
-\item{tissueSiteDetail}{(character) details of tissues in GTEx can be listed using \code{tissueSiteDetailGTExv8} or \code{tissueSiteDetailGTExv7}}
 
 \item{recordPerChunk}{(integer) number of records fetched per request (default: 2000).}
 }
@@ -28,7 +28,7 @@ eGenes are genes that have at least one significant cis-eQTL acting upon them. R
 }
 \examples{
 \donttest{
-eGeneInfo <- xQTLdownload_egene("TP53")
-eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", recordPerChunk=2000)
+eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate", gene="CICP3")
+eGeneInfo <- xQTLdownload_egene(tissueSiteDetail="Prostate")
 }
 }

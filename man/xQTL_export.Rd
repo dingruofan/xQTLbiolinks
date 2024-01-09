@@ -21,6 +21,7 @@ Export expression object to a specified format
 \donttest{
 expProfiles <- xQTLdownload_exp(c("tp53","naDK","SDF4"),
                                tissueSiteDetail="Artery - Coronary",
-                               pathologyNotesCategories=TRUE, toSummarizedExperiment = TRUE)
+                               pathologyNotesCategories=TRUE, toSummarizedExperiment = FALSE)
+xQTL_export(expProfiles)
 }
 }

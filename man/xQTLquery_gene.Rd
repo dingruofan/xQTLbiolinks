@@ -4,7 +4,7 @@
 \alias{xQTLquery_gene}
 \title{Query basic information for genes, including name, symbol, position and description}
 \usage{
-xQTLquery_gene(genes = "", geneType = "auto", recordPerChunk = 150)
+xQTLquery_gene(genes = "", geneType = "auto", recordPerChunk = 100)
 }
 \arguments{
 \item{genes}{A charater vector or a string of gene symbol, gencode id (versioned or unversioned), or a charater string of gene type.
