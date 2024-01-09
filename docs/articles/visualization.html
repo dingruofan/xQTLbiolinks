@@ -86,14 +86,6 @@
 
     
     
-<hr>
-<div class="section level2">
-<h2 id="note-the-gtex-portal-api-update-has-caused-some-functions-of-xqtlbioliks-to-malfunction--the-package-will-be-updated-within-one-week-to-address-this-issue-">
-<strong>NOTE! The GTEx Portal API update has caused some functions
-of xQTLbioliks to malfunction. The package will be updated within one
-week to address this issue.</strong><a class="anchor" aria-label="anchor" href="#note-the-gtex-portal-api-update-has-caused-some-functions-of-xqtlbioliks-to-malfunction--the-package-will-be-updated-within-one-week-to-address-this-issue-"></a>
-</h2>
-<hr>
 <p>Some visual examples are provided in this vignette, including example
 data, code, and figures.</p>
 <p><strong>Visualilzation</strong> of eQTL, sQTL, gene expression across
@@ -127,7 +119,7 @@ tissues.</p>
 </blockquote>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
-<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwasChr6Sub4.txt"</span><span class="op">)</span></span>
 <span><span class="va">p_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">)</span></span>
 <span><span class="va">p_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLvisual_locusZoom.html">xQTLvisual_locusZoom</a></span><span class="op">(</span><span class="va">gwasDF</span>, posRange<span class="op">=</span><span class="st">"chr6:4.7e7-4.8e7"</span>, population <span class="op">=</span><span class="st">"EUR"</span><span class="op">)</span></span>
 <span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p_all</span>, <span class="va">p_sub</span>, align <span class="op">=</span> <span class="st">"h"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
@@ -146,25 +138,22 @@ interest:</p>
 <p><img src="images/visualization/visualization_locusZoom_eQTL1.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
-<span><span class="va">eqtlDF</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt"</span><span class="op">)</span></span>
-<span><span class="va">gwasDF</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt"</span><span class="op">)</span></span>
+<span><span class="va">eqtlDF</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/eqtl/eqtlAsso1.txt"</span><span class="op">)</span></span>
+<span><span class="va">gwasDF</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"https://gitee.com/stronghoney/exampleData/raw/master/gwas/AD/gwasChr6Sub3.txt"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/xQTLvisual_locusCompare.html">xQTLvisual_locusCompare</a></span><span class="op">(</span> <span class="va">eqtlDF</span>, <span class="va">gwasDF</span>, legend_position<span class="op">=</span><span class="st">"topleft"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/visualization/visualization_locusCompare.png" width="50%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/AD/gwasEqtldata.txt"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/gwas/AD/gwasEqtldata.txt"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/xQTLvisual_locusCombine.html">xQTLvisual_locusCombine</a></span><span class="op">(</span><span class="va">gwasEqtldata</span>, highlightSnp<span class="op">=</span><span class="st">"rs13120565"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/visualization/xQTLvisual_locusCombine.png" width="90%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/xQTLvisual_coloc.html">xQTLvisual_coloc</a></span><span class="op">(</span> gene<span class="op">=</span><span class="st">"MMP7"</span>, variantName<span class="op">=</span><span class="st">"rs11568818"</span>, study<span class="op">=</span><span class="st">"TwinsUK"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/visualization/eQTLspecificity.png" width="70%" style="display: block; margin: auto;"></p>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 

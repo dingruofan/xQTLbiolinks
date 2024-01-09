@@ -18,9 +18,6 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-***
-## **NOTE! The GTEx Portal API update has caused some functions of xQTLbioliks to malfunction. The package will be updated within one week to address this issue.**
-***
 
 ## Before we start.
 

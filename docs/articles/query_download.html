@@ -88,15 +88,6 @@ Daing</h4>
 
     
     
-<hr>
-<div class="section level2">
-<h2 id="note-the-gtex-portal-api-update-has-caused-some-functions-of-xqtlbioliks-to-malfunction--the-package-will-be-updated-within-one-week-to-address-this-issue-">
-<strong>NOTE! The GTEx Portal API update has caused some functions
-of xQTLbioliks to malfunction. The package will be updated within one
-week to address this issue.</strong><a class="anchor" aria-label="anchor" href="#note-the-gtex-portal-api-update-has-caused-some-functions-of-xqtlbioliks-to-malfunction--the-package-will-be-updated-within-one-week-to-address-this-issue-"></a>
-</h2>
-<hr>
-</div>
 <div class="section level2">
 <h2 id="load-packages">Load packages:<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
@@ -825,7 +816,7 @@ unversioned gencode ID:</strong><a class="anchor" aria-label="anchor" href="#que
 <span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_sampleByTissue.html">xQTLquery_sampleByTissue</a></span><span class="op">(</span>tissueSiteDetail<span class="op">=</span><span class="st">"Liver"</span>, pathologyNotesCategories<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">sampleIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GTEX-11NUK-0011-R4a-SM-DO12B"</span>, <span class="st">"GTEX-11ONC-0011-R4b-SM-DO93H"</span>,</span>
 <span>               <span class="st">"GTEX-11DXY-0526-SM-5EGGQ"</span>, <span class="st">"GTEX-13OVJ-1026-SM-5IFGI"</span><span class="op">)</span></span>
-<span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/xQTLbiolinks/man/xQTLquery_sampleBySampleId.html" class="external-link">xQTLquery_sampleBySampleId</a></span><span class="op">(</span><span class="va">sampleIds</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sampleInfo</span> <span class="op">&lt;-</span> <span class="fu">xQTLquery_sampleBySampleId</span><span class="op">(</span><span class="va">sampleIds</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sampleInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    ageBracket aliquotId autolysisScore dataType datasetId</span></span>

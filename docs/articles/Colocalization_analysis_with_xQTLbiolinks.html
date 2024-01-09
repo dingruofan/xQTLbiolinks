@@ -87,15 +87,6 @@ prostate cancer</h1>
 
     
     
-<hr>
-<div class="section level2">
-<h2 id="note-the-gtex-portal-api-update-has-caused-some-functions-of-xqtlbioliks-to-malfunction--the-package-will-be-updated-within-one-week-to-address-this-issue-">
-<strong>NOTE! The GTEx Portal API update has caused some functions
-of xQTLbioliks to malfunction. The package will be updated within one
-week to address this issue.</strong><a class="anchor" aria-label="anchor" href="#note-the-gtex-portal-api-update-has-caused-some-functions-of-xqtlbioliks-to-malfunction--the-package-will-be-updated-within-one-week-to-address-this-issue-"></a>
-</h2>
-<hr>
-</div>
 <div class="section level2">
 <h2 id="before-we-start-">Before we start.<a class="anchor" aria-label="anchor" href="#before-we-start-"></a>
 </h2>
@@ -128,7 +119,7 @@ of prostate cancer from GWAS category and load the dataset in R with
 (start with <code>rs</code>), and a data.table object named
 <code>gwasDF</code> of 13,498,990 (rows) x 7 (cols) is loaded.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"29892016-GCST006085-EFO_0001663-build37.f.tsv.gz"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gwasDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"29892016-GCST006085-EFO_0001663-build37.f.tsv.gz"</span><span class="op">)</span></span>
 <span><span class="co"># extract columns.</span></span>
 <span><span class="va">gwasDF</span><span class="op">&lt;-</span> <span class="va">gwasDF</span><span class="op">[</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">variant_id</span>, <span class="st">"^rs"</span><span class="op">)</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">variant_id</span>, chrom<span class="op">=</span><span class="va">chromosome</span>, position<span class="op">=</span> <span class="va">base_pair_location</span>, pValue<span class="op">=</span><span class="va">p_value</span>, AF<span class="op">=</span><span class="va">effect_allele_frequency</span>, <span class="va">beta</span>, se<span class="op">=</span> <span class="va">standard_error</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># tissue:</span></span>
@@ -230,9 +221,9 @@ outputs of colocalization analysis (this may take several minutes):</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># All genes:</span></span>
 <span><span class="va">genesAll</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLquery_gene.html">xQTLquery_gene</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">traitsAll</span><span class="op">$</span><span class="va">gencodeId</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setindex</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">rsid</span><span class="op">)</span> <span class="co"># speed up merging</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setkey.html" class="external-link">setindex</a></span><span class="op">(</span><span class="va">gwasDF</span>, <span class="va">rsid</span><span class="op">)</span> <span class="co"># speed up merging</span></span>
 <span><span class="co"># A data.table to save results:</span></span>
-<span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="co"># eQTL of the gene i</span></span>
 <span>  <span class="va">eQTL_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span><span class="va">genesAll</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">$</span><span class="va">gencodeId</span>, geneType <span class="op">=</span> <span class="st">"gencodeId"</span>, tissueLabel<span class="op">=</span><span class="va">tissueSiteDetail</span>, withB37VariantId <span class="op">=</span> <span class="cn">FALSE</span>, data_source<span class="op">=</span><span class="st">"liLab"</span><span class="op">)</span></span>
@@ -293,7 +284,7 @@ With a threshold of 0.75 for <code>coloc</code> and 0.5 for
 <p>To save time and go through this case as soon as possible, you can
 get the above result directly with:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/colocResultAll.txt"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">colocResultAll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"http://bioinfo.szbl.ac.cn/xQTL_biolinks/xqtl_data/colocResultAll.txt"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-4-visualization-of-the-results">Step 4: Visualization of the results:<a class="anchor" aria-label="anchor" href="#step-4-visualization-of-the-results"></a>
@@ -424,7 +415,7 @@ gene <code>MMP7</code> as an example:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download all eQTL associations of gene  MMP7 in prostate:</span></span>
 <span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xQTLdownload_eqtlAllAsso.html">xQTLdownload_eqtlAllAsso</a></span><span class="op">(</span>gene<span class="op">=</span><span class="st">"MMP7"</span>,tissueLabel <span class="op">=</span> <span class="va">tissueSiteDetail</span><span class="op">)</span></span>
-<span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">eqtlAsso</span><span class="op">)</span></span>
+<span><span class="va">eqtlAsso</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">eqtlAsso</span><span class="op">)</span></span>
 <span><span class="co"># Merge the variants of GWAS and eQTL dataset by rsid:</span></span>
 <span><span class="va">gwasEqtldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">gwasDF</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AF"</span><span class="op">)</span><span class="op">]</span>, <span class="va">eqtlAsso</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>rsid<span class="op">=</span><span class="va">snpId</span>, <span class="va">pValue</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                      by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rsid"</span><span class="op">)</span>, suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".gwas"</span>,<span class="st">".eqtl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
