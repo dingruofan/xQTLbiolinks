@@ -159,7 +159,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   chrom <- pValue <- V1 <- V2 <- V3 <- tx_name <- anno <- TXID <- tx_id <- type <- pos <- proportion <- NULL
   nrow_id <- rep_id<- NULL
 
-  datatype_DT <- data.table(type=c("spliceSite",  "utr5","utr3", "exon", "promoter", "intron", "downstream", "intergenic"),
+  datatype_DT <- data.table::data.table(type=c("spliceSite",  "utr5","utr3", "exon", "promoter", "intron", "downstream", "intergenic"),
                             bg_ratio = c(0.017,    0.3,   0.98,   2.13,   1.09,       50.27,    1.1,          44.11)/100)
 
   .<- NULL
@@ -208,7 +208,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
     snpRanges_hg38 <- snpRanges_hg38[which(as.character(GenomeInfoDb::seqnames(snpRanges_hg38)) %in% paste0("chr", c(1:22,"X","Y", "M"))),]
     message("== ",length(snpRanges_hg38),"/",nrow(snpInfo)," (",round(length(snpRanges_hg38)/nrow(snpInfo)*100,2),"%)"," left.")
     snpInfoNew <- data.table::data.table(chrom = as.character(GenomeInfoDb::seqnames(snpRanges_hg38)),
-                                         pos=as.data.table(IRanges::ranges(snpRanges_hg38))$start,
+                                         pos=data.table::as.data.table(IRanges::ranges(snpRanges_hg38))$start,
                                          pValue=snpRanges_hg38$pValue)
     snpRanges <- data.table::copy(snpRanges_hg38)
     snpInfo <- data.table::copy(snpInfoNew)
@@ -220,26 +220,26 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   message("==> Start importing annotations...")
 
   # all transcripts:
-  txinfo <- as.data.table(GenomicFeatures::transcripts(txdb))
+  txinfo <- data.table::as.data.table(GenomicFeatures::transcripts(txdb))
   txinfo <- txinfo[which(seqnames %in% paste0("chr", c(1:22,"X","Y", "M"))),]
 
   # extract introns:
   message("      introns...")
   intronParts <-  GenomicFeatures::intronicParts(txdb)
   intronParts <- intronParts[which(as.character(GenomeInfoDb::seqnames(intronParts)) %in% paste0("chr", c(1:22,"X","Y", "M"))),]
-  intronAnno <- as.data.table(intronParts)
+  intronAnno <- data.table::as.data.table(intronParts)
 
   # extract exons:
   message("      exons...")
   exonParts <- GenomicFeatures::exonicParts(txdb)
   exonParts <- exonParts[which(as.character(GenomeInfoDb::seqnames(exonParts)) %in% paste0("chr", c(1:22,"X","Y", "M"))),]
-  exonAnno <- as.data.table(exonParts)
+  exonAnno <- data.table::as.data.table(exonParts)
 
   # extract promoters:
   message("      promoters...")
   promoterParts <- suppressWarnings(GenomicFeatures::promoters(txdb))
   promoterParts <- promoterParts[which(as.character(GenomeInfoDb::seqnames(promoterParts)) %in% paste0("chr", c(1:22,"X","Y", "M"))),]
-  promoterDT <- as.data.table(promoterParts)
+  promoterDT <- data.table::as.data.table(promoterParts)
   promoterDT$TSS <- ifelse(promoterDT$strand=="+", promoterDT$start+2000, promoterDT$end-2000)
   promoterDT$upstream <- ifelse(promoterDT$strand=="+", promoterDT$TSS-1000, promoterDT$TSS+1000)
   promoterDT$start <- ifelse(promoterDT$strand=="+", promoterDT$upstream, promoterDT$TSS)
@@ -277,7 +277,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   cpgHits <- data.table(chrom=character(0),pos=numeric(0),pValue=numeric(0),type=character(0),anno=character(0))
 
   # annotate snp with introns:
-  intronHits <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
+  intronHits <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
                                                                  subject = intronParts,
                                                                  maxgap = 1,
                                                                  ignore.strand=TRUE ))
@@ -290,17 +290,17 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     intronHits <- cpgHits[0,]
   }
-  intron_hits_non_sig_all <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
+  intron_hits_non_sig_all <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
                                                                           subject = intronParts,
                                                                           maxgap = 1,
                                                                           ignore.strand=TRUE ))
-  intron_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[intron_hits_non_sig_all$queryHits]))
+  intron_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[intron_hits_non_sig_all$queryHits]))
   intron_hits_non_sig_all$type<- "intron"
   # message("      intron hits: ",nrow(intronHits),"; none-hits: ",nrow(intron_hits_non_sig_all))
   # rm(intronParts, intronAnno)
 
   # annotate snp with exons:
-  exonHits <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
+  exonHits <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
                                                                subject = exonParts,
                                                                maxgap = 1,
                                                                ignore.strand=TRUE ))
@@ -312,28 +312,28 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     exonHits <- cpgHits[0,]
   }
-  exon_hits_non_sig_all <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
+  exon_hits_non_sig_all <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
                                                                         subject = exonParts,
                                                                         maxgap = 1,
                                                                         ignore.strand=TRUE ))
-  exon_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[exon_hits_non_sig_all$queryHits]))
+  exon_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[exon_hits_non_sig_all$queryHits]))
   exon_hits_non_sig_all$type <- "exon"
   # message("      exon hits: ",nrow(exonHits), "; none-hits: ", nrow(exon_hits_non_sig_all))
   # rm(exonParts, exonAnno)
 
   # annotate snp with promoters:
-  promoterHits <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
+  promoterHits <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
                                                                    subject = promoterParts,
                                                                    maxgap = 1,
                                                                    ignore.strand=TRUE ))
-  promoterHits <- cbind(snpInfo[promoterHits$queryHits,], as.data.table(GenomicRanges::mcols(promoterParts))[promoterHits$subjectHits,.(anno=tx_name, type="promoter")])
+  promoterHits <- cbind(snpInfo[promoterHits$queryHits,], data.table::as.data.table(GenomicRanges::mcols(promoterParts))[promoterHits$subjectHits,.(anno=tx_name, type="promoter")])
   # collapse annotation:
   promoterHits <- promoterHits[,.(anno=paste(anno,collapse = ",")),by=c("chrom", "pos", "pValue", "type")]
-  promoter_hits_non_sig_all <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
+  promoter_hits_non_sig_all <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
                                                                             subject = promoterParts,
                                                                             maxgap = 1,
                                                                             ignore.strand=TRUE ))
-  promoter_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[promoter_hits_non_sig_all$queryHits]))
+  promoter_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[promoter_hits_non_sig_all$queryHits]))
   promoter_hits_non_sig_all$type <- "promoter"
 
 
@@ -341,18 +341,18 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   # rm(promoterParts)
 
   # annotate snp with downstream:
-  downstreamHits <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
+  downstreamHits <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges,
                                                                    subject = downstreamParts,
                                                                    maxgap = 1,
                                                                    ignore.strand=TRUE ))
-  downstreamHits <- cbind(snpInfo[downstreamHits$queryHits,], as.data.table(GenomicRanges::mcols(downstreamParts))[downstreamHits$subjectHits,.(anno=tx_name, type="downstream")])
+  downstreamHits <- cbind(snpInfo[downstreamHits$queryHits,], data.table::as.data.table(GenomicRanges::mcols(downstreamParts))[downstreamHits$subjectHits,.(anno=tx_name, type="downstream")])
   # collapse annotation:
   downstreamHits <- downstreamHits[,.(anno=paste(anno,collapse = ",")),by=c("chrom", "pos", "pValue", "type")]
-  downstream_hits_non_sig_all <- as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
+  downstream_hits_non_sig_all <- data.table::as.data.table(SummarizedExperiment::findOverlaps(query = snpRanges_non_sig_all,
                                                                                 subject = downstreamParts,
                                                                                 maxgap = 1,
                                                                                 ignore.strand=TRUE ))
-  downstream_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[downstream_hits_non_sig_all$queryHits]))
+  downstream_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[downstream_hits_non_sig_all$queryHits]))
   downstream_hits_non_sig_all$type <- "downstream"
 
   # message("      downstream hits: ",nrow(downstreamHits), "; none-hits: ", nrow(downstream_hits_non_sig_all))
@@ -360,7 +360,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
 
 
   # annotate snp with 5 utr:
-  utr5Hits <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
+  utr5Hits <- suppressMessages(suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges,
                                                                                                  txdb,
                                                                                                  VariantAnnotation::FiveUTRVariants())) ))
   if(nrow(utr5Hits)>0){
@@ -371,15 +371,15 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     utr5Hits <- cpgHits[0,]
   }
-  utr5_hits_non_sig_all <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
+  utr5_hits_non_sig_all <- suppressMessages(suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
                                                                                                  txdb,
                                                                                                  VariantAnnotation::FiveUTRVariants())) ))
-  utr5_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[utr5_hits_non_sig_all$QUERYID]))
+  utr5_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[utr5_hits_non_sig_all$QUERYID]))
   utr5_hits_non_sig_all$type <- "utr5"
   # message("      5'utr hits: ",nrow(utr5Hits),"; none hits: ", nrow(utr5_hits_non_sig_all))
 
   # annotate snp with 3 utr:
-  utr3Hits <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
+  utr3Hits <- suppressMessages(suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges,
                                                                                                  txdb,
                                                                                                  VariantAnnotation::ThreeUTRVariants())) ))
   if(nrow(utr3Hits)>0){
@@ -390,15 +390,15 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     utr3Hits <- cpgHits[0,]
   }
-  utr3_hits_non_sig_all <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
+  utr3_hits_non_sig_all <- suppressMessages(suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
                                                                                                           txdb,
                                                                                                           VariantAnnotation::ThreeUTRVariants())) ))
-  utr3_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[utr3_hits_non_sig_all$QUERYID]))
+  utr3_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[utr3_hits_non_sig_all$QUERYID]))
   utr3_hits_non_sig_all$type <- "utr3"
   # message("      3'utr hits: ",nrow(utr3Hits),"; none-hits: ", nrow(utr3_hits_non_sig_all))
 
   # annotate snp with splice sites:
-  splicingHits <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
+  splicingHits <- suppressMessages(suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges,
                                                                                                      txdb,
                                                                                                      VariantAnnotation::SpliceSiteVariants())) ))
   if(nrow(splicingHits)>0){
@@ -409,14 +409,14 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     splicingHits <- cpgHits[0,]
   }
-  splicing_hits_non_sig_all <- suppressMessages(suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
+  splicing_hits_non_sig_all <- suppressMessages(suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
                                                                                                               txdb,
                                                                                                               VariantAnnotation::SpliceSiteVariants())) ))
-  splicing_hits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[splicing_hits_non_sig_all$QUERYID]))
+  splicing_hits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[splicing_hits_non_sig_all$QUERYID]))
   splicing_hits_non_sig_all$type <- "spliceSite"
   # message("      splice site hits: ",nrow(splicingHits),"; none-hits: ", nrow(splicing_hits_non_sig_all))
 
-  intergenicHits <- suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges,
+  intergenicHits <- suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges,
                                                                                       txdb,
                                                                                       VariantAnnotation::IntergenicVariants(), ignore.strand=TRUE)) )
   if(nrow(intergenicHits)>0){
@@ -430,10 +430,10 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   }else{
     intergenicHits <- cpgHits[0,]
   }
-  intergenicHits_non_sig_all <- suppressWarnings( as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
+  intergenicHits_non_sig_all <- suppressWarnings( data.table::as.data.table(VariantAnnotation::locateVariants(snpRanges_non_sig_all,
                                                                                       txdb,
                                                                                       VariantAnnotation::IntergenicVariants(), ignore.strand=TRUE)) )
-  intergenicHits_non_sig_all <- unique(as.data.table(snpRanges_non_sig_all[intergenicHits_non_sig_all$QUERYID]))
+  intergenicHits_non_sig_all <- unique(data.table::as.data.table(snpRanges_non_sig_all[intergenicHits_non_sig_all$QUERYID]))
   intergenicHits_non_sig_all$type <- "intergenic"
   # message("      Intergenic hits: ",nrow(promoterHits), "; none-hits: ", nrow(intergenicHits_non_sig_all))
   # rm(txinfo)
@@ -475,7 +475,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   dup_non_sig <- dup_non_sig[,.SD[1,], by=c("seqnames", "start", "pValue")]
   non_sig_all <- rbind(dup_non_sig[,-c("bg_ratio")], noDup_non_sig)
 
-  non_sig_count <- as.data.table(table(non_sig_all$type))
+  non_sig_count <- data.table::as.data.table(table(non_sig_all$type))
   names(non_sig_count) <- c("type", "num_non_sig_hits")
 
   # non_sig_count <- data.table(
@@ -483,7 +483,7 @@ xQTLanno_genomic <- function(snpInfo="", p_cutoff =5e-8, genomeVersion="hg38"){
   #   num_non_sig_hits = c(nrow(intron_hits_non_sig_all), nrow(downstream_hits_non_sig_all), nrow(exon_hits_non_sig_all), nrow(promoter_hits_non_sig_all), nrow(utr5_hits_non_sig_all), nrow(utr3_hits_non_sig_all), nrow(splicing_hits_non_sig_all), nrow(intergenicHits_non_sig_all))
   #   )
 
-  snpHits_count  <- merge(as.data.table(table(snpHits$type))[,.(type=V1, num_sig_hits=N)], non_sig_count, by = "type")
+  snpHits_count  <- merge(data.table::as.data.table(table(snpHits$type))[,.(type=V1, num_sig_hits=N)], non_sig_count, by = "type")
   snpHits_count$num_sig_non_hits <- nrow(snpInfo) - snpHits_count$num_sig_hits
   snpHits_count$num_non_sig_non_hits <- nrow(snpInfo_non_sig) - snpHits_count$num_non_sig_hits
   snpHits_count$p.value = apply(snpHits_count, 1, function(x){ x<-as.numeric(x[2:5]); x_enrich = fisher.test(matrix(c(x[1],x[2],x[3],x[4]), nrow=2, byrow = TRUE),alternative = "two.sided"); return(x_enrich$p.value)})

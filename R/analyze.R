@@ -83,7 +83,7 @@ xQTLanalyze_getSentinelSnp <- function(gwasDF, pValueThreshold=5e-8, centerRange
     # retain the SNPs located in chromosome 1:22
     gwasRanges_hg38 <- gwasRanges_hg38[which(as.character(GenomeInfoDb::seqnames(gwasRanges_hg38)) %in% paste0("chr", 1:22)),]
     gwasDF <- cbind(data.table(rsid = gwasRanges_hg38$rsid, maf=gwasRanges_hg38$maf, pValue=gwasRanges_hg38$pValue, beta = gwasRanges_hg38$beta, se = gwasRanges_hg38$se),
-                    data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(gwasRanges_hg38)), position=as.data.table(IRanges::ranges(gwasRanges_hg38))$start ))
+                    data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(gwasRanges_hg38)), position=data.table::as.data.table(IRanges::ranges(gwasRanges_hg38))$start ))
     gwasDF <- gwasDF[,.(rsid, chr, position, pValue, maf, beta, se)]
     message("== ",length(gwasRanges_hg38),"/",nrow(gwasDF)," left.")
     rm(gwasRanges, gwasRanges_hg38)
@@ -402,7 +402,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     dataRanges_hg38 <- dataRanges_hg38[which(as.character(GenomeInfoDb::seqnames(dataRanges_hg38)) %in% paste0("chr", 1:22)),]
     message("== ",length(dataRanges_hg38),"/",nrow(gwasDF)," (",round(length(dataRanges_hg38)/nrow(gwasDF)*100,2),"%)"," left.")
     gwasDFnew <- cbind(data.table::data.table(rsid = dataRanges_hg38$rsid, maf=dataRanges_hg38$maf, pValue=dataRanges_hg38$pValue, beta=dataRanges_hg38$beta, se=dataRanges_hg38$se),
-                       data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(dataRanges_hg38)), position=as.data.table(IRanges::ranges(dataRanges_hg38))$start ))
+                       data.table::data.table(chr = as.character(GenomeInfoDb::seqnames(dataRanges_hg38)), position=data.table::as.data.table(IRanges::ranges(dataRanges_hg38))$start ))
     gwasDF <- gwasDFnew[,.(rsid, chr, position, pValue, maf, beta, se)]
     rm(dataRanges, dataRanges_hg38, gwasDFnew)
   }
@@ -489,9 +489,9 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     # 防止 check_dataset 中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
     suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
                                                    dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=ifelse(is.na(sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), 300, sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
-    coloc_Out_results <- as.data.table(coloc_Out$results)
+    coloc_Out_results <- data.table::as.data.table(coloc_Out$results)
     # coloc_Out_results$gene <- traitGenes[i]
-    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary <- data.table::as.data.table(t(as.data.frame(coloc_Out$summary)))
     coloc_Out_summary$traitGene <- traitGene
     coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
     coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
@@ -509,7 +509,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
     rownames(sesMat) <- gwasEqtlInfo$rsid
     res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=bb.alg);
-    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary <- data.table::as.data.table(res$results)
     hyprcoloc_Out_summary$traitGene <- traitGene
     hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.(traitGene, posterior_prob, regional_prob, candidate_snp, posterior_explained_by_snp)]
     message(hyprcoloc_Out_summary)
@@ -521,9 +521,9 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     # coloc:
     suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
                                                    dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=ifelse(is.na(sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), 300, sampleNum[tissueSiteDetailId, on="tissueSiteDetailId"]$sampleNum), snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
-    coloc_Out_results <- as.data.table(coloc_Out$results)
+    coloc_Out_results <- data.table::as.data.table(coloc_Out$results)
     # coloc_Out_results$gene <- traitGenes[i]
-    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary <- data.table::as.data.table(t(as.data.frame(coloc_Out$summary)))
     coloc_Out_summary$traitGene <- traitGene
     coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
     coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
@@ -536,7 +536,7 @@ xQTLanalyze_coloc <- function(gwasDF, traitGene, geneType="auto", genomeVersion=
     sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
     rownames(sesMat) <- gwasEqtlInfo$rsid
     res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=FALSE);
-    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary <- data.table::as.data.table(res$results)
     hyprcoloc_Out_summary$traitGene <- traitGene
     hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.(traitGene, hypr_posterior=posterior_prob, hypr_regional_prob=regional_prob, hypr_candidate_snp=candidate_snp, hypr_posterior_explainedBySnp=posterior_explained_by_snp)]
     colocOut <- merge(coloc_Out_summary, hyprcoloc_Out_summary, by="traitGene" )
@@ -643,9 +643,9 @@ xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNu
     # 防止 check_dataset 中 p = pnorm(-abs(d$beta/sqrt(d$varbeta))) * 2 出错
     suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
                                                    dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=qtlSampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
-    coloc_Out_results <- as.data.table(coloc_Out$results)
+    coloc_Out_results <- data.table::as.data.table(coloc_Out$results)
     # coloc_Out_results$gene <- traitGenes[i]
-    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary <- data.table::as.data.table(t(as.data.frame(coloc_Out$summary)))
     coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
     coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
     message("== Done")
@@ -673,9 +673,9 @@ xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNu
     # coloc:
     suppressWarnings(coloc_Out <- coloc::coloc.abf(dataset1 = list( pvalues = gwasEqtlInfo$pValue.gwas, type="quant", N=gwasSampleNum, snp=gwasEqtlInfo$rsid, MAF=gwasEqtlInfo$maf.gwas),
                                                    dataset2 = list( pvalues = gwasEqtlInfo$pValue.eqtl, type="quant", N=qtlSampleNum, snp=gwasEqtlInfo$rsid, MAF= gwasEqtlInfo$maf.eqtl)))
-    coloc_Out_results <- as.data.table(coloc_Out$results)
+    coloc_Out_results <- data.table::as.data.table(coloc_Out$results)
     # coloc_Out_results$gene <- traitGenes[i]
-    coloc_Out_summary <- as.data.table(t(as.data.frame(coloc_Out$summary)))
+    coloc_Out_summary <- data.table::as.data.table(t(as.data.frame(coloc_Out$summary)))
     coloc_Out_summary$candidate_snp <- coloc_Out_results[order(-SNP.PP.H4)][1,]$snp
     coloc_Out_summary$SNP.PP.H4 <- coloc_Out_results[order(-SNP.PP.H4)][1,]$SNP.PP.H4
     # print(coloc_Out_summary)
@@ -687,7 +687,7 @@ xQTLanalyze_coloc_diy <- function(gwasDF, qtlDF, mafThreshold=0.01, gwasSampleNu
     sesMat <- as.matrix(gwasEqtlInfo[,.(eqtl=se.eqtl, gwas=se.gwas)])
     rownames(sesMat) <- gwasEqtlInfo$rsid
     res <- hyprcoloc::hyprcoloc(effect.est = betasMat, effect.se= sesMat, trait.names=colnames(betasMat), snp.id=rownames(betasMat), bb.alg=FALSE);
-    hyprcoloc_Out_summary <- as.data.table(res$results)
+    hyprcoloc_Out_summary <- data.table::as.data.table(res$results)
     hyprcoloc_Out_summary <- hyprcoloc_Out_summary[,.( hypr_posterior=posterior_prob, hypr_regional_prob=regional_prob, hypr_candidate_snp=candidate_snp, hypr_posterior_explainedBySnp=posterior_explained_by_snp)]
     colocOut <- cbind(coloc_Out_summary, hyprcoloc_Out_summary )
     print(colocOut)
