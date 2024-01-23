@@ -1607,7 +1607,7 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="geneSymbol",  tissue=""
       mRNA_gene<-mRNA_gene_DF
     }else{
       # mRNA_gene <- fread(paste0("https://github.com/dingruofan/exampleData/raw/master/hg38_refseq_gencodeId.txt"), header=TRUE)
-      mRNA_gene <- fread("http://bioinfo.szbl.ac.cn/aQTL/for_xQTLbiolinks/hg38_3UTR_anno.txt", header=FALSE)
+      mRNA_gene <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/metadata/hg38_3UTR_anno.txt", header=FALSE)
       if(!exists("mRNA_gene") || nrow(mRNA_gene)==0){ stop("mRNA info download fail...") }
     }
     names(mRNA_gene) <- c("mRNA", "geneSymbol")

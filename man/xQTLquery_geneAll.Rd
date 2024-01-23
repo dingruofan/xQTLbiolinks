@@ -13,7 +13,6 @@ xQTLquery_geneAll(gencodeVersion = "v26", recordPerChunk = 2000)
 }
 \value{
 A data.table object of all genes' information.
-58191
 }
 \description{
 Query all genes supported in GTEx

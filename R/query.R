@@ -513,7 +513,6 @@ xQTLquery_sampleByTissue <- function( tissueSiteDetail="Liver", dataType="RNASEQ
 #' @import utils
 #' @import data.table
 #' @return A data.table object of all genes' information.
-#' 58191
 xQTLquery_geneAll <- function(gencodeVersion="v26", recordPerChunk=2000){
   geneSymbol <- gencodeId <- entrezGeneId <- geneType <- chromosome <- start <- end <- strand <- tss <- description <- NULL
   .<-NULL
