@@ -5,7 +5,7 @@
 
 Instructions, documentation, and tutorials can be found at [**here**](https://dingruofan.github.io/xQTLbiolinks/index.html).
 
-<img src="https://cdnjson.com/image/AFq3D" alt="Overview" width="100%" height="100%"/>
+<img src="http://bioinfo.szbl.ac.cn/share/MAAS_data/_site/figure/Overview.png" alt="Overview" width="100%" height="100%"/>
 
 ### Quick Start
 
