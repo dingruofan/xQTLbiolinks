@@ -5,7 +5,7 @@
 
 Instructions, documentation, and tutorials can be found at [**here**](https://dingruofan.github.io/xQTLbiolinks/index.html).
 
-<img src="https://raw.githubusercontent.com/dingruofan/xQTLbiolinks/master/img/Overview.png" alt="Overview" width="100%" height="100%"/>
+<img src="https://private-user-images.githubusercontent.com/27127316/319440622-aa582137-7f9d-421a-b781-b3ec11f37d56.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTIyMDQyMzQsIm5iZiI6MTcxMjIwMzkzNCwicGF0aCI6Ii8yNzEyNzMxNi8zMTk0NDA2MjItYWE1ODIxMzctN2Y5ZC00MjFhLWI3ODEtYjNlYzExZjM3ZDU2LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA0MDQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNDA0VDA0MTIxNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAyMzk5NTk5YjNiMTc0NjI4NGNjZTk5Yjg5NjQ5MjA5YzIyZTE1YTZlNjZjMTgzZjkzNmZhNjIzMTJhMzU5YjEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.1Dd-6Id95znyR-hCMPFZcF3vS5xrPoeEHQUcfXuHOfE" alt="Overview" width="100%" height="100%"/>
 
 ### Quick Start
 
