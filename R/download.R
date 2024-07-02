@@ -1451,6 +1451,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail=
 
 #' @title Retrieve SNP pairwise LD from locuscompare database
 #' @description
+#'  Note: This function comes from boxiangliu/locuscomparer. If you used this function, please cite the following paper: https://www.nature.com/articles/s41588-019-0404-0 
 #'  SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
 #'  For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.
 #' @param chr (string) Chromosome name. e.g. '22'. Notice that the name should not contain 'chr'.
