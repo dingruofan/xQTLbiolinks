@@ -1451,7 +1451,7 @@ xQTLdownload_geneMedExp <- function(genes="", geneType="auto", tissueSiteDetail=
 
 #' @title Retrieve SNP pairwise LD from locuscompare database
 #' @description
-#'  Note: This function comes from boxiangliu/locuscomparer. If you used this function, please cite the following paper: https://www.nature.com/articles/s41588-019-0404-0 
+#'  Note: This function comes from boxiangliu/locuscomparer. If you used this function, please cite the following paper: https://www.nature.com/articles/s41588-019-0404-0
 #'  SNP pairwise lD are calculated based on 1000 Genomes Project Phase 3 version 5.
 #'  For storage-efficiency, the output will only include SNPs with r2 > 0.2 with the input SNP.
 #' @param chr (string) Chromosome name. e.g. '22'. Notice that the name should not contain 'chr'.
@@ -1608,7 +1608,7 @@ xQTLdownload_xqtlAllAsso <- function(genes="", geneType="geneSymbol",  tissue=""
       mRNA_gene<-mRNA_gene_DF
     }else{
       # mRNA_gene <- fread(paste0("https://github.com/dingruofan/exampleData/raw/master/hg38_refseq_gencodeId.txt"), header=TRUE)
-      mRNA_gene <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/metadata/hg38_3UTR_anno.txt", header=FALSE)
+      mRNA_gene <- fread("http://bioinfo.szbl.ac.cn/xQTL_biolinks/hg38_3UTR_anno.txt", header=FALSE)
       if(!exists("mRNA_gene") || nrow(mRNA_gene)==0){ stop("mRNA info download fail...") }
     }
     names(mRNA_gene) <- c("mRNA", "geneSymbol")

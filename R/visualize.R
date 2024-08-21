@@ -1435,17 +1435,17 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
   names(summaryDT) <- c("pval")
   summaryDT <- na.omit(summaryDT)
 
-  # 用原始值计算 lamdba，用bin 值作图：
+  # 用原始值计算 lambda，用bin 值作图：
   legend_p <- ifelse(legend_p, legend_p, "none")
 
   if(!requireNamespace("ggplot2")){stop("Require ggplot2")}
 
-  message("calculating lamdba: ", date())
-  #lamdba_p <- round(median((qnorm(summaryDT$pval/ 2))^2, na.rm =TRUE) / qchisq(0.5,1), 3)
+  message("calculating lambda: ", date())
+  #lambda_p <- round(median((qnorm(summaryDT$pval/ 2))^2, na.rm =TRUE) / qchisq(0.5,1), 3)
   # http://genometoolbox.blogspot.com/2014/08/how-to-calculate-genomic-inflation.html
-  lamdba_p <- median(qchisq(1-summaryDT$pval,1))/qchisq(0.5,1)
+  lambda_p <- median(qchisq(1-summaryDT$pval,1))/qchisq(0.5,1)
 
-  message("== Lamdba: ", lamdba_p)
+  message("== lambda: ", lambda_p)
 
   message("== sorting... ", date())
   summaryDT <- summaryDT[order(pval)]
@@ -1500,9 +1500,9 @@ xQTLvisual_qqPlot <- function(summaryDT, legend_p=FALSE, binCutLogP=3, binNumber
     )+
     xlab(expression(Expected -log["10"](p-value)))+
     ylab(expression(Observed -log["10"](p-value)))+
-    annotate("text", x = 0.2, y = max(summaryDT$observedLogP), label = paste0("Lamdba: ", round(lamdba_p,3)), colour = "black", size = 4.5, ,hjust=0)
+    annotate("text", x = 0.2, y = max(summaryDT$observedLogP), label = paste0("lambda: ", round(lambda_p,3)), colour = "black", size = 4.5, ,hjust=0)
 
-  return(list(plot=P, lambda=lamdba_p))
+  return(list(plot=P, lambda=lambda_p))
 }
 
 
