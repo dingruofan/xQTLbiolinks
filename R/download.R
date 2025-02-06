@@ -1558,7 +1558,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="auto", tissue="", clu_n
     df <- try(suppressWarnings(utils::download.file(url = clu_geneid_sub[i,]$url1,
                                                     destfile=clu_geneid_sub[i,]$tmpFilePath,
                                                     quiet = TRUE )), silent=TRUE)
-    if(!file.exists(clu_geneid_sub[i,]$tmpFilePath)){ cat("    > Failed...") }
+    if(!file.exists(clu_geneid_sub[i,]$tmpFilePath)){ cat("    > Failed...");next() }
     cat("   > Success!")
     message("")
   }

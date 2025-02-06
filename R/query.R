@@ -2029,7 +2029,7 @@ xQTLquery_sc <- function(gene="BIN3",geneType="geneSymbol", cell_type="Astrocyte
   url1 <- utils::URLencode(url1)
   url1GetText2Json <- fetchContent(url1, method = "download", downloadMethod = "auto")
   qtl_summary <- data.table::as.data.table(url1GetText2Json$singleTissueEqtl)
-  if(nrow(tmp)==0){
+  if(nrow(qtl_summary)==0){
     message("No expression profiles were found in ",tissueSiteDetail, " of thess ", length(genes), " genes!")
     message("== Done.")
     return(data.table::data.table())
