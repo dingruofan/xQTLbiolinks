@@ -1520,7 +1520,7 @@ xQTLdownload_sqtlAllAsso <- function(genes="", geneType="auto", tissue="", clu_n
   tissueSiteDetail <- clu_name<- tissueSiteDetailId <- gencodeId <- gencodeId_unv <- NULL
   # match tissue:
   if(tissue==""){ stop("tissue can not be null...") }
-  tissueDT <- tissueSiteDetailGTExv8[tissueSiteDetail== tissue | tissueSiteDetailId==tissue][1,]
+  tissueDT <- na.omit(tissueSiteDetailGTExv8[tissueSiteDetail== tissue | tissueSiteDetailId==tissue][1,])
   if(nrow(tissueDT)==0){ stop("tissue not found...")}
   # get clu-gene info:
   if(!is.null(clu_geneid_DF)){
